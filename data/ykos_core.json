@@ -1,0 +1,52 @@
+import TehnikPanel from "./components/TehnikPanel";
+
+import React, { useState, useEffect } from 'react';
+import { D3GraphCanvas } from './components/3DGraphCanvas'; // Dosya yolu düzeltildi
+import { DetailSidebar } from './components/DetailSidebar';
+
+function App() {
+  const [ykosData, setYkosData] = useState(null);
+  const [selectedNode, setSelectedNode] = useState(null);
+
+  useEffect(() => {
+    fetch('/data/ykos_core.json')
+      .then((res) => res.json())
+      .then((data) => setYkosData(data.ykos_core))
+      .catch((err) => console.error("Matris bağlantı hatası:", err));
+  }, []);
+
+  if (!ykosData) {
+    return (
+      <div style={{ backgroundColor: '#020617', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fbbf24', fontFamily: 'monospace' }}>
+        YKOS ENTEGRE MATRİS SİSTEMİ BAZ ALINIYOR...
+      </div>
+    );
+  }
+
+  // Tıklayınca yeni sekmede linki açan işe yarar fonksiyon
+  const handleNodeClick = (node) => {
+    setSelectedNode(node);
+    if (node.url) {
+      window.open(node.url, '_blank');
+    }
+  };
+
+  return (
+    <div style={{ position: 'relative', width: '100%', height: '100vh', backgroundColor: '#020617', overflow: 'hidden', fontFamily: 'sans-serif' }}>
+      
+      {/* Sol Üst Yönetim Paneli Göstergesi */}
+      <div style={{ position: 'absolute', top: '24px', left: '24px', zIndex: 10, pointerEvents: 'none', backgroundColor: 'rgba(2, 6, 23, 0.9)', padding: '20px', borderRadius: '8px', border: '1px solid #334155' }}>
+        <h1 style={{ fontSize: '24px', fontWeight: '900', letterSpacing: '0.1em', margin: 0, color: '#fbbf24' }}>YKOS MATRİSLERİ</h1>
+        <p style={{ fontSize: '11px', color: '#38bdf8', fontFamily: 'monospace', marginTop: '4px', margin: 0, textTransform: 'uppercase' }}>100 • 200 • 300 GENEL AKTİF</p>
+        <div style={{ borderTop: '1px solid #334155', marginTop: '12px', paddingTop: '8px', fontSize: '10px', color: '#94a3b8', lineHeight: '1.4' }}>
+          <strong>ÖNCE VERİ, SONRA ANALİZ, SONRA YORUM:</strong> 40 Kök Sistem, Karşılaştırmalı Arkeolojik Katmanlar ve Küresel Kültür Atlası aktif.
+        </div>
+      </div>
+
+      <D3GraphCanvas rawData={ykosData} onNodeClick={handleNodeClick} />
+      <DetailSidebar selectedNode={selectedNode} onClose={() => setSelectedNode(null)} />
+    </div>
+  );
+}
+
+export default App;
