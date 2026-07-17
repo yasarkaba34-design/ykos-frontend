@@ -1,372 +1,196 @@
 import React, { useState } from "react";
-import Matris from "./components/Matris";
-import Atlas from "./components/Atlas";
-import VeriGirisi from "./components/VeriGirisi";
-import "./App.css";
-
-const FILTERS = [
-  "Hepsi",
-  "Ülke",
-  "İl",
-  "Antik Kent",
-  "Damga",
-  "Petroglif",
-  "Yazıt",
-  "Höyük",
-];
-
-const STATS = [
-  { label: "Ülke", count: "196", icon: "🌍" },
-  { label: "Türkiye İli", count: "81", icon: "📍" },
-  { label: "Antik Kent", count: "1.240", icon: "🏛️" },
-  { label: "Damga", count: "15.320", icon: "🔶" },
-  { label: "Petroglif", count: "8.950", icon: "🪨" },
-  { label: "Görsel", count: "120.000+", icon: "🖼️" },
-];
-
-const MENU_ITEMS = [
-  { id: "m8", label: "m8 Matrisi", icon: "◈" },
-  { id: "m11", label: "m11 Matrisi", icon: "◇" },
-  { id: "m12", label: "m12 Matrisi", icon: "⬡" },
-  { id: "atlas", label: "Dünya Atlası", icon: "🌍" },
-  { id: "turkiye", label: "Türkiye Atlası", icon: "🇹🇷" },
-  { id: "damga", label: "Damga Atlası", icon: "🔶" },
-  { id: "petroglif", label: "Petroglif Atlası", icon: "🪨" },
-  { id: "veri-girisi", label: "Veri Girişi", icon: "✚" },
-];
+import Sidebar from "./components/Sidebar";
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState("m8");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeFilter, setActiveFilter] = useState("Hepsi");
-  const [menuOpen, setMenuOpen] = useState(false);
+  // İlk açılışta doğrudan ana sayfa özet panelinin gelmesi için varsayılanı "ana-sayfa" yaptık
+  const [activeTab, setActiveTab] = useState("ana-sayfa");
 
-  const selectTab = (tab) => {
-    setActiveTab(tab);
-    setMenuOpen(false);
+  const handleTabSelect = (tabId) => {
+    setActiveTab(tabId);
   };
 
-  const renderContent = () => {
-    if (activeTab === "veri-girisi") {
-      return (
-        <VeriGirisi
-          searchQuery={searchQuery}
-          activeFilter={activeFilter}
-        />
-      );
-    }
+  const renderMainContent = () => {
+    switch (activeTab) {
+      case "ana-sayfa":
+        return (
+          <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+            {/* Orijinal YKOS Bilgi Sistemi Tanıtım Kartı */}
+            <div className="ykos-matrix-panel" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+              <div style={{ flex: 1 }}>
+                <h2>YKOS Bilgi Sistemi</h2>
+                <p>Kültürel mirasın dijital araştırma platformu. Arkeoloji, dil, damga, yazıt ve kültürel verileri ortak bir bilgi ağı içinde ilişkilendirir.</p>
+              </div>
+              <div style={{ background: "#0c0d0f", border: "1px solid #4c3b00", borderRadius: "8px", padding: "12px 20px", textAlign: "center", minWidth: "140px" }}>
+                <span style={{ fontSize: "11px", color: "#9a9a9a", display: "block" }}>Sistem Durumu</span>
+                <strong style={{ fontSize: "18px", color: "#22c66a", display: "block", margin: "4px 0" }}>AKTİF</strong>
+                <span style={{ fontSize: "10px", color: "#777" }}>YKOS v1.0 Beta</span>
+              </div>
+            </div>
 
-    if (
-      activeTab === "m8" ||
-      activeTab === "m11" ||
-      activeTab === "m12"
-    ) {
-      return (
-        <Matris
-          query={searchQuery}
-          filter={activeFilter}
-          matrixType={activeTab}
-        />
-      );
-    }
+            {/* İstatistik Sayıcı Kartları */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))", gap: "12px" }}>
+              {[
+                { label: "Ülkeler", value: "214", icon: "🌍" },
+                { label: "Araştırmalar", value: "248", icon: "🏛️" },
+                { label: "Damgalar", value: "9.870", icon: "🔷" },
+                { label: "Petroglifler", value: "18.420", icon: "📜" },
+                { label: "Yazıtlar", value: "4.132", icon: "📜" },
+                { label: "Kaynaklar", value: "12.580", icon: "📚" },
+                { label: "Görseller", value: "46.900", icon: "📷" },
+                { label: "Atlaslar", value: "58", icon: "🗺️" }
+              ].map((stat, idx) => (
+                <div key={idx} style={{ background: "#111214", border: "1px solid #4c3b00", borderRadius: "10px", padding: "12px", display: "flex", alignItems: "center", gap: "10px" }}>
+                  <span style={{ fontSize: "20px" }}>{stat.icon}</span>
+                  <div>
+                    <strong style={{ display: "block", fontSize: "16px", color: "#fff" }}>{stat.value}</strong>
+                    <span style={{ fontSize: "11px", color: "#9a9a9a" }}>{stat.label}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
 
-    return (
-      <Atlas
-        query={searchQuery}
-        filter={activeFilter}
-        atlasType={activeTab}
-      />
-    );
+            {/* Alt İki Blok: Son Eklenenler ve Hızlı Erişim */}
+            <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "24px" }}>
+              {/* Göbeklitepe'nin Bulunduğu Araştırmalar Paneli */}
+              <div className="ykos-matrix-panel">
+                <h2>Son Eklenen Araştırmalar</h2>
+                <ul style={{ color: "#f3f3f3", fontSize: "14px", lineHeight: "2", paddingLeft: "20px", margin: "10px 0 0 0" }}>
+                  <li>YKOS-34-001 Yoros Kalesi</li>
+                  <li style={{ color: "#d6ad2f", fontWeight: "bold" }}>Göbeklitepe</li>
+                  <li>Tamgalı</li>
+                  <li>Saymalıtaş</li>
+                  <li>Hierapolis</li>
+                </ul>
+              </div>
+
+              {/* Hızlı Erişim Paneli */}
+              <div className="ykos-matrix-panel">
+                <h2>Hızlı Erişim</h2>
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "12px" }}>
+                  {["Araştırmalar", "Atlaslar", "Akademik", "Dijital Arşiv"].map((btn, idx) => (
+                    <button key={idx} style={{ width: "100%", height: "36px", background: "#1a1b1e", border: "1px solid rgba(214,173,47,0.15)", borderRadius: "6px", color: "#d8d8d8", fontSize: "13px", cursor: "pointer", textAlign: "center" }}>
+                      {btn}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      case "m8":
+        return (
+          <div className="ykos-matrix-panel">
+            <h2>m8 Matrisi Veri Laboratuvarı</h2>
+            <p>Kök-Hece algoritmasına göre m8 matrisi dinamik analizi ve veri ağları burada listelenir.</p>
+          </div>
+        );
+      case "m11":
+        return (
+          <div className="ykos-matrix-panel">
+            <h2>m11 Matrisi Veri Laboratuvarı</h2>
+            <p>m11 parametreleri, Anadolu sembol sistemleri ve tamga dizilimleri aktif görünümü.</p>
+          </div>
+        );
+      case "m12":
+        return (
+          <div className="ykos-matrix-panel">
+            <h2>m12 Matrisi Veri Laboratuvarı</h2>
+            <p>Kozmik dil ve kaya resmi (petroglif) semantik matris doğrulamaları.</p>
+          </div>
+        );
+      case "dunya":
+        return (
+          <div className="ykos-matrix-panel">
+            <h2>Dünya Atlası Coğrafi Veri Sistemi</h2>
+            <p>Küresel ölçekteki dil, damga ve petroglif yayılımlarının haritalandırma merkezi.</p>
+          </div>
+        );
+      case "turkiye":
+        return (
+          <div className="ykos-matrix-panel">
+            <h2>Türkiye Atlası Bölgesel Analiz Paneli</h2>
+            <p>Anadolu coğrafyasındaki tamgaların lokasyon bazlı yoğunluk haritaları.</p>
+          </div>
+        );
+      case "damga-atlasi":
+        return (
+          <div className="ykos-matrix-panel">
+            <h2>Damga Atlası Tipoloji Veri Tabanı</h2>
+            <p>Erken dönem sembol sistemlerinin köken ve biçimsel analizi.</p>
+          </div>
+        );
+      case "petroglif":
+        return (
+          <div className="ykos-matrix-panel">
+            <h2>Petroglif Atlası Kronolojik Haritalama</h2>
+            <p>Kaya resimlerinin dünya genelindeki semantik ve dönemsel katmanları.</p>
+          </div>
+        );
+      case "veri-girisi":
+        return (
+          <div className="ykos-matrix-panel">
+            <h2>Yeni Kültürel Veri Giriş Formu</h2>
+            <p>Sisteme yeni damga, petroglif veya dil analizi ekleme arayüzü.</p>
+          </div>
+        );
+      default:
+        return (
+          <div className="ykos-matrix-panel">
+            <h2>YKOS Bilgi Sistemi Genel Özet Paneli</h2>
+          </div>
+        );
+    }
   };
 
   return (
-    <div className="ykos-app">
-      <button
-        type="button"
-        className="mobile-menu-button"
-        onClick={() => setMenuOpen((prev) => !prev)}
-        aria-label="Menüyü aç veya kapat"
-      >
-        ☰
-      </button>
+    <div className="ykos-app-container" style={{ display: "flex" }}>
+      {/* Sol Sabit Menü */}
+      <Sidebar activeTab={activeTab} onTabSelect={handleTabSelect} />
 
-      <aside className={`sidebar ${menuOpen ? "sidebar-open" : ""}`}>
-        <div className="sidebar-brand">
-          <div className="sidebar-logo">YKOS</div>
-
-          <div>
-            <strong>YKOS</strong>
-            <small>Bilgi Sistemi</small>
-          </div>
-        </div>
-
-        <nav className="sidebar-nav">
-          {MENU_ITEMS.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => selectTab(item.id)}
-              className={`sidebar-item ${
-                activeTab === item.id ? "sidebar-item-active" : ""
-              }`}
-            >
-              <span className="sidebar-icon">{item.icon}</span>
-              <span>{item.label}</span>
-            </button>
-          ))}
-        </nav>
-
-        <div className="sidebar-footer">
-          <span className="live-dot" />
-          Canlı veri bağlantısı
-        </div>
-      </aside>
-
-      {menuOpen && (
-        <button
-          type="button"
-          className="mobile-overlay"
-          onClick={() => setMenuOpen(false)}
-          aria-label="Menüyü kapat"
-        />
-      )}
-
-      <div className="page-shell">
-        <header className="hero">
-          <div className="hero-logo">YKOS</div>
-
-          <div>
-            <h1>YKOS BİLGİ SİSTEMİ</h1>
-            <p>
-              Disiplinler Arası Algoritmik Kültür ve Dil Veri Tabanı
-            </p>
-          </div>
-
-          <div className="system-status">
-            <span className="live-dot" />
-            Sistem aktif
-          </div>
-        </header>
-
-        <section className="search-panel">
-          <div className="search-row">
-            <span className="search-icon">⌕</span>
-
-            <input
-              type="search"
-              placeholder="Damga, kök hece, ülke, il veya kadim merkez ara..."
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-              className="search-input"
-            />
-
-            {searchQuery && (
-              <button
-                type="button"
-                className="clear-search"
-                onClick={() => setSearchQuery("")}
-                aria-label="Aramayı temizle"
-              >
-                ×
-              </button>
-            )}
-          </div>
-
-          <div className="filter-row">
-            {FILTERS.map((filter) => (
-              <button
-                key={filter}
-                type="button"
-                onClick={() => setActiveFilter(filter)}
-                className={`filter-button ${
-                  activeFilter === filter
-                    ? "filter-button-active"
-                    : ""
-                }`}
-              >
-                {filter}
-              </button>
-            ))}
-          </div>
-        </section>
-
-        <section className="quick-tabs">
-          {MENU_ITEMS.slice(0, 5).map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => selectTab(item.id)}
-              className={`quick-tab ${
-                activeTab === item.id ? "quick-tab-active" : ""
-              }`}
-            >
-              <span>{item.icon}</span>
-              {item.label}
-            </button>
-          ))}
-        </section>
-
-        <main className="main-grid">
-          <section className="content-panel">
-            <div className="content-toolbar">
+      {/* Sağ Ana İçerik Gövdesi */}
+      <main className="ykos-main-content" style={{ flex: 1 }}>
+        
+        {/* ÜST BEYAZ BANNER VE LACİVERT NAVİGASYON BARI */}
+        <div className="ykos-header-wrapper" style={{ width: "100%", background: "#fff" }}>
+          <div className="ykos-top-banner" style={{ display: "flex", alignItems: "center", padding: "12px 24px", justifyContent: "space-between", borderBottom: "1px solid #eef0f2" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              {/* Sol logoya tıklandığında ana sayfaya dönme işlevi ekledik */}
+              <div onClick={() => setActiveTab("ana-sayfa")} style={{ background: "#102436", color: "#fff", padding: "8px 12px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}>YKOS</div>
               <div>
-                <span className="eyebrow">
-                  Aktif çalışma katmanı
-                </span>
-
-                <h2>{getTabTitle(activeTab)}</h2>
-              </div>
-
-              <div className="active-query">
-                <span>Filtre</span>
-                <strong>{activeFilter}</strong>
+                <h1 onClick={() => setActiveTab("ana-sayfa")} style={{ margin: 0, fontSize: "18px", color: "#0f172a", fontWeight: "800", letterSpacing: "0.5px", cursor: "pointer" }}>YKOS BİLGİ SİSTEMİ</h1>
+                <p style={{ margin: 0, fontSize: "11px", color: "#64748b" }}>Disiplinler Arası Algoritmik Kültür ve Dil Veri Tabanı</p>
               </div>
             </div>
-
-            <div className="component-area">
-              {renderContent()}
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <span style={{ fontSize: "12px", color: "#22c55e", background: "#f0fdf4", padding: "4px 8px", borderRadius: "12px", fontWeight: "600" }}>● Sistem aktif</span>
+              <span style={{ fontSize: "11px", color: "#94a3b8" }}>v1.0 Beta</span>
             </div>
-          </section>
+          </div>
 
-          <aside className="right-column">
-            <article className="discovery-card">
-              <div className="discovery-image">
-                <div className="discovery-image-overlay" />
-
-                <div className="discovery-badge">
-                  <span className="live-dot" />
-                  Günün keşfi
-                </div>
-
-                <div className="discovery-image-title">
-                  <small>ŞANLIURFA · TÜRKİYE</small>
-                  <h3>Göbeklitepe</h3>
-                </div>
-              </div>
-
-              <div className="discovery-body">
-                <p>
-                  İnsanlık tarihinin erken anıtsal merkezlerinden biri
-                  olarak YKOS karşılaştırmalı araştırmalarının temel
-                  kayıt noktalarındandır.
-                </p>
-
-                <div className="discovery-metrics">
-                  <div>
-                    <span>Dönem</span>
-                    <strong>MÖ 9600</strong>
-                  </div>
-
-                  <div>
-                    <span>Damga</span>
-                    <strong>148</strong>
-                  </div>
-
-                  <div>
-                    <span>Petroglif</span>
-                    <strong>62</strong>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  className="primary-button"
-                  onClick={() => {
-                    setSearchQuery("Göbeklitepe");
-                    setActiveFilter("Antik Kent");
-                    selectTab("atlas");
-                  }}
-                >
-                  Kaydı incele →
-                </button>
-              </div>
-            </article>
-
-            <article className="progress-card">
-              <span className="eyebrow">Atlas ilerlemesi</span>
-              <h3>Veri giriş durumu</h3>
-
-              <ProgressItem label="Ülke dosyaları" value={64} />
-              <ProgressItem label="Türkiye illeri" value={42} />
-              <ProgressItem
-                label="Petroglif kayıtları"
-                value={31}
-              />
-            </article>
-          </aside>
-        </main>
-
-        <section className="stats-section">
-          <div className="stats-heading">
-            <div>
-              <span className="eyebrow">Canlı veri tabanı</span>
-              <h2>YKOS Kayıt İstatistikleri</h2>
+          <div className="ykos-sub-nav" style={{ background: "#0f1e2d", padding: "0 24px", display: "flex", height: "46px", alignItems: "center", justifyContent: "space-between" }}>
+            <div style={{ display: "flex", gap: "20px" }}>
+              {/* Üst menüdeki Ana Sayfa yazısına basınca da paneli tetikliyoruz */}
+              <span onClick={() => setActiveTab("ana-sayfa")} style={{ color: activeTab === "ana-sayfa" ? "#fff" : "#94a3b8", fontSize: "13px", fontWeight: "500", cursor: "pointer" }}>Ana Sayfa</span>
+              <span style={{ color: "#94a3b8", fontSize: "13px", cursor: "pointer" }}>Araştırmalar</span>
+              <span style={{ color: "#94a3b8", fontSize: "13px", cursor: "pointer" }}>Atlaslar</span>
+              <span style={{ color: "#94a3b8", fontSize: "13px", cursor: "pointer" }}>Akademik</span>
+              <span style={{ color: "#94a3b8", fontSize: "13px", cursor: "pointer" }}>Dijital Arşiv</span>
+              <span style={{ color: "#94a3b8", fontSize: "13px", cursor: "pointer" }}>Hakkında</span>
+              <span style={{ color: "#94a3b8", fontSize: "13px", cursor: "pointer" }}>İletişim</span>
             </div>
-
-            <span className="last-update">
-              Son güncelleme: 2026
-            </span>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <button style={{ background: "transparent", border: "none", color: "#fff", cursor: "pointer" }}>🔍</button>
+              <span style={{ color: "#fff", fontSize: "12px", background: "#1e293b", padding: "4px 8px", borderRadius: "4px" }}>🌐 TR Türkçe</span>
+            </div>
           </div>
+        </div>
 
-          <div className="stats-grid">
-            {STATS.map((stat) => (
-              <article key={stat.label} className="stat-card">
-                <span className="stat-icon">{stat.icon}</span>
+        {/* ALT DİNAMİK İÇERİK ALANI */}
+        <div className="ykos-page-body" style={{ padding: "24px" }}>
+          {renderMainContent()}
+        </div>
 
-                <div>
-                  <strong>{stat.count}</strong>
-                  <span>{stat.label}</span>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <footer className="footer">
-          <div>
-            <strong>YKOS Araştırma Platformu</strong>
-            <span>© 2026</span>
-          </div>
-
-          <div>
-            <span>Kurucu: Yaşar Kaba</span>
-            <span>Dijital organizasyon: AL AJANS</span>
-          </div>
-        </footer>
-      </div>
+      </main>
     </div>
   );
-}
-
-function ProgressItem({ label, value }) {
-  return (
-    <div className="progress-item">
-      <div className="progress-label">
-        <span>{label}</span>
-        <strong>%{value}</strong>
-      </div>
-
-      <div className="progress-track">
-        <div
-          className="progress-value"
-          style={{ width: `${value}%` }}
-        />
-      </div>
-    </div>
-  );
-}
-
-function getTabTitle(tab) {
-  const titles = {
-    m8: "m8 Matrisi",
-    m11: "m11 Matrisi",
-    m12: "m12 Matrisi",
-    atlas: "Dünya Atlası",
-    turkiye: "Türkiye Katmanlar Atlası",
-    damga: "Dünya Damga Atlası",
-    petroglif: "Petroglif Atlası",
-    "veri-girisi": "YKOS Veri Giriş ve Yönetim Paneli",
-  };
-
-  return titles[tab] || "YKOS Çalışma Alanı";
 }
