@@ -148,3 +148,82 @@ header {
     width: 60%;
     border-radius: 6px;
 }
+/* --- Modül Kartlarına İkon Desteği --- */
+
+.modul {
+    background: #111;
+    border: 1px solid #d4af37;
+    padding: 25px;
+    text-align: center;
+    border-radius: 8px;
+    font-size: 20px;
+    transition: 0.3s;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.15);
+}
+
+/* İkon alanı */
+.modul-icon {
+    font-size: 40px;
+    color: #d4af37;
+    margin-bottom: 15px;
+    display: block;
+}
+
+/* Hover efekti */
+.modul:hover {
+    background: #d4af37;
+    color: #0a0a0a;
+}
+
+.modul:hover .modul-icon {
+    color: #0a0a0a;
+}
+/* --- YKOS Üst Menü (Navbar) --- */
+
+.navbar {
+    background: #111;
+    border-bottom: 2px solid #d4af37;
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-logo {
+    font-size: 28px;
+    font-weight: 700;
+    color: #d4af37;
+    letter-spacing: 2px;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+}
+
+.nav-links li a {
+    color: #f5f5f5;
+    text-decoration: none;
+    font-size: 18px;
+    transition: 0.3s;
+}
+
+.nav-links li a:hover {
+    color: #d4af37;
+}
+
+/* Mobil uyum */
+@media (max-width: 600px) {
+    .navbar {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 10px;
+    }
+}
