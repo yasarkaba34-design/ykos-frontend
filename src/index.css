@@ -1,23 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 body {
   margin: 0;
   background-color: #020617;
   color: #fbbf24;
   font-family: 'Roboto Mono', monospace;
 }
-/src/modules/AnadoluShieldModule/
-    AnadoluCoreEnergy.js
-    AnadoluShieldRing.js
-    NorthWindBreaker.js
-    AnadoluMigrationSpiral.js
-    index.js
-import AnadoluCoreEnergy from "./AnadoluCoreEnergy";
-import AnadoluShieldRing from "./AnadoluShieldRing";
-import NorthWindBreaker from "./NorthWindBreaker";
-import AnadoluMigrationSpiral from "./AnadoluMigrationSpiral";
-
-export const AnadoluShieldModule = {
-  core: AnadoluCoreEnergy,
-  shield: AnadoluShieldRing,
-  wind: NorthWindBreaker,
-  spiral: AnadoluMigrationSpiral
-};

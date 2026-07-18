@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+// Yeni eklenen modül yapısını projeye dahil ediyoruz
+import { AnadoluShieldModule } from "./modules/AnadoluShieldModule";
 
 export default function App() {
   const [activeTopMenu, setActiveTopMenu] = useState("Ana Sayfa");
@@ -17,7 +19,7 @@ export default function App() {
   ];
 
   return (
-    <div className="min-h-screen bg-black text-gray-100 font-sans p-6 selection:bg-yellow-500 selection:text-black">
+    <div className="min-h-screen p-6 selection:bg-yellow-500 selection:text-black">
       {/* Üst Logo ve Başlık Alanı */}
       <header className="border-b border-gray-800 pb-4 mb-4 flex justify-between items-center">
         <div>
@@ -57,7 +59,7 @@ export default function App() {
               className={`px-3 py-1.5 text-xs font-medium rounded border transition-all ${
                 activeTab === matrix.split(" ")[0] && activeTopMenu === "Araştırmalar"
                   ? "bg-yellow-500 text-black border-yellow-500"
-                  : "bg-gray-900 text-yellow-500 border-yellow-500/30 hover:bg-gray-800"
+                  : "bg-gray-950 text-yellow-500 border-yellow-500/30 hover:bg-gray-900"
               }`}
             >
               ♦ {matrix}
@@ -71,17 +73,17 @@ export default function App() {
         {activeTopMenu === "Ana Sayfa" && (
           <>
             {/* Giriş Spotu */}
-            <div className="p-4 bg-gray-950 rounded border border-gray-900">
+            <div className="p-4 bg-gray-950/50 rounded border border-gray-900">
               <h2 className="text-lg font-bold text-yellow-500 mb-1">YKOS Bilgi Sistemi</h2>
               <p className="text-xs text-gray-400 leading-relaxed">
                 Kültürel mirasın dijital araştırma platformu. Arkeoloji, dil, damga, yazıt ve kültürel verileri ortak bir bilgi ağı içinde ilişkilendirir.
               </p>
             </div>
 
-            {/* İstatistik Kartları Izgarası (Düzgün Hizalanmış Grid) */}
+            {/* İstatistik Kartları Izgarası */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {stats.map((stat, idx) => (
-                <div key={idx} className="p-3 bg-gray-950 rounded border border-gray-900 flex items-center space-x-3 hover:border-gray-800 transition-colors">
+                <div key={idx} className="p-3 bg-gray-950/40 rounded border border-gray-900 flex items-center space-x-3 hover:border-gray-800 transition-colors">
                   <span className="text-xl p-1.5 bg-gray-900 rounded">{stat.icon}</span>
                   <div>
                     <div className="text-lg font-mono font-bold text-gray-200">{stat.count}</div>
@@ -94,36 +96,45 @@ export default function App() {
             {/* İki Sütunlu Yan Yana Alt Panel */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               
-              {/* Sol Sütun: Son Eklenen Araştırmalar (Dokunulmaz Sabit Liste) */}
-              <div className="md:col-span-2 p-4 bg-gray-950 rounded border border-gray-900">
+              {/* Sol Sütun: Son Eklenen Araştırmalar */}
+              <div className="md:col-span-2 p-4 bg-gray-950/40 rounded border border-gray-900">
                 <h3 className="text-xs font-bold text-yellow-500 uppercase tracking-wider mb-3 pb-1 border-b border-gray-900">
                   Son Eklenen Araştırmalar
                 </h3>
                 <ul className="space-y-2 text-xs text-gray-300 font-mono">
-                  <li className="p-2 bg-gray-900/50 rounded border border-gray-900">• YKOS-34-001 Yoros Kalesi</li>
-                  <li className="p-2 bg-gray-900/50 rounded border border-gray-900">• Göbeklitepe</li>
-                  <li className="p-2 bg-gray-900/50 rounded border border-gray-900">• Tamgalı</li>
-                  <li className="p-2 bg-gray-900/50 rounded border border-gray-900">• Saymalıtaş</li>
-                  <li className="p-2 bg-gray-900/50 rounded border border-gray-900">• Hierapolis</li>
+                  <li className="p-2 bg-gray-900/30 rounded border border-gray-900">• YKOS-34-001 Yoros Kalesi</li>
+                  <li className="p-2 bg-gray-900/30 rounded border border-gray-900">• Göbeklitepe</li>
+                  <li className="p-2 bg-gray-900/30 rounded border border-gray-900">• Tamgalı</li>
+                  <li className="p-2 bg-gray-900/30 rounded border border-gray-900">• Saymalıtaş</li>
+                  <li className="p-2 bg-gray-900/30 rounded border border-gray-900">• Hierapolis</li>
                 </ul>
               </div>
 
-              {/* Sağ Sütun: Hızlı Erişim (İyileştirilmiş ve Tetikleyici Butonlar) */}
-              <div className="p-4 bg-gray-950 rounded border border-gray-900">
-                <h3 className="text-xs font-bold text-yellow-500 uppercase tracking-wider mb-3 pb-1 border-b border-gray-900">
-                  Hızlı Erişim
-                </h3>
-                <div className="flex flex-col space-y-2">
-                  {["Araştırmalar", "Atlaslar", "Akademik", "Dijital Arşiv"].map((menu) => (
-                    <button
-                      key={menu}
-                      onClick={() => setActiveTopMenu(menu === "Atlaslar" ? "Atlas" : menu)}
-                      className="w-full text-left p-2.5 rounded bg-gray-900 text-gray-300 hover:text-yellow-500 hover:bg-gray-800 border border-gray-850 transition-all text-xs flex justify-between items-center"
-                    >
-                      <span>{menu}</span>
-                      <span className="text-gray-600">→</span>
-                    </button>
-                  ))}
+              {/* Sağ Sütun: Hızlı Erişim ve Modül Durumu */}
+              <div className="space-y-4">
+                <div className="p-4 bg-gray-950/40 rounded border border-gray-900">
+                  <h3 className="text-xs font-bold text-yellow-500 uppercase tracking-wider mb-3 pb-1 border-b border-gray-900">
+                    Hızlı Erişim
+                  </h3>
+                  <div className="flex flex-col space-y-2">
+                    {["Araştırmalar", "Atlaslar", "Akademik", "Dijital Arşiv"].map((menu) => (
+                      <button
+                        key={menu}
+                        onClick={() => setActiveTopMenu(menu === "Atlaslar" ? "Atlas" : menu)}
+                        className="w-full text-left p-2.5 rounded bg-gray-900/50 text-gray-300 hover:text-yellow-500 hover:bg-gray-800 border border-gray-850 transition-all text-xs flex justify-between items-center"
+                      >
+                        <span>{menu}</span>
+                        <span className="text-gray-600">→</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Algoritmik Modüllerin Aktiflik Göstergesi */}
+                <div className="p-3 bg-gray-950/60 rounded border border-yellow-900/30 text-[10px] text-gray-400 font-mono space-y-1">
+                  <div className="text-yellow-600 font-bold uppercase tracking-wider mb-1">Modül Entegrasyonu</div>
+                  <div className="flex justify-between"><span>Anadolu Core:</span> <span className="text-green-500">Yüklendi</span></div>
+                  <div className="flex justify-between"><span>Göç Sarmalı (Spiral):</span> <span className="text-green-500">Aktif</span></div>
                 </div>
               </div>
 
@@ -131,10 +142,10 @@ export default function App() {
           </>
         )}
 
-        {/* Diğer Alt Menü Sekmeleri Tetiklendiğinde Açılacak Alanlar */}
+        {/* Diğer Alt Menü Sekmeleri */}
         {activeTopMenu !== "Ana Sayfa" && (
-          <div className="p-6 bg-gray-950 rounded border border-gray-900 text-gray-400 text-xs">
-            {activeTopMenu} modülü panel görünümleri yükleniyor...
+          <div className="p-6 bg-gray-950/40 rounded border border-gray-900 text-gray-400 text-xs font-mono">
+            {activeTopMenu} modülü panel görünümleri ve algoritmik veriler yükleniyor...
           </div>
         )}
       </main>
