@@ -1,5 +1,5 @@
 import React from "react";
-import YKOSDashboard from "./YKOSDashboard";
+import YKOSDashboard from "./pages/YKOSDashboard";
 
 export default function App() {
   return (
