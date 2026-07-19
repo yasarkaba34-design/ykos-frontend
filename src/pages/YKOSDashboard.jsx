@@ -28,6 +28,7 @@ import CosmicEngine from "../components/CosmicEngine";
 import CosmicSync from "../components/CosmicSync";
 import CosmicAI from "../components/CosmicAI";
 import CosmicAtlas from "../components/CosmicAtlas";
+import AtlasMap from "../data/atlas/AtlasMap";
 
 export default function YKOSDashboard() {
   const [selectedRoot, setSelectedRoot] = useState(null);
