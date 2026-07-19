@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+// Bileşenleri üst klasördeki components dizininden nizamî olarak alıyoruz
 import SemanticEngine from "../components/SemanticEngine";
 import AtlasMap from "../components/AtlasMap";
 import LayerSystem from "../components/LayerSystem";
@@ -38,8 +39,8 @@ export default function YKOSDashboard() {
     <div className="dashboard-container" style={{ background: "#000", minHeight: "100vh", color: "#fff" }}>
       
       {/* 1. ÜST BAR: Logo, Menü ve Sağ Üstte Dil/Matrisler */}
-      <div className="top-bar" style={{ display: "flex", justifyContent: "between", alignItems: "center", padding: "15px 20px" }}>
-        <div className="top-logo" style={{ fontSize: "24px", fontWeight: "bold", color: "#d4af37" }}>YKOS</div>
+      <div className="top-bar" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "15px 20px", borderBottom: "1px solid #1a203b" }}>
+        <div className="top-logo" style={{ fontSize: "24px", fontWeight: "bold", color: "#d4af37" }}>YKOS BİLGİ SİSTEMİ</div>
         <div className="top-menu" style={{ display: "flex", gap: "20px" }}>
           <span>Ana Sayfa</span>
           <span>Hakkında</span>
@@ -61,21 +62,21 @@ export default function YKOSDashboard() {
       </div>
 
       {/* 2. GOOGLE TARZI ARAMA ÇUBUĞU */}
-      <div style={{ display: "flex", justifyContent: "center", margin: "30px 0 20px 0" }}>
-        <div className="search-box" style={{ display: "flex", alignItems: "center", gap: "10px", background: "#111", border: "1px solid #d4af37", padding: "10px 20px", borderRadius: "30px", width: "50%" }}>
+      <div style={{ display: "flex", justifyContent: "center", margin: "40px 0 30px 0" }}>
+        <div className="search-box" style={{ display: "flex", alignItems: "center", gap: "12px", background: "#111", border: "1px solid #d4af37", padding: "12px 25px", borderRadius: "30px", width: "50%" }}>
           <span style={{ color: "#d4af37", fontSize: "18px" }}>🔍</span>
           <input 
             type="text" 
             placeholder="Damga, yazıt, petroglif veya kadim bir merkez arayın..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ background: "transparent", border: "none", color: "#fff", width: "100%", outline: "none" }}
+            style={{ background: "transparent", border: "none", color: "#fff", width: "100%", outline: "none", fontSize: "15px" }}
           />
         </div>
       </div>
 
       {/* 3. TEK SATIRA SIĞAN ORTALANMIŞ GÖSTERGE PANELI */}
-      <div className="stats-bar" style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "10px", background: "#111", padding: "15px", borderRadius: "8px", margin: "0 20px" }}>
+      <div className="stats-bar" style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "10px", background: "#111", padding: "15px", borderRadius: "8px", margin: "0 20px", border: "1px solid #222" }}>
         {[
           { icon: "🌐", value: "214", label: "Ülkeler" },
           { icon: "🏛️", value: "248", label: "Araştırmalar" },
@@ -87,15 +88,15 @@ export default function YKOSDashboard() {
           { icon: "🗺️", value: "58", label: "Atlaslar" }
         ].map((item, index) => (
           <div className="stats-item" key={index} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", borderRight: index !== 7 ? "1px solid #222" : "none" }}>
-            <span className="icon" style={{ fontSize: "20px" }}>{item.icon}</span>
+            <span className="icon" style={{ fontSize: "20px", marginBottom: "4px" }}>{item.icon}</span>
             <span className="value" style={{ fontSize: "18px", fontWeight: "bold", color: "#fff" }}>{item.value}</span>
-            <span className="label" style={{ fontSize: "11px", color: "#888" }}>{item.label}</span>
+            <span className="label" style={{ fontSize: "11px", color: "#888", marginTop: "2px" }}>{item.label}</span>
           </div>
         ))}
       </div>
 
       {/* 4. ANA AKIŞ VE ANALİZ MOTORLARI */}
-      <div className="dashboard-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", padding: "20px" }}>
+      <div className="dashboard-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", padding: "20px", marginTop: "20px" }}>
         <div className="dashboard-card" style={{ background: "#111", padding: "20px", borderRadius: "8px", border: "1px solid #222" }}>
           <h2 style={{ color: "#d4af37", fontSize: "18px", marginBottom: "15px" }}>🔤 Semantik Motoru</h2>
           <SemanticEngine onRootSelect={setSelectedRoot} />
