@@ -1,19 +1,12 @@
 import React, { useEffect } from "react";
-import tutSound from "../audio/tut.mp3";
-
-import kurSound from "../audio/kur.mp3";
-import baSound from "../audio/ba.mp3";
-import yolSound from "../audio/yol.mp3";
-import birSound from "../audio/bir.mp3";
-import kalSound from "../audio/kal.mp3";
 
 const rootSounds = {
-  TUT: tutSound,
-  KUR: kurSound,
-  BA: baSound,
-  YOL: yolSound,
-  BİR: birSound,
-  KAL: kalSound
+  TUT: "/audio/tut.mp3",
+  KUR: "/audio/kur.mp3",
+  BA: "/audio/ba.mp3",
+  YOL: "/audio/yol.mp3",
+  BİR: "/audio/bir.mp3",
+  KAL: "/audio/kal.mp3"
 };
 
 export default function AudioEngine({ selectedRoot }) {
