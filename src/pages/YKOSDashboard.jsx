@@ -27,16 +27,17 @@ import CosmicEngine from "../components/CosmicEngine";
 import CosmicSync from "../components/CosmicSync";
 import CosmicAI from "../components/CosmicAI";
 import CosmicAtlas from "../components/CosmicAtlas";
-import { YKOS_API } from "../api/ycos";
 
 export default function YKOSDashboard() {
   const [selectedRoot, setSelectedRoot] = useState(null);
   const [syncData, setSyncData] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const userId = "YKOS_USER_" + Math.floor(Math.random() * 999999);
 
   return (
-    <div className="dashboard-container">
-      {/* 1. Nizamî Ortalanmış Üst Menü */}
+    <div className="dashboard-container" style={{ background: "#000", minHeight: "100vh", color: "#fff" }}>
+      
+      {/* 1. ÜST BAR: Logo, Menü ve Sağ Üstte Dil/Matrisler */}
       <div className="top-bar">
         <div className="top-logo">YKOS</div>
         <div className="top-menu">
@@ -48,11 +49,33 @@ export default function YKOSDashboard() {
           <span>Kurumsal İşbirlikleri</span>
           <span>İletişim</span>
         </div>
-        <div className="language-selector">🌐 TR</div>
+        
+        {/* Sağ Üst Panel (Dil ve Matris Modülleri) */}
+        <div className="language-selector" style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+          <div className="matrix-badges" style={{ display: "flex", gap: "8px" }}>
+            <span style={{ fontSize: "12px", padding: "3px 8px", background: "#111", border: "1px solid #d4af37", color: "#d4af37", borderRadius: "4px" }}>m8</span>
+            <span style={{ fontSize: "12px", padding: "3px 8px", background: "#111", border: "1px solid #d4af37", color: "#d4af37", borderRadius: "4px" }}>m11</span>
+            <span style={{ fontSize: "12px", padding: "3px 8px", background: "#111", border: "1px solid #d4af37", color: "#d4af37", borderRadius: "4px" }}>m12</span>
+          </div>
+          <span>🌐 TR</span>
+        </div>
       </div>
 
-      {/* 2. Nizamî 8 Kutulu Veri Paneli (Stats Grid) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 my-6">
+      {/* 2. GOOGLE TARZI ARAMA ÇUBUĞU */}
+      <div style={{ display: "flex", justifyContent: "center", margin: "30px 0 20px 0" }}>
+        <div className="search-box">
+          <span style={{ color: "#d4af37", fontSize: "18px" }}>🔍</span>
+          <input 
+            type="text" 
+            placeholder="Damga, yazıt, petroglif veya kadim bir merkez arayın..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
+
+      {/* 3. TEK SATIRA SIĞAN ORTALANMIŞ GÖSTERGE PANELI (STATS BAR) */}
+      <div className="stats-bar">
         {[
           { icon: "🌐", value: "214", label: "Ülkeler" },
           { icon: "🏛️", value: "248", label: "Araştırmalar" },
@@ -63,27 +86,16 @@ export default function YKOSDashboard() {
           { icon: "📷", value: "46.900", label: "Görseller" },
           { icon: "🗺️", value: "58", label: "Atlaslar" }
         ].map((item, index) => (
-          <div 
-            key={index} 
-            className="flex items-center gap-4 p-5 rounded-xl bg-[#141414] border border-gray-900 hover:border-amber-500/30 transition-all duration-200 shadow-md group"
-          >
-            <span className="text-2xl bg-[#0d0d0d] p-3 rounded-lg border border-gray-800 group-hover:border-amber-500/20 transition-colors">
-              {item.icon}
-            </span>
-            <div className="flex flex-col">
-              <span className="text-2xl font-bold text-slate-100 tracking-tight font-mono">
-                {item.value}
-              </span>
-              <span className="text-xs font-medium text-slate-400 uppercase tracking-wider mt-0.5">
-                {item.label}
-              </span>
-            </div>
+          <div className="stats-item" key={index} style={{ padding: "0 15px" }}>
+            <span className="icon">{item.icon}</span>
+            <span className="value">{item.value}</span>
+            <span className="label">{item.label}</span>
           </div>
         ))}
       </div>
 
-      {/* 3. Ana Motorlar ve Grafik Matrisi Izgarası */}
-      <div className="dashboard-grid">
+      {/* 4. ANA AKIŞ VE ANALİZ MOTORLARI */}
+      <div className="dashboard-grid" style={{ marginTop: "30px" }}>
         <div className="dashboard-card">
           <h2>🔤 Semantik Motoru</h2>
           <SemanticEngine onRootSelect={setSelectedRoot} />
@@ -105,7 +117,7 @@ export default function YKOSDashboard() {
         </div>
       </div>
 
-      {/* 4. Arka Plan Senkronizasyon ve Evrensel/Kozmik Motor Katmanları */}
+      {/* 5. ARKA PLAN AKIŞ VE UYUM MOTORLARI */}
       <div className="hidden-engines" style={{ display: "none" }}>
         <AudioEngine selectedRoot={selectedRoot} />
         <ReportEngine />
