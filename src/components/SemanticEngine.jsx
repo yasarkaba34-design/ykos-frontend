@@ -1,25 +1,57 @@
 import React, { useState } from "react";
 import { YKOS_ROOTS } from "../data/ycos_roots";
 import { YKOS_GEO } from "../data/ycos_geo";
-geo: YKOS_GEO[item.step] || null
 import LayerSystem from "./LayerSystem";
-export default function SemanticEngine({ onRootSelect }) {
-
-export default function SemanticEngine() {
-  const [input, setInput] = useState("");
-  const [chain, setChain] = useState([]);
-
-  const SEMANTIC_STEPS = ["TUT", "KUR", "BA", "YOL", "BİR", "KAL"];
 import GraphMatrix from "./GraphMatrix";
 
-  const analyze = () => {
-    if (!input.trim()) return;
+export default function SemanticEngine({ onRootSelect }) {
+  const [input, setInput] = useState("");
+  const [chain, setChain] = useState([]);
+  const [selectedRoot, setSelectedRoot] = useState(null);
 
-    // Basit YKOS zinciri: her adımda kökü işleyip bir aşama üret
-    const result = SEMANTIC_STEPS.map((step, index) => {
+  // m8 Matris Adımları
+  const SEMANTIC_STEPS = ["TUT", "KUR", "BA", "YOL", "BİR", "KAL"];
+
+  const handleAnalyze = () => {
+    const cleanedInput = input.trim().toUpperCase();
+    if (!cleanedInput) return;
+
+    // Seçili ana kökü LayerSystem ve GraphMatrix için alt bileşenlere gönderiyoruz
+    setSelectedRoot(cleanedInput);
+    
+    if (onRootSelect) {
+      onRootSelect(cleanedInput);
+    }
+
+    // Zincir akışını oluşturuyoruz
+    const result = SEMANTIC_STEPS.map((step) => {
+      // Veri dosyasından ilgili adıma ait kök bilgisini çekiyoruz
+      const rootData = YKOS_ROOTS[step] || null;
+      // Coğrafi veri dosyasından ilgili adıma ait konumu çekiyoruz
+      const geoData = YKOS_GEO[step] || null;
+
+      if (!rootData) {
+        return {
+          step,
+          matches: ["Eşleşme yok"],
+          anlam: "-",
+          kategori: "-",
+          geo: geoData || "-"
+        };
+      }
+
+      // Kullanıcının girdisiyle eşleşen varyantları veya kökleri süzüyoruz
+      const currentRoots = rootData.kökler || rootData.varyantlar || [];
+      const matches = currentRoots.filter((item) =>
+        item.toLowerCase().startsWith(cleanedInput.toLowerCase())
+      );
+
       return {
         step,
-        value: `${step}-${input}-${index}`
+        matches: matches.length > 0 ? matches : ["Eşleşme yok"],
+        anlam: rootData.anlam || "-",
+        kategori: rootData.kategori || "-",
+        geo: geoData || "-"
       };
     });
 
@@ -27,179 +59,40 @@ import GraphMatrix from "./GraphMatrix";
   };
 
   return (
-    <div>
-      <h2>Semantik Motor</h2>
-<LayerSystem selectedRoot={selectedRoot} />
+    <div className="semantic-engine-container">
+      <h2>YKOS Semantik Motor</h2>
 
-      <input
-        type="text"
-        placeholder="Kök gir..."
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-      />
-
-      <button onClick={analyze}>Çözümle</button>
-
-      <div className="semantic-output">
-        {chain.map((item) => (
-          <div key={item.step}>
-            <strong>{item.step}</strong> → {item.value}
-          </div>
-        ))}
+      <div className="search-panel">
+        <input
+          type="text"
+          placeholder="Kök girin (Örn: TUT, KUR...)"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+        />
+        <button onClick={handleAnalyze}>Çözümle</button>
       </div>
-    </div>
-  );
-}
-import React, { useState } from "react";
 
-const ROOTS = {
-  "TUT": ["tut", "tutmak", "tutucu"],
-  "KUR": ["kur", "kurmak", "kurucu"],
-  "BA": ["ba", "bağ", "bağla"],
-  "YOL": ["yol", "yolcu", "yolmak"],
-  "BİR": ["bir", "birlik", "birleş"],
-  "KAL": ["kal", "kalmak", "kalıcı"]
-};
+      {/* Matris ve Katman Yapıları Görsel Grafik Bileşenleri */}
+      {selectedRoot && (
+        <div className="visual-matrices">
+          <LayerSystem selectedRoot={selectedRoot} />
+          <GraphMatrix selectedRoot={selectedRoot} />
+        </div>
+      )}
 
-const analyzeRoot = (root) => {
-  const steps = ["TUT", "KUR", "BA", "YOL", "BİR", "KAL"];
-
-  return steps.map((step) => {
-    const matches = ROOTS[step].filter((item) =>
-      item.startsWith(root.toLowerCase())
-    );
-
-    return {
-      step,
-      matches: matches.length > 0 ? matches : ["eşleşme yok"]
-    };
-  });
-};
-
-export default function SemanticEngine() {
-  const [input, setInput] = useState("");
-  const [chain, setChain] = useState([]);
-
-  const handleAnalyze = () => {
-    const result = analyzeRoot(input);
-    setChain(result);
-  };
-const YKOS_ROOTS = {
-  TUT: {
-    kökler: ["tut", "tutmak", "tutucu"],
-    anlam: "tutma, kavrama, bağlama başlangıcı",
-    kategori: "başlangıç eylemi"
-  },
-  KUR: {
-    kökler: ["kur", "kurmak", "kurucu"],
-    anlam: "kurma, yapı oluşturma",
-    kategori: "yapı eylemi"
-  },
-  BA: {
-    kökler: ["ba", "bağ", "bağla"],
-    anlam: "bağlama, ilişki kurma",
-    kategori: "ilişki eylemi"
-  },
-  YOL: {
-    kökler: ["yol", "yolcu", "yolmak"],
-    anlam: "yol alma, yön belirleme",
-    kategori: "hareket eylemi"
-  },
-  BİR: {
-    kökler: ["bir", "birlik", "birleş"],
-    anlam: "birleştirme, bütünleme",
-    kategori: "birlik eylemi"
-  },
-  KAL: {
-    kökler: ["kal", "kalmak", "kalıcı"],
-    anlam: "kalma, süreklilik",
-    kategori: "süreklilik eylemi"
-  }
-};
-
-  return (
-    <div>
-      <h2>Semantik Motor</h2>
-
-      <input
-        type="text"
-        placeholder="Kök gir..."
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-      />
-
-      <button onClick={handleAnalyze}>Çözümle</button>
-
+      {/* Çözümleme Sonucu Çıkan Zincir Akışı */}
       <div className="semantic-output">
         {chain.map((item) => (
-          <div key={item.step}>
-            <strong>{item.step}</strong> → {item.matches.join(", ")}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-import React, { useState } from "react";
-
-const YKOS_ROOTS = {
-  TUT: { kökler: ["tut", "tutmak", "tutucu"], anlam: "tutma, kavrama", kategori: "başlangıç" },
-  KUR: { kökler: ["kur", "kurmak", "kurucu"], anlam: "kurma, yapı", kategori: "oluşum" },
-  BA:  { kökler: ["ba", "bağ", "bağla"], anlam: "bağlama, ilişki", kategori: "ilişki" },
-  YOL: { kökler: ["yol", "yolcu", "yolmak"], anlam: "yol alma, yön", kategori: "hareket" },
-  BİR: { kökler: ["bir", "birlik", "birleş"], anlam: "birleştirme", kategori: "birlik" },
-  KAL: { kökler: ["kal", "kalmak", "kalıcı"], anlam: "kalma, süreklilik", kategori: "süreklilik" }
-};
-
-const analyzeYKOS = (root) => {
-  const steps = ["TUT", "KUR", "BA", "YOL", "BİR", "KAL"];
-
-  return steps.map((step) => {
-    const data = YKOS_ROOTS[step];
-    const matches = data.kökler.filter((item) =>
-      item.startsWith(root.toLowerCase())
-    );
-
-    return {
-      step,
-      matches: matches.length ? matches : ["eşleşme yok"],
-      anlam: data.anlam,
-      kategori: data.kategori
-    };
-  });
-};
-
-export default function SemanticEngine() {
-  const [input, setInput] = useState("");
-  const [chain, setChain] = useState([]);
-
-  const handleAnalyze = () => {
-    setChain(analyzeYKOS(input));
-  };
-
-  return (
-    <div>
-      <h2>Semantik Motor</h2>
-
-      <input
-        type="text"
-        placeholder="Kök gir..."
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-      />
-
-      <button onClick={handleAnalyze}>Çözümle</button>
-
-      <div className="semantic-output">
-        {chain.map((item) => (
-          <div key={item.step}>
-            <strong>{item.step}</strong>  
+          <div key={item.step} className="semantic-step-card">
+            <strong>Adım: {item.step}</strong>
             <br />
-            Kök: {item.matches.join(", ")}  
+            <span>Kök / Varyantlar: {item.matches.join(", ")}</span>
             <br />
-            Anlam: {item.anlam}  
+            <span>Anlam: {item.anlam}</span>
             <br />
-            Kategori: {item.kategori}
+            <span>Kategori: {item.kategori}</span>
+            <br />
+            <span>Coğrafi Konum (Geo): {item.geo}</span>
             <hr />
           </div>
         ))}
@@ -207,34 +100,3 @@ export default function SemanticEngine() {
     </div>
   );
 }
-const analyzeYKOS = (root) => {
-  const steps = ["TUT", "KUR", "BA", "YOL", "BİR", "KAL"];
-
-  return steps.map((step) => {
-    const data = YKOS_ROOTS[root.toUpperCase()] || null;
-import GraphMatrix from "./GraphMatrix";
-
-    if (!data) {
-      return {
-        step,
-        matches: ["kök bulunamadı"],
-        anlam: "-",
-        kategori: "-",
-        fonetik: "-",
-        geo: "-",
-        kültür: "-"
-      };
-    }
-<GraphMatrix selectedRoot={selectedRoot} />
-
-    return {
-      step,
-      matches: data.varyantlar || [],
-      anlam: data.anlam || "-",
-      kategori: data.kategori || "-",
-      fonetik: data.fonetik || "-",
-      geo: data.geo || "-",
-      kültür: data.kültür || "-"
-    };
-  });
-};
