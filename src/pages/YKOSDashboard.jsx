@@ -96,3 +96,24 @@ const [syncData, setSyncData] = useState(null);
 <CosmicSync selectedRoot={selectedRoot} />
 <CosmicAI selectedRoot={selectedRoot} />
 <CosmicAtlas selectedRoot={selectedRoot} />
+<div className="top-bar">
+
+  <div className="top-logo">
+    YKOS
+  </div>
+
+  <div className="top-menu">
+    <span>Ana Sayfa</span>
+    <span>Hakkında</span>
+    <span>Metodoloji</span>
+    <span>Atlas</span>
+    <span>Araştırmacılar</span>
+    <span>Kurumsal İşbirlikleri</span>
+    <span>İletişim</span>
+  </div>
+
+  <div className="language-selector">
+    🌐 TR
+  </div>
+
+</div>

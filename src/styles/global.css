@@ -207,3 +207,43 @@ a {
   color: #f5f5f5;
   opacity: 0.85;
 }
+.top-bar {
+  display: flex;
+  justify-content: center;   /* TAM ORTALAMA */
+  align-items: center;
+  gap: 30px;                  /* Logo–menü arası */
+  padding: 15px 0;
+  background: #000;
+  position: relative;
+}
+
+/* Dil seçici sağ üstte sabit */
+.language-selector {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #d4af37;
+  font-weight: 600;
+}
+
+/* Logo */
+.top-logo {
+  color: #d4af37;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* Menü */
+.top-menu {
+  display: flex;
+  gap: 18px;                  /* Menü öğeleri arası */
+  color: #f5f5f5;
+  font-size: 15px;
+}
+
+.top-menu span:hover {
+  color: #d4af37;
+  cursor: pointer;
+}
