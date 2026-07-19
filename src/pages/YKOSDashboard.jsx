@@ -38,9 +38,9 @@ export default function YKOSDashboard() {
     <div className="dashboard-container" style={{ background: "#000", minHeight: "100vh", color: "#fff" }}>
       
       {/* 1. ÜST BAR: Logo, Menü ve Sağ Üstte Dil/Matrisler */}
-      <div className="top-bar">
-        <div className="top-logo">YKOS</div>
-        <div className="top-menu">
+      <div className="top-bar" style={{ display: "flex", justifyContent: "between", alignItems: "center", padding: "15px 20px" }}>
+        <div className="top-logo" style={{ fontSize: "24px", fontWeight: "bold", color: "#d4af37" }}>YKOS</div>
+        <div className="top-menu" style={{ display: "flex", gap: "20px" }}>
           <span>Ana Sayfa</span>
           <span>Hakkında</span>
           <span>Metodoloji</span>
@@ -50,7 +50,6 @@ export default function YKOSDashboard() {
           <span>İletişim</span>
         </div>
         
-        {/* Sağ Üst Panel (Dil ve Matris Modülleri) */}
         <div className="language-selector" style={{ display: "flex", alignItems: "center", gap: "15px" }}>
           <div className="matrix-badges" style={{ display: "flex", gap: "8px" }}>
             <span style={{ fontSize: "12px", padding: "3px 8px", background: "#111", border: "1px solid #d4af37", color: "#d4af37", borderRadius: "4px" }}>m8</span>
@@ -63,19 +62,20 @@ export default function YKOSDashboard() {
 
       {/* 2. GOOGLE TARZI ARAMA ÇUBUĞU */}
       <div style={{ display: "flex", justifyContent: "center", margin: "30px 0 20px 0" }}>
-        <div className="search-box">
+        <div className="search-box" style={{ display: "flex", alignItems: "center", gap: "10px", background: "#111", border: "1px solid #d4af37", padding: "10px 20px", borderRadius: "30px", width: "50%" }}>
           <span style={{ color: "#d4af37", fontSize: "18px" }}>🔍</span>
           <input 
             type="text" 
             placeholder="Damga, yazıt, petroglif veya kadim bir merkez arayın..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ background: "transparent", border: "none", color: "#fff", width: "100%", outline: "none" }}
           />
         </div>
       </div>
 
-      {/* 3. TEK SATIRA SIĞAN ORTALANMIŞ GÖSTERGE PANELI (STATS BAR) */}
-      <div className="stats-bar">
+      {/* 3. TEK SATIRA SIĞAN ORTALANMIŞ GÖSTERGE PANELI */}
+      <div className="stats-bar" style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "10px", background: "#111", padding: "15px", borderRadius: "8px", margin: "0 20px" }}>
         {[
           { icon: "🌐", value: "214", label: "Ülkeler" },
           { icon: "🏛️", value: "248", label: "Araştırmalar" },
@@ -86,39 +86,40 @@ export default function YKOSDashboard() {
           { icon: "📷", value: "46.900", label: "Görseller" },
           { icon: "🗺️", value: "58", label: "Atlaslar" }
         ].map((item, index) => (
-          <div className="stats-item" key={index} style={{ padding: "0 15px" }}>
-            <span className="icon">{item.icon}</span>
-            <span className="value">{item.value}</span>
-            <span className="label">{item.label}</span>
+          <div className="stats-item" key={index} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", borderRight: index !== 7 ? "1px solid #222" : "none" }}>
+            <span className="icon" style={{ fontSize: "20px" }}>{item.icon}</span>
+            <span className="value" style={{ fontSize: "18px", fontWeight: "bold", color: "#fff" }}>{item.value}</span>
+            <span className="label" style={{ fontSize: "11px", color: "#888" }}>{item.label}</span>
           </div>
         ))}
       </div>
 
       {/* 4. ANA AKIŞ VE ANALİZ MOTORLARI */}
-      <div className="dashboard-grid" style={{ marginTop: "30px" }}>
-        <div className="dashboard-card">
-          <h2>🔤 Semantik Motoru</h2>
+      <div className="dashboard-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", padding: "20px" }}>
+        <div className="dashboard-card" style={{ background: "#111", padding: "20px", borderRadius: "8px", border: "1px solid #222" }}>
+          <h2 style={{ color: "#d4af37", fontSize: "18px", marginBottom: "15px" }}>🔤 Semantik Motoru</h2>
           <SemanticEngine onRootSelect={setSelectedRoot} />
         </div>
 
-        <div className="dashboard-card">
-          <h2>🗺️ Atlas Motoru</h2>
+        <div className="dashboard-card" style={{ background: "#111", padding: "20px", borderRadius: "8px", border: "1px solid #222" }}>
+          <h2 style={{ color: "#d4af37", fontSize: "18px", marginBottom: "15px" }}>🗺️ Atlas Motoru</h2>
           <AtlasMap selectedRoot={selectedRoot} />
         </div>
 
-        <div className="dashboard-card">
-          <h2>🧩 Katman Motoru</h2>
+        <div className="dashboard-card" style={{ background: "#111", padding: "20px", borderRadius: "8px", border: "1px solid #222" }}>
+          <h2 style={{ color: "#d4af37", fontSize: "18px", marginBottom: "15px" }}>🧩 Katman Motoru</h2>
           <LayerSystem selectedRoot={selectedRoot} />
         </div>
 
-        <div className="dashboard-card">
-          <h2>📊 Grafik Motoru</h2>
+        <div className="dashboard-card" style={{ background: "#111", padding: "20px", borderRadius: "8px", border: "1px solid #222" }}>
+          <h2 style={{ color: "#d4af37", fontSize: "18px", marginBottom: "15px" }}>📊 Grafik Motoru</h2>
           <GraphMatrix selectedRoot={selectedRoot} />
         </div>
       </div>
 
-      {/* 5. ARKA PLAN AKIŞ VE UYUM MOTORLARI */}
+      {/* 5. ARKA PLAN AKIŞ MOTORLARI */}
       <div className="hidden-engines" style={{ display: "none" }}>
+        <MotionEngine selectedRoot={selectedRoot} />
         <AudioEngine selectedRoot={selectedRoot} />
         <ReportEngine />
         <ExportEngine />
