@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-// Bileşenleri üst klasördeki components dizininden nokta atışı alıyoruz
+// AtlasMap kök dizindeki veriden tam nizamî iki nokta ile çağrılıyor
+import AtlasMap from "../../data/atlas/AtlasMap";
+
+// Diğer bileşenler components klasöründen çağrılıyor
 import SemanticEngine from "../components/SemanticEngine";
-import AtlasMap from "../components/AtlasMap";
 import LayerSystem from "../components/LayerSystem";
 import GraphMatrix from "../components/GraphMatrix";
 import MotionEngine from "../components/MotionEngine";
@@ -28,7 +30,6 @@ import CosmicEngine from "../components/CosmicEngine";
 import CosmicSync from "../components/CosmicSync";
 import CosmicAI from "../components/CosmicAI";
 import CosmicAtlas from "../components/CosmicAtlas";
-import AtlasMap from "../data/atlas/AtlasMap";
 
 export default function YKOSDashboard() {
   const [selectedRoot, setSelectedRoot] = useState(null);
@@ -62,7 +63,7 @@ export default function YKOSDashboard() {
         </div>
       </div>
 
-      {/* 2. GOOGLE BENZERİ ARAMA ÇUBUĞU */}
+      {/* 2. ARAMA ÇUBUĞU */}
       <div style={{ display: "flex", justifyContent: "center", margin: "40px 0 30px 0" }}>
         <div className="search-box" style={{ display: "flex", alignItems: "center", gap: "12px", background: "#111", border: "1px solid #d4af37", padding: "12px 25px", borderRadius: "30px", width: "50%" }}>
           <span style={{ color: "#d4af37", fontSize: "18px" }}>🔍</span>
@@ -76,7 +77,7 @@ export default function YKOSDashboard() {
         </div>
       </div>
 
-      {/* 3. TEK SATIRLIK GÖSTERGE PANELI */}
+      {/* 3. VERİ PANELİ */}
       <div className="stats-bar" style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "10px", background: "#111", padding: "15px", borderRadius: "8px", margin: "0 20px", border: "1px solid #222" }}>
         {[
           { icon: "🌐", value: "214", label: "Ülkeler" },
@@ -96,7 +97,7 @@ export default function YKOSDashboard() {
         ))}
       </div>
 
-      {/* 4. MOTOR ENTEGRASYONLARI */}
+      {/* 4. MOTOR DÜZENİ */}
       <div className="dashboard-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", padding: "20px", marginTop: "20px" }}>
         <div className="dashboard-card" style={{ background: "#111", padding: "20px", borderRadius: "8px", border: "1px solid #222" }}>
           <h2 style={{ color: "#d4af37", fontSize: "18px", marginBottom: "15px" }}>🔤 Semantik Motoru</h2>
@@ -119,7 +120,7 @@ export default function YKOSDashboard() {
         </div>
       </div>
 
-      {/* 5. GİZLİ ÇALIŞAN ARKA PLAN SİSTEMLERİ */}
+      {/* 5. GİZLİ MOTORLAR */}
       <div className="hidden-engines" style={{ display: "none" }}>
         <MotionEngine selectedRoot={selectedRoot} />
         <AudioEngine selectedRoot={selectedRoot} />
