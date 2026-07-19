@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-// Bileşenleri üst klasördeki components dizininden nizamî olarak alıyoruz
+// Bileşenleri üst klasördeki components dizininden nokta atışı alıyoruz
 import SemanticEngine from "../components/SemanticEngine";
 import AtlasMap from "../components/AtlasMap";
 import LayerSystem from "../components/LayerSystem";
@@ -38,7 +38,7 @@ export default function YKOSDashboard() {
   return (
     <div className="dashboard-container" style={{ background: "#000", minHeight: "100vh", color: "#fff" }}>
       
-      {/* 1. ÜST BAR: Logo, Menü ve Sağ Üstte Dil/Matrisler */}
+      {/* 1. ÜST BAR */}
       <div className="top-bar" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "15px 20px", borderBottom: "1px solid #1a203b" }}>
         <div className="top-logo" style={{ fontSize: "24px", fontWeight: "bold", color: "#d4af37" }}>YKOS BİLGİ SİSTEMİ</div>
         <div className="top-menu" style={{ display: "flex", gap: "20px" }}>
@@ -61,7 +61,7 @@ export default function YKOSDashboard() {
         </div>
       </div>
 
-      {/* 2. GOOGLE TARZI ARAMA ÇUBUĞU */}
+      {/* 2. GOOGLE BENZERİ ARAMA ÇUBUĞU */}
       <div style={{ display: "flex", justifyContent: "center", margin: "40px 0 30px 0" }}>
         <div className="search-box" style={{ display: "flex", alignItems: "center", gap: "12px", background: "#111", border: "1px solid #d4af37", padding: "12px 25px", borderRadius: "30px", width: "50%" }}>
           <span style={{ color: "#d4af37", fontSize: "18px" }}>🔍</span>
@@ -75,7 +75,7 @@ export default function YKOSDashboard() {
         </div>
       </div>
 
-      {/* 3. TEK SATIRA SIĞAN ORTALANMIŞ GÖSTERGE PANELI */}
+      {/* 3. TEK SATIRLIK GÖSTERGE PANELI */}
       <div className="stats-bar" style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "10px", background: "#111", padding: "15px", borderRadius: "8px", margin: "0 20px", border: "1px solid #222" }}>
         {[
           { icon: "🌐", value: "214", label: "Ülkeler" },
@@ -95,7 +95,7 @@ export default function YKOSDashboard() {
         ))}
       </div>
 
-      {/* 4. ANA AKIŞ VE ANALİZ MOTORLARI */}
+      {/* 4. MOTOR ENTEGRASYONLARI */}
       <div className="dashboard-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", padding: "20px", marginTop: "20px" }}>
         <div className="dashboard-card" style={{ background: "#111", padding: "20px", borderRadius: "8px", border: "1px solid #222" }}>
           <h2 style={{ color: "#d4af37", fontSize: "18px", marginBottom: "15px" }}>🔤 Semantik Motoru</h2>
@@ -118,7 +118,7 @@ export default function YKOSDashboard() {
         </div>
       </div>
 
-      {/* 5. ARKA PLAN AKIŞ MOTORLARI */}
+      {/* 5. GİZLİ ÇALIŞAN ARKA PLAN SİSTEMLERİ */}
       <div className="hidden-engines" style={{ display: "none" }}>
         <MotionEngine selectedRoot={selectedRoot} />
         <AudioEngine selectedRoot={selectedRoot} />
