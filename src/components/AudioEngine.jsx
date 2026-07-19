@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import tutSound from "./tut.mp3";
-;
+import tutSound from "../audio/tut.mp3";
+
 import kurSound from "../audio/kur.mp3";
 import baSound from "../audio/ba.mp3";
 import yolSound from "../audio/yol.mp3";
