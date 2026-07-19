@@ -157,3 +157,32 @@ export default function App() {
     </div>
   );
 }
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
+  {[
+    { icon: "🌐", value: "214", label: "Ülkeler" },
+    { icon: "🏛️", value: "248", label: "Araştırmalar" },
+    { icon: "🔷", value: "9.870", label: "Damgalar" },
+    { icon: "📜", value: "18.420", label: "Petroglifler" },
+    { icon: "📜", value: "4.132", label: "Yazıtlar" },
+    { icon: "📚", value: "12.580", label: "Kaynaklar" },
+    { icon: "📷", value: "46.900", label: "Görseller" },
+    { icon: "🗺️", value: "58", label: "Atlaslar" }
+  ].map((item, index) => (
+    <div 
+      key={index} 
+      className="flex items-center gap-4 p-5 rounded-xl bg-[#141414] border border-gray-900 hover:border-amber-500/30 transition-all duration-200 shadow-md group"
+    >
+      <span className="text-2xl bg-[#0d0d0d] p-3 rounded-lg border border-gray-800 group-hover:border-amber-500/20 transition-colors">
+        {item.icon}
+      </span>
+      <div className="flex flex-col">
+        <span className="text-2xl font-bold text-slate-100 tracking-tight font-mono">
+          {item.value}
+        </span>
+        <span className="text-xs font-medium text-slate-400 uppercase tracking-wider mt-0.5">
+          {item.label}
+        </span>
+      </div>
+    </div>
+  ))}
+</div>
