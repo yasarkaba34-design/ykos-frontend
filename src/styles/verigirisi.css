@@ -42,6 +42,7 @@
 
 .entry-summary strong {
   color: #f0bb00;
+
   font-size: 24px;
 }
 
@@ -200,7 +201,8 @@
 .record-card {
   min-width: 0;
   overflow: hidden;
-  border: 1px solid #2a2a2a;
+border: 1px solid #5b4780;
+
   border-radius: 9px;
   background: #111;
 }

@@ -1,3 +1,20 @@
-import M8 from '@/matrices/m8'
-import M11 from '@/matrices/m11'
-import M12 from '@/matrices/m12'
+/* YKOS Global Stil Kuralları */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: #000000;
+  color: #ffffff;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
