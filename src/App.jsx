@@ -2,6 +2,38 @@ import React, { useState } from "react";
 import React from "react";
 // Yeni oluşturduğunuz panoyu ana dosyaya çağırıyoruz
 import YKOSAnadoluEvrenselPano from "./mega/YKOSAnadoluEvrenselPano";
+import React from "react";
+
+export default function App() {
+  return (
+    <div
+      style={{
+        background: "radial-gradient(circle at center, #000010, #000000)",
+        color: "#fff",
+        minHeight: "100vh",
+        padding: "24px",
+        display: "grid",
+        gridTemplateRows: "auto 440px 440px", 
+        gap: "24px",
+        fontFamily: "sans-serif"
+      }}
+    >
+      <h1 style={{ textAlign: "center", margin: "0 0 10px 0", fontSize: "28px", letterSpacing: "0.05em" }}>
+        YKOS Anadolu Evrensel Pano
+      </h1>
+
+      {/* Üst Kutu */}
+      <div style={{ border: "1px solid #333", borderRadius: "14px", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(15, 23, 42, 0.3)" }}>
+        <p style={{ color: "#64748b" }}>Cosmic Atlas Map & Migration Flow Modülü (Anadolu Merkezli Dışa Doğru Akış)</p>
+      </div>
+
+      {/* Alt Kutu */}
+      <div style={{ border: "1px solid #333", borderRadius: "14px", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(15, 23, 42, 0.3)" }}>
+        <p style={{ color: "#64748b" }}>Anadolu Kalkanı İnteraktif Modülü</p>
+      </div>
+    </div>
+  );
+}
 
 export default function App() {
   return (
