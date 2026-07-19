@@ -1,5 +1,15 @@
 import React, { useState } from "react";
+import React from "react";
+// Yeni oluşturduğunuz panoyu ana dosyaya çağırıyoruz
+import YKOSAnadoluEvrenselPano from "./mega/YKOSAnadoluEvrenselPano";
 
+export default function App() {
+  return (
+    <div style={{ backgroundColor: "#000000", minHeight: "100vh" }}>
+      <YKOSAnadoluEvrenselPano />
+    </div>
+  );
+}
 export default function App() {
   const [activeTopMenu, setActiveTopMenu] = useState("Ana Sayfa");
   const [activeTab, setActiveTab] = useState("m8");

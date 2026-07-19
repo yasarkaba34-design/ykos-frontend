@@ -1,4 +1,3 @@
-
 export default function YKOSAnadoluEvrenselPano() {
   return (
     <div
@@ -8,23 +7,24 @@ export default function YKOSAnadoluEvrenselPano() {
         minHeight: "100vh",
         padding: "24px",
         display: "grid",
-        gridTemplateRows: "440px 440px",
+        // Başlığa otomatik yükseklik (auto), harita ve modüle 440'ar piksel veriyoruz
+        gridTemplateRows: "auto 440px 440px", 
         gap: "24px"
       }}
     >
-      <h1 style={{ gridColumn: "1 / -1", textAlign: "center", marginBottom: "10px" }}>
+      {/* Başlık artık kendi satırında bağımsız ve nizamî duracak */}
+      <h1 style={{ textAlign: "center", margin: "0 0 10px 0", fontSize: "28px", letterSpacing: "0.05em" }}>
         YKOS Anadolu Evrensel Pano
       </h1>
 
-
-
-      {/* Üst: Atlas Gezegenleri + Göç Akışı */}
+      {/* Üst: Atlas Gezegenleri + Göç Akışı (Anadolu merkezli dışa doğru akış) */}
       <div
         style={{
           position: "relative",
           border: "1px solid #333",
           borderRadius: "14px",
-          overflow: "hidden"
+          overflow: "hidden",
+          backgroundColor: "rgba(15, 23, 42, 0.3)"
         }}
       >
         <CosmicAtlasMap />
@@ -35,7 +35,8 @@ export default function YKOSAnadoluEvrenselPano() {
             pointerEvents: "none"
           }}
         >
-          <CosmicMigrationFlow />
+          {/* Göç yönünün Anadolu'dan dışarıya doğru yapılandırıldığını doğrulamayı unutmayalım */}
+          <CosmicMigrationFlow direction="outward-from-anatolia" />
         </div>
       </div>
 
@@ -44,7 +45,8 @@ export default function YKOSAnadoluEvrenselPano() {
         style={{
           border: "1px solid #333",
           borderRadius: "14px",
-          overflow: "hidden"
+          overflow: "hidden",
+          backgroundColor: "rgba(15, 23, 42, 0.3)"
         }}
       >
         <AnadoluShieldInteractive />
