@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { YKOS_ROOTS } from "../data/ycos_roots";
+import { YKOS_ROOTS } from "../data/ykos_roots";
 
 export default function AiEngine({ selectedRoot }) {
   const [analysis, setAnalysis] = useState(null);

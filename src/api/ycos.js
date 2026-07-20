@@ -1,9 +1,8 @@
-import { YKOS_ROOTS } from "../data/ycos_roots";
+iimport { YKOS_ROOTS } from "../data/ykos_roots"; // c harfi k olarak nizamî hale getirildi
 import { YKOS_GEO } from "../data/ycos_geo";
 import { YKOS_LAYERS } from "../components/LayerSystem";
 
 export const YKOS_API = {
-
   root(kok) {
     const key = kok.toUpperCase();
     return {
@@ -12,7 +11,8 @@ export const YKOS_API = {
       geo: YKOS_GEO[key],
       layers: YKOS_LAYERS[key]
     };
-  },
+  }
+};
 
   atlas(kok) {
     return YKOS_GEO[kok.toUpperCase()];

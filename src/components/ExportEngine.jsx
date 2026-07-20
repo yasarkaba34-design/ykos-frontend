@@ -1,5 +1,5 @@
 import React from "react";
-import { YKOS_ROOTS } from "../data/ycos_roots";
+import { YKOS_ROOTS } from "../data/ykos_roots";
 import { YKOS_GEO } from "../data/ycos_geo";
 import { YKOS_LAYERS } from "./LayerSystem";
 

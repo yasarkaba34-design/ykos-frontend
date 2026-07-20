@@ -1,4 +1,4 @@
-import { YKOS_ROOTS } from "../data/ycos_roots";
+import { YKOS_ROOTS } from "../data/ykos_roots";
 const getChainForRoot = (root) => {
   const data = YKOS_ROOTS[root.toUpperCase()];
   return data ? data.zincir : null;
