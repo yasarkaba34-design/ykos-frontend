@@ -1,8 +1,11 @@
 export const YKOS_LAYERS = {
-  KUR: { sınıf: "oluşum", semantik: "yapı kurma", fonetik: "K-G", kültür: "oluş" },
-  YOL: { sınıf: "hareket", semantik: "yön", fonetik: "Y-L", kültür: "yolculuk" },
-  BİR: { sınıf: "birlik", semantik: "bütünlük", fonetik: "B-R", kültür: "birleşme" },
-  // ... diğer kökler
+  TUT: { sınıf: "başlangıç", semantik: "kavrama", fonetik: "T-D-K", kültür: "tutmak" },
+  BA: { sınıf: "ilişki", semantik: "bağ kurma", fonetik: "B", kültür: "bağ" },
+  KAL: { sınıf: "süreklilik", semantik: "kalıcılık", fonetik: "K-L", kültür: "kalmak" },
+  YÜR: { sınıf: "hareket", semantik: "yürüme", fonetik: "Y-R", kültür: "yürümek" },
+  GİT: { sınıf: "hareket", semantik: "uzaklaşma", fonetik: "G-T", kültür: "gitmek" },
+  GEL: { sınıf: "hareket", semantik: "yaklaşma", fonetik: "G-L", kültür: "gelmek" },
+  YAP: { sınıf: "üretim", semantik: "oluşturma", fonetik: "Y-P", kültür: "yapmak" }
 };
 
   // --- OMURGA KÖKLER ---

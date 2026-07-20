@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import tutSound from "../audio/tut.mp3";
+import kurSound from "../audio/kur.mp3";
 
 const rootSounds = {
   TUT: "/audio/tut.mp3",

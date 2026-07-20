@@ -1,27 +1,4 @@
 import React from "react";
-import { YKOS_LAYERS } from "../data/ykos_layers";
-
-export default function LayerSystem() {
-  return (
-    <div className="layer-container">
-      <h2>Katman Motoru</h2>
-
-      <pre
-        style={{
-          color: "gold",
-          background: "#000",
-          padding: "20px",
-          border: "1px solid gold",
-          borderRadius: "8px",
-          fontFamily: "Courier New, monospace"
-        }}
-      >
-        {JSON.stringify(YKOS_LAYERS, null, 2)}
-      </pre>
-
-    </div>
-  );
-}
 
 export const YKOS_LAYERS = {
   // --- OMURGA KÖKLER ---
@@ -38,7 +15,7 @@ export const YKOS_LAYERS = {
   GEL: { sınıf: "hareket", semantik: "yaklaşma", fonetik: "G-K", kültür: "geliş kültürü", geo: "İstanbul", zincirAşaması: "YOL" },
   GİT: { sınıf: "hareket", semantik: "uzaklaşma", fonetik: "G-K", kültür: "gidiş kültürü", geo: "Orta Anadolu", zincirAşaması: "YOL" },
   ÇIK: { sınıf: "hareket", semantik: "yükselme", fonetik: "Ç", kültür: "çıkış kültürü", geo: "Sakarya", zincirAşaması: "YOL" },
-  İN:  { sınıf: "hareket", semantik: "alçalma", fonetik: "N", culture: "iniş kültürü", geo: "Kapadokya", zincirAşaması: "YOL" },
+  İN:  { sınıf: "hareket", semantik: "alçalma", fonetik: "N", kültür: "iniş kültürü", geo: "Kapadokya", zincirAşaması: "YOL" },
   DÖN: { sınıf: "hareket", semantik: "yön değiştirme", fonetik: "D", kültür: "dönüş kültürü", geo: "Kars", zincirAşaması: "BA" },
   KES: { sınıf: "işlem", semantik: "ayırma", fonetik: "K-G", kültür: "kesme kültürü", geo: "Erzurum", zincirAşaması: "BA" },
   AÇ:  { sınıf: "işlem", semantik: "açma", fonetik: "A", kültür: "açılma kültürü", geo: "Aydın", zincirAşaması: "KUR" },
@@ -83,10 +60,12 @@ export default function LayerSystem({ selectedRoot }) {
   const layers = getLayersForRoot(selectedRoot);
 
   return (
-    <div className="layer-container" style={{ padding: "10px", background: "#111", borderRadius: "6px" }}>
+    <div className="layer-container" style={{ padding: "15px", background: "#111", borderRadius: "8px", border: "1px solid #333" }}>
       {layers ? (
         <div className="layer-info" style={{ lineHeight: "1.8" }}>
-          <h3 style={{ color: "#d4af37", margin: "0 0 10px 0" }}> Kök: {selectedRoot.toUpperCase()}</h3>
+          <h3 style={{ color: "#d4af37", margin: "0 0 12px 0", borderBottom: "1px solid #222", paddingBottom: "5px" }}> 
+            Kök: {selectedRoot.toUpperCase()}
+          </h3>
           <strong>Sınıf:</strong> {layers.sınıf} <br />
           <strong>Semantik:</strong> {layers.semantik} <br />
           <strong>Fonetik:</strong> {layers.fonetik} <br />
@@ -95,8 +74,8 @@ export default function LayerSystem({ selectedRoot }) {
           <strong>Zincir Aşaması:</strong> {layers.zincirAşaması}
         </div>
       ) : (
-        <div style={{ color: "#888", fontStyle: "italic" }}>
-          Semantik Motordan bir kök seçildiğinde katman verileri burada listelenecektir.
+        <div style={{ color: "#666", fontStyle: "italic", fontSize: "14px" }}>
+          Semantik Motordan veya haritadan bir kök seçildiğinde katman verileri burada listelenecektir.
         </div>
       )}
     </div>
