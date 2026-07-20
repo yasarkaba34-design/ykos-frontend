@@ -1,73 +1,69 @@
 import { useEffect, useState } from "react";
-import chainData from "../data/cosmic_chain_v7.json";
+import chainData from "../data/cosmic_chain_v12.json";
 
-export default function CosmicChainV7() {
+export default function CosmicChainV12() {
   const chain = Array.isArray(chainData.chain) ? chainData.chain : [];
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setTick((t) => t + 1);
-    }, 700);
-
+    }, 480);
     return () => clearInterval(timer);
   }, []);
 
-  const hyperWave = (root) =>
+  const totalWave = (root) =>
     Math.abs(
-      Math.sin(
-        tick * (root.freq ?? 1) + (root.phase ?? 0)
-      )
-    ) * (root.hyper ?? 1);
+      Math.sin(tick * (root.freq ?? 1) + (root.phase ?? 0))
+    ) *
+    (root.totality ?? 1);
 
-  const destinyMatrix =
+  const totalMatrix =
     chain.length > 0
-      ? chain.map((a, i) =>
-          chain.map((b, j) =>
+      ? chain.map((a) =>
+          chain.map((b) =>
             (
-              hyperWave(a) *
-              hyperWave(b) *
+              totalWave(a) *
+              totalWave(b) *
               ((a.energy ?? 0.5) + (b.energy ?? 0.5)) / 2
             ).toFixed(2)
           )
         )
       : [];
 
-  const hyperBranches = chain.map((root, i) => ({
+  const totalBranches = chain.map((root, i) => ({
     id: root.id ?? `root-${i}`,
-    destiny: (
-      (root.hyper ?? 1) *
-      hyperWave(root)
+    score: (
+      (root.totality ?? 1) *
+      totalWave(root)
     ).toFixed(2),
   }));
 
-  const topDestiny =
-    hyperBranches.length > 0
-      ? hyperBranches.reduce((a, b) =>
-          parseFloat(a.destiny) > parseFloat(b.destiny)
-            ? a
-            : b
+  const topTotal =
+    totalBranches.length > 0
+      ? totalBranches.reduce((a, b) =>
+          parseFloat(a.score) > parseFloat(b.score) ? a : b
         )
-      : { id: "N/A", destiny: "0.00" };
+      : { id: "N/A", score: "0.00" };
 
   const topColor =
-    chain.find((c) => c.id === topDestiny.id)?.color ?? "#99ccff";
+    chain.find((c) => c.id === topTotal.id)?.color ?? "#ffffff";
 
   return (
     <div
       style={{
         marginTop: "30px",
         padding: "25px",
-        background: "#11163d",
+        background: "#202b80",
         borderRadius: "14px",
         color: "white",
       }}
     >
       <h2 style={{ fontSize: "30px", marginBottom: "15px" }}>
-        COSMICCHAIN v7 — Hyper‑Consciousness & Destiny Matrix
+        COSMICCHAIN v12 — Totality Engine
       </h2>
 
-      {/* Infinite Probability Field */}
+      {/* Totality Probability Field */}
       <div
         style={{
           position: "relative",
@@ -86,7 +82,7 @@ export default function CosmicChainV7() {
               width: "100%",
               height: "100%",
               background: root.color ?? "#444",
-              opacity: 0.05 + hyperWave(root) * 0.15,
+              opacity: 0.05 + totalWave(root) * 0.28,
               mixBlendMode: "screen",
               transition: "opacity 0.3s",
             }}
@@ -94,7 +90,7 @@ export default function CosmicChainV7() {
         ))}
       </div>
 
-      {/* Destiny Matrix */}
+      {/* Totality Matrix */}
       <div
         style={{
           display: "grid",
@@ -103,13 +99,13 @@ export default function CosmicChainV7() {
           marginBottom: "25px",
         }}
       >
-        {destinyMatrix.flat().map((value, i) => (
+        {totalMatrix.flat().map((value, i) => (
           <div
             key={`cell-${i}`}
             style={{
               height: "28px",
               borderRadius: "4px",
-              background: "#99ccff",
+              background: "#ffffff",
               opacity: parseFloat(value),
               transition: "opacity 0.3s",
             }}
@@ -117,7 +113,7 @@ export default function CosmicChainV7() {
         ))}
       </div>
 
-      {/* Fractal Infinity Tree */}
+      {/* Totality Tree */}
       <div
         style={{
           padding: "15px",
@@ -126,18 +122,18 @@ export default function CosmicChainV7() {
           marginBottom: "20px",
         }}
       >
-        <h3 style={{ color: "#cce6ff", marginBottom: "10px" }}>
-          Fractal Infinity Tree
+        <h3 style={{ color: "#ffffff", marginBottom: "10px" }}>
+          Totality Fractal Tree
         </h3>
 
-        {hyperBranches.map((branch) => (
+        {totalBranches.map((branch) => (
           <p key={branch.id} style={{ opacity: 0.85 }}>
-            {branch.id} → Hiper‑Dal: {branch.destiny}
+            {branch.id} → Totality: {branch.score}
           </p>
         ))}
       </div>
 
-      {/* Hyper‑Consciousness Output */}
+      {/* Totality Output */}
       <div
         style={{
           padding: "15px",
@@ -147,10 +143,10 @@ export default function CosmicChainV7() {
         }}
       >
         <h3 style={{ color: topColor }}>
-          Hyper‑Consciousness Output: {topDestiny.id}
+          Totality Output: {topTotal.id}
         </h3>
         <p style={{ opacity: 0.85 }}>
-          Kader matrisinde en güçlü hiper‑dal tespit edildi.
+          Kozmik bütünlük içinde en güçlü totality‑dal tespit edildi.
         </p>
       </div>
     </div>

@@ -27,7 +27,7 @@ export default function Chain() {
           display: "flex",
           gap: "15px",
           marginTop: "20px",
-          flexWrap: "wrap"
+          flexWrap: "wrap",
         }}
       >
         {ZINCIR.map((item, index) => (
@@ -39,7 +39,7 @@ export default function Chain() {
               background: step === index ? "#0a0" : "#222",
               color: "#fff",
               transition: "0.3s",
-              fontWeight: step === index ? "bold" : "normal"
+              fontWeight: step === index ? "bold" : "normal",
             }}
           >
             {item}
@@ -54,7 +54,7 @@ export default function Chain() {
           padding: "20px",
           borderRadius: "8px",
           color: "#0f0",
-          minHeight: "80px"
+          minHeight: "80px",
         }}
       >
         {flow.join(" → ")}

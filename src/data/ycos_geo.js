@@ -81,3 +81,14 @@ export const YKOS_GEO = {
     }
   }
 };
+
+// src/data/ykos_geo.js
+
+export const YKOS_GEO = {
+  ATLAS: { lat: 41.0, lon: 29.0 },
+  MATRIS: { lat: 39.9, lon: 32.8 },
+  CHAIN: { lat: 38.4, lon: 27.1 },
+  QUANTUM: { lat: 36.8, lon: 34.6 }
+};
+
+export default YKOS_GEO;

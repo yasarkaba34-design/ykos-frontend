@@ -6,13 +6,15 @@ export default function CosmicSync({ selectedRoot }) {
     if (!selectedRoot) return;
 
     const cosmicPacket = {
-      root: selectedRoot,
+      root: selectedRoot.id ?? selectedRoot,
+      color: selectedRoot.color ?? "#ffffff",
+      energy: selectedRoot.energy ?? 0,
       cosmicSync: true,
       timestamp: Date.now(),
       level: "COSMIC_SYNC"
     };
 
-    console.log("CosmicSync:", cosmicPacket);
+    console.log("CosmicSync Packet:", cosmicPacket);
 
   }, [selectedRoot]);
 

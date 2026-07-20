@@ -10,7 +10,7 @@ export default function CosmicPlanetsRooted({ root }) {
 
   if (!universe || !root) return null;
 
-  const rootName = root.name;
+  const rootName = root.name ?? "N/A";
 
   // KÖK → Renk
   const rootColors = {
@@ -22,7 +22,7 @@ export default function CosmicPlanetsRooted({ root }) {
     KAL: "#f1c40f"
   };
 
-  const planetColor = rootColors[rootName];
+  const planetColor = rootColors[rootName] ?? "#888";
 
   // KÖK → Yüzey dokusu
   const rootTextures = {
@@ -34,7 +34,7 @@ export default function CosmicPlanetsRooted({ root }) {
     KAL: "radial-gradient(circle at 50% 50%, #fff3, transparent)"
   };
 
-  const planetTexture = rootTextures[rootName];
+  const planetTexture = rootTextures[rootName] ?? "none";
 
   // KÖK → Atmosfer yoğunluğu
   const rootAtmosphere = {
@@ -46,7 +46,7 @@ export default function CosmicPlanetsRooted({ root }) {
     KAL: 0.22
   };
 
-  const atmosphereOpacity = rootAtmosphere[rootName];
+  const atmosphereOpacity = rootAtmosphere[rootName] ?? 0.2;
 
   // KÖK → Yörünge hızı
   const rootSpeed = {
@@ -58,13 +58,13 @@ export default function CosmicPlanetsRooted({ root }) {
     KAL: 20
   };
 
-  const orbitSpeed = rootSpeed[rootName];
+  const orbitSpeed = rootSpeed[rootName] ?? 16;
 
   // Evren genişlemesi → yörünge büyüklüğü
-  const orbitSize = 150 + universe.expansion * 90;
+  const orbitSize = 150 + (universe.expansion ?? 0) * 90;
 
   // Kozmik dalga → parlama
-  const glow = Math.abs(universe.cosmicWave) * 40;
+  const glow = Math.abs(universe.cosmicWave ?? 0) * 40;
 
   return (
     <div

@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from "react";
+// src/components/Matris.jsx
+import React, { useState, useMemo } from "react";
 import ykosRoots from "../data/ykos_roots";
 
 const MODULES = [
@@ -321,18 +322,23 @@ export default function Matris({
 
             <div>
               <strong>Petroglif:</strong>{" "}
-              {selectedRoot.petroglifler.join(", ") || "Yok"}
+              {selectedRoot.petroglifler?.length > 0
+                ? selectedRoot.petroglifler.map(itemToText).join(", ")
+                : "Yok"}
             </div>
 
             <div>
               <strong>Yazıt:</strong>{" "}
-              {selectedRoot.yazitlar.join(", ") || "Yok"}
+              {selectedRoot.yazitlar?.length > 0
+                ? selectedRoot.yazitlar.map(itemToText).join(", ")
+                : "Yok"}
             </div>
 
             <div>
               <strong>Konum:</strong>{" "}
-              {selectedRoot.konumlar.map(itemToText).join(", ") ||
-                "Yok"}
+              {selectedRoot.konumlar?.length > 0
+                ? selectedRoot.konumlar.map(itemToText).join(", ")
+                : "Yok"}
             </div>
           </div>
         )}
@@ -343,141 +349,15 @@ export default function Matris({
 
 const styles = {
   container: {
-    backgroundColor: "#222",
+    padding: "20px",
+    background: "#0f0f0f",
     color: "#fff",
-    padding: "24px",
-    borderRadius: "8px",
-    border: "1px solid #444",
+    borderRadius: "10px",
+    border: "1px solid #222",
   },
-
   headingRow: {
     display: "flex",
     justifyContent: "space-between",
-    gap: "20px",
+    alignItems: "flex-start",
+    marginBottom: "16px",
   },
-
-  title: {
-    color: "#f5c400",
-    fontSize: "24px",
-    marginTop: 0,
-    marginBottom: "10px",
-  },
-
-  text: {
-    fontSize: "16px",
-    opacity: 0.85,
-    marginTop: 0,
-    marginBottom: "24px",
-  },
-
-  infoBadge: {
-    color: "#f5c400",
-    border: "1px solid #6f5a00",
-    borderRadius: "999px",
-    padding: "8px 14px",
-    height: "fit-content",
-  },
-
-  grid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-    gap: "14px",
-  },
-
-  card: {
-    backgroundColor: "#171717",
-    color: "#fff",
-    border: "1px solid #555",
-    borderRadius: "8px",
-    padding: "18px",
-    fontSize: "17px",
-    fontWeight: "600",
-    cursor: "pointer",
-  },
-
-  activeCard: {
-    backgroundColor: "#f5c400",
-    color: "#111",
-    borderColor: "#f5c400",
-  },
-
-  resultPanel: {
-    marginTop: "22px",
-    padding: "20px",
-    backgroundColor: "#151515",
-    border: "1px solid #3f3f3f",
-    borderRadius: "8px",
-  },
-
-  resultHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    gap: "16px",
-    marginBottom: "18px",
-  },
-
-  resultLabel: {
-    color: "#999",
-    fontSize: "12px",
-    textTransform: "uppercase",
-  },
-
-  resultTitle: {
-    color: "#f5c400",
-    fontSize: "20px",
-    margin: "4px 0 0",
-  },
-
-  selectedRoot: {
-    backgroundColor: "#222",
-    border: "1px solid #444",
-    borderRadius: "6px",
-    padding: "8px 12px",
-  },
-
-  filterNotice: {
-    marginBottom: "14px",
-    color: "#ccc",
-  },
-
-  itemGrid: {
-    display: "grid",
-    gridTemplateColumns:
-      "repeat(auto-fit, minmax(130px, 1fr))",
-    gap: "10px",
-  },
-
-  itemButton: {
-    backgroundColor: "#202020",
-    color: "#fff",
-    border: "1px solid #4a4a4a",
-    borderRadius: "7px",
-    padding: "12px",
-    cursor: "pointer",
-  },
-
-  selectedItem: {
-    backgroundColor: "#f5c400",
-    color: "#111",
-    borderColor: "#f5c400",
-    fontWeight: "700",
-  },
-
-  emptyState: {
-    color: "#aaa",
-    border: "1px dashed #444",
-    borderRadius: "7px",
-    padding: "24px",
-    textAlign: "center",
-  },
-
-  detailPanel: {
-    marginTop: "18px",
-    padding: "16px",
-    lineHeight: 1.8,
-    backgroundColor: "#1d1d1d",
-    border: "1px solid #3f3f3f",
-    borderRadius: "7px",
-    color: "#ddd",
-  },
-};

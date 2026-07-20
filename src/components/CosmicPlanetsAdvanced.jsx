@@ -8,7 +8,7 @@ export default function CosmicPlanetsAdvanced() {
     startCosmicUniverse((packet) => setUniverse(packet));
   }, []);
 
-  if (!universe) return null;
+  if (!universe || !universe.chainNode) return null;
 
   // ChainNode → renk eşleme
   const chainColors = {
@@ -20,13 +20,14 @@ export default function CosmicPlanetsAdvanced() {
     KAL: "#f1c40f"
   };
 
-  const planetColor = chainColors[universe.chainNode.name];
+  const rootName = universe.chainNode.name ?? "TUT";
+  const planetColor = chainColors[rootName] ?? "#888";
 
   // Yörünge genişliği (expansion)
-  const orbitSize = 150 + universe.expansion * 80;
+  const orbitSize = 150 + (universe.expansion ?? 0) * 80;
 
   // Parlama (cosmicWave)
-  const glow = Math.abs(universe.cosmicWave) * 40;
+  const glow = Math.abs(universe.cosmicWave ?? 0) * 40;
 
   // Hız (semanticFlow)
   const speedMap = {
@@ -41,7 +42,7 @@ export default function CosmicPlanetsAdvanced() {
     Kozmik: 25
   };
 
-  const orbitSpeed = speedMap[universe.behaviorFlow] || 15;
+  const orbitSpeed = speedMap[universe.behaviorFlow] ?? 15;
 
   return (
     <div
@@ -101,7 +102,7 @@ export default function CosmicPlanetsAdvanced() {
             color: "#000"
           }}
         >
-          {universe.chainNode.name}
+          {rootName}
         </div>
 
         {/* Atmosfer */}
@@ -172,7 +173,7 @@ export default function CosmicPlanetsAdvanced() {
 
       {/* Bilgi Paneli */}
       <div style={{ marginTop: "450px" }}>
-        <p>🪐 Gezegen: {universe.chainNode.name}</p>
+        <p>🪐 Gezegen: {rootName}</p>
         <p>🎨 Renk: {planetColor}</p>
         <p>🌌 Parlama: {glow.toFixed(2)}</p>
         <p>🔄 Yörünge: {orbitSize.toFixed(2)} px</p>

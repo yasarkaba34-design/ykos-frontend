@@ -20,7 +20,7 @@ export default function CosmicPlanetsAtlas({ atlasRegion }) {
     Hitit: "BİR"
   };
 
-  const rootName = atlasToRoot[atlasRegion];
+  const rootName = atlasToRoot[atlasRegion] ?? "TUT";
 
   // Kök → Renk
   const rootColors = {
@@ -32,7 +32,7 @@ export default function CosmicPlanetsAtlas({ atlasRegion }) {
     KAL: "#f1c40f"
   };
 
-  const planetColor = rootColors[rootName];
+  const planetColor = rootColors[rootName] ?? "#888";
 
   // Kök → Yüzey dokusu
   const rootTextures = {
@@ -44,7 +44,7 @@ export default function CosmicPlanetsAtlas({ atlasRegion }) {
     KAL: "radial-gradient(circle at 50% 50%, #fff3, transparent)"
   };
 
-  const planetTexture = rootTextures[rootName];
+  const planetTexture = rootTextures[rootName] ?? "none";
 
   // Kök → Atmosfer yoğunluğu
   const rootAtmosphere = {
@@ -56,7 +56,7 @@ export default function CosmicPlanetsAtlas({ atlasRegion }) {
     KAL: 0.22
   };
 
-  const atmosphereOpacity = rootAtmosphere[rootName];
+  const atmosphereOpacity = rootAtmosphere[rootName] ?? 0.2;
 
   // Kök → Yörünge hızı
   const rootSpeed = {
@@ -68,13 +68,13 @@ export default function CosmicPlanetsAtlas({ atlasRegion }) {
     KAL: 20
   };
 
-  const orbitSpeed = rootSpeed[rootName];
+  const orbitSpeed = rootSpeed[rootName] ?? 16;
 
   // Evren genişlemesi → yörünge büyüklüğü
-  const orbitSize = 150 + universe.expansion * 90;
+  const orbitSize = 150 + (universe.expansion ?? 0) * 90;
 
   // Kozmik dalga → parlama
-  const glow = Math.abs(universe.cosmicWave) * 40;
+  const glow = Math.abs(universe.cosmicWave ?? 0) * 40;
 
   return (
     <div

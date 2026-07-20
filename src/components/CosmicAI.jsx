@@ -7,7 +7,8 @@ export default function CosmicAI({ selectedRoot }) {
     if (!selectedRoot) return;
 
     const ai = {
-      root: selectedRoot,
+      root: selectedRoot.id ?? selectedRoot,
+      color: selectedRoot.color ?? "#ffffff",
       cosmicMeaningField: [
         "OMNI",
         "QUANTUM",
@@ -15,7 +16,7 @@ export default function CosmicAI({ selectedRoot }) {
         "UNIVERSE",
         "COSMIC"
       ].sort(() => Math.random() - 0.5),
-      cosmicPrediction: Math.random().toFixed(7),
+      cosmicPrediction: (Math.random() * 0.9999999).toFixed(7),
       level: "COSMIC_AI",
       timestamp: Date.now()
     };
@@ -27,11 +28,24 @@ export default function CosmicAI({ selectedRoot }) {
   return (
     <div className="dashboard-card">
       <h2>🧬 CosmicAI</h2>
+
       {cosmicAI && (
         <>
-          <div><strong>Kozmik Anlam Alanı:</strong> {cosmicAI.cosmicMeaningField.join(" • ")}</div>
-          <div><strong>Kozmik Tahmin:</strong> {cosmicAI.cosmicPrediction}</div>
-          <div><strong>Seviye:</strong> {cosmicAI.level}</div>
+          <div>
+            <strong>Kök:</strong> {cosmicAI.root}
+          </div>
+
+          <div>
+            <strong>Kozmik Anlam Alanı:</strong> {cosmicAI.cosmicMeaningField.join(" • ")}
+          </div>
+
+          <div>
+            <strong>Kozmik Tahmin:</strong> {cosmicAI.cosmicPrediction}
+          </div>
+
+          <div>
+            <strong>Seviye:</strong> {cosmicAI.level}
+          </div>
         </>
       )}
     </div>

@@ -10,7 +10,7 @@ export default function CosmicMigrationFlow() {
 
   if (!universe) return null;
 
-  const glow = Math.abs(universe.cosmicWave) * 30;
+  const glow = Math.abs(universe.cosmicWave ?? 0) * 30;
 
   const atlasPositions = {
     "Buzul Çağı": { top: "10%", left: "50%" },
@@ -36,8 +36,10 @@ export default function CosmicMigrationFlow() {
 
   return (
     <div style={{ position: "absolute", inset: 0 }}>
+      {/* Noktalar */}
       {migrationRoute.map((region) => {
-        const pos = atlasPositions[region];
+        const pos = atlasPositions[region] ?? { top: "50%", left: "50%" };
+
         return (
           <div
             key={region}
@@ -63,11 +65,14 @@ export default function CosmicMigrationFlow() {
         );
       })}
 
+      {/* Çizgiler */}
       {migrationRoute.map((region, i) => {
         if (i === migrationRoute.length - 1) return null;
 
         const start = atlasPositions[migrationRoute[i]];
         const end = atlasPositions[migrationRoute[i + 1]];
+
+        if (!start || !end) return null;
 
         return (
           <svg

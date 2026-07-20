@@ -8,9 +8,9 @@ export default function CosmicPlanetsLayered() {
     startCosmicUniverse((packet) => setUniverse(packet));
   }, []);
 
-  if (!universe) return null;
+  if (!universe || !universe.cosmicLayer) return null;
 
-  const layer = universe.cosmicLayer.name;
+  const layer = universe.cosmicLayer.name ?? "Origin";
 
   // Katman → Gezegen Renk
   const layerColors = {
@@ -22,7 +22,7 @@ export default function CosmicPlanetsLayered() {
     Cosmic: "#ecf0f1"
   };
 
-  const planetColor = layerColors[layer];
+  const planetColor = layerColors[layer] ?? "#888";
 
   // Katman → Yüzey Dokusu
   const textures = {
@@ -34,7 +34,7 @@ export default function CosmicPlanetsLayered() {
     Cosmic: "radial-gradient(circle, #ffffffaa, #ffffff00)"
   };
 
-  const planetTexture = textures[layer];
+  const planetTexture = textures[layer] ?? "none";
 
   // Katman → Atmosfer
   const atmosphere = {
@@ -46,10 +46,10 @@ export default function CosmicPlanetsLayered() {
     Cosmic: 0.35
   };
 
-  const atmosphereOpacity = atmosphere[layer];
+  const atmosphereOpacity = atmosphere[layer] ?? 0.2;
 
   // Katman → Halka Sistemi
-  const ringEnabled = layer === "Structure" || layer === "Cosmic";
+  const ringEnabled = ["Structure", "Cosmic"].includes(layer);
 
   // Katman → Uydu
   const moonEnabled = layer !== "Origin";
@@ -64,13 +64,13 @@ export default function CosmicPlanetsLayered() {
     Cosmic: 8
   };
 
-  const orbitSpeed = speedMap[layer];
+  const orbitSpeed = speedMap[layer] ?? 14;
 
   // Evren genişlemesi → yörünge büyüklüğü
-  const orbitSize = 150 + universe.expansion * 90;
+  const orbitSize = 150 + (universe.expansion ?? 0) * 90;
 
   // Kozmik dalga → parlama
-  const glow = Math.abs(universe.cosmicWave) * 40;
+  const glow = Math.abs(universe.cosmicWave ?? 0) * 40;
 
   return (
     <div

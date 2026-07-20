@@ -8,6 +8,13 @@ export default function CosmicPlanets() {
     startCosmicUniverse((packet) => setUniverse(packet));
   }, []);
 
+  if (!universe) return null;
+
+  const glow = Math.abs(universe.cosmicWave ?? 0) * 40;
+  const orbit1 = 150 + (universe.expansion ?? 0) * 60;
+  const orbit2 = 220 + (universe.expansion ?? 0) * 80;
+  const orbit3 = 100 + (universe.expansion ?? 0) * 40;
+
   return (
     <div
       style={{
@@ -33,7 +40,7 @@ export default function CosmicPlanets() {
           transform: "translate(-50%, -50%)",
           borderRadius: "50%",
           background: "linear-gradient(135deg, #00f, #a0f, #fff)",
-          boxShadow: `0 0 ${20 + Math.abs(Math.sin((universe?.tick || 0) / 10)) * 40}px #a0f`,
+          boxShadow: `0 0 ${20 + glow}px #a0f`,
           transition: "box-shadow 0.3s ease"
         }}
       ></div>
@@ -86,18 +93,18 @@ export default function CosmicPlanets() {
       <style>
         {`
           @keyframes orbit1 {
-            from { transform: rotate(0deg) translateX(150px) rotate(0deg); }
-            to { transform: rotate(360deg) translateX(150px) rotate(-360deg); }
+            from { transform: rotate(0deg) translateX(${orbit1}px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(${orbit1}px) rotate(-360deg); }
           }
 
           @keyframes orbit2 {
-            from { transform: rotate(0deg) translateX(220px) rotate(0deg); }
-            to { transform: rotate(360deg) translateX(220px) rotate(-360deg); }
+            from { transform: rotate(0deg) translateX(${orbit2}px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(${orbit2}px) rotate(-360deg); }
           }
 
           @keyframes orbit3 {
-            from { transform: rotate(0deg) translateX(100px) rotate(0deg); }
-            to { transform: rotate(360deg) translateX(100px) rotate(-360deg); }
+            from { transform: rotate(0deg) translateX(${orbit3}px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(${orbit3}px) rotate(-360deg); }
           }
         `}
       </style>

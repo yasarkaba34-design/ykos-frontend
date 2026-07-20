@@ -8,10 +8,10 @@ export default function QuantumEngine() {
   useEffect(() => {
     const interval = setInterval(() => {
       const qState = {
-        superposition: ROOTS.sort(() => Math.random() - 0.5),
+        superposition: [...ROOTS].sort(() => Math.random() - 0.5),
         probabilityField: Math.random().toFixed(4),
         timestamp: Date.now(),
-        level: "QUANTUM_CORE"
+        level: "QUANTUM_CORE",
       };
 
       setState(qState);
@@ -27,7 +27,8 @@ export default function QuantumEngine() {
       {state && (
         <>
           <div>
-            <strong>Süperpozisyon:</strong> {state.superposition.join(" • ")}
+            <strong>Süperpozisyon:</strong>{" "}
+            {state.superposition.join(" • ")}
           </div>
 
           <div>
@@ -39,7 +40,8 @@ export default function QuantumEngine() {
           </div>
 
           <div>
-            <strong>Zaman:</strong> {new Date(state.timestamp).toLocaleTimeString()}
+            <strong>Zaman:</strong>{" "}
+            {new Date(state.timestamp).toLocaleTimeString()}
           </div>
         </>
       )}

@@ -1,6 +1,10 @@
+// src/components/Atlas.jsx
 import React from "react";
+import YKOS_API from "../ykos_api"; // 🔗 YKOS veri katmanı bağlantısı
 
 export default function Atlas({ query = "", filter = "Hepsi" }) {
+  const { geo, roots } = YKOS_API; // 🌐 Coğrafi ve kök verileri çekiyoruz
+
   return (
     <section style={styles.container}>
       <div style={styles.header}>
@@ -12,6 +16,7 @@ export default function Atlas({ query = "", filter = "Hepsi" }) {
         </p>
       </div>
 
+      {/* 🔍 Dinamik bilgi kartları */}
       <div style={styles.infoGrid}>
         <div style={styles.infoCard}>
           <span style={styles.icon}>🌍</span>
@@ -34,8 +39,14 @@ export default function Atlas({ query = "", filter = "Hepsi" }) {
         <div style={styles.infoCard}>
           <span style={styles.icon}>🔶</span>
           <strong>Damga Atlası</strong>
-          <small>Karşılaştırmalı işaret sistemi</small>
+          <small>{roots.YKOS_ROOTS.length} kök kayıtlı</small>
         </div>
+      </div>
+
+      {/* 🌐 Coğrafi veri örneği */}
+      <div style={styles.geoBlock}>
+        <strong>Atlas Merkezleri:</strong>
+        <pre style={styles.geoText}>{JSON.stringify(geo, null, 2)}</pre>
       </div>
 
       <div style={styles.tags}>
@@ -76,9 +87,7 @@ const styles = {
     backgroundColor: "#101010",
     color: "#f5f5f5",
   },
-  header: {
-    marginBottom: "24px",
-  },
+  header: { marginBottom: "24px" },
   badge: {
     display: "inline-block",
     marginBottom: "10px",
@@ -87,11 +96,7 @@ const styles = {
     fontWeight: "700",
     letterSpacing: "0.8px",
   },
-  title: {
-    margin: "0 0 10px",
-    color: "#ffffff",
-    fontSize: "26px",
-  },
+  title: { margin: "0 0 10px", color: "#ffffff", fontSize: "26px" },
   description: {
     margin: 0,
     maxWidth: "760px",
@@ -114,8 +119,18 @@ const styles = {
     borderRadius: "8px",
     backgroundColor: "#151515",
   },
-  icon: {
-    fontSize: "22px",
+  icon: { fontSize: "22px" },
+  geoBlock: {
+    marginBottom: "20px",
+    padding: "10px",
+    backgroundColor: "#0f0f0f",
+    borderRadius: "6px",
+    border: "1px solid #333",
+  },
+  geoText: {
+    fontSize: "12px",
+    color: "#d9a926",
+    marginTop: "6px",
   },
   tags: {
     display: "flex",
