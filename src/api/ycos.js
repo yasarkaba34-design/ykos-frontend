@@ -1,6 +1,6 @@
 import { YKOS_ROOTS } from "../data/ycos_roots";
 import { YKOS_GEO } from "../data/ycos_geo";
-import { YKOS_LAYERS } from "../data/ycos_layers";
+import { YKOS_LAYERS } from "../components/LayerSystem";
 
 export const YKOS_API = {
 
