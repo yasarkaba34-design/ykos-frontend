@@ -1,10 +1,19 @@
 import React from "react";
-import YKOSDashboard from "./pages/YKOSDashboard";
+import Matris from "./components/Matris";
+import Atlas from "./components/Atlas";
+import Chain from "./components/Chain";
+import QuantumEngine from "./components/QuantumEngine";
 
-export default function App() {
+function App() {
   return (
-    <div className="app-root">
-      <YKOSDashboard />
+    <div style={{ fontFamily: "Arial" }}>
+      <h1>YKOS Semantic Lab</h1>
+      <Matris />
+      <Atlas />
+      <Chain />
+      <QuantumEngine />
     </div>
   );
 }
+
+export default App;

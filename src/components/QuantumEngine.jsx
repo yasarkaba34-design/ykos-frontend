@@ -1,33 +1,46 @@
 import React, { useEffect, useState } from "react";
 
-export default function QuantumEngine({ selectedRoot }) {
-  const [quantumState, setQuantumState] = useState(null);
+const ROOTS = ["TUT", "KUR", "BA", "YOL", "BİR", "KAL"];
+
+export default function QuantumEngine() {
+  const [state, setState] = useState(null);
 
   useEffect(() => {
-    if (!selectedRoot) return;
+    const interval = setInterval(() => {
+      const qState = {
+        superposition: ROOTS.sort(() => Math.random() - 0.5),
+        probabilityField: Math.random().toFixed(4),
+        timestamp: Date.now(),
+        level: "QUANTUM_CORE"
+      };
 
-    const qState = {
-      root: selectedRoot,
-      superposition: [
-        "TUT", "KUR", "BA", "YOL", "BİR", "KAL"
-      ].sort(() => Math.random() - 0.5),
-      probabilityField: Math.random().toFixed(4),
-      timestamp: Date.now(),
-      level: "QUANTUM_CORE"
-    };
+      setState(qState);
+    }, 1500);
 
-    setQuantumState(qState);
-
-  }, [selectedRoot]);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="dashboard-card">
       <h2>⚛️ QuantumEngine</h2>
-      {quantumState && (
+
+      {state && (
         <>
-          <div><strong>Süperpozisyon:</strong> {quantumState.superposition.join(" • ")}</div>
-          <div><strong>Olasılık Alanı:</strong> {quantumState.probabilityField}</div>
-          <div><strong>Seviye:</strong> {quantumState.level}</div>
+          <div>
+            <strong>Süperpozisyon:</strong> {state.superposition.join(" • ")}
+          </div>
+
+          <div>
+            <strong>Olasılık Alanı:</strong> {state.probabilityField}
+          </div>
+
+          <div>
+            <strong>Seviye:</strong> {state.level}
+          </div>
+
+          <div>
+            <strong>Zaman:</strong> {new Date(state.timestamp).toLocaleTimeString()}
+          </div>
         </>
       )}
     </div>

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { YKOS_ROOTS } from "../data/ykos_roots"; // c harfi k olarak kesinleştirildi
+import { YKOS_ROOTS } from "/src/data/ykos_roots"; // c harfi k olarak kesinleştirildi
 
 export default function AutoPilotEngine({ onAutoRoot }) {
 
