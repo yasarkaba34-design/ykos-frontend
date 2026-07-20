@@ -1,3 +1,12 @@
+const ykos_roots = {
+  root1: "Atlas",
+  root2: "Matris",
+  root3: "Chain",
+  root4: "QuantumEngine",
+};
+
+export default ykos_roots;
+
 export const YKOS_ROOTS = [
   "TUT",
   "KUR",

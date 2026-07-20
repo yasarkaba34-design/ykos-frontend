@@ -1,4 +1,15 @@
 import React from 'react';
+import React from "react";
+import ykos_roots from "../data/ykos_roots.js";
+
+export default function Matris() {
+  return (
+    <div style={{ color: "gold", background: "black", padding: "20px" }}>
+      <h2>Matris Modülü</h2>
+      <pre>{JSON.stringify(ykos_roots, null, 2)}</pre>
+    </div>
+  );
+}
 
 // 'query' ve 'filter' proplarını yukarıdan teslim alıyoruz gari Hocam!
 export default function Matris({ query, filter }) {
