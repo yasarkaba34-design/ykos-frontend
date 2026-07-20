@@ -1,4 +1,27 @@
 import React from "react";
+import { YKOS_LAYERS } from "../data/ykos_layers";
+
+export default function LayerSystem() {
+  return (
+    <div className="layer-container">
+      <h2>Katman Motoru</h2>
+
+      <pre
+        style={{
+          color: "gold",
+          background: "#000",
+          padding: "20px",
+          border: "1px solid gold",
+          borderRadius: "8px",
+          fontFamily: "Courier New, monospace"
+        }}
+      >
+        {JSON.stringify(YKOS_LAYERS, null, 2)}
+      </pre>
+
+    </div>
+  );
+}
 
 export const YKOS_LAYERS = {
   // --- OMURGA KÖKLER ---

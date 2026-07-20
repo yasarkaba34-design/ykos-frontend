@@ -1,26 +1,9 @@
-import { YKOS_LAYERS } from "../data/ycos_layers";
-
 export const YKOS_LAYERS = {
-  TUT: {
-    sınıf: "başlangıç",
-    semantik: "kavrama",
-    fonetik: "T-D",
-    kültür: "ilk temas",
-    geo: "Ankara",
-    zincirAşaması: "TUT"
-  }
+  KUR: { sınıf: "oluşum", semantik: "yapı kurma", fonetik: "K-G", kültür: "oluş" },
+  YOL: { sınıf: "hareket", semantik: "yön", fonetik: "Y-L", kültür: "yolculuk" },
+  BİR: { sınıf: "birlik", semantik: "bütünlük", fonetik: "B-R", kültür: "birleşme" },
+  // ... diğer kökler
 };
-src/components/LayerSystem.jsx
-const getLayersForRoot = (root) => {
-  return YKOS_LAYERS[root.toUpperCase()] || null;
-};
-export default function LayerSystem({ selectedRoot }) {
-  const layers = getLayersForRoot(selectedRoot);
-
-  return (
-    <div className="layer-container">
-      <h2>Katman Motoru</h2>
-export const YKOS_LAYERS = {
 
   // --- OMURGA KÖKLER ---
   TUT: { sınıf: "başlangıç", semantik: "kavrama", fonetik: "T-D", kültür: "ilk temas", geo: "Ankara", zincirAşaması: "TUT" },
