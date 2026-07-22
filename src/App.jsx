@@ -6,21 +6,22 @@ import YKOSAnadoluEvrenselPano from "./mega/YKOSAnadoluEvrenselPano";
 
 // --- ALT MODÜLLER ---
 import Chain from "./mega/Chain.jsx";
-import QuantumEngine from "./mega/QuantumEngine.js";
+import { computeQuantum } from "./mega/QuantumEngine.js";
 import LayerSystem from "./components/LayerSystem.jsx";
 import { startCosmicUniverse } from "./engine/CosmicUniverseEngine";
 
 export default function App() {
   const [universeData, setUniverseData] = useState(null);
+  const quantumData = computeQuantum(15);
 
   useEffect(() => {
-    // Sayfa açıldığında motoru tek seferlik başlatır (ekranın gelip gitmesini önler)
+    // Sayfa ilk yüklendiğinde motoru başlatır
     const cleanup = startCosmicUniverse((packet) => {
       setUniverseData(packet);
     });
 
     return () => cleanup && cleanup();
-  }, []); // Boş dizi [] kalması kritik!
+  }, []);
 
   return (
     <div style={{ fontFamily: "Arial", textAlign: "center", padding: "20px", backgroundColor: "#0b0c10", color: "#fff", minHeight: "100vh" }}>
@@ -36,7 +37,15 @@ export default function App() {
 
       <div style={{ marginTop: "30px" }}>
         <Chain />
-        <QuantumEngine />
+        
+        {/* Kuantum Hesaplama Çıktısını Ekrana Basalım */}
+        <div style={{ border: "1px solid cyan", padding: "15px", margin: "20px auto", maxWidth: "400px", borderRadius: "8px", background: "#081b29", color: "#fff" }}>
+          <h3 style={{ color: "cyan", marginTop: 0 }}>Kuantum Motoru Verisi</h3>
+          <p>Flux: {quantumData.flux}</p>
+          <p>OmniField: {quantumData.omniField}</p>
+          <p>Kararlılık: %{quantumData.stability.toFixed(1)}</p>
+        </div>
+
         <LayerSystem selectedRoot="YOL" />
       </div>
     </div>
