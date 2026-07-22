@@ -1,7 +1,4 @@
-// FILE: src/data/ykos_geo.js
-
-// --- SEMANTİK KÖK COĞRAFYA MODELİ ---
-export const YKOS_GEO = {
+export const YCOS_GEO = {
   TUT: {
     kökler: ["tut", "tutmak", "tutucu"],
     anlam: "tutma, kavrama, başlangıç",
@@ -32,8 +29,6 @@ export const YKOS_GEO = {
     anlam: "kalma, süreklilik",
     kategori: "süreklilik eylemi"
   },
-
-  // --- ZAMAN / YÖN / DOĞA KÖKLERİ ---
   YIL: {
     kök: "yıl",
     varyantlar: ["yıl", "yıllık", "yılı", "yılın"],
@@ -51,7 +46,6 @@ export const YKOS_GEO = {
       KAL: "dönemin kalıcılığı"
     }
   },
-
   OK: {
     kök: "ok",
     varyantlar: ["ok", "okumak", "okçu", "okluk"],
@@ -69,7 +63,6 @@ export const YKOS_GEO = {
       KAL: "yönün kalıcılığı"
     }
   },
-
   YÜK: {
     kök: "yük",
     varyantlar: ["yük", "yüksek", "yüklemek", "yüklem"],
@@ -86,26 +79,28 @@ export const YKOS_GEO = {
       BİR: "yükün birlik oluşturması",
       KAL: "yükün kalıcılığı"
     }
-  },
+  }
+};
 
-  // --- ATLAS / MATRIS / CHAIN / QUANTUM COĞRAFİ MERKEZLERİ ---
-  MERKEZLER: {
-    ATLAS: { lat: 41.0, lon: 29.0 },
-    MATRIS: { lat: 39.9, lon: 32.8 },
-    CHAIN: { lat: 38.4, lon: 27.1 },
-    QUANTUM: { lat: 36.8, lon: 34.6 }
-  },
+// src/data/ykos_geo.js
 
-  // --- BÖLGE MODELİ ---
-  REGIONS: [
+export const YKOS_GEO = {
+  ATLAS: { lat: 41.0, lon: 29.0 },
+  MATRIS: { lat: 39.9, lon: 32.8 },
+  CHAIN: { lat: 38.4, lon: 27.1 },
+  QUANTUM: { lat: 36.8, lon: 34.6 }
+};
+
+export default YKOS_GEO;
+const ykos_geo = {
+  regions: [
     { id: 1, name: "Anadolu", type: "bölge" },
     { id: 2, name: "Mezopotamya", type: "bölge" }
   ],
-
-  COORDINATES: {
+  coordinates: {
     Anadolu: { lat: 39.0, lng: 35.0 },
     Mezopotamya: { lat: 33.0, lng: 44.0 }
   }
 };
 
-export default YKOS_GEO;
+export default ykos_geo;

@@ -1,4 +1,10 @@
+// FILE: src/mega/CosmicMigrationFlow.jsx
+import React from "react";
+import { readYKOSFlow } from "./YKOSFlowReader.js";
+
 export default function CosmicMigrationFlow({ universe, direction }) {
+  const flow = readYKOSFlow();
+
   return (
     <div
       style={{
@@ -7,22 +13,20 @@ export default function CosmicMigrationFlow({ universe, direction }) {
         color: "#ffddaa",
         fontSize: "18px",
         display: "flex",
+        flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        opacity: 0.8
+        opacity: 0.85
       }}
     >
-      🌀 Göç Akışı ({direction}) — OmniField: {universe.omniField}
-    </div>
-  );
-}
-import YKOSAnadoluEvrenselPano from "./mega/YKOSAnadoluEvrenselPano";
-
-export default function App() {
-  return (
-    <div style={{ fontFamily: "Arial", textAlign: "center", padding: "20px" }}>
-      <h1>YKOS Semantic Lab</h1>
-      <YKOSAnadoluEvrenselPano />
+      <div>
+        🌀 Göç Akışı ({direction}) — OmniField: {universe?.omniField ?? "Bilinmiyor"}
+      </div>
+      {flow && (
+        <p style={{ color: "#0f0", marginTop: "10px" }}>
+          Flux: {flow.quantum.flux}
+        </p>
+      )}
     </div>
   );
 }

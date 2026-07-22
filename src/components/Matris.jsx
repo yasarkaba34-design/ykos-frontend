@@ -361,3 +361,70 @@ const styles = {
     alignItems: "flex-start",
     marginBottom: "16px",
   },
+// FILE: src/components/Matris.jsx
+
+import React from "react";
+
+export default function Matris() {
+  return (
+    <div
+      style={{
+        background: "#111",
+        padding: "20px",
+        borderRadius: "10px",
+        color: "#fff",
+        marginTop: "20px"
+      }}
+    >
+      <h2 style={{ color: "#d4af37" }}>Matris Bileşeni</h2>
+
+      <p>
+        Bu bileşen YKOS Matris modülünün temel görüntü alanıdır.
+        Şu anda statik çalışıyor, istersen veri akışı bağlayabiliriz.
+      </p>
+
+      <div
+        style={{
+          marginTop: "15px",
+          padding: "10px",
+          background: "#222",
+          borderRadius: "8px"
+        }}
+      >
+        <strong>Matris Alanı</strong>
+      </div>
+    </div>
+  );
+}
+// FILE: src/components/Matris.jsx
+
+import React from "react";
+import { sendFeedback } from "../mega/YKOSFeedback.js";
+
+export default function Matris() {
+  return (
+    <div style={{ background: "#111", padding: "20px", borderRadius: "10px", color: "#fff" }}>
+      <h2 style={{ color: "#d4af37" }}>Matris Bileşeni</h2>
+
+      <button
+        onClick={() => sendFeedback("layerA_plus", 5)}
+        style={{ marginRight: "10px" }}
+      >
+        Layer A +5
+      </button>
+
+      <button
+        onClick={() => sendFeedback("layerA_minus", 5)}
+      >
+        Layer A -5
+      </button>
+    </div>
+  );
+}
+// FILE: src/components/Matris.jsx
+
+import { sendCrossSignal } from "../mega/CrossModuleRouter.js";
+
+<button onClick={() => sendCrossSignal("kalkan", 3)}>
+  Kalkan LayerB +3
+</button>

@@ -1,10 +1,10 @@
-// src/data/ykos_layers.js
+// FILE: src/data/ykos_layers.js
 
-const YKOS_LAYERS = {
-  layer1: "Proto-Kök",
-  layer2: "Kültürel Hafıza",
-  layer3: "Sembolik Yapılar",
-  layer4: "Jeo-Kültürel Atlas"
-};
+export const YKOS_LAYERS = [
+  { id: 1, name: "Proto-Kök Katmanı", type: "semantic" },
+  { id: 2, name: "Damga ve Kültürel Hafıza", type: "symbolic" },
+  { id: 3, name: "Sembolik Yapılar", type: "structure" },
+  { id: 4, name: "Jeo-Kültürel Atlas", type: "geo" }
+];
 
 export default YKOS_LAYERS;
