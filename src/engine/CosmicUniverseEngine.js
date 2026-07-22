@@ -8,6 +8,11 @@ import { cosmicEntropy } from "./cosmicEntropy";
 
 export function startCosmicUniverse(callback) {
   let t = 0;
+let intervalId = setInterval(() => {
+  callback(universePacket);
+}, 1000);
+
+return () => clearInterval(intervalId);
 
   const intervalId = setInterval(() => {
     t++;

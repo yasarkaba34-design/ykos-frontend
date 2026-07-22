@@ -89,3 +89,19 @@ export default function YKOSAnadoluEvrenselPano() {
     </div>
   );
 }
+useEffect(() => {
+  let mounted = true;
+
+  try {
+    startCosmicUniverse((packet) => {
+      if (mounted) setFlow(packet);
+    });
+    setUniverseActive(true);
+  } catch (error) {
+    console.error("Kozmik evren motoru başlatılamadı:", error);
+  }
+
+  return () => {
+    mounted = false;
+  };
+}, []); // 🔹 Boş dependency listesi: sadece ilk render'da çalışır
