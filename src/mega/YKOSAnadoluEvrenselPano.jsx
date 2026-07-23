@@ -12,20 +12,22 @@ export default function YKOSAnadoluEvrenselPano() {
   const [catalogFilter, setCatalogFilter] = useState("ALL");
   const [selectedItemModal, setSelectedItemModal] = useState(null);
 
-  // 3. Modül: Analiz Motoru
   const [selectedAnalyzeItem, setSelectedAnalyzeItem] = useState("OK_DAMGA");
   const [activeAnalysisLayer, setActiveAnalysisLayer] = useState("GEOMETRY");
-
-  // 4. Modül: Coğrafi Akış Haritası
   const [selectedRoute, setSelectedRoute] = useState("ANATOLIA_ASIA");
-
-  // Sağ Panel Canlı Çözümleme ve Arşiv Seçimi
   const [selectedSolution, setSelectedSolution] = useState("YAZIT_01");
+
+  const handleResetToHome = () => {
+    setActiveMatrix(null);
+    setSelectedHece("OK");
+    setSearchTerm("");
+    setCatalogFilter("ALL");
+    setSelectedItemModal(null);
+  };
 
   useEffect(() => {
     let mounted = true;
     let stopFn = null;
-
     try {
       stopFn = startCosmicUniverse((packet) => {
         if (mounted) setData(packet);
@@ -33,14 +35,13 @@ export default function YKOSAnadoluEvrenselPano() {
     } catch (err) {
       console.error(err);
     }
-
     return () => {
       mounted = false;
       if (typeof stopFn === "function") stopFn();
     };
   }, []);
 
-  // 10 DİLLİ SÖZLÜK MATRİSİ
+  // 10 DİLLİ TAM SÖZLÜK MATRİSİ (SAĞ PANEL ÇÖZÜMLERİ DAHİL)
   const i18n = {
     TR: {
       flag: "🇹🇷", label: "Türkçe",
@@ -48,22 +49,20 @@ export default function YKOSAnadoluEvrenselPano() {
       searchPlaceholder: "🔍 Damga, kök hece, ülke, il veya kadim merkez ara...",
       systemStatus: "Sistem Durumu", statusActive: "AKTİF", matricesTitle: "MATRİSLER VE KATMANLAR",
       rightPanelTitle: "⚡ YKOS ÇÖZÜMLERİ VE İNDEKSLER",
+      rightPanelDesc: "* Sağ paneldeki çözümlere basarak doğrudan dinamik okuma matrislerine geçebilirsiniz.",
+      solutions: {
+        gobeklitepe: "📜 Göbeklitepe T-Sütunu YKOS Okuması",
+        etrusk: "📜 Etrüsk Lemnos Kitabesi & Ön Türkçe Eşleşmesi",
+        kulliyat: "📚 YKOS 11 Ciltlik Külliyat ve Sembol Kataloğu"
+      },
       engineText: "Canlı Motor Bağlantısı", backToHome: "✖ Ana Sayfaya Dön", moduleTitle: "YKOS MODÜLÜ",
-      searchResultsTitle: "🔍 Canlı Arama ve İndeks Sonuçları",
-      noResults: "Aranan kriterlere uygun kayıt bulunamadı.",
+      searchResultsTitle: "🔍 Canlı Arama ve İndeks Sonuçları", noResults: "Aranan kriterlere uygun kayıt bulunamadı.",
       nav: { kurumsal: "KURUMSAL", metodoloji: "YKOS METODOLOJİSİ", kokHece: "KÖK HECE MATRİSİ", damgaAtlasi: "DAMGA ATLASI", analizEngine: "OKUMA & ANALİZ MOTORU", flowMap: "GÖÇ & AKIŞ HARİTASI", kulliyat: "KÜLLİYAT & YAYINLAR", dijitalArsiv: "DİJİTAL ARŞİV" },
       stats: ["Ülkeler", "Araştırmalar", "Damgalar", "Petroglifler", "Yazıtlar", "Kaynaklar", "Görseller", "Atlaslar"],
-      rightButtons: ["YAZIT ÇÖZÜMLEMELERİ", "KÜLLİYAT İNDEKSİ", "MOPHO-SENTAKS MATRİSİ"],
       labels: { phonetic: "Fonetik Kök", semantic: "Anlamsal Katman", anatolian: "Anadolu Odak Noktası", asian: "Asya Akış Hattı", coherence: "Matris Uyum (Coherence)", rootPrefix: "Kök", category: "Kategori", location: "Kadim Merkez" },
       catalog: { all: "Tümü", stamps: "Damgalar", petroglyphs: "Petroglifler", inspect: "İncele" },
-      analysis: {
-        title: "YKOS Algoritmik Okuma ve Çözümleme Motoru",
-        geometryTab: "📐 Geometrik Vektör Katmanı", directionTab: "🏹 Yön ve Vektör Akışı", phoneticTab: "𐰸 Fonetik Eşleşme Matrisi", confidence: "Algoritma Okuma Doğruluğu"
-      },
-      map: {
-        title: "Anadolu Odaklı Kadim Göç ve Sembol Akış Haritası", route1: "Anadolu ➔ Asya Ana Akış Hattı", route2: "Anadolu ➔ Akdeniz & Avrupa Hattı",
-        origin: "Çıkış / Odak Merkezi", destination: "Varış / Yayılım Havzası", stampsTransferred: "Taşınan Damga/Kök Sayısı"
-      },
+      analysis: { title: "YKOS Algoritmik Okuma ve Çözümleme Motoru", geometryTab: "📐 Geometrik Vektör Katmanı", directionTab: "🏹 Yön ve Vektör Akışı", phoneticTab: "𐰸 Fonetik Eşleşme Matrisi", confidence: "Algoritma Okuma Doğruluğu" },
+      map: { title: "Anadolu Odaklı Kadim Göç ve Sembol Akış Haritası", route1: "Anadolu ➔ Asya Ana Akış Hattı", route2: "Anadolu ➔ Akdeniz & Avrupa Hattı", origin: "Çıkış / Odak Merkezi", destination: "Varış / Yayılım Havzası", stampsTransferred: "Taşınan Damga/Kök Sayısı" },
       heceDetails: {
         OK: { meaning: "Yön, Yükseliş, Bağlantı, Akış, Göç Hattı", anadolu: "Göbeklitepe / Çatalhöyük", asya: "Orhun / Yenisey Hobi Hattı" },
         AT: { meaning: "Hareket, İlerleme, Sıçrama, Birincil Er", anadolu: "Alacahöyük / Kültepe", asya: "Altay-Sayan Kültür Havzası" },
@@ -77,44 +76,257 @@ export default function YKOSAnadoluEvrenselPano() {
       searchPlaceholder: "🔍 Search stamp, root syllable, country, city or ancient center...",
       systemStatus: "System Status", statusActive: "ACTIVE", matricesTitle: "MATRICES AND LAYERS",
       rightPanelTitle: "⚡ YKOS SOLUTIONS & INDEXES",
+      rightPanelDesc: "* Click solutions in the right panel to switch directly to dynamic reading matrices.",
+      solutions: {
+        gobeklitepe: "📜 Gobeklitepe T-Pillar YKOS Reading",
+        etrusk: "📜 Etruscan Lemnos Inscription & Proto-Turkic Match",
+        kulliyat: "📚 YKOS 11-Volume Collected Works & Symbol Catalog"
+      },
       engineText: "Live Engine Connection", backToHome: "✖ Back to Home", moduleTitle: "YKOS MODULE",
-      searchResultsTitle: "🔍 Live Search & Index Results",
-      noResults: "No matching records found.",
+      searchResultsTitle: "🔍 Live Search & Index Results", noResults: "No matching records found.",
       nav: { kurumsal: "CORPORATE", metodoloji: "YKOS METHODOLOGY", kokHece: "ROOT SYLLABLE MATRIX", damgaAtlasi: "STAMP ATLAS", analizEngine: "READING & ANALYSIS ENGINE", flowMap: "MIGRATION & FLOW MAP", kulliyat: "COLLECTED WORKS", dijitalArsiv: "DIGITAL ARCHIVE" },
       stats: ["Countries", "Researches", "Stamps", "Petroglyphs", "Inscriptions", "Sources", "Images", "Atlases"],
-      rightButtons: ["INSCRIPTION DECIPHERMENTS", "COLLECTED WORKS INDEX", "MORPHO-SYNTAX MATRIX"],
       labels: { phonetic: "Phonetic Root", semantic: "Semantic Layer", anatolian: "Anatolian Focal Point", asian: "Asian Flow Line", coherence: "Matrix Coherence", rootPrefix: "Root", category: "Category", location: "Ancient Center" },
       catalog: { all: "All", stamps: "Stamps", petroglyphs: "Petroglyphs", inspect: "Inspect" },
-      analysis: {
-        title: "YKOS Algorithmic Reading and Decipherment Engine",
-        geometryTab: "📐 Geometric Vector Layer", directionTab: "🏹 Direction and Vector Flow", phoneticTab: "𐰸 Phonetic Matching Matrix", confidence: "Algorithm Reading Accuracy"
-      },
-      map: {
-        title: "Anatolian-Centered Ancient Migration & Symbol Flow Map", route1: "Anatolia ➔ Asia Main Flow Line", route2: "Anatolia ➔ Mediterranean & Europe Line",
-        origin: "Origin / Focal Center", destination: "Destination / Spread Basin", stampsTransferred: "Transferred Stamps/Roots"
-      },
+      analysis: { title: "YKOS Algorithmic Reading Engine", geometryTab: "📐 Geometric Vector Layer", directionTab: "🏹 Direction and Vector Flow", phoneticTab: "𐰸 Phonetic Matching Matrix", confidence: "Reading Accuracy" },
+      map: { title: "Anatolian-Centered Ancient Migration Map", route1: "Anatolia ➔ Asia Main Line", route2: "Anatolia ➔ Europe Line", origin: "Origin Center", destination: "Destination Basin", stampsTransferred: "Transferred Stamps" },
       heceDetails: {
-        OK: { meaning: "Direction, Ascension, Connection, Flow, Migration Line", anadolu: "Gobeklitepe / Catalhoyuk", asya: "Orkhon / Yenisey Line" },
-        AT: { meaning: "Movement, Progress, Leap, Primary Man", anadolu: "Alacahoyuk / Kultepe", asya: "Altai-Sayan Cultural Basin" },
-        ER: { meaning: "Existence, Identity, Power, Maturation", anadolu: "Hattusa / Gordion", asya: "Issyk Kul / Balasagun" },
-        EL: { meaning: "Community, Unity, State/Tribe Governance Structure", anadolu: "Yazilikaya / Karkemish", asya: "Talas / Otuken Basin" }
+        OK: { meaning: "Direction, Ascension, Connection, Migration", anadolu: "Gobeklitepe / Catalhoyuk", asya: "Orkhon / Yenisey Line" },
+        AT: { meaning: "Movement, Progress, Primary Man", anadolu: "Alacahoyuk / Kultepe", asya: "Altai-Sayan Basin" },
+        ER: { meaning: "Existence, Identity, Power", anadolu: "Hattusa / Gordion", asya: "Issyk Kul / Balasagun" },
+        EL: { meaning: "Community, Unity, State Structure", anadolu: "Yazilikaya / Karkemish", asya: "Talas / Otuken Basin" }
+      }
+    },
+    FR: {
+      flag: "🇫🇷", label: "Français",
+      title: "SYSTÈME D'INFORMATION YKOS", subtitle: "Base de Données Algorithmique sur la Culture et la Langue",
+      searchPlaceholder: "🔍 Rechercher sceau, racine, pays, centre ancien...",
+      systemStatus: "État du Système", statusActive: "ACTIF", matricesTitle: "MATRICES ET COUCHES",
+      rightPanelTitle: "⚡ SOLUTIONS ET INDEX YKOS",
+      rightPanelDesc: "* Cliquez sur les solutions du panneau droit pour basculer vers les matrices.",
+      solutions: {
+        gobeklitepe: "📜 Lecture YKOS du Pilier T de Gobeklitepe",
+        etrusk: "📜 Inscription Étrusque de Lemnos & Correspondance",
+        kulliyat: "📚 Catalogue des Symboles YKOS en 11 Volumes"
+      },
+      engineText: "Connexion Moteur En Direct", backToHome: "✖ Accueil", moduleTitle: "MODULE YKOS",
+      searchResultsTitle: "🔍 Résultats de Recherche", noResults: "Aucun enregistrement trouvé.",
+      nav: { kurumsal: "ENTREPRISE", metodoloji: "MÉTHODOLOGIE YKOS", kokHece: "MATRICE DE RACINE", damgaAtlasi: "ATLAS DES SCEAUX", analizEngine: "MOTEUR D'ANALYSE", flowMap: "CARTE DE MIGRATION", kulliyat: "ŒUVRES COMPLÈTES", dijitalArsiv: "ARCHIVE NUMÉRIQUE" },
+      stats: ["Pays", "Recherches", "Sceaux", "Pétroglyphes", "Inscriptions", "Sources", "Images", "Atlas"],
+      labels: { phonetic: "Racine Phonétique", semantic: "Couche Sémantique", anatolian: "Point Focal Anatolien", asian: "Ligne d'Asie", coherence: "Cohérence Matricielle", rootPrefix: "Racine", category: "Catégorie", location: "Centre Ancien" },
+      catalog: { all: "Tous", stamps: "Sceaux", petroglyphs: "Pétroglyphes", inspect: "Inspecter" },
+      analysis: { title: "Moteur de Lecture Algorithmique YKOS", geometryTab: "📐 Vecteur Géométrique", directionTab: "🏹 Flux Vectoriel", phoneticTab: "𐰸 Matrice Phonétique", confidence: "Précision de Lecture" },
+      map: { title: "Carte de Migration Ancienne", route1: "Anatolie ➔ Asie", route2: "Anatolie ➔ Europe", origin: "Origine", destination: "Destination", stampsTransferred: "Sceaux Transférés" },
+      heceDetails: {
+        OK: { meaning: "Direction, Ascension, Connexion", anadolu: "Gobeklitepe", asya: "Ligne d'Orkhon" },
+        AT: { meaning: "Mouvement, Progrès", anadolu: "Alacahoyuk", asya: "Bassin de l'Altaï" },
+        ER: { meaning: "Existence, Identité", anadolu: "Hattusa", asya: "Issyk Koul" },
+        EL: { meaning: "Communauté, Unité", anadolu: "Yazilikaya", asya: "Bassin de Talas" }
+      }
+    },
+    DE: {
+      flag: "🇩🇪", label: "Deutsch",
+      title: "YKOS INFORMATIONSSYSTEM", subtitle: "Interdisziplinäre Algorithmentat- und Sprachdatenbank",
+      searchPlaceholder: "🔍 Suche Siegel, Silbe, Land, altes Zentrum...",
+      systemStatus: "Systemstatus", statusActive: "AKTIV", matricesTitle: "MATRIZEN UND SCHICHTEN",
+      rightPanelTitle: "⚡ YKOS LÖSUNGEN UND INDIZES",
+      rightPanelDesc: "* Klicken Sie auf die Lösungen, um zu den Lesematrizen zu wechseln.",
+      solutions: {
+        gobeklitepe: "📜 Göbeklitepe T-Pfeiler YKOS Lesung",
+        etrusk: "📜 Etruskische Lemnos-Inschrift & Proto-Türkisch",
+        kulliyat: "📚 YKOS 11-Bändige Gesamtausgabe & Symbolkatalog"
+      },
+      engineText: "Live-Motorverbindung", backToHome: "✖ Startseite", moduleTitle: "YKOS MODUL",
+      searchResultsTitle: "🔍 Suchergebnisse", noResults: "Keine Datensätze gefunden.",
+      nav: { kurumsal: "UNTERNEHMEN", metodoloji: "YKOS METHODIK", kokHece: "STAMMSILBEN-MATRIX", damgaAtlasi: "SIEGEL-ATLAS", analizEngine: "ANALYSE-ENGINE", flowMap: "MIGRATIONSKARTE", kulliyat: "GESAMTAUSGABE", dijitalArsiv: "DIGITALES ARCHIV" },
+      stats: ["Länder", "Forschungen", "Siegel", "Petroglyphen", "Inschriften", "Quellen", "Bilder", "Atlasse"],
+      labels: { phonetic: "Phonetische Wurzel", semantic: "Semantische Schicht", anatolian: "Anatolischer Fokus", asian: "Asiatische Linie", coherence: "Kohärenz", rootPrefix: "Wurzel", category: "Kategorie", location: "Altes Zentrum" },
+      catalog: { all: "Alle", stamps: "Siegel", petroglyphs: "Petroglyphen", inspect: "Prüfen" },
+      analysis: { title: "YKOS Algorithmetische Lese-Engine", geometryTab: "📐 Geometrischer Vektor", directionTab: "🏹 Vektorfluss", phoneticTab: "𐰸 Phonetische Matrix", confidence: "Genauigkeit" },
+      map: { title: "Anatolische Migrationskarte", route1: "Anatolien ➔ Asien", route2: "Anatolien ➔ Europa", origin: "Herkunft", destination: "Zielbecken", stampsTransferred: "Übertragene Siegel" },
+      heceDetails: {
+        OK: { meaning: "Richtung, Aufstieg, Verbindung", anadolu: "Göbeklitepe", asya: "Orchon-Linie" },
+        AT: { meaning: "Bewegung, Fortschritt", anadolu: "Alacahöyük", asya: "Altai-Becken" },
+        ER: { meaning: "Existenz, Identität", anadolu: "Hattuscha", asya: "Issykkul" },
+        EL: { meaning: "Gemeinschaft, Einheit", anadolu: "Yazılıkaya", asya: "Talas-Becken" }
+      }
+    },
+    ZH: {
+      flag: "🇨🇳", label: "中文",
+      title: "YKOS 信息系统", subtitle: "跨学科算法文化与语言数据库",
+      searchPlaceholder: "🔍 搜索印章、根音节、国家、古中心...",
+      systemStatus: "系统状态", statusActive: "活跃", matricesTitle: "矩阵与图层",
+      rightPanelTitle: "⚡ YKOS 解决方案与索引",
+      rightPanelDesc: "* 点击右侧面板中的解决方案直接切换到动态读取矩阵。",
+      solutions: {
+        gobeklitepe: "📜 哥贝克力石阵 T 柱 YKOS 解读",
+        etrusk: "📜 伊特鲁里亚雷姆诺斯铭文与原始突厥语对应",
+        kulliyat: "📚 YKOS 11 卷全集与符号目录"
+      },
+      engineText: "实时引擎连接", backToHome: "✖ 返回首页", moduleTitle: "YKOS 模块",
+      searchResultsTitle: "🔍 实时搜索结果", noResults: "未找到符合条件的记录。",
+      nav: { kurumsal: "企业", metodoloji: "YKOS 方法论", kokHece: "根音节矩阵", damgaAtlasi: "印章地图集", analizEngine: "分析引擎", flowMap: "迁移路线图", kulliyat: "全集与出版物", dijitalArsiv: "数字档案" },
+      stats: ["国家", "研究", "印章", "岩画", "铭文", "文献", "图像", "地图集"],
+      labels: { phonetic: "语音根", semantic: "语义层", anatolian: "安纳托利亚焦点", asian: "亚洲流动线", coherence: "矩阵一致性", rootPrefix: "根", category: "类别", location: "古中心" },
+      catalog: { all: "全部", stamps: "印章", petroglyphs: "岩画", inspect: "查看" },
+      analysis: { title: "YKOS 算法解读引擎", geometryTab: "📐 几何向量层", directionTab: "🏹 方向与向量流", phoneticTab: "𐰸 语音匹配矩阵", confidence: "准确率" },
+      map: { title: "安纳托利亚古迁移地图", route1: "安纳托利亚 ➔ 亚洲", route2: "安纳托利亚 ➔ 欧洲", origin: "起点", destination: "终点", stampsTransferred: "转移的印章" },
+      heceDetails: {
+        OK: { meaning: "方向、上升、连接", anadolu: "哥贝克力石阵", asya: "鄂尔浑线" },
+        AT: { meaning: "运动、进步", anadolu: "阿拉贾霍裕克", asya: "阿尔泰盆地" },
+        ER: { meaning: "存在、身份", anadolu: "哈图沙", asya: "伊塞克湖" },
+        EL: { meaning: "社区、统一", anadolu: "亚兹利卡亚", asya: "塔拉斯盆地" }
+      }
+    },
+    JA: {
+      flag: "🇯🇵", label: "日本語",
+      title: "YKOS 情報システム", subtitle: "学際的アルゴリズム文化・言語データベース",
+      searchPlaceholder: "🔍 刻印、音節、国家、古代中心地を検索...",
+      systemStatus: "システム状態", statusActive: "アクティブ", matricesTitle: "マトリックスとレイヤー",
+      rightPanelTitle: "⚡ YKOS ソリューション＆インデックス",
+      rightPanelDesc: "* 右パネルのソリューションをクリックするとマトリックスに切り替わります。",
+      solutions: {
+        gobeklitepe: "📜 ギョベクリ・テペ T柱 YKOS 解読",
+        etrusk: "📜 エトルリア・レムノス碑文＆プロト・ターキック照合",
+        kulliyat: "📚 YKOS 全11巻全集＆シンボルカタログ"
+      },
+      engineText: "ライブエンジン接続", backToHome: "✖ ホームへ戻る", moduleTitle: "YKOS モジュール",
+      searchResultsTitle: "🔍 検索結果", noResults: "該当する記録が見つかりません。",
+      nav: { kurumsal: "企業", metodoloji: "YKOS メソドロジー", kokHece: "根音節マトリックス", damgaAtlasi: "刻印アトラス", analizEngine: "解析エンジン", flowMap: "移動・ルートマップ", kulliyat: "全集・出版物", dijitalArsiv: "デジタルアーカイブ" },
+      stats: ["国家", "研究", "刻印", "岩刻", "碑文", "光源", "画像", "地図"],
+      labels: { phonetic: "音素根", semantic: "意味論レイヤー", anatolian: "アナトリアの焦点", asian: "アジアライン", coherence: "整合性", rootPrefix: "根", category: "カテゴリ", location: "古代中心地" },
+      catalog: { all: "すべて", stamps: "刻印", petroglyphs: "岩刻", inspect: "詳細" },
+      analysis: { title: "YKOS アルゴリズム解読エンジン", geometryTab: "📐 幾何学ベクトル", directionTab: "🏹 ベクトル流", phoneticTab: "𐰸 音声マッチング", confidence: "解読精度" },
+      map: { title: "古代移動ルートマップ", route1: "アナトリア ➔ アジア", route2: "アナトリア ➔ ヨーロッパ", origin: "起点", destination: "目的地", stampsTransferred: "移動した刻印" },
+      heceDetails: {
+        OK: { meaning: "方向、上昇、結合", anadolu: "ギョベクリ・テペ", asya: "オルホンライン" },
+        AT: { meaning: "移動、進歩", anadolu: "アラジャホユック", asya: "アルタイ盆地" },
+        ER: { meaning: "存在、アイデンティティ", anadolu: "ハトゥシャ", asya: "イシク・クル" },
+        EL: { meaning: "共同体、統一", anadolu: "ヤズルカヤ", asya: "タラス盆地" }
+      }
+    },
+    IT: {
+      flag: "🇮🇹", label: "Italiano",
+      title: "SISTEMA INFORMATIVO YKOS", subtitle: "Database Algoritmico Interdisciplinare di Cultura e Lingua",
+      searchPlaceholder: "🔍 Cerca sigillo, radice, paese, centro antico...",
+      systemStatus: "Stato del Sistema", statusActive: "ATTIVO", matricesTitle: "MATRICI E LIVELLI",
+      rightPanelTitle: "⚡ SOLUZIONI E INDICI YKOS",
+      rightPanelDesc: "* Clicca sulle soluzioni per passare alle matrici di lettura.",
+      solutions: {
+        gobeklitepe: "📜 Lettura YKOS del Pilastro T di Gobeklitepe",
+        etrusk: "📜 Iscrizione Etrusca di Lemno & Corrispondenza",
+        kulliyat: "📚 Catalogo dei Simboli YKOS in 11 Volumi"
+      },
+      engineText: "Connessione Motore Live", backToHome: "✖ Home Page", moduleTitle: "MODULO YKOS",
+      searchResultsTitle: "🔍 Risultati della Ricerca", noResults: "Nessun risultato trovato.",
+      nav: { kurumsal: "AZIENDALE", metodoloji: "METODOLOGIA YKOS", kokHece: "MATRICE SILLABICA", damgaAtlasi: "ATLANTE DEI SIGILLI", analizEngine: "MOTORE DI ANALISI", flowMap: "MAPPA DI MIGRAZIONE", kulliyat: "OPERE COMPLETE", dijitalArsiv: "ARCHIVIO DIGITALE" },
+      stats: ["Paesi", "Ricerche", "Sigilli", "Petroglifi", "Iscrizioni", "Fonti", "Immagini", "Atlanti"],
+      labels: { phonetic: "Radice Fonetica", semantic: "Livello Semantico", anatolian: "Foco Anatolico", asian: "Linea Asiatica", coherence: "Coerenza Matriciale", rootPrefix: "Radice", category: "Categoria", location: "Centro Antico" },
+      catalog: { all: "Tutti", stamps: "Sigilli", petroglyphs: "Petroglifi", inspect: "Ispeziona" },
+      analysis: { title: "Motore di Lettura Algoritmica YKOS", geometryTab: "📐 Vettore Geometrico", directionTab: "🏹 Flusso Vettoriale", phoneticTab: "𐰸 Matrice Fonetica", confidence: "Precisione" },
+      map: { title: "Mappa delle Migrazioni Antiche", route1: "Anatolia ➔ Asia", route2: "Anatolia ➔ Europa", origin: "Origine", destination: "Destinazione", stampsTransferred: "Sigilli Trasferiti" },
+      heceDetails: {
+        OK: { meaning: "Direzione, Ascensione, Connessione", anadolu: "Gobeklitepe", asya: "Linea Orkhon" },
+        AT: { meaning: "Movimento, Progresso", anadolu: "Alacahoyuk", asya: "Bacino Altai" },
+        ER: { meaning: "Esistenza, Identità", anadolu: "Hattusa", asya: "Issyk Kul" },
+        EL: { meaning: "Comunità, Unità", anadolu: "Yazilikaya", asya: "Bacino Talas" }
+      }
+    },
+    ES: {
+      flag: "🇪🇸", label: "Español",
+      title: "SISTEMA DE INFORMACIÓN YKOS", subtitle: "Base de Datos Algorítmica Interdisciplinaria de Cultura y Lengua",
+      searchPlaceholder: "🔍 Buscar sello, raíz, país, centro antiguo...",
+      systemStatus: "Estado del Sistema", statusActive: "ACTIVO", matricesTitle: "MATRICES Y CAPAS",
+      rightPanelTitle: "⚡ SOLUCIONES E ÍNDICES YKOS",
+      rightPanelDesc: "* Haga clic en las soluciones para pasar directamente a las matrices.",
+      solutions: {
+        gobeklitepe: "📜 Lectura YKOS del Pilar T de Gobeklitepe",
+        etrusk: "📜 Inscripción Etrusca de Lemnos y Coincidencia",
+        kulliyat: "📚 Catálogo de Símbolos YKOS en 11 Volúmenes"
+      },
+      engineText: "Conexión Motor en Vivo", backToHome: "✖ Inicio", moduleTitle: "MÓDULO YKOS",
+      searchResultsTitle: "🔍 Resultados de Búsqueda", noResults: "No se encontraron registros.",
+      nav: { kurumsal: "CORPORATIVO", metodoloji: "METODOLOGÍA YKOS", kokHece: "MATRIZ DE RAÍZ", damgaAtlasi: "ATLAS DE SELLOS", analizEngine: "MOTOR DE ANÁLISIS", flowMap: "MAPA DE MIGRACIÓN", kulliyat: "OBRAS COMPLETAS", dijitalArsiv: "ARCHIVOS DIGITALES" },
+      stats: ["Países", "Investigaciones", "Sellos", "Petroglifos", "Inscripciones", "Fuentes", "Imágenes", "Atlas"],
+      labels: { phonetic: "Raíz Fonética", semantic: "Capa Semántica", anatolian: "Foco Anatolio", asian: "Línea Asiática", coherence: "Coherencia de Matriz", rootPrefix: "Raíz", category: "Categoría", location: "Centro Antiguo" },
+      catalog: { all: "Todos", stamps: "Sellos", petroglyphs: "Petroglifos", inspect: "Inspeccionar" },
+      analysis: { title: "Motor de Lectura Algorítmica YKOS", geometryTab: "📐 Vector Geométrico", directionTab: "🏹 Flujo Vectorial", phoneticTab: "𐰸 Matriz Fonética", confidence: "Precisión" },
+      map: { title: "Mapa de Migración Antigua", route1: "Anatolia ➔ Asia", route2: "Anatolia ➔ Europa", origin: "Origen", destination: "Destino", stampsTransferred: "Sellos Transferidos" },
+      heceDetails: {
+        OK: { meaning: "Dirección, Ascensión, Conexión", anadolu: "Gobeklitepe", asya: "Línea Orkhon" },
+        AT: { meaning: "Movimiento, Progreso", anadolu: "Alacahoyuk", asya: "Cuenca Altai" },
+        ER: { meaning: "Existencia, Identidad", anadolu: "Hattusa", asya: "Issyk Kul" },
+        EL: { meaning: "Comunidad, Unidad", anadolu: "Yazilikaya", asya: "Cuenca Talas" }
+      }
+    },
+    AR: {
+      flag: "🇸🇦", label: "العربية",
+      title: "نظام المعلومات YKOS", subtitle: "قاعدة بيانات ثقافة ولغة خوارزمية متعددة التخصصات",
+      searchPlaceholder: "🔍 البحث عن الختم، الجذر، الدولة، المركز القديم...",
+      systemStatus: "حالة النظام", statusActive: "نشط", matricesTitle: "المصفوفات والطبقات",
+      rightPanelTitle: "⚡ حلول ومؤشرات YKOS",
+      rightPanelDesc: "* انقر على الحلول في اللوحة اليمنى للانتقال مباشرة إلى مصفوفات القراءة.",
+      solutions: {
+        gobeklitepe: "📜 قراءة YKOS لعمود T في جوبيكلي تبه",
+        etrusk: "📜 نقش ليمنوس الإتروسكي ومطابقة اللغة التركية القديمة",
+        kulliyat: "📚 كتيّب رموز وآثار YKOS في 11 مجلداً"
+      },
+      engineText: "اتصال المحرك المباشر", backToHome: "✖ الصفحة الرئيسية", moduleTitle: "وحدة YKOS",
+      searchResultsTitle: "🔍 نتائج البحث المباشر", noResults: "لم يتم العثور على سجلات مطابقة.",
+      nav: { kurumsal: "المؤسسية", metodoloji: "منهجية YKOS", kokHece: "مصفوفة الجذر", damgaAtlasi: "أطلس الأختام", analizEngine: "محرك التحليل", flowMap: "خريطة الهجرة", kulliyat: "الآثار الكاملة", dijitalArsiv: "الأرشيف الرقمي" },
+      stats: ["الدول", "الأبحاث", "الأختام", "النقوش الصخرية", "النقوش", "المصادر", "الصور", "الأطالس"],
+      labels: { phonetic: "الجذر الصوتي", semantic: "الطبقة الدلالية", anatolian: "المركز الأناضولي", asian: "الخط الآسيوي", coherence: "اتساق المصفوفة", rootPrefix: "الجذر", category: "الفئة", location: "المركز القديم" },
+      catalog: { all: "الكل", stamps: "الأختام", petroglyphs: "النقوش", inspect: "معاينة" },
+      analysis: { title: "محرك القراءة الخوارزمية YKOS", geometryTab: "📐 المتجه الهندسي", directionTab: "🏹 تدفق المتجهات", phoneticTab: "𐰸 مصفوفة الصوت", confidence: "دقة القراءة" },
+      map: { title: "خريطة الهجرة القديمة", route1: "الأناضول ➔ آسيا", route2: "الأناضول ➔ أوروبا", origin: "المركز", destination: "الوجهة", stampsTransferred: "الأختام المنقولة" },
+      heceDetails: {
+        OK: { meaning: "الاتجاه، الصعود، الاتصال", anadolu: "جوبيكلي تبه", asya: "خط أورخون" },
+        AT: { meaning: "الحركة، التقدم", anadolu: "ألاجاهويوك", asya: "حوض التاي" },
+        ER: { meaning: "الوجود، الهوية", anadolu: "حاتوشا", asya: "إيسيك كول" },
+        EL: { meaning: "المجتمع، الوحدة", anadolu: "يازيلي كايا", asya: "حوض طلاس" }
+      }
+    },
+    PT: {
+      flag: "🇵🇹", label: "Português",
+      title: "SISTEMA DE INFORMAÇÃO YKOS", subtitle: "Banco de Dados Algorítmico Interdisciplinar de Cultura e Língua",
+      searchPlaceholder: "🔍 Pesquisar selo, sílaba, país, centro antigo...",
+      systemStatus: "Status do Sistema", statusActive: "ATIVO", matricesTitle: "MATRIZES E CAMADAS",
+      rightPanelTitle: "⚡ SOLUÇÕES E ÍNDICES YKOS",
+      rightPanelDesc: "* Clique nas soluções para ir diretamente às matrizes de leitura.",
+      solutions: {
+        gobeklitepe: "📜 Leitura YKOS do Pilar T de Gobeklitepe",
+        etrusk: "📜 Inscrição Etrusca de Lemnos e Correspondência",
+        kulliyat: "📚 Catálogo de Símbolos YKOS em 11 Volumes"
+      },
+      engineText: "Conexão do Motor Ao Vivo", backToHome: "✖ Início", moduleTitle: "MÓDULO YKOS",
+      searchResultsTitle: "🔍 Resultados da Pesquisa", noResults: "Nenhum registro encontrado.",
+      nav: { kurumsal: "CORPORATIVO", metodoloji: "METODOLOGIA YKOS", kokHece: "MATRIZ DE RAÍZ", damgaAtlasi: "ATLAS DE SELOS", analizEngine: "MOTOR DE ANÁLISE", flowMap: "MAPA DE MIGRAÇÃO", kulliyat: "OBRAS COMPLETAS", dijitalArsiv: "ARQUIVO DIGITAL" },
+      stats: ["Países", "Pesquisas", "Selos", "Petróglifos", "Inscrições", "Fontes", "Imagens", "Atlasses"],
+      labels: { phonetic: "Raiz Fonética", semantic: "Camada Semântica", anatolian: "Foco Anatólio", asian: "Linha Asiática", coherence: "Coerência da Matriz", rootPrefix: "Raiz", category: "Categoria", location: "Centro Antigo" },
+      catalog: { all: "Todos", stamps: "Selos", petróglifos: "Petróglifos", inspect: "Inspecionar" },
+      analysis: { title: "Motor de Leitura Algorítmica YKOS", geometryTab: "📐 Vetor Geométrico", directionTab: "🏹 Fluxo Vetorial", phoneticTab: "𐰸 Matriz Fonética", confidence: "Precisão" },
+      map: { title: "Mapa de Migração Antiga", route1: "Anatólia ➔ Ásia", route2: "Anatólia ➔ Europa", origin: "Origem", destination: "Destino", stampsTransferred: "Selos Transferidos" },
+      heceDetails: {
+        OK: { meaning: "Direção, Ascensão, Conexão", anadolu: "Gobeklitepe", asya: "Linha Orkhon" },
+        AT: { meaning: "Movimento, Progresso", anadolu: "Alacahoyuk", asya: "Bacia Altai" },
+        ER: { meaning: "Existência, Identidade", anadolu: "Hattusa", asya: "Issyk Kul" },
+        EL: { meaning: "Comunidade, Unidade", anadolu: "Yazilikaya", asya: "Bacia Talas" }
       }
     }
   };
 
-  const t = i18n[currentLang] || i18n.EN;
+  const t = i18n[currentLang] || i18n.TR;
 
-  // SAĞ PANEL: CANLI ÇÖZÜMLEME MATRİSLERİ VE KÜLLİYAT DİZİNİ
   const solutionsData = {
     YAZIT_01: {
-      title: "Göbeklitepe T-Sütunu YKOS Çözümlemesi",
+      title: t.solutions.gobeklitepe,
       stampsUsed: "OK (𐰸) + BAL (🗿) + AT (𐰡)",
       decipheredText: "Kök Ok-Er Yayılım Aksı / Güneş Yolu",
       method: "YKOS Geometrik & Fonetik Katman Analizi",
       status: "TAMAMLANDI (%99.8)"
     },
     YAZIT_02: {
-      title: "Etrüsk Lemnos Yazıtı & Anadolu Bağlantısı",
+      title: t.solutions.etrusk,
       stampsUsed: "EL (𐰠) + KIN (⚔️) + ER (𐰼)",
       decipheredText: "El-Er İl Yönetimi ve Birlik Andı",
       method: "Etrüsk - Ön Türkçe Fonetik Matrisi",
@@ -229,13 +441,19 @@ export default function YKOSAnadoluEvrenselPano() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center", marginBottom: "10px" }}>
           <div></div>
 
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "3px" }}>
+          {/* LOGO VE BAŞLIK GRUBU */}
+          <div 
+            onClick={handleResetToHome}
+            style={{ 
+              display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "3px",
+              cursor: "pointer", userSelect: "none"
+            }}
+          >
             <div 
-              onClick={() => setActiveMatrix(null)}
               style={{
                 border: "1.5px solid #d4af37", borderRadius: "50%", padding: "4px 12px", fontSize: "12px",
-                fontWeight: "bold", color: "#d4af37", backgroundColor: "#0f0d08", boxShadow: "0 0 10px rgba(212, 175, 55, 0.25)",
-                cursor: "pointer", width: "fit-content"
+                fontWeight: "bold", color: "#d4af37", backgroundColor: "#0f0d08", boxShadow: "0 0 10px rgba(212, 175, 55, 0.3)",
+                transition: "transform 0.2s ease"
               }}
             >
               YKOS
@@ -251,6 +469,7 @@ export default function YKOSAnadoluEvrenselPano() {
             </div>
           </div>
 
+          {/* 10 DİLLİ SEÇİM AÇILIR MENÜSÜ */}
           <div style={{ textAlign: "right", position: "relative" }}>
             <button
               onClick={() => setShowLangMenu(!showLangMenu)}
@@ -260,7 +479,7 @@ export default function YKOSAnadoluEvrenselPano() {
                 display: "inline-flex", alignItems: "center", gap: "6px"
               }}
             >
-              <span>{t.flag}</span>
+              <span>{i18n[currentLang]?.flag || "🇹🇷"}</span>
               <span>{currentLang}</span>
               <span style={{ fontSize: "8px" }}>▼</span>
             </button>
@@ -269,7 +488,7 @@ export default function YKOSAnadoluEvrenselPano() {
               <div style={{
                 position: "absolute", right: 0, top: "35px", backgroundColor: "#0d0c08",
                 border: "1.5px solid #d4af37", borderRadius: "8px", boxShadow: "0 0 15px rgba(0,0,0,0.9)",
-                zIndex: 100, display: "grid", gridTemplateColumns: "1fr", minWidth: "150px", maxHeight: "320px", overflowY: "auto"
+                zIndex: 100, display: "grid", gridTemplateColumns: "1fr", minWidth: "160px", maxHeight: "320px", overflowY: "auto"
               }}>
                 {Object.keys(i18n).map((langKey) => (
                   <button
@@ -290,16 +509,18 @@ export default function YKOSAnadoluEvrenselPano() {
           </div>
         </div>
 
+        {/* MENÜ GEÇİŞLERİ */}
         <nav style={{ display: "flex", justifyContent: "center", gap: "6px", borderTop: "1px solid #332a15", paddingTop: "8px" }}>
           {navMenuItems.map((item) => (
             <button
               key={item.id}
-              onClick={() => setActiveMatrix(item.id)}
+              onClick={() => setActiveMatrix(activeMatrix === item.id ? null : item.id)}
               style={{
                 background: activeMatrix === item.id ? "#2a220d" : "#110f0a",
-                border: activeMatrix === item.id ? "1px solid #d4af37" : "1px solid #332a15",
+                border: activeMatrix === item.id ? "1.5px solid #d4af37" : "1px solid #332a15",
                 color: activeMatrix === item.id ? "#d4af37" : "#bbb",
-                padding: "5px 12px", borderRadius: "5px", cursor: "pointer", fontSize: "10.5px", fontWeight: "bold", letterSpacing: "0.6px"
+                padding: "6px 14px", borderRadius: "5px", cursor: "pointer", fontSize: "10.5px", fontWeight: "bold", letterSpacing: "0.6px",
+                boxShadow: activeMatrix === item.id ? "0 0 8px rgba(212, 175, 55, 0.3)" : "none"
               }}
             >
               {item.label}
@@ -308,7 +529,7 @@ export default function YKOSAnadoluEvrenselPano() {
         </nav>
       </header>
 
-      {/* 2. ARAMA BARI */}
+      {/* 2. CANLI ARAMA BARI */}
       <div style={{ marginBottom: "12px", position: "relative" }}>
         <input
           type="text"
@@ -378,117 +599,37 @@ export default function YKOSAnadoluEvrenselPano() {
         </div>
       </div>
 
-      {/* 4. ANA SAYFA ALT MATRİS VE SAĞ CANLI ÇÖZÜMLEME PANOLARI */}
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "12px", marginBottom: "12px" }}>
-        
-        {/* SOL MATRİS SEÇENEKLERİ */}
-        <div style={{ border: "1.5px solid #8c7126", borderRadius: "10px", backgroundColor: "#0a0a0a", padding: "18px", display: "flex", flexDirection: "column", gap: "10px" }}>
-          <h3 style={{ margin: 0, color: "#d4af37", fontSize: "15px", letterSpacing: "1px" }}>{t.matricesTitle}</h3>
-          
-          <div onClick={() => setActiveMatrix("KOK_HECE")} style={{ color: activeMatrix === "KOK_HECE" ? "#d4af37" : "#fff", fontWeight: "bold", cursor: "pointer", fontSize: "14px", display: "flex", alignItems: "center", gap: "8px" }}>
-            ▶ 🔤 {t.nav.kokHece}
-          </div>
-
-          <div onClick={() => setActiveMatrix("DAMGA_ATLASI")} style={{ color: activeMatrix === "DAMGA_ATLASI" ? "#d4af37" : "#d4af37", fontWeight: "bold", cursor: "pointer", fontSize: "14px", display: "flex", alignItems: "center", gap: "8px" }}>
-            ▶ 🗺️ {t.nav.damgaAtlasi}
-          </div>
-
-          <div onClick={() => setActiveMatrix("ANALIZ_ENGINE")} style={{ color: activeMatrix === "ANALIZ_ENGINE" ? "#d4af37" : "#fff", fontWeight: "bold", cursor: "pointer", fontSize: "14px", display: "flex", alignItems: "center", gap: "8px" }}>
-            ▶ 🔬 {t.nav.analizEngine}
-          </div>
-
-          <div onClick={() => setActiveMatrix("FLOW_MAP")} style={{ color: activeMatrix === "FLOW_MAP" ? "#d4af37" : "#fff", fontWeight: "bold", cursor: "pointer", fontSize: "14px", display: "flex", alignItems: "center", gap: "8px" }}>
-            ▶ 🌍 {t.nav.flowMap}
-          </div>
-
-          <div onClick={() => setActiveMatrix("DIJITAL_ARSIV")} style={{ color: activeMatrix === "DIJITAL_ARSIV" ? "#d4af37" : "#fff", fontWeight: "bold", cursor: "pointer", fontSize: "14px", display: "flex", alignItems: "center", gap: "8px" }}>
-            ▶ 📚 {t.nav.dijitalArsiv}
-          </div>
-          
-          {data && (
-            <div style={{ marginTop: "auto", paddingTop: "8px", borderTop: "1px solid #332a15", fontSize: "10.5px", color: "#0f0" }}>
-              ⚡ {t.engineText} (Tick): {data.tick} | Flux: {data.quantumFlux}
-            </div>
-          )}
-        </div>
-
-        {/* SAĞ PANEL: CANLI ÇÖZÜMLER VE İNDEKSLER (GÖRÜNÜR KILINDI) */}
-        <div style={{ border: "1.5px solid #8c7126", borderRadius: "10px", backgroundColor: "#0a0a0a", padding: "18px", display: "flex", flexDirection: "column", gap: "10px" }}>
-          <h3 style={{ margin: 0, color: "#d4af37", fontSize: "13px", letterSpacing: "0.8px" }}>{t.rightPanelTitle}</h3>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-            <button
-              onClick={() => { setSelectedSolution("YAZIT_01"); setActiveMatrix("ANALIZ_ENGINE"); }}
-              style={{ padding: "10px", borderRadius: "6px", border: "1px solid #554218", backgroundColor: "#12100b", color: "#d4af37", fontWeight: "bold", cursor: "pointer", textAlign: "left", fontSize: "11px" }}
-            >
-              📜 Göbeklitepe T-Sütunu YKOS Okuması
-            </button>
-
-            <button
-              onClick={() => { setSelectedSolution("YAZIT_02"); setActiveMatrix("ANALIZ_ENGINE"); }}
-              style={{ padding: "10px", borderRadius: "6px", border: "1px solid #554218", backgroundColor: "#12100b", color: "#d4af37", fontWeight: "bold", cursor: "pointer", textAlign: "left", fontSize: "11px" }}
-            >
-              📜 Etrüsk Lemnos Kitabesi & Ön Türkçe Eşleşmesi
-            </button>
-
-            <button
-              onClick={() => setActiveMatrix("KULLIYAT")}
-              style={{ padding: "10px", borderRadius: "6px", border: "1px solid #554218", backgroundColor: "#12100b", color: "#aaa", fontWeight: "bold", cursor: "pointer", textAlign: "left", fontSize: "11px" }}
-            >
-              📚 YKOS 11 Ciltlik Külliyat ve Sembol Kataloğu
-            </button>
-          </div>
-
-          <div style={{ marginTop: "auto", padding: "8px", backgroundColor: "#111", border: "1px solid #332a15", borderRadius: "6px", fontSize: "10px", color: "#888" }}>
-            * Sağ paneldeki çözümlere basarak doğrudan dinamik okuma matrislerine geçebilirsiniz.
-          </div>
-        </div>
-
-      </div>
-
-      {/* 5. AÇILIR MODÜL PANELİ */}
+      {/* 4. AÇILIR MODÜL PANELİ */}
       {activeMatrix && (
         <div style={{ 
           border: "2px solid #d4af37", borderRadius: "10px", backgroundColor: "#0d0c08", padding: "18px",
-          boxShadow: "0 0 20px rgba(212, 175, 55, 0.2)"
+          boxShadow: "0 0 20px rgba(212, 175, 55, 0.2)", marginBottom: "12px"
         }}>
-          
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", borderBottom: "1.5px solid #554218", paddingBottom: "10px" }}>
-            <h2 style={{ margin: 0, color: "#d4af37", fontSize: "17px", letterSpacing: "1px" }}>
+            <h2 style={{ margin: 0, color: "#d4af37", fontSize: "16px", letterSpacing: "1px" }}>
               📂 {t.moduleTitle}: <span style={{ color: "#fff" }}>{activeMatrix}</span>
             </h2>
-
-            <button
-              onClick={() => setActiveMatrix(null)}
-              style={{
-                padding: "5px 12px", borderRadius: "5px", border: "1px solid #d4af37",
-                backgroundColor: "#1f190a", color: "#d4af37", fontWeight: "bold", cursor: "pointer", fontSize: "11px"
-              }}
-            >
-              {t.backToHome}
+            <button onClick={() => setActiveMatrix(null)} style={{ padding: "5px 12px", borderRadius: "5px", border: "1px solid #d4af37", backgroundColor: "#1f190a", color: "#d4af37", fontWeight: "bold", cursor: "pointer", fontSize: "11px" }}>
+              ✖ {t.backToHome}
             </button>
           </div>
 
-          {/* KÖK HECE MATRİSİ */}
+          {activeMatrix === "METODOLOJI" && (
+            <div style={{ padding: "10px", color: "#ddd", fontSize: "13px", lineHeight: "1.6" }}>
+              <h3 style={{ color: "#d4af37", marginTop: 0 }}>YKOS Metodolojisi ve Okuma Sistematiği</h3>
+              <p>Yaşar Kaba Okuma Sistemi (YKOS); kadim yazıtlardaki sembol, damga ve petroglifleri kök hece matrisleri ve geometrik akslar üzerinden çözümleyen disiplinler arası bir analiz modelidir.</p>
+            </div>
+          )}
+
           {activeMatrix === "KOK_HECE" && (
             <div>
               <div style={{ display: "flex", gap: "8px", marginBottom: "15px" }}>
                 {Object.keys(kokHeceVerileri).map((hece) => (
-                  <button
-                    key={hece}
-                    onClick={() => setSelectedHece(hece)}
-                    style={{
-                      padding: "7px 16px", borderRadius: "5px",
-                      border: selectedHece === hece ? "1.5px solid #d4af37" : "1px solid #332a15",
-                      backgroundColor: selectedHece === hece ? "#2a220d" : "#111",
-                      color: selectedHece === hece ? "#d4af37" : "#aaa", fontWeight: "bold", cursor: "pointer", fontSize: "12px"
-                    }}
-                  >
+                  <button key={hece} onClick={() => setSelectedHece(hece)} style={{ padding: "7px 16px", borderRadius: "5px", border: selectedHece === hece ? "1.5px solid #d4af37" : "1px solid #332a15", backgroundColor: selectedHece === hece ? "#2a220d" : "#111", color: selectedHece === hece ? "#d4af37" : "#aaa", fontWeight: "bold", cursor: "pointer", fontSize: "12px" }}>
                     {t.labels.rootPrefix}: {hece}
                   </button>
                 ))}
               </div>
-
               <div style={{ backgroundColor: "#050505", border: "1px solid #554218", borderRadius: "8px", padding: "16px" }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "16px", alignItems: "center" }}>
                   <div style={{ textAlign: "center", background: "#14120b", padding: "20px", borderRadius: "8px", border: "1.5px solid #d4af37" }}>
@@ -496,7 +637,6 @@ export default function YKOSAnadoluEvrenselPano() {
                     <div style={{ fontSize: "18px", fontWeight: "bold", color: "#d4af37" }}>[{currentHece.hece}]</div>
                     <div style={{ fontSize: "9.5px", color: "#888", marginTop: "4px" }}>YKOS Matris Kodu</div>
                   </div>
-
                   <div style={{ display: "flex", flexDirection: "column", gap: "8px", fontSize: "13px" }}>
                     <div><strong style={{ color: "#d4af37" }}>{t.labels.phonetic}:</strong> <span style={{ color: "#fff" }}>{currentHece.fonetikKok}</span></div>
                     <div><strong style={{ color: "#d4af37" }}>{t.labels.semantic}:</strong> <span style={{ color: "#ddd" }}>{currentHeceDetail.meaning}</span></div>
@@ -509,14 +649,35 @@ export default function YKOSAnadoluEvrenselPano() {
             </div>
           )}
 
-          {/* 3. MODÜL: OKUMA & ANALİZ MOTORU VE YAZIT ÇÖZÜMLEMELERİ */}
+          {(activeMatrix === "DAMGA_ATLASI" || activeMatrix === "PETROGLİFLER" || activeMatrix === "PETROGLYPHS") && (
+            <div>
+              <div style={{ display: "flex", gap: "8px", marginBottom: "15px" }}>
+                <button onClick={() => setCatalogFilter("ALL")} style={{ padding: "6px 14px", borderRadius: "5px", border: catalogFilter === "ALL" ? "1.5px solid #d4af37" : "1px solid #332a15", backgroundColor: catalogFilter === "ALL" ? "#2a220d" : "#111", color: catalogFilter === "ALL" ? "#d4af37" : "#aaa", fontSize: "11px", fontWeight: "bold", cursor: "pointer" }}>🌐 {t.catalog.all} ({catalogItems.length})</button>
+                <button onClick={() => setCatalogFilter("DAMGA")} style={{ padding: "6px 14px", borderRadius: "5px", border: catalogFilter === "DAMGA" ? "1.5px solid #d4af37" : "1px solid #332a15", backgroundColor: catalogFilter === "DAMGA" ? "#2a220d" : "#111", color: catalogFilter === "DAMGA" ? "#d4af37" : "#aaa", fontSize: "11px", fontWeight: "bold", cursor: "pointer" }}>🔷 {t.catalog.stamps}</button>
+                <button onClick={() => setCatalogFilter("PETROGLIF")} style={{ padding: "6px 14px", borderRadius: "5px", border: catalogFilter === "PETROGLIF" ? "1.5px solid #d4af37" : "1px solid #332a15", backgroundColor: catalogFilter === "PETROGLIF" ? "#2a220d" : "#111", color: catalogFilter === "PETROGLIF" ? "#d4af37" : "#aaa", fontSize: "11px", fontWeight: "bold", cursor: "pointer" }}>🗿 {t.catalog.petroglyphs}</button>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "12px" }}>
+                {filteredCatalog.map((item) => (
+                  <div key={item.id} style={{ backgroundColor: "#050505", border: "1px solid #554218", borderRadius: "8px", padding: "12px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                    <div style={{ backgroundColor: "#14120b", border: "1px solid #332a15", borderRadius: "6px", height: "100px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "36px" }}>{item.icon}</div>
+                    <div>
+                      <div style={{ fontSize: "13px", fontWeight: "bold", color: "#d4af37" }}>{item.title}</div>
+                      <div style={{ fontSize: "10px", color: "#aaa", marginTop: "2px" }}>📍 {item.location}</div>
+                      <div style={{ fontSize: "10px", color: "#777", marginTop: "1px" }}>⏳ {item.period}</div>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "auto", paddingTop: "6px", borderTop: "1px dashed #222" }}>
+                      <span style={{ fontSize: "10px", color: "#0f0", fontWeight: "bold" }}>Kök: [{item.kok}]</span>
+                      <button onClick={() => setSelectedItemModal(item)} style={{ padding: "4px 8px", backgroundColor: "#1f190a", border: "1px solid #d4af37", color: "#d4af37", borderRadius: "4px", fontSize: "10px", fontWeight: "bold", cursor: "pointer" }}>🔍 {t.catalog.inspect}</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {activeMatrix === "ANALIZ_ENGINE" && (
             <div>
-              <div style={{ fontSize: "13px", color: "#d4af37", fontWeight: "bold", marginBottom: "12px" }}>
-                🔬 {t.analysis.title}
-              </div>
-
-              {/* SEÇİLİ YAZIT ÇÖZÜM BİLGİSİ */}
+              <div style={{ fontSize: "13px", color: "#d4af37", fontWeight: "bold", marginBottom: "12px" }}>🔬 {t.analysis.title}</div>
               {selectedSolution && (
                 <div style={{ backgroundColor: "#1a160d", border: "1px solid #d4af37", borderRadius: "6px", padding: "12px", marginBottom: "15px" }}>
                   <div style={{ fontSize: "11px", color: "#0f0", fontWeight: "bold" }}>⚡ AKTİF ÇÖZÜMLEME DİZİNİ:</div>
@@ -525,36 +686,18 @@ export default function YKOSAnadoluEvrenselPano() {
                   <div style={{ fontSize: "10px", color: "#aaa", marginTop: "2px" }}><strong>Kullanılan Damgalar:</strong> {solutionsData[selectedSolution].stampsUsed}</div>
                 </div>
               )}
-
               <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
                 {Object.keys(analysisData).map((key) => (
-                  <button
-                    key={key}
-                    onClick={() => setSelectedAnalyzeItem(key)}
-                    style={{
-                      padding: "8px 14px", borderRadius: "6px",
-                      border: selectedAnalyzeItem === key ? "1.5px solid #d4af37" : "1px solid #332a15",
-                      backgroundColor: selectedAnalyzeItem === key ? "#2a220d" : "#111",
-                      color: selectedAnalyzeItem === key ? "#d4af37" : "#aaa", fontSize: "11px", fontWeight: "bold", cursor: "pointer"
-                    }}
-                  >
+                  <button key={key} onClick={() => setSelectedAnalyzeItem(key)} style={{ padding: "8px 14px", borderRadius: "6px", border: selectedAnalyzeItem === key ? "1.5px solid #d4af37" : "1px solid #332a15", backgroundColor: selectedAnalyzeItem === key ? "#2a220d" : "#111", color: selectedAnalyzeItem === key ? "#d4af37" : "#aaa", fontSize: "11px", fontWeight: "bold", cursor: "pointer" }}>
                     {analysisData[key].icon} {analysisData[key].name}
                   </button>
                 ))}
               </div>
-
               <div style={{ display: "flex", gap: "6px", borderBottom: "1px solid #332a15", paddingBottom: "8px", marginBottom: "15px" }}>
-                <button onClick={() => setActiveAnalysisLayer("GEOMETRY")} style={{ padding: "6px 12px", background: activeAnalysisLayer === "GEOMETRY" ? "#1f190a" : "transparent", border: activeAnalysisLayer === "GEOMETRY" ? "1px solid #d4af37" : "none", color: activeAnalysisLayer === "GEOMETRY" ? "#d4af37" : "#888", borderRadius: "4px", cursor: "pointer", fontSize: "11px", fontWeight: "bold" }}>
-                  {t.analysis.geometryTab}
-                </button>
-                <button onClick={() => setActiveAnalysisLayer("DIRECTION")} style={{ padding: "6px 12px", background: activeAnalysisLayer === "DIRECTION" ? "#1f190a" : "transparent", border: activeAnalysisLayer === "DIRECTION" ? "1px solid #d4af37" : "none", color: activeAnalysisLayer === "DIRECTION" ? "#d4af37" : "#888", borderRadius: "4px", cursor: "pointer", fontSize: "11px", fontWeight: "bold" }}>
-                  {t.analysis.directionTab}
-                </button>
-                <button onClick={() => setActiveAnalysisLayer("PHONETIC")} style={{ padding: "6px 12px", background: activeAnalysisLayer === "PHONETIC" ? "#1f190a" : "transparent", border: activeAnalysisLayer === "PHONETIC" ? "1px solid #d4af37" : "none", color: activeAnalysisLayer === "PHONETIC" ? "#d4af37" : "#888", borderRadius: "4px", cursor: "pointer", fontSize: "11px", fontWeight: "bold" }}>
-                  {t.analysis.phoneticTab}
-                </button>
+                <button onClick={() => setActiveAnalysisLayer("GEOMETRY")} style={{ padding: "6px 12px", background: activeAnalysisLayer === "GEOMETRY" ? "#1f190a" : "transparent", border: activeAnalysisLayer === "GEOMETRY" ? "1px solid #d4af37" : "none", color: activeAnalysisLayer === "GEOMETRY" ? "#d4af37" : "#888", borderRadius: "4px", cursor: "pointer", fontSize: "11px", fontWeight: "bold" }}>{t.analysis.geometryTab}</button>
+                <button onClick={() => setActiveAnalysisLayer("DIRECTION")} style={{ padding: "6px 12px", background: activeAnalysisLayer === "DIRECTION" ? "#1f190a" : "transparent", border: activeAnalysisLayer === "DIRECTION" ? "1px solid #d4af37" : "none", color: activeAnalysisLayer === "DIRECTION" ? "#d4af37" : "#888", borderRadius: "4px", cursor: "pointer", fontSize: "11px", fontWeight: "bold" }}>{t.analysis.directionTab}</button>
+                <button onClick={() => setActiveAnalysisLayer("PHONETIC")} style={{ padding: "6px 12px", background: activeAnalysisLayer === "PHONETIC" ? "#1f190a" : "transparent", border: activeAnalysisLayer === "PHONETIC" ? "1px solid #d4af37" : "none", color: activeAnalysisLayer === "PHONETIC" ? "#d4af37" : "#888", borderRadius: "4px", cursor: "pointer", fontSize: "11px", fontWeight: "bold" }}>{t.analysis.phoneticTab}</button>
               </div>
-
               <div style={{ backgroundColor: "#050505", border: "1px solid #554218", borderRadius: "8px", padding: "18px" }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "20px", alignItems: "center" }}>
                   <div style={{ textAlign: "center", background: "#14120b", border: "1.5px solid #d4af37", borderRadius: "8px", padding: "25px", position: "relative" }}>
@@ -563,7 +706,6 @@ export default function YKOSAnadoluEvrenselPano() {
                     <div style={{ fontSize: "24px", color: "#d4af37", fontWeight: "bold" }}>[{currentAnalyze.symbolCode}]</div>
                     <div style={{ fontSize: "10px", color: "#888", marginTop: "4px" }}>YKOS Vektör Çözümlemesi</div>
                   </div>
-
                   <div style={{ display: "flex", flexDirection: "column", gap: "10px", fontSize: "13px" }}>
                     {activeAnalysisLayer === "GEOMETRY" && (
                       <>
@@ -596,37 +738,97 @@ export default function YKOSAnadoluEvrenselPano() {
             </div>
           )}
 
-          {/* DİĞER MODÜLLER (DAMGA ATLASI, FLOW MAP VB.) */}
-          {activeMatrix !== "KOK_HECE" && activeMatrix !== "ANALIZ_ENGINE" && (
-            <div style={{ textAlign: "center", padding: "30px 0", color: "#aaa" }}>
-              <div style={{ fontSize: "28px", marginBottom: "8px" }}>🏛️</div>
-              <h3 style={{ color: "#d4af37", margin: 0 }}>{activeMatrix}</h3>
-              <p style={{ fontSize: "12px", marginTop: "6px", color: "#888" }}>
-                YKOS disiplinler arası kültür ve dil veri tabanı indeksleri aktif taranmaktadır.
-              </p>
+          {activeMatrix === "FLOW_MAP" && (
+            <div>
+              <div style={{ fontSize: "13px", color: "#d4af37", fontWeight: "bold", marginBottom: "12px" }}>🌍 {t.map.title}</div>
+              <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
+                <button onClick={() => setSelectedRoute("ANATOLIA_ASIA")} style={{ padding: "8px 14px", borderRadius: "6px", border: selectedRoute === "ANATOLIA_ASIA" ? "1.5px solid #d4af37" : "1px solid #332a15", backgroundColor: selectedRoute === "ANATOLIA_ASIA" ? "#2a220d" : "#111", color: selectedRoute === "ANATOLIA_ASIA" ? "#d4af37" : "#aaa", fontSize: "11px", fontWeight: "bold", cursor: "pointer" }}>📍 {t.map.route1}</button>
+                <button onClick={() => setSelectedRoute("ANATOLIA_EUROPE")} style={{ padding: "8px 14px", borderRadius: "6px", border: selectedRoute === "ANATOLIA_EUROPE" ? "1.5px solid #d4af37" : "1px solid #332a15", backgroundColor: selectedRoute === "ANATOLIA_EUROPE" ? "#2a220d" : "#111", color: selectedRoute === "ANATOLIA_EUROPE" ? "#d4af37" : "#aaa", fontSize: "11px", fontWeight: "bold", cursor: "pointer" }}>📍 {t.map.route2}</button>
+              </div>
+              <div style={{ backgroundColor: "#050505", border: "1px solid #554218", borderRadius: "8px", padding: "18px" }}>
+                <div style={{ backgroundColor: "#0d0c08", border: "1.5px solid #d4af37", borderRadius: "8px", padding: "30px", marginBottom: "15px", textAlign: "center", position: "relative", overflow: "hidden" }}>
+                  <div style={{ position: "absolute", top: "10px", left: "10px", fontSize: "10px", color: "#0f0", border: "1px solid #0f0", padding: "2px 8px", borderRadius: "4px" }}>LIVE FLOW VECTOR</div>
+                  <div style={{ fontSize: "18px", fontWeight: "bold", color: "#d4af37", marginBottom: "15px" }}>{currentRoute.title}</div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", maxWidth: "600px", margin: "0 auto", padding: "20px 0" }}>
+                    <div style={{ border: "1px solid #60a5fa", borderRadius: "8px", padding: "12px", backgroundColor: "#0a192f", minWidth: "140px" }}>
+                      <div style={{ fontSize: "20px" }}>🏛️</div>
+                      <div style={{ fontSize: "11px", fontWeight: "bold", color: "#60a5fa" }}>ANADOLU</div>
+                      <div style={{ fontSize: "9px", color: "#aaa" }}>Merkez Odak</div>
+                    </div>
+                    <div style={{ flex: 1, height: "2px", backgroundColor: "#d4af37", position: "relative", margin: "0 15px", boxShadow: "0 0 10px #d4af37" }}><span style={{ position: "absolute", top: "-10px", left: "45%", fontSize: "14px" }}>➔ ➔ ➔</span></div>
+                    <div style={{ border: "1px solid #a855f7", borderRadius: "8px", padding: "12px", backgroundColor: "#1e102a", minWidth: "140px" }}>
+                      <div style={{ fontSize: "20px" }}>🏔️</div>
+                      <div style={{ fontSize: "11px", fontWeight: "bold", color: "#a855f7" }}>YAYILIM HAVZASI</div>
+                      <div style={{ fontSize: "9px", color: "#aaa" }}>Varış Noktası</div>
+                    </div>
+                  </div>
+                  <p style={{ fontSize: "11px", color: "#bbb", margin: "10px 0 0 0", fontStyle: "italic" }}>"{currentRoute.description}"</p>
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px", fontSize: "12px" }}>
+                  <div style={{ background: "#111", padding: "10px", borderRadius: "6px", border: "1px solid #332a15" }}><strong style={{ color: "#d4af37", display: "block", marginBottom: "3px" }}>{t.map.origin}:</strong><span style={{ color: "#60a5fa" }}>{currentRoute.origin}</span></div>
+                  <div style={{ background: "#111", padding: "10px", borderRadius: "6px", border: "1px solid #332a15" }}><strong style={{ color: "#d4af37", display: "block", marginBottom: "3px" }}>{t.map.destination}:</strong><span style={{ color: "#a855f7" }}>{currentRoute.destination}</span></div>
+                  <div style={{ background: "#111", padding: "10px", borderRadius: "6px", border: "1px solid #332a15" }}><strong style={{ color: "#d4af37", display: "block", marginBottom: "3px" }}>{t.map.stampsTransferred}:</strong><span style={{ color: "#0f0", fontWeight: "bold" }}>{currentRoute.stamps}</span></div>
+                </div>
+              </div>
             </div>
           )}
 
+          {(activeMatrix === "KULLIYAT" || activeMatrix === "DIJITAL_ARSIV" || activeMatrix === "KURUMSAL") && (
+            <div style={{ textAlign: "center", padding: "20px 0", color: "#aaa" }}>
+              <div style={{ fontSize: "28px", marginBottom: "8px" }}>📚</div>
+              <h3 style={{ color: "#d4af37", margin: 0 }}>YKOS 11 Ciltlik Akademik Külliyat ve Dijital Arşiv</h3>
+              <p style={{ fontSize: "12px", marginTop: "6px", color: "#888" }}>Küresel sembol sistemleri ve Ön Türkçe damga indeksleri taranmaktadır.</p>
+            </div>
+          )}
         </div>
       )}
 
+      {/* 5. ALT PANEL (SAĞ ALT ÇÖZÜMLEMELER %100 DİNAMİKLEŞTİRİLDİ) */}
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "12px", marginBottom: "12px" }}>
+        <div style={{ border: "1.5px solid #8c7126", borderRadius: "10px", backgroundColor: "#0a0a0a", padding: "18px", display: "flex", flexDirection: "column", gap: "12px" }}>
+          <h3 style={{ margin: 0, color: "#d4af37", fontSize: "15px", letterSpacing: "1px" }}>{t.matricesTitle}</h3>
+          <div onClick={() => setActiveMatrix(activeMatrix === "KOK_HECE" ? null : "KOK_HECE")} style={{ color: activeMatrix === "KOK_HECE" ? "#d4af37" : "#fff", fontWeight: "bold", cursor: "pointer", fontSize: "14px", display: "flex", alignItems: "center", gap: "8px" }}>▶ 🔤 {t.nav.kokHece}</div>
+          <div onClick={() => setActiveMatrix(activeMatrix === "DAMGA_ATLASI" ? null : "DAMGA_ATLASI")} style={{ color: activeMatrix === "DAMGA_ATLASI" ? "#d4af37" : "#fff", fontWeight: "bold", cursor: "pointer", fontSize: "14px", display: "flex", alignItems: "center", gap: "8px" }}>▶ 🗺️ {t.nav.damgaAtlasi}</div>
+          <div onClick={() => setActiveMatrix(activeMatrix === "ANALIZ_ENGINE" ? null : "ANALIZ_ENGINE")} style={{ color: activeMatrix === "ANALIZ_ENGINE" ? "#d4af37" : "#fff", fontWeight: "bold", cursor: "pointer", fontSize: "14px", display: "flex", alignItems: "center", gap: "8px" }}>▶ 🔬 {t.nav.analizEngine}</div>
+          <div onClick={() => setActiveMatrix(activeMatrix === "FLOW_MAP" ? null : "FLOW_MAP")} style={{ color: activeMatrix === "FLOW_MAP" ? "#d4af37" : "#fff", fontWeight: "bold", cursor: "pointer", fontSize: "14px", display: "flex", alignItems: "center", gap: "8px" }}>▶ 🌍 {t.nav.flowMap}</div>
+          <div onClick={() => setActiveMatrix(activeMatrix === "DIJITAL_ARSIV" ? null : "DIJITAL_ARSIV")} style={{ color: activeMatrix === "DIJITAL_ARSIV" ? "#d4af37" : "#fff", fontWeight: "bold", cursor: "pointer", fontSize: "14px", display: "flex", alignItems: "center", gap: "8px" }}>▶ 📚 {t.nav.dijitalArsiv}</div>
+          {data && (
+            <div style={{ marginTop: "auto", paddingTop: "8px", borderTop: "1px solid #332a15", fontSize: "10.5px", color: "#0f0" }}>⚡ {t.engineText} (Tick): {data.tick} | Flux: {data.quantumFlux}</div>
+          )}
+        </div>
+
+        {/* SAĞ PANEL DİNAMİK BAĞLANTI */}
+        <div style={{ border: "1.5px solid #8c7126", borderRadius: "10px", backgroundColor: "#0a0a0a", padding: "18px", display: "flex", flexDirection: "column", gap: "10px" }}>
+          <h3 style={{ margin: 0, color: "#d4af37", fontSize: "13.5px", letterSpacing: "0.8px" }}>{t.rightPanelTitle}</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <button onClick={() => { setSelectedSolution("YAZIT_01"); setActiveMatrix("ANALIZ_ENGINE"); }} style={{ padding: "10px", borderRadius: "6px", border: "1px solid #554218", backgroundColor: "#12100b", color: "#d4af37", fontWeight: "bold", cursor: "pointer", textAlign: "left", fontSize: "11px" }}>
+              {t.solutions.gobeklitepe}
+            </button>
+            <button onClick={() => { setSelectedSolution("YAZIT_02"); setActiveMatrix("ANALIZ_ENGINE"); }} style={{ padding: "10px", borderRadius: "6px", border: "1px solid #554218", backgroundColor: "#12100b", color: "#d4af37", fontWeight: "bold", cursor: "pointer", textAlign: "left", fontSize: "11px" }}>
+              {t.solutions.etrusk}
+            </button>
+            <button onClick={() => setActiveMatrix("KULLIYAT")} style={{ padding: "10px", borderRadius: "6px", border: "1px solid #554218", backgroundColor: "#12100b", color: "#aaa", fontWeight: "bold", cursor: "pointer", textAlign: "left", fontSize: "11px" }}>
+              {t.solutions.kulliyat}
+            </button>
+          </div>
+          <div style={{ marginTop: "auto", padding: "8px", backgroundColor: "#111", border: "1px solid #332a15", borderRadius: "6px", fontSize: "10px", color: "#888" }}>
+            {t.rightPanelDesc}
+          </div>
+        </div>
+      </div>
+
       {/* DETAY MODALI */}
       {selectedItemModal && (
-        <div style={{
-          position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.85)",
-          zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px"
-        }}>
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.85)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}>
           <div style={{ backgroundColor: "#0d0c08", border: "2px solid #d4af37", borderRadius: "10px", padding: "20px", maxWidth: "450px", width: "100%", boxShadow: "0 0 25px rgba(212,175,55,0.3)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", borderBottom: "1px solid #332a15", pb: "8px" }}>
               <h3 style={{ margin: 0, color: "#d4af37", fontSize: "16px" }}>🔍 YKOS Görsel Analiz</h3>
               <button onClick={() => setSelectedItemModal(null)} style={{ background: "none", border: "none", color: "#d4af37", fontSize: "16px", cursor: "pointer" }}>✖</button>
             </div>
-
             <div style={{ textAlign: "center", backgroundColor: "#14120b", border: "1px solid #554218", borderRadius: "8px", padding: "25px", marginBottom: "15px" }}>
               <div style={{ fontSize: "52px" }}>{selectedItemModal.icon}</div>
               <div style={{ fontSize: "22px", color: "#d4af37", fontWeight: "bold", marginTop: "8px" }}>[{selectedItemModal.code}]</div>
             </div>
-
             <div style={{ display: "flex", flexDirection: "column", gap: "8px", fontSize: "12px", color: "#ddd" }}>
               <div><strong style={{ color: "#d4af37" }}>Eser Adı:</strong> {selectedItemModal.title}</div>
               <div><strong style={{ color: "#d4af37" }}>{t.labels.category}:</strong> {selectedItemModal.type}</div>
@@ -634,13 +836,7 @@ export default function YKOSAnadoluEvrenselPano() {
               <div><strong style={{ color: "#d4af37" }}>{t.labels.location}:</strong> {selectedItemModal.location}</div>
               <div><strong style={{ color: "#d4af37" }}>Tarihlendirme:</strong> {selectedItemModal.period}</div>
             </div>
-
-            <button
-              onClick={() => setSelectedItemModal(null)}
-              style={{ width: "100%", marginTop: "15px", padding: "8px", backgroundColor: "#1f190a", border: "1px solid #d4af37", color: "#d4af37", fontWeight: "bold", borderRadius: "5px", cursor: "pointer" }}
-            >
-              Kapat
-            </button>
+            <button onClick={() => setSelectedItemModal(null)} style={{ width: "100%", marginTop: "15px", padding: "8px", backgroundColor: "#1f190a", border: "1px solid #d4af37", color: "#d4af37", fontWeight: "bold", borderRadius: "5px", cursor: "pointer" }}>Kapat</button>
           </div>
         </div>
       )}
