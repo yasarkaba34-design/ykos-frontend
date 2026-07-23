@@ -8,3 +8,48 @@ body {
   color: #fbbf24;
   font-family: 'Roboto Mono', monospace;
 }
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YKOS Semantic Lab</title>
+  <style>
+    /* Genel grid yapısı */
+    .cards-container {
+      display: grid;
+      grid-template-columns: 1fr; /* Mobilde tek sütun */
+      gap: 16px; /* Kartlar arası boşluk */
+      padding: 16px; /* Üst-alt ve yan padding */
+    }
+
+    /* Tablet ve üzeri için dengeli grid */
+    @media (min-width: 768px) {
+      .cards-container {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      }
+    }
+
+    /* Kartların genel stili */
+    .card {
+      width: 100%; /* Mobilde tam genişlik */
+      padding: 16px;
+      box-sizing: border-box;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    /* Atlas kartı için özel yükseklik */
+    .card.atlas {
+      min-height: 200px; /* Yüksekliği azaltılmış */
+      height: auto; /* İçeriğe göre esnek */
+    }
+
+    /* Veri durumları */
+    .status {
+      font-weight: bold;
+      color: #333;
+    }
+    .status.waiting {
+      color: #999;
+    }
+  </style>
+</head>

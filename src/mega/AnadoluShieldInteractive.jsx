@@ -7,6 +7,16 @@ import { sendCrossSignal } from "./CrossModuleRouter.js";
 export default function AnadoluShieldInteractive({ universe }) {
   const flow = readYKOSFlow();
 
+  // hyperState obje mi metin/sayı mı kontrol edip metne çevirelim
+  const hyperStateDisplay = typeof universe?.hyperState === "object"
+    ? (universe?.hyperState?.state || universe?.hyperState?.value || JSON.stringify(universe.hyperState))
+    : (universe?.hyperState ?? "Aktif");
+
+  // flow.layers.layerB obje mi metin mi kontrol edelim
+  const layerBDisplay = typeof flow?.layers?.layerB === "object"
+    ? (flow?.layers?.layerB?.name || flow?.layers?.layerB?.value || JSON.stringify(flow.layers.layerB))
+    : flow?.layers?.layerB;
+
   return (
     <div
       style={{
@@ -17,17 +27,23 @@ export default function AnadoluShieldInteractive({ universe }) {
         alignItems: "center",
         justifyContent: "center",
         color: "#ffaaaa",
-        fontSize: "20px"
+        fontSize: "18px"
       }}
     >
-      🛡 Anadolu Kalkanı — HyperState: {universe?.hyperState}
+      <div>🛡 Anadolu Kalkanı — HyperState: {hyperStateDisplay}</div>
+
       {flow && (
-        <p style={{ color: "#0f0", marginTop: "10px" }}>
-          Layer B: {flow.layers.layerB}
+        <p style={{ color: "#0f0", marginTop: "10px", fontSize: "14px" }}>
+          Layer B: {layerBDisplay}
         </p>
       )}
+
       <button
-        onClick={() => sendCrossSignal("goc", 2)}
+        type="button"
+        onClick={(e) => {
+          e.preventDefault();
+          sendCrossSignal("goc", 2);
+        }}
         style={{
           marginTop: "15px",
           padding: "8px 16px",
