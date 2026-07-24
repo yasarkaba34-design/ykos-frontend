@@ -1,55 +1,30 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 body {
   margin: 0;
-  background-color: #020617;
-  color: #fbbf24;
-  font-family: 'Roboto Mono', monospace;
+  background: #000;
+  color: #ffd700;
+  font-family: "Segoe UI", sans-serif;
 }
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YKOS Semantic Lab</title>
-  <style>
-    /* Genel grid yapısı */
-    .cards-container {
-      display: grid;
-      grid-template-columns: 1fr; /* Mobilde tek sütun */
-      gap: 16px; /* Kartlar arası boşluk */
-      padding: 16px; /* Üst-alt ve yan padding */
-    }
 
-    /* Tablet ve üzeri için dengeli grid */
-    @media (min-width: 768px) {
-      .cards-container {
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      }
-    }
+.ykos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 32px;
+  background: #111;
+}
 
-    /* Kartların genel stili */
-    .card {
-      width: 100%; /* Mobilde tam genişlik */
-      padding: 16px;
-      box-sizing: border-box;
-      border-radius: 8px;
-      background: #fff;
-    }
+.ykos-hero {
+  text-align: center;
+  padding: 80px 20px;
+}
 
-    /* Atlas kartı için özel yükseklik */
-    .card.atlas {
-      min-height: 200px; /* Yüksekliği azaltılmış */
-      height: auto; /* İçeriğe göre esnek */
-    }
+.ykos-section {
+  padding: 60px 40px;
+  border-top: 1px solid #333;
+}
 
-    /* Veri durumları */
-    .status {
-      font-weight: bold;
-      color: #333;
-    }
-    .status.waiting {
-      color: #999;
-    }
-  </style>
-</head>
+.ykos-footer {
+  text-align: center;
+  padding: 20px;
+  background: #111;
+}
