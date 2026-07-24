@@ -25,3 +25,8 @@ export default {
   YKOS_ROOTS,
   YKOS_ROOT_DETAILS,
 };
+import ResearcherEntry from "./pages/ResearcherEntry";
+import YKOSDashboard from "./pages/YKOSDashboard";
+
+<Route path="/" element={<ResearcherEntry />} />
+<Route path="/dashboard" element={<YKOSDashboard />} />

@@ -1,11 +1,5 @@
-// FILE: src/App.jsx
-import React from 'react';
-import YKOSAnadoluEvrenselPano from './mega/YKOSAnadoluEvrenselPano.jsx';
+import YKOSIntro from "./pages/YKOSIntro";
+import YKOSDashboard from "./pages/YKOSDashboard";
 
-export default function App() {
-  return (
-    <div style={{ backgroundColor: '#000', minHeight: '100vh', width: '100%' }}>
-      <YKOSAnadoluEvrenselPano />
-    </div>
-  );
-}
+<Route path="/" element={<YKOSIntro />} />
+<Route path="/dashboard" element={<YKOSDashboard />} />
