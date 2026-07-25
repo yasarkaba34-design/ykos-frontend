@@ -10,11 +10,16 @@ export default function YKOSDashboard() {
   const [clusters, setClusters] = useState({});
 
   useEffect(() => {
-    const apiKey ="AIzaSyDzvu66ZC5V3aH7LeY8gct_Uzyu7Gy-8mE";
-    const channelId = "UCxxxxxxxxxxxx";
+    // API Anahtarı .env dosyasından çekiliyor (Açık metin yazılmıyor!)
+    const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
+    const channelId = "UCxxxxxxxxxxxx"; // Kanal ID'nizi buraya yazın
 
     async function loadData() {
       try {
+        if (!apiKey) {
+          console.error(".env dosyasında VITE_GOOGLE_API_KEY bulunamadı!");
+          return;
+        }
         const index = await bulkIndexYouTubeChannel(apiKey, channelId);
         const grouped = clusterVideos(index);
         setClusters(grouped);
@@ -24,7 +29,7 @@ export default function YKOSDashboard() {
     }
 
     loadData();
-  }, []); // bağımlılık dizisi eklendi, uyarı kalkar
+  }, []); // Bileşen yüklendiğinde tek sefer çalışır
 
   return (
     <div style={{ padding: "20px", color: "white" }}>
