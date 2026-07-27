@@ -68,10 +68,3 @@ button {
   color: #d8a400;
   text-align: center;
 }
-
-@media (max-width: 760px) {
-  .app-main {
-    margin-left: 0;
-    padding: 12px;
-  }
-}

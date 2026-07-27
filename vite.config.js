@@ -3,7 +3,8 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  json: {
-    stringify: true
+  server: {
+    port: 3000,
+    strictPort: true // Port 3000 doluysa başka porta geçmesin, hata versin
   }
 })
