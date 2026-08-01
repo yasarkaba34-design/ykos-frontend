@@ -1,27 +1,46 @@
 import { useState } from "react";
-import MobileMenu from "./MobileMenu";
-import LangSwitch from "./LangSwitch";
+import "./Navbar.css";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <nav className="navbar">
-      <div className="logo-area">
-        <div className="logo">YKOS</div>
-        <div className="logo-line"></div>
+    <div className="navbar">
+
+      {/* ÜST BAR */}
+      <div className="navbar-top">
+
+        {/* Logo + Altın Çizgi */}
+        <div className="logo-area">
+          <div className="logo">YKOS</div>
+          <div className="logo-line" />
+        </div>
+
+        {/* Tek Tuş (DİLGİBİ) */}
+        <button className="menu-toggle" onClick={() => setOpen(!open)}>
+          DİLGİBİ
+        </button>
       </div>
 
-      {/* Dil seçici — mobil menü açılınca gizlenir */}
-      import LangSwitch from "./LangSwitch";
+      {/* MENÜ PANELİ */}
+      <div className={`menu-panel ${open ? "open" : ""}`}>
 
-<div className={`lang-toggle ${open ? "hide-lang" : ""}`}>
-  <LangSwitch />
-</div>
+        {/* Dil Seçici */}
+        <div className="language-select">
+          <button>TR</button>
+          <button>EN</button>
+        </div>
 
-
-      {/* Mobil Menü */}
-      <MobileMenu open={open} setOpen={setOpen} />
-    </nav>
+        {/* Ana Menü */}
+        <ul className="menu-list">
+          <li>Kurumsal</li>
+          <li>YKOS Metodolojisi</li>
+          <li>Kök Hece Matrisi</li>
+          <li>Damga Atlası</li>
+          <li>Göç & Akış Haritası</li>
+          <li>Semantik Motor</li>
+        </ul>
+      </div>
+    </div>
   );
 }

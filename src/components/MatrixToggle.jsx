@@ -7,6 +7,19 @@ import "./MatrixToggle.css";
 export default function MatrixToggle({ data }) {
   const [open, setOpen] = useState(false);
 
+  // Okuma ekranından gelen veriyi BubbleMatrix formatına dönüştürme
+  const bubbleData = Array.isArray(data)
+    ? data
+    : [
+        {
+          label: data?.title || "YKOS Matris",
+          color: "#d4af37",
+          atlas: data?.atlas || "Anadolu",
+          matrix: data?.matrix,
+          tags: data?.tags
+        }
+      ];
+
   return (
     <div className="matrix-toggle-wrapper">
       <button
@@ -18,7 +31,7 @@ export default function MatrixToggle({ data }) {
 
       {open && (
         <div className="matrix-panel">
-          <BubbleMatrix data={data} />
+          <BubbleMatrix data={bubbleData} />
         </div>
       )}
     </div>

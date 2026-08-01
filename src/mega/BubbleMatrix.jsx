@@ -4,11 +4,12 @@ import Sync from "../mega/YKOSSync";
 import FinalStabilizer from "../mega/FinalStabilizer";
 
 import { useState, useEffect } from "react";
-import "./BubbleMatrix.css";
+import "./BubbleMatrix.css";   // 31‑7 görünüm CSS’i aktif
 
 export default function BubbleMatrix({ data, atlas }) {
   const [bubbles, setBubbles] = useState([]);
 
+  // Atlas koordinatları (Anadolu, Orta Asya, Avrupa, Amerika, Mezopotamya)
   const atlasCoords = {
     "Anadolu": { x: 140, y: 160 },
     "Orta Asya": { x: 260, y: 120 },
@@ -17,7 +18,7 @@ export default function BubbleMatrix({ data, atlas }) {
     "Mezopotamya": { x: 160, y: 200 }
   };
 
-  // 31‑7 Motor Entegrasyonu
+  // 31‑7 Motor Entegrasyonu (DOĞRU YER)
   useEffect(() => {
     if (bubbles.length === 0) return;
 
@@ -31,6 +32,7 @@ export default function BubbleMatrix({ data, atlas }) {
   useEffect(() => {
     if (!data) return;
 
+    // Tek kayıt (ReadingScreen)
     if (!Array.isArray(data)) {
       const activeAtlas = atlas || data.atlas || "Anadolu";
       const coord = atlasCoords[activeAtlas] || { x: 120, y: 120 };
@@ -51,6 +53,7 @@ export default function BubbleMatrix({ data, atlas }) {
       return;
     }
 
+    // Çoklu kayıt (Home / Dashboard)
     const mapped = data.map((item, i) => {
       const activeAtlas = atlas || item.atlas || "Anadolu";
       const coord = atlasCoords[activeAtlas] || {
@@ -74,7 +77,7 @@ export default function BubbleMatrix({ data, atlas }) {
     setBubbles(mapped);
   }, [data, atlas]);
 
-  // Flux motoru (27‑7)
+  // Flux motoru (Sinüs/Kosinüs salınımı)
   useEffect(() => {
     if (bubbles.length === 0) return;
 
