@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "title": "Anadolu Kök Hece",
+    "content": "Anadolu bölgesinde tespit edilen kadim kök-hece zincirleri. Bu veriler, YKOS AtlasMap üzerinde altın tonlu baloncuklarla gösterilir.",
+    "atlas": "Anadolu",
+    "matrix": "YKOS-100",
+    "tags": ["kök-hece", "kadim", "Anadolu"]
+  },
+  {
+    "id": 2,
+    "title": "Orta Asya Damga Dizgesi",
+    "content": "Orta Asya kültürlerinde kullanılan damga biçimleri ve semiyotik kökenleri. Görselleştirme turkuaz baloncuklarla yapılır.",
+    "atlas": "Orta Asya",
+    "matrix": "YKOS-200",
+    "tags": ["damga", "Orta Asya", "sembol"]
+  },
+  {
+    "id": 3,
+    "title": "Avrupa Dil Akışı",
+    "content": "Avrupa bölgesinde dil akışının kök-hece temelli evrimi. Mavi tonlu baloncuklarla gösterilir.",
+    "atlas": "Avrupa",
+    "matrix": "YKOS-300",
+    "tags": ["dil", "akış", "Avrupa"]
+  },
+  {
+    "id": 4,
+    "title": "Mezopotamya Yazı Matrisi",
+    "content": "Mezopotamya bölgesinde yazı sistemlerinin kök-hece temelli yapısı. Toprak tonlu baloncuklarla görselleştirilir.",
+    "atlas": "Mezopotamya",
+    "matrix": "YKOS-400",
+    "tags": ["yazı", "Mezopotamya", "arkeoloji"]
+  }
+]
