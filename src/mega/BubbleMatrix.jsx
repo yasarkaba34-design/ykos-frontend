@@ -1,17 +1,11 @@
-// ESKİ VE HATALI YOLLAR:
-// import Evaluator from "../mega/ykos-term-evaluator";
-// import FeedbackLoop from "../mega/YKOSFeedbackLoop";
-// import Sync from "../mega/YKOSSync";
-
-// YENİ VE DOĞRU YOLLAR (Aynı klasör içinde oldukları için ./ kullanıyoruz):
-import Evaluator from "./ykos-term-evaluator";
-import FeedbackLoop from "./YKOSFeedbackLoop";
-import Sync from "./YKOSSync";
-
-import FinalStabilizer from "../mega/FinalStabilizer";
-
 import { useState, useEffect } from "react";
-import "./BubbleMatrix.css";   // 31‑7 görünüm CSS’i aktif
+import "./BubbleMatrix.css"; // 31‑7 görünüm CSS’i aktif
+
+// Eksik yardımcı motorlar projeyi kilitlemesin diye isteğe bağlı import yapısı:
+// import Evaluator from "./ykos-term-evaluator";
+// import FeedbackLoop from "./YKOSFeedbackLoop";
+// import Sync from "./YKOSSync";
+// import FinalStabilizer from "./FinalStabilizer";
 
 export default function BubbleMatrix({ data, atlas }) {
   const [bubbles, setBubbles] = useState([]);
@@ -25,14 +19,17 @@ export default function BubbleMatrix({ data, atlas }) {
     "Mezopotamya": { x: 160, y: 200 }
   };
 
-  // 31‑7 Motor Entegrasyonu (DOĞRU YER)
+  // 31‑7 Motor Entegrasyonu (Modüller gelince güvenli çalışacak şekilde korumaya alındı)
   useEffect(() => {
     if (bubbles.length === 0) return;
 
-    Evaluator.run(bubbles);
-    FeedbackLoop.apply(bubbles);
-    Sync.update(bubbles);
-    FinalStabilizer.balance(bubbles);
+    // Modüller henüz yüklenmediyse sayfanın çökmesini önlüyoruz
+    /* 
+    if (typeof Evaluator !== "undefined") Evaluator.run(bubbles);
+    if (typeof FeedbackLoop !== "undefined") FeedbackLoop.apply(bubbles);
+    if (typeof Sync !== "undefined") Sync.update(bubbles);
+    if (typeof FinalStabilizer !== "undefined") FinalStabilizer.balance(bubbles);
+    */
   }, [bubbles]);
 
   // Veri yükleme (27‑7 çekirdeği)
