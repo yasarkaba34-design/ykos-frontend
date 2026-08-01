@@ -2,43 +2,42 @@ import React, { useState } from "react";
 import "./Header.css";
 
 export default function Header() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="ykos-header">
-      {/* ÜST BAR: Tek Tuş Menü + Logo + Dil Seçimi */}
-      <div className="header-top-bar">
+    <header className="ykos-header-wrapper">
+      {/* MENÜ ÇİZGİSİ: Tek Tuş Menü + Ortalanmış Logo + Dil Düğmesi */}
+      <div className="header-main-bar">
         <button 
-          className="menu-toggle-btn"
-          onClick={() => setIsOpen(!isOpen)}
+          className="hamburger-btn" 
+          onClick={() => setMenuOpen(!menuOpen)}
         >
-          <span className="hamburger-icon">☰</span>
-          <span className="menu-text">MENÜ</span>
+          ☰ MENÜ
         </button>
 
-        <div className="main-logo-badge">
-          <span className="logo-ykos">YKOS</span>
-          <span className="logo-sub">BİLGİ SİSTEMİ</span>
+        <div className="header-brand">
+          <span className="brand-logo">YKOS</span>
+          <span className="brand-title">BİLGİ SİSTEMİ</span>
         </div>
 
-        <div className="lang-box">
-          <button className="lang-btn">TR / EN ▼</button>
-        </div>
+        <button className="lang-toggle">
+          TR ▾
+        </button>
       </div>
 
-      {/* MENÜ ÇİZGİSİNİN ALTINA AÇILAN MODÜLER TUŞLAR */}
-      {isOpen && (
-        <nav className="dropdown-menu-grid">
-          <button className="menu-btn">KURUMSAL</button>
-          <button className="menu-btn">YKOS METODOLOJİSİ</button>
-          <button className="menu-btn active">KÖK HECE MATRİSİ</button>
-          <button className="menu-btn">DAMGA ATLASI</button>
-          <button className="menu-btn">OKUMA & ANALİZ MOTORU</button>
-          <button className="menu-btn">GÖÇ & AKIŞ HARİTASI</button>
-          <button className="menu-btn">🎥 VİDEO & SUNUMLAR</button>
-          <button className="menu-btn">KÜLLİYAT & YAYINLAR</button>
-          <button className="menu-btn">DİJİTAL ARŞİV</button>
-        </nav>
+      {/* MENÜ ÇİZGİSİNİN ALTINA AÇILAN BUTONLAR (TEK TUŞA BASINCA GÖRÜNÜR) */}
+      {menuOpen && (
+        <div className="dropdown-menu-container">
+          <button className="nav-btn">KURUMSAL</button>
+          <button className="nav-btn">YKOS METODOLOJİSİ</button>
+          <button className="nav-btn active">KÖK HECE MATRİSİ</button>
+          <button className="nav-btn">DAMGA ATLASI</button>
+          <button className="nav-btn">OKUMA & ANALİZ MOTORU</button>
+          <button className="nav-btn">GÖÇ & AKIŞ HARİTASI</button>
+          <button className="nav-btn">🎥 VİDEO & SUNUMLAR</button>
+          <button className="nav-btn">KÜLLİYAT & YAYINLAR</button>
+          <button className="nav-btn">DİJİTAL ARŞİV</button>
+        </div>
       )}
     </header>
   );

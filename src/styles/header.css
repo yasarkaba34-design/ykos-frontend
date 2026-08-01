@@ -1,97 +1,90 @@
-.ykos-header {
+.ykos-header-wrapper {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto 15px auto;
   box-sizing: border-box;
 }
 
-.header-top-bar {
+/* Ana Üst Çubuk / Menü Çizgisi */
+.header-main-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
-  background: #050811;
+  padding: 10px 18px;
+  background-color: #050811;
   border: 1px solid rgba(255, 215, 0, 0.4);
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
 }
 
-/* Tek Tuş Menü Düğmesi */
-.menu-toggle-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+/* Sol Tek Tuş [☰ MENÜ] */
+.hamburger-btn {
   background: rgba(255, 215, 0, 0.1);
   border: 1px solid #ffd700;
   color: #ffd700;
-  padding: 6px 14px;
+  padding: 8px 16px;
   border-radius: 8px;
-  cursor: pointer;
   font-weight: bold;
-  transition: all 0.3s ease;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
 }
 
-.menu-toggle-btn:hover {
+.hamburger-btn:hover {
   background: rgba(255, 215, 0, 0.25);
   box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
 }
 
-.hamburger-icon {
-  font-size: 1.2rem;
+/* Orta Logo ve Başlık */
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.menu-text {
-  font-size: 0.85rem;
+.brand-logo {
+  background: linear-gradient(135deg, #ffd700, #b8860b);
+  color: #000;
+  font-weight: 900;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 1rem;
   letter-spacing: 1px;
 }
 
-/* Orta YKOS Logo */
-.main-logo-badge {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.logo-ykos {
+.brand-title {
   color: #ffd700;
-  font-size: 1.4rem;
-  font-weight: 900;
-  letter-spacing: 2px;
-  line-height: 1;
-}
-
-.logo-sub {
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.65rem;
+  font-weight: bold;
+  font-size: 1.1rem;
   letter-spacing: 1.5px;
-  margin-top: 2px;
 }
 
-/* Dil Düğmesi */
-.lang-btn {
+/* Sağ Dil Düğmesi */
+.lang-toggle {
   background: transparent;
   border: 1px solid rgba(255, 215, 0, 0.4);
   color: #ffd700;
   padding: 6px 12px;
   border-radius: 6px;
+  font-weight: bold;
   font-size: 0.8rem;
   cursor: pointer;
 }
 
-/* Tek Tuş Tıklanınca Açılan Izgara */
-.dropdown-menu-grid {
+/* Tek Tuşa Basılınca Menü Çizgisinin Altına Açılan Kutu */
+.dropdown-menu-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 8px;
   margin-top: 10px;
   padding: 15px;
-  background: #050811;
+  background-color: #050811;
   border: 1px solid rgba(255, 215, 0, 0.3);
   border-radius: 12px;
-  animation: fadeIn 0.3s ease-in-out;
+  animation: fadeIn 0.3s ease;
 }
 
-.menu-btn {
+.nav-btn {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 215, 0, 0.2);
   color: #ccc;
@@ -100,13 +93,13 @@
   font-size: 0.75rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
   text-align: center;
+  transition: all 0.2s;
 }
 
-.menu-btn:hover,
-.menu-btn.active {
-  background: rgba(255, 215, 0, 0.15);
+.nav-btn:hover,
+.nav-btn.active {
+  background: rgba(255, 215, 0, 0.2);
   color: #ffd700;
   border-color: #ffd700;
 }
@@ -114,4 +107,11 @@
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-8px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobil Ekran Uyum Dilimleri */
+@media (max-width: 600px) {
+  .brand-title {
+    display: none; /* Mobilde sadece YKOS rozeti kalır */
+  }
 }
