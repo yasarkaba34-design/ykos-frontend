@@ -2,12 +2,20 @@
   position: relative;
   width: 100%;
   height: 100%;
+  min-height: 450px;
+  background-color: #050811;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 215, 0, 0.25);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
 }
 
 .atlas-image {
   width: 100%;
   height: auto;
   display: block;
+  object-fit: cover;
+  opacity: 0.85;
 }
 
 .bubble-area {
@@ -16,11 +24,10 @@
   left: 0;
   width: 100%;
   height: 100%;
+  pointer-events: none; /* Arka plandaki etkileşimleri engellemez */
 }
-.atlas-map {
-  width: 1000px;
-  height: 600px;
-  background-image: url('/atlas/ykos-atlas.png');
-  background-size: cover;
-  position: relative;
+
+/* Baloncukların tıklanabilir kalması için */
+.bubble-area .bubble {
+  pointer-events: auto;
 }

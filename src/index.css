@@ -28,3 +28,37 @@ body {
   padding: 20px;
   background: #111;
 }
+/* ==========================================
+   YALNIZCA MOBİL EKRANLAR İÇİN ÖZEL DÜZEN
+   ========================================== */
+@media (max-width: 768px) {
+  .header-nav-buttons {
+    display: none !important;
+  }
+
+  .header-nav-buttons.active {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .mobile-hamburger-btn {
+    display: flex !important;
+  }
+
+  .header-logo-title {
+    font-size: 22px !important;
+    letter-spacing: 2px !important;
+  }
+
+  .header-sub-title {
+    display: none !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-hamburger-btn {
+    display: none !important;
+  }
+}

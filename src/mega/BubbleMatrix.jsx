@@ -1,6 +1,13 @@
-import Evaluator from "../mega/ykos-term-evaluator";
-import FeedbackLoop from "../mega/YKOSFeedbackLoop";
-import Sync from "../mega/YKOSSync";
+// ESKİ VE HATALI YOLLAR:
+// import Evaluator from "../mega/ykos-term-evaluator";
+// import FeedbackLoop from "../mega/YKOSFeedbackLoop";
+// import Sync from "../mega/YKOSSync";
+
+// YENİ VE DOĞRU YOLLAR (Aynı klasör içinde oldukları için ./ kullanıyoruz):
+import Evaluator from "./ykos-term-evaluator";
+import FeedbackLoop from "./YKOSFeedbackLoop";
+import Sync from "./YKOSSync";
+
 import FinalStabilizer from "../mega/FinalStabilizer";
 
 import { useState, useEffect } from "react";

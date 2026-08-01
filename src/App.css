@@ -68,3 +68,91 @@ button {
   color: #d8a400;
   text-align: center;
 }
+/* YALNIZCA MOBİL EKRANLAR İÇİN ÖZEL DÜZEN */
+@media (max-width: 768px) {
+  .header-nav-buttons {
+    display: none !important;
+  }
+
+  .header-nav-buttons.active {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .mobile-hamburger-btn {
+    display: flex !important;
+  }
+
+  .header-logo-title {
+    font-size: 22px !important;
+    letter-spacing: 2px !important;
+  }
+
+  .header-sub-title {
+    display: none !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-hamburger-btn {
+    display: none !important;
+  }
+}
+/* YALNIZCA MOBİL EKRANLAR İÇİN NİZAMİ AKIŞ */
+@media (max-width: 768px) {
+  /* Sol ve sağ paneli mobilde tek sütuna düşür (Alt alta dizilsin) */
+  div[style*="gridTemplateColumns"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Mobil ekranda üst arama barını ve başlıkları rahatlat */
+  h1 {
+    font-size: 20px !important;
+  }
+}
+/* MOBİL EKRAN İÇİN NİZAMİ İNCE AYARLAR */
+@media (max-width: 768px) {
+  /* Sol ve sağ panelleri mobilde tek sütuna düşür (Sıkışmayı engeller) */
+  div[style*="gridTemplateColumns"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Mobilde ana başlığın üstündeki tekrarlayan küçük YKOS rozetini gizle */
+  div[style*="border: 2px solid #ffd700"][style*="fontSize: 14px"] {
+    display: none !important;
+  }
+}
+/* MASAÜSTÜ İÇİN DÜZEN */
+.dashboard-grid-container {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 20px;
+}
+
+/* MOBİL EKRAN İÇİN TEMİZ AKIŞ (768px ve altı) */
+@media (max-width: 768px) {
+  /* Sol ve sağ paneller alt alta dizilsin */
+  .dashboard-grid-container {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Mobilde ana başlığın üstündeki küçük çift YKOS rozetini gizle */
+  .dashboard-mini-badge {
+    display: none !important;
+  }
+
+  /* Arama çubuğunun mobilde kenar boşluklarını rahatlat */
+  .search-container-mobile {
+    width: 95% !important;
+  }
+}
+/* MOBİLDE TÜM İKİLİ GRIDLERİ TEK SÜTUNA DÜŞÜR */
+@media (max-width: 768px) {
+  div[style*="display: grid"],
+  div[style*="grid-template-columns"],
+  div[style*="gridTemplateColumns"] {
+    grid-template-columns: 1fr !important;
+  }
+}
