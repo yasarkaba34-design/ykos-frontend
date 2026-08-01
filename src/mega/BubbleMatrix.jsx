@@ -7,7 +7,7 @@ import "./BubbleMatrix.css"; // 31‑7 görünüm CSS’i aktif
 // import Sync from "./YKOSSync";
 // import FinalStabilizer from "./FinalStabilizer";
 
-export default function BubbleMatrix({ data, atlas }) {
+export default function BubbleMatrixCore({ data, atlas }) {
   const [bubbles, setBubbles] = useState([]);
 
   // Atlas koordinatları (Anadolu, Orta Asya, Avrupa, Amerika, Mezopotamya)
@@ -23,8 +23,7 @@ export default function BubbleMatrix({ data, atlas }) {
   useEffect(() => {
     if (bubbles.length === 0) return;
 
-    // Modüller henüz yüklenmediyse sayfanın çökmesini önlüyoruz
-    /* 
+    /*
     if (typeof Evaluator !== "undefined") Evaluator.run(bubbles);
     if (typeof FeedbackLoop !== "undefined") FeedbackLoop.apply(bubbles);
     if (typeof Sync !== "undefined") Sync.update(bubbles);

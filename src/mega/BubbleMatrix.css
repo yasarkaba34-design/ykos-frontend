@@ -1,41 +1,44 @@
+/* Ana alan */
 .bubble-area {
   position: relative;
   width: 100%;
-  height: 450px;
-  background-color: #050811;
-  border-radius: 12px;
+  height: 100%;
+  min-height: 550px;
+  background: #0d0d0d;
   overflow: hidden;
-  border: 1px solid rgba(255, 215, 0, 0.25);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
 
+/* Baloncuk */
 .bubble {
   position: absolute;
   border-radius: 50%;
   display: flex;
-  justify-content: center;
   align-items: center;
-  color: #000;
-  font-weight: 600;
-  animation: fadeIn 0.5s ease;
-  transition: transform 0.3s ease;
-  cursor: pointer;
-  user-select: none;
+  justify-content: center;
+
+  /* Altın parlama */
+  box-shadow:
+    0 0 12px rgba(255, 215, 0, 0.6),
+    0 0 25px rgba(255, 215, 0, 0.4),
+    inset 0 0 10px rgba(255, 215, 0, 0.3);
+
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
 
+/* Hover efekti */
 .bubble:hover {
-  transform: scale(1.1);
-  z-index: 10;
+  transform: scale(1.08);
+  box-shadow:
+    0 0 18px rgba(255, 215, 0, 0.8),
+    0 0 35px rgba(255, 215, 0, 0.6),
+    inset 0 0 12px rgba(255, 215, 0, 0.4);
 }
 
+/* Etiket */
 .bubble-label {
-  pointer-events: none;
-  font-size: 11px;
+  color: #000;
+  font-weight: bold;
+  font-size: 0.75rem;
   text-align: center;
-  line-height: 1.2;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.8); }
-  to { opacity: 1; transform: scale(1); }
+  pointer-events: none;
 }

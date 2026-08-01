@@ -2,23 +2,15 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import YKOSDashboard from "./layouts/YKOSDashboard";
-import ReadingScreen from "./components/ReadingScreen";
-import "./App.css";
 
 export default function App() {
   return (
-    <div style={{ backgroundColor: "#0a0a0a", minHeight: "100vh", color: "#fff" }}>
-      {/* Üst Bar */}
+    <div style={{ backgroundColor: "#050811", minHeight: "100vh", color: "#ffffff" }}>
       <Header />
-
-      {/* Sayfa Yönlendirmeleri (Routing) */}
-      <main style={{ width: "100%", maxWidth: "1200px", margin: "0 auto", padding: "10px", boxSizing: "border-box" }}>
+      <main style={{ padding: "15px", maxWidth: "1200px", margin: "0 auto" }}>
         <Routes>
-          {/* Ana Sayfa: YKOS Dashboard */}
           <Route path="/" element={<YKOSDashboard />} />
-          
-          {/* Okuma / Çözüm Detay Ekranı */}
-          <Route path="/read/:id" element={<ReadingScreen />} />
+          <Route path="*" element={<YKOSDashboard />} />
         </Routes>
       </main>
     </div>
