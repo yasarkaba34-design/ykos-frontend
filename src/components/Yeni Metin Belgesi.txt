@@ -1,0 +1,52 @@
+.ykos-search-wrapper {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.search-input-box {
+  display: flex;
+  align-items: center;
+  background-color: #050811;
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  border-radius: 25px;
+  padding: 6px 18px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.search-input-box:focus-within {
+  border-color: #ffd700;
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+}
+
+.search-icon {
+  font-size: 1.1rem;
+  margin-right: 12px;
+  color: #ffd700;
+  user-select: none;
+}
+
+.search-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #ffffff;
+  font-size: 0.95rem;
+  padding: 8px 0;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+}
+
+.search-clear-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 215, 0, 0.7);
+  font-size: 1rem;
+  cursor: pointer;
+}
