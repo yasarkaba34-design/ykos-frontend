@@ -5,96 +5,113 @@
   box-sizing: border-box;
 }
 
-/* Üst Çubuk */
-.header-bar {
+.header-top-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 15px;
-  background-color: #050811;
+  padding: 10px 20px;
+  background: #050811;
   border: 1px solid rgba(255, 215, 0, 0.4);
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
 }
 
-/* Sol Menü Düğmesi [≡] */
+/* Tek Tuş Menü Düğmesi */
 .menu-toggle-btn {
-  background: transparent;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 215, 0, 0.1);
   border: 1px solid #ffd700;
   color: #ffd700;
-  font-size: 1.2rem;
-  padding: 4px 12px;
-  border-radius: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  font-weight: bold;
+  transition: all 0.3s ease;
 }
 
 .menu-toggle-btn:hover {
-  background: rgba(255, 215, 0, 0.2);
+  background: rgba(255, 215, 0, 0.25);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
 }
 
-/* Orta Logo Rozeti [YKOS] */
-.logo-badge {
-  border: 2px solid #ffd700;
-  padding: 4px 24px;
-  border-radius: 12px;
-  background: rgba(5, 8, 17, 0.9);
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
-}
-
-.logo-badge span {
-  color: #ffd700;
-  font-weight: 900;
+.hamburger-icon {
   font-size: 1.2rem;
-  letter-spacing: 2px;
 }
 
-/* Sağ Dil Düğmesi [🌐 TR] */
+.menu-text {
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+}
+
+/* Orta YKOS Logo */
+.main-logo-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo-ykos {
+  color: #ffd700;
+  font-size: 1.4rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  line-height: 1;
+}
+
+.logo-sub {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.65rem;
+  letter-spacing: 1.5px;
+  margin-top: 2px;
+}
+
+/* Dil Düğmesi */
 .lang-btn {
   background: transparent;
-  border: 1px solid #ffd700;
+  border: 1px solid rgba(255, 215, 0, 0.4);
   color: #ffd700;
   padding: 6px 12px;
   border-radius: 6px;
-  font-weight: bold;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   cursor: pointer;
 }
 
-/* Düğmeye Basılınca Aşağı Açılan Menü */
-.dropdown-nav {
-  display: flex;
-  flex-direction: column;
+/* Tek Tuş Tıklanınca Açılan Izgara */
+.dropdown-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 8px;
   margin-top: 10px;
   padding: 15px;
-  background-color: #050811;
+  background: #050811;
   border: 1px solid rgba(255, 215, 0, 0.3);
-  border-radius: 10px;
-  animation: slideDown 0.3s ease-out;
+  border-radius: 12px;
+  animation: fadeIn 0.3s ease-in-out;
 }
 
-.nav-item {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 215, 0, 0.25);
-  color: #ddd;
-  padding: 10px 15px;
+.menu-btn {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  color: #ccc;
+  padding: 10px 8px;
   border-radius: 6px;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  text-align: center;
   cursor: pointer;
   transition: all 0.2s;
+  text-align: center;
 }
 
-.nav-item:hover,
-.nav-item.active {
-  background: rgba(255, 215, 0, 0.2);
+.menu-btn:hover,
+.menu-btn.active {
+  background: rgba(255, 215, 0, 0.15);
   color: #ffd700;
   border-color: #ffd700;
 }
 
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-10px); }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
   to { opacity: 1; transform: translateY(0); }
 }
