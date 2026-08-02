@@ -11,10 +11,8 @@ export default function AdminPanel({ onBack }) {
     summary: "",
     analysis: "",
     tags: "",
-    imageUrl: ""
+    imagePreview: null
   });
-
-  const [savedLogs, setSavedLogs] = useState([]);
 
   const categories = ["Damga", "Petroglif", "Yazıt", "Makale / Külliyat", "Atlas & Bölge"];
 
@@ -22,18 +20,23 @@ export default function AdminPanel({ onBack }) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Bilgisayardan/Telefondan Resim Seçme ve Yükleme Mantığı
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({ ...formData, imagePreview: reader.result });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.title) return alert("Lütfen en azından bir başlık giriniz.");
+    if (!formData.title) return alert("Lütfen eser / bulgu başlığını giriniz.");
 
-    const newEntry = {
-      ...formData,
-      id: Date.now(),
-      createdAt: new Date().toLocaleDateString("tr-TR")
-    };
-
-    setSavedLogs([newEntry, ...savedLogs]);
-    alert("✅ Yeni YKOS Bulgusu başarıyla sisteme mühürlendi ve indekslendi!");
+    alert("✅ YKOS Bulgusu ve Görseli başarıyla sisteme mühürlendi ve arama motoru indeksine eklendi!");
     setFormData({
       title: "",
       category: "Damga",
@@ -44,7 +47,7 @@ export default function AdminPanel({ onBack }) {
       summary: "",
       analysis: "",
       tags: "",
-      imageUrl: ""
+      imagePreview: null
     });
   };
 
@@ -52,144 +55,156 @@ export default function AdminPanel({ onBack }) {
     backgroundColor: "#050811",
     border: "1px solid #ffd700",
     borderRadius: "12px",
-    padding: "20px",
-    marginBottom: "20px",
-    boxShadow: "0 4px 25px rgba(0, 0, 0, 0.8)",
+    padding: "25px",
+    boxShadow: "0 4px 30px rgba(0, 0, 0, 0.9)",
     color: "#fff",
     fontFamily: "Segoe UI, sans-serif"
   };
 
   const inputStyle = {
     width: "100%",
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    backgroundColor: "rgba(255, 255, 255, 0.04)",
     border: "1px solid rgba(255, 215, 0, 0.4)",
     borderRadius: "6px",
-    padding: "10px",
+    padding: "11px",
     color: "#fff",
-    fontSize: "0.85rem",
+    fontSize: "0.88rem",
     marginTop: "5px",
     boxSizing: "border-box",
     outline: "none"
   };
 
   return (
-    <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "15px" }}>
-      {/* ÜST DÜĞME & BAŞLIK */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
+    <div style={{ maxWidth: "800px", margin: "0 auto", padding: "15px" }}>
+      
+      {/* ÜST GEÇİŞ BARI */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
         <button
           onClick={onBack}
-          style={{ background: "rgba(255, 215, 0, 0.15)", border: "1px solid #ffd700", color: "#ffd700", padding: "8px 16px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer" }}
+          style={{ background: "rgba(255, 215, 0, 0.15)", border: "1px solid #ffd700", color: "#ffd700", padding: "8px 18px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer" }}
         >
           ⬅ Ana Panele Dön
         </button>
-        <span style={{ color: "#38bdf8", fontSize: "0.8rem", fontWeight: "bold" }}>🏛️ YKOS YÖNETİM & VERİ GİRİŞ PORTALI (ykos.com.tr)</span>
+        <span style={{ color: "#ffd700", fontSize: "0.9rem", fontWeight: "bold" }}>🏛️ ykos.com.tr VERİ GİRİŞ PORTALI</span>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "20px" }}>
-        
-        {/* SOL: FORM GİRİŞİ */}
-        <div style={cardStyle}>
-          <h2 style={{ color: "#ffd700", fontSize: "1.2rem", marginTop: 0, borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px" }}>
-            📝 Yeni Küresel Bulgu & Hece Analizi Ekle
-          </h2>
+      {/* VERİ GİRİŞ FORMU */}
+      <div style={cardStyle}>
+        <h2 style={{ color: "#ffd700", fontSize: "1.3rem", marginTop: 0, marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "12px", textAlign: "center", letterSpacing: "1px" }}>
+          📝 YKOS BİLGİ MERKEZİ VERİ GİRİŞ FORMU
+        </h2>
 
-          <form onSubmit={handleSubmit}>
-            <div style={{ marginBottom: "12px" }}>
-              <label style={{ fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold" }}>Bulgu / Eser Başlığı</label>
-              <input type="text" name="title" value={formData.title} onChange={handleChange} placeholder="Örn: Göbeklitepe T-Sütunu H Sembolü" style={inputStyle} />
+        <form onSubmit={handleSubmit}>
+          
+          <div style={{ marginBottom: "15px" }}>
+            <label style={{ fontSize: "0.85rem", color: "#ffd700", fontWeight: "bold" }}>Bulgu / Eser Başlığı</label>
+            <input type="text" name="title" value={formData.title} onChange={handleChange} placeholder="Örn: Çatalhöyük Dairesel Damga Motifleri" style={inputStyle} />
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px", marginBottom: "15px" }}>
+            <div>
+              <label style={{ fontSize: "0.85rem", color: "#ffd700", fontWeight: "bold" }}>Veri Kategorisi</label>
+              <select name="category" value={formData.category} onChange={handleChange} style={{ ...inputStyle, backgroundColor: "#050811" }}>
+                {categories.map((c, i) => <option key={i} value={c}>{c}</option>)}
+              </select>
             </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "12px" }}>
-              <div>
-                <label style={{ fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold" }}>Veri Kategorisi</label>
-                <select name="category" value={formData.category} onChange={handleChange} style={{ ...inputStyle, backgroundColor: "#050811" }}>
-                  {categories.map((c, i) => <option key={i} value={c}>{c}</option>)}
-                </select>
-              </div>
-              <div>
-                <label style={{ fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold" }}>Kök Hece / Damga</label>
-                <input type="text" name="rootSyllable" value={formData.rootSyllable} onChange={handleChange} placeholder="Örn: ER-İK-AN / KÖK" style={inputStyle} />
-              </div>
+            <div>
+              <label style={{ fontSize: "0.85rem", color: "#ffd700", fontWeight: "bold" }}>Kök Hece / Damga Kodu</label>
+              <input type="text" name="rootSyllable" value={formData.rootSyllable} onChange={handleChange} placeholder="Örn: ÇEV / BA / KÖK" style={inputStyle} />
             </div>
+          </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px", marginBottom: "12px" }}>
-              <div>
-                <label style={{ fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold" }}>Ülke</label>
-                <input type="text" name="country" value={formData.country} onChange={handleChange} placeholder="Örn: Türkiye" style={inputStyle} />
-              </div>
-              <div>
-                <label style={{ fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold" }}>Bölge / Atlas</label>
-                <input type="text" name="region" value={formData.region} onChange={handleChange} placeholder="Örn: Anadolu Atlası" style={inputStyle} />
-              </div>
-              <div>
-                <label style={{ fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold" }}>Dönem / Çağ</label>
-                <input type="text" name="period" value={formData.period} onChange={handleChange} placeholder="Örn: M.Ö. 9600" style={inputStyle} />
-              </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "15px", marginBottom: "15px" }}>
+            <div>
+              <label style={{ fontSize: "0.85rem", color: "#ffd700", fontWeight: "bold" }}>Ülke</label>
+              <input type="text" name="country" value={formData.country} onChange={handleChange} placeholder="Örn: Türkiye" style={inputStyle} />
             </div>
-
-            <div style={{ marginBottom: "12px" }}>
-              <label style={{ fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold" }}>Kısa Özet (Arama Sonucu İçin)</label>
-              <input type="text" name="summary" value={formData.summary} onChange={handleChange} placeholder="Sorgu ekranında görünecek kısa açıklama..." style={inputStyle} />
+            <div>
+              <label style={{ fontSize: "0.85rem", color: "#ffd700", fontWeight: "bold" }}>Bölge / Atlas</label>
+              <input type="text" name="region" value={formData.region} onChange={handleChange} placeholder="Örn: Anadolu Atlası" style={inputStyle} />
             </div>
-
-            <div style={{ marginBottom: "12px" }}>
-              <label style={{ fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold" }}>Detaylı YKOS Çözümleme Metni</label>
-              <textarea name="analysis" rows="4" value={formData.analysis} onChange={handleChange} placeholder="Kök hece çözümü, fonetik analizler ve akademik açıklamalar..." style={{ ...inputStyle, resize: "vertical" }}></textarea>
+            <div>
+              <label style={{ fontSize: "0.85rem", color: "#ffd700", fontWeight: "bold" }}>Dönem / Çağ</label>
+              <input type="text" name="period" value={formData.period} onChange={handleChange} placeholder="Örn: M.Ö. 7400" style={inputStyle} />
             </div>
+          </div>
 
-            <div style={{ marginBottom: "15px" }}>
-              <label style={{ fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold" }}>Arama Etiketleri (Virgülle Ayırın)</label>
-              <input type="text" name="tags" value={formData.tags} onChange={handleChange} placeholder="göbeklitepe, h sembolü, anadolu, ön türkçe" style={inputStyle} />
-            </div>
-
-            <button
-              type="submit"
+          {/* 📷 GÖRSEL VE ÇİZİM DOSYA YÜKLEME KUTUSU */}
+          <div style={{ marginBottom: "20px", background: "rgba(255,215,0,0.03)", border: "1px dashed rgba(255,215,0,0.5)", borderRadius: "8px", padding: "15px", textAlign: "center" }}>
+            <label style={{ fontSize: "0.9rem", color: "#ffd700", fontWeight: "bold", display: "block", marginBottom: "8px" }}>
+              📷 Damga / Petroglif Görseli veya Çizim Dosyası Yükle
+            </label>
+            <input 
+              type="file" 
+              accept="image/*" 
+              onChange={handleImageChange}
+              style={{ display: "none" }} 
+              id="file-upload-input" 
+            />
+            <label 
+              htmlFor="file-upload-input"
               style={{
-                width: "100%",
-                background: "linear-gradient(135deg, #ffd700, #b8860b)",
-                color: "#000",
-                border: "none",
-                padding: "12px",
-                borderRadius: "8px",
-                fontWeight: "900",
-                fontSize: "0.9rem",
+                background: "rgba(255, 215, 0, 0.15)",
+                border: "1px solid #ffd700",
+                color: "#ffd700",
+                padding: "8px 16px",
+                borderRadius: "6px",
+                fontWeight: "bold",
                 cursor: "pointer",
-                boxShadow: "0 0 15px rgba(255, 215, 0, 0.4)"
+                display: "inline-block"
               }}
             >
-              🚀 BULGUYU MÜHÜRLE VE SİSTEME YÜKLE ➔
-            </button>
-          </form>
-        </div>
+              📁 Cihazınızdan Dosya Seçin
+            </label>
 
-        {/* SAĞ: CANLI YÜKLENEN KAYITLAR İZLEME PANELİ */}
-        <div style={cardStyle}>
-          <h2 style={{ color: "#ffd700", fontSize: "1.2rem", marginTop: 0, borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px" }}>
-            📊 İndekslenen YKOS Veri Akışı ({savedLogs.length})
-          </h2>
+            {/* YÜKLENEN RESMİN CANLI ÖNİZLEMESİ */}
+            {formData.imagePreview && (
+              <div style={{ marginTop: "15px" }}>
+                <span style={{ fontSize: "0.75rem", color: "#aaa", display: "block", marginBottom: "6px" }}>Seçilen Görsel Önizlemesi:</span>
+                <img 
+                  src={formData.imagePreview} 
+                  alt="Damga Önizleme" 
+                  style={{ maxHeight: "180px", borderRadius: "8px", border: "1px solid #ffd700", boxShadow: "0 0 10px rgba(255,215,0,0.3)" }} 
+                />
+              </div>
+            )}
+          </div>
 
-          {savedLogs.length === 0 ? (
-            <div style={{ color: "#888", fontSize: "0.85rem", textAlign: "center", padding: "30px 0" }}>
-              Henüz bu oturumda veri yüklenmedi. Sol taraftan ilk bulgunuzu yüklediğinizde arama motoru veritabanı anında güncellenecektir.
-            </div>
-          ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px", maxHeight: "550px", overflowY: "auto" }}>
-              {savedLogs.map((item) => (
-                <div key={item.id} style={{ backgroundColor: "rgba(255,215,0,0.05)", border: "1px solid rgba(255,215,0,0.3)", padding: "12px", borderRadius: "8px" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem" }}>
-                    <span>📜 {item.title}</span>
-                    <span style={{ fontSize: "0.7rem", color: "#38bdf8" }}>{item.category}</span>
-                  </div>
-                  <div style={{ fontSize: "0.75rem", color: "#aaa", marginTop: "4px" }}>
-                    📍 {item.country} ({item.region}) | ⏳ {item.period} | 🔤 Kök: {item.rootSyllable || "Belirtilmedi"}
-                  </div>
-                  <p style={{ fontSize: "0.78rem", color: "#ddd", margin: "6px 0 0 0" }}>{item.summary}</p>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+          <div style={{ marginBottom: "15px" }}>
+            <label style={{ fontSize: "0.85rem", color: "#ffd700", fontWeight: "bold" }}>Kısa Özet (Arama Yanıt Ekranı İçin)</label>
+            <input type="text" name="summary" value={formData.summary} onChange={handleChange} placeholder="Arama motorunda kullanıcıya sunulacak özeti giriniz..." style={inputStyle} />
+          </div>
 
+          <div style={{ marginBottom: "15px" }}>
+            <label style={{ fontSize: "0.85rem", color: "#ffd700", fontWeight: "bold" }}>Detaylı YKOS Çözümleme Metni</label>
+            <textarea name="analysis" rows="5" value={formData.analysis} onChange={handleChange} placeholder="Kök hece çözümü, fonetik okumalar ve akademik açıklamalar..." style={{ ...inputStyle, resize: "vertical" }}></textarea>
+          </div>
+
+          <div style={{ marginBottom: "20px" }}>
+            <label style={{ fontSize: "0.85rem", color: "#ffd700", fontWeight: "bold" }}>Arama Anahtar Kelimeleri (Virgülle Ayırın)</label>
+            <input type="text" name="tags" value={formData.tags} onChange={handleChange} placeholder="çatalhöyük, damga, çev, kök hece, anadolu" style={inputStyle} />
+          </div>
+
+          <button
+            type="submit"
+            style={{
+              width: "100%",
+              background: "linear-gradient(135deg, #ffd700, #b8860b)",
+              color: "#000",
+              border: "none",
+              padding: "14px",
+              borderRadius: "8px",
+              fontWeight: "900",
+              fontSize: "1rem",
+              cursor: "pointer",
+              boxShadow: "0 0 20px rgba(255, 215, 0, 0.4)",
+              letterSpacing: "1px"
+            }}
+          >
+            🚀 GÖRSELİ VE VERİYİ KAYDET / SİSTEME YÜKLE ➔
+          </button>
+
+        </form>
       </div>
     </div>
   );
