@@ -1,48 +1,37 @@
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
+import "./SearchBar.css";
 
-export default function SearchBox() {
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
+export default function SearchBar({ onSearch }) {
+  const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    if (query.length < 2) {
-      setResults([]);
-      return;
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    if (onSearch) {
+      onSearch(value);
     }
-
-    const delay = setTimeout(async () => {
-      const res = await fetch(`/api/v1/search?q=${query}`);
-      const data = await res.json();
-      setResults(data);
-    }, 200);
-
-    return () => clearTimeout(delay);
-  }, [query]);
+  };
 
   return (
-    <div className="search-box">
-      <input
-        type="text"
-        placeholder="🔍 Araştırma, Damga, Yazıt, Petroglif, Atlas..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      />
-
-      {results.length > 0 && (
-        <div className="search-results">
-          {results.map((item) => (
-            <div key={item.id} className="result-item">
-              {item.title} ({item.id})
-            </div>
-          ))}
-        </div>
-      )}
+    <div className="ykos-search-wrapper">
+      <div className="search-input-box">
+        <span className="search-icon">🔍</span>
+        <input
+          type="text"
+          className="search-input"
+          placeholder="Damga, kök hece, ülke, il veya kadim merkez ara..."
+          value={searchTerm}
+          onChange={handleChange}
+        />
+        {searchTerm && (
+          <button 
+            className="search-clear-btn" 
+            onClick={() => { setSearchTerm(""); if(onSearch) onSearch(""); }}
+          >
+            ✕
+          </button>
+        )}
+      </div>
     </div>
   );
-}
-.ykos-search-wrapper,
-.search-input-box {
-  width: 100% !important;
-  max-width: 100% !important;
-  box-sizing: border-box !important;
 }
