@@ -91,7 +91,7 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome })
   return (
     <div style={{ width: "100%", maxWidth: "1240px", margin: "0 auto", padding: "10px", boxSizing: "border-box", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
       
-      {/* 1. ÜST HEADER KUTUSU (KARTAL YUKARI ÇEKİLDİ) */}
+      {/* 1. ÜST HEADER KUTUSU (COMPACT LOGO) */}
       <div style={{
         ...cardStyle,
         padding: "8px 16px 10px 16px",
@@ -131,7 +131,7 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome })
           </div>
         </div>
 
-        {/* ORTA LOGO (KARTAL YUKARI YAKLAŞTIRILDI) */}
+        {/* ORTA LOGO */}
         <div 
           onClick={onGoHome || (() => window.location.reload())}
           title="Ana Sayfaya Dön"
@@ -166,13 +166,17 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome })
         <SearchBar onSearch={(q) => setSearchQuery(q)} />
       </div>
 
-      {/* 3. İSTATİSTİK SAYAÇ KUTUSU (AKTİF ROZETİ TAM ORTALANDI) */}
+      {/* 3. İSTATİSTİK SAYAÇ KUTUSU (SOL BAŞLIK VE SAĞ SİSTEM DURUMU GERİ GELDİ) */}
       <div style={cardStyle}>
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: "12px" }}>
-          <div style={{ border: "1px solid #ffd700", borderRadius: "6px", padding: "4px 16px", textAlign: "center", fontSize: "0.65rem", background: "rgba(255, 215, 0, 0.05)", minWidth: "140px" }}>
-            <span style={{ color: "#888", display: "block" }}>SİSTEM DURUMU</span>
-            <strong style={{ color: "#ffd700", fontSize: "0.85rem", display: "block" }}>AKTİF</strong>
-            <small style={{ color: "#666" }}>YKOS v1.0 Beta</small>
+        
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", borderBottom: "1px solid rgba(255, 215, 0, 0.2)", paddingBottom: "8px" }}>
+          <span style={{ color: "#ffd700", fontSize: "0.85rem", fontWeight: "bold", letterSpacing: "1px" }}>
+            📊 CANLI VERİ İSTATİSTİKLERİ
+          </span>
+
+          <div style={{ border: "1px solid #ffd700", borderRadius: "6px", padding: "2px 10px", textAlign: "right", fontSize: "0.65rem", background: "rgba(255, 215, 0, 0.05)", display: "flex", alignItems: "center", gap: "8px" }}>
+            <span style={{ color: "#888" }}>SİSTEM DURUMU:</span>
+            <strong style={{ color: "#ffd700", fontSize: "0.8rem" }}>🟢 AKTİF</strong>
           </div>
         </div>
 
