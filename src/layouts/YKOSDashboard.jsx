@@ -50,6 +50,8 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
       
       {/* 1. ÜST HEADER KUTUSU */}
       <div style={cardStyle}>
+        
+        {/* SOL ÜST MENÜ & SAĞ ÜST DİL */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
           <button 
             onClick={() => { setMenuOpen(!menuOpen); setLangOpen(false); }}
@@ -82,9 +84,25 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
           </div>
         </div>
 
+        {/* ORTA LOGO (KARTAL AMBLEMİ İLE GÜNCELLENDİ) */}
         <div style={{ textAlign: "center", margin: "10px 0" }}>
-          <span style={{ border: "1px solid #ffd700", borderRadius: "10px", padding: "2px 12px", color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>YKOS</span>
-          <h1 style={{ color: "#ffd700", fontSize: "1.7rem", fontWeight: "900", margin: "6px 0 2px 0", letterSpacing: "1.5px" }}>YKOS BİLGİ SİSTEMİ</h1>
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "8px" }}>
+            <img 
+              src="/ykos-logo.png" 
+              alt="YKOS Kartal Amblemi" 
+              style={{ 
+                maxHeight: "85px", 
+                maxWidth: "100%", 
+                objectFit: "contain",
+                filter: "drop-shadow(0px 0px 10px rgba(255, 215, 0, 0.4))"
+              }} 
+              onError={(e) => {
+                // Görsel henüz yüklenmediyse yedek metin
+                e.target.style.display = 'none';
+              }}
+            />
+          </div>
+          <h1 style={{ color: "#ffd700", fontSize: "1.7rem", fontWeight: "900", margin: "4px 0 2px 0", letterSpacing: "1.5px" }}>YKOS BİLGİ SİSTEMİ</h1>
           <p style={{ color: "#aaaaaa", fontSize: "0.8rem", margin: 0 }}>Disiplinler Arası Algoritmik Kültür ve Dil Veri Tabanı</p>
         </div>
 
@@ -144,22 +162,19 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
         <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
           <h3 style={{ color: "#ffd700", fontSize: "0.95rem", fontWeight: "bold", marginTop: 0, marginBottom: "12px" }}>⚡ YKOS ÇÖZÜMLERİ VE İNDEKLSER</h3>
           <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "15px" }}>
-            
-            {/* Tıklanınca Okuma Ekranına Giden Kartlar */}
             <div 
               onClick={() => onNavigateRead && onNavigateRead(1)}
-              style={{ background: "rgba(255, 215, 0, 0.05)", border: "1px solid rgba(255, 215, 0, 0.4)", borderRadius: "6px", padding: "10px", fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold", cursor: "pointer", transition: "all 0.2s" }}
+              style={{ background: "rgba(255, 215, 0, 0.05)", border: "1px solid rgba(255, 215, 0, 0.4)", borderRadius: "6px", padding: "10px", fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold", cursor: "pointer" }}
             >
               📜 Göbeklitepe T-Sütunu YKOS Okuması →
             </div>
             
             <div 
               onClick={() => onNavigateRead && onNavigateRead(2)}
-              style={{ background: "rgba(255, 215, 0, 0.05)", border: "1px solid rgba(255, 215, 0, 0.4)", borderRadius: "6px", padding: "10px", fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold", cursor: "pointer", transition: "all 0.2s" }}
+              style={{ background: "rgba(255, 215, 0, 0.05)", border: "1px solid rgba(255, 215, 0, 0.4)", borderRadius: "6px", padding: "10px", fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold", cursor: "pointer" }}
             >
               📜 Etrüsk Lemnos Kitabesi & Ön Türkçe Eşleşmesi →
             </div>
-
           </div>
 
           <button 
