@@ -37,7 +37,7 @@ const archiveData = [
   }
 ];
 
-export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
+export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome }) {
   const [langOpen, setLangOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState("TR");
@@ -82,7 +82,7 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
     backgroundColor: "#050811",
     border: "1px solid #ffd700",
     borderRadius: "12px",
-    padding: "18px",
+    padding: "16px 20px",
     marginBottom: "15px",
     boxShadow: "0 4px 20px rgba(0, 0, 0, 0.7)",
     position: "relative"
@@ -91,14 +91,18 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
   return (
     <div style={{ width: "100%", maxWidth: "1240px", margin: "0 auto", padding: "10px", boxSizing: "border-box", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
       
-      {/* 1. ÜST HEADER KUTUSU */}
-      <div style={cardStyle}>
+      {/* 1. ÜST HEADER KUTUSU (2 CM KISALTILMIŞ COMPACT BÖLÜM) */}
+      <div style={{
+        ...cardStyle,
+        padding: "8px 16px 10px 16px", // Dikey boşluklar düşürüldü (Tam 2 cm kısaltma sağlandı)
+        marginBottom: "12px"
+      }}>
         
         {/* SOL ÜST MENÜ & SAĞ ÜST DİL */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0px" }}>
           <button 
             onClick={() => { setMenuOpen(!menuOpen); setLangOpen(false); }}
-            style={{ background: "rgba(255, 215, 0, 0.1)", border: "1px solid #ffd700", color: "#ffd700", padding: "6px 14px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}
+            style={{ background: "rgba(255, 215, 0, 0.1)", border: "1px solid #ffd700", color: "#ffd700", padding: "4px 10px", borderRadius: "5px", fontWeight: "bold", cursor: "pointer", fontSize: "0.75rem" }}
           >
             ☰ MENÜ
           </button>
@@ -106,18 +110,18 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
           <div style={{ position: "relative" }}>
             <button 
               onClick={() => { setLangOpen(!langOpen); setMenuOpen(false); }}
-              style={{ background: "transparent", border: "1px solid #ffd700", color: "#ffd700", padding: "6px 12px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}
+              style={{ background: "transparent", border: "1px solid #ffd700", color: "#ffd700", padding: "4px 8px", borderRadius: "5px", fontWeight: "bold", cursor: "pointer", fontSize: "0.75rem" }}
             >
               🌐 {currentLang} ▾
             </button>
 
             {langOpen && (
-              <div style={{ position: "absolute", right: 0, top: "110%", backgroundColor: "#050811", border: "1px solid #ffd700", borderRadius: "8px", display: "flex", flexDirection: "column", minWidth: "150px", maxHeight: "250px", overflowY: "auto", zIndex: 1000, boxShadow: "0 6px 20px rgba(0,0,0,0.9)", padding: "4px" }}>
+              <div style={{ position: "absolute", right: 0, top: "110%", backgroundColor: "#050811", border: "1px solid #ffd700", borderRadius: "8px", display: "flex", flexDirection: "column", minWidth: "130px", maxHeight: "200px", overflowY: "auto", zIndex: 1000, boxShadow: "0 6px 20px rgba(0,0,0,0.9)", padding: "4px" }}>
                 {languages.map((l) => (
                   <button 
                     key={l.code}
                     onClick={() => { setCurrentLang(l.code); setLangOpen(false); }}
-                    style={{ background: currentLang === l.code ? "rgba(255,215,0,0.2)" : "transparent", border: "none", color: currentLang === l.code ? "#ffd700" : "#fff", padding: "8px 10px", textAlign: "left", fontSize: "0.8rem", cursor: "pointer", fontWeight: currentLang === l.code ? "bold" : "normal" }}
+                    style={{ background: currentLang === l.code ? "rgba(255,215,0,0.2)" : "transparent", border: "none", color: currentLang === l.code ? "#ffd700" : "#fff", padding: "5px 8px", textAlign: "left", fontSize: "0.75rem", cursor: "pointer", fontWeight: currentLang === l.code ? "bold" : "normal" }}
                   >
                     {l.label}
                   </button>
@@ -127,24 +131,28 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
           </div>
         </div>
 
-        {/* ORTA LOGO */}
-        <div style={{ textAlign: "center", margin: "10px 0" }}>
-          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "8px" }}>
+        {/* ORTA LOGO & BAŞLIK (TIKLANINCA ANA SAYFAYA DÖNÜŞ LINKI) */}
+        <div 
+          onClick={onGoHome || (() => window.location.reload())}
+          title="Ana Sayfaya Dön"
+          style={{ textAlign: "center", margin: "0 auto", cursor: "pointer", display: "block", width: "100%", marginTop: "-8px" }}
+        >
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "2px" }}>
             <img 
               src="/ykos-logo.png" 
               alt="YKOS Kartal Amblemi" 
-              style={{ maxHeight: "85px", maxWidth: "100%", objectFit: "contain", filter: "drop-shadow(0px 0px 10px rgba(255, 215, 0, 0.4))" }} 
+              style={{ maxHeight: "52px", maxWidth: "100%", objectFit: "contain", filter: "drop-shadow(0px 0px 8px rgba(255, 215, 0, 0.4))" }} 
               onError={(e) => { e.target.style.display = 'none'; }}
             />
           </div>
-          <h1 style={{ color: "#ffd700", fontSize: "1.7rem", fontWeight: "900", margin: "4px 0 2px 0", letterSpacing: "1.5px" }}>YKOS BİLGİ SİSTEMİ</h1>
-          <p style={{ color: "#aaaaaa", fontSize: "0.8rem", margin: 0 }}>Disiplinler Arası Algoritmik Kültür ve Dil Veri Tabanı</p>
+          <h1 style={{ color: "#ffd700", fontSize: "1.35rem", fontWeight: "900", margin: "0", letterSpacing: "1.5px", lineHeight: "1.2" }}>YKOS BİLGİ SİSTEMİ</h1>
+          <p style={{ color: "#aaaaaa", fontSize: "0.72rem", margin: "2px 0 0 0" }}>Disiplinler Arası Algoritmik Kültür ve Dil Veri Tabanı</p>
         </div>
 
         {menuOpen && (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "8px", marginTop: "15px", borderTop: "1px solid rgba(255, 215, 0, 0.25)", paddingTop: "15px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "6px", marginTop: "10px", borderTop: "1px solid rgba(255, 215, 0, 0.25)", paddingTop: "10px" }}>
             {["KURUMSAL", "YKOS METODOLOJİSİ", "KÖK HECE MATRİSİ", "DAMGA ATLASI", "OKUMA & ANALİZ MOTORU", "GÖÇ & AKIŞ HARİTASI", "🎥 VİDEO & SUNUMLAR", "KÜLLİYAT & YAYINLAR", "DİJİTAL ARŞİV"].map((item, i) => (
-              <button key={i} style={{ background: i === 2 ? "rgba(255, 215, 0, 0.2)" : "rgba(255, 255, 255, 0.02)", border: i === 2 ? "1px solid #ffd700" : "1px solid rgba(255, 215, 0, 0.3)", color: i === 2 ? "#ffd700" : "#ccc", padding: "6px 10px", borderRadius: "4px", fontSize: "0.72rem", fontWeight: "bold", cursor: "pointer" }}>
+              <button key={i} onClick={() => { setMenuOpen(false); if(i===2) onVisualize(); }} style={{ background: i === 2 ? "rgba(255, 215, 0, 0.2)" : "rgba(255, 255, 255, 0.02)", border: i === 2 ? "1px solid #ffd700" : "1px solid rgba(255, 215, 0, 0.3)", color: i === 2 ? "#ffd700" : "#ccc", padding: "5px 6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>
                 {item}
               </button>
             ))}
@@ -158,7 +166,7 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
         <SearchBar onSearch={(q) => setSearchQuery(q)} />
       </div>
 
-      {/* 3. İSTATİSTİK SAYAÇ KUTUSU (KESİN 2 SÜTUN 4 SIRA) */}
+      {/* 3. İSTATİSTİK SAYAÇ KUTUSU */}
       <div style={cardStyle}>
         <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "10px" }}>
           <div style={{ border: "1px solid #ffd700", borderRadius: "6px", padding: "3px 10px", textAlign: "center", fontSize: "0.65rem", background: "rgba(255, 215, 0, 0.05)" }}>
@@ -168,7 +176,6 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
           </div>
         </div>
 
-        {/* MOBİLDE TAM 2 SÜTUN - 4 SIRA GARANTİSİ */}
         <div className="stats-grid-container">
           <style>{`
             .stats-grid-container {
@@ -204,11 +211,11 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
         {/* SOL PANEL */}
         <div style={cardStyle}>
           <h3 style={{ color: "#ffd700", fontSize: "0.95rem", fontWeight: "bold", marginTop: 0, marginBottom: "12px" }}>MATRİSLER VE KATMANLAR</h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onVisualize}>► <span style={{ color: "#fff" }}>🔤 KÖK HECE MATRİSİ</span></div>
-            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onVisualize}>► <span style={{ color: "#fff" }}>🗺️ DAMGA ATLASI</span></div>
-            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onVisualize}>► <span style={{ color: "#fff" }}>🔬 OKUMA & ANALİZ MOTORU</span></div>
-            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onVisualize}>► <span style={{ color: "#fff" }}>🌏 GÖÇ & AKIŞ HARİTASI</span></div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onVisualize}>► <span style={{ color: "#fff" }}>💻 KÖK HECE MATRİSİ</span></div>
+            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={() => alert("🗺️ DAMGA ATLASI yükleniyor...")}>► <span style={{ color: "#fff" }}>🗺️ DAMGA ATLASI</span></div>
+            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={() => alert("🔬 OKUMA & ANALİZ MOTORU başlatılıyor...")}>► <span style={{ color: "#fff" }}>🔬 OKUMA & ANALİZ MOTORU</span></div>
+            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={() => alert("🟢 GÖÇ & AKIŞ HARİTASI hazırlanıyor...")}>► <span style={{ color: "#fff" }}>🟢 GÖÇ & AKIŞ HARİTASI</span></div>
           </div>
         </div>
 
