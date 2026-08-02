@@ -166,30 +166,30 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome })
         <SearchBar onSearch={(q) => setSearchQuery(q)} />
       </div>
 
-      {/* 3. İSTATİSTİK SAYAÇ KUTUSU (KOMPAKT, KARŞILIKLI TEK SATIR BAŞLIK) */}
+      {/* 3. İSTATİSTİK SAYAÇ KUTUSU (SOLA VE SAĞA TAM YASLI BAŞLIK KUTULARI) */}
       <div style={cardStyle}>
         
         <div style={{ 
           display: "flex", 
-          justify: "space-between", 
+          justifyContent: "space-between", 
           alignItems: "center", 
-          flexWrap: "nowrap", // Kesinlikle alt alta geçmesin
+          width: "100%",
           marginBottom: "10px", 
           borderBottom: "1px solid rgba(255, 215, 0, 0.2)", 
           paddingBottom: "6px" 
         }}>
           
-          {/* SOL BAŞLIK (Küçültülmüş Font) */}
-          <div style={{ border: "1px solid #ffd700", borderRadius: "5px", padding: "2px 6px", backgroundColor: "rgba(255, 215, 0, 0.05)" }}>
-            <span style={{ color: "#ffd700", fontSize: "0.65rem", fontWeight: "bold", letterSpacing: "0.2px", whiteSpace: "nowrap" }}>
+          {/* SOLA YASLI BAŞLIK KUTUSU */}
+          <div style={{ border: "1px solid #ffd700", borderRadius: "5px", padding: "2px 8px", backgroundColor: "rgba(255, 215, 0, 0.05)" }}>
+            <span style={{ color: "#ffd700", fontSize: "0.62rem", fontWeight: "bold", letterSpacing: "0.2px", whiteSpace: "nowrap" }}>
               📊 CANLI VERİ İSTATİSTİKLERİ
             </span>
           </div>
 
-          {/* SAĞ SİSTEM DURUMU (Küçültülmüş Font) */}
-          <div style={{ border: "1px solid #ffd700", borderRadius: "5px", padding: "2px 6px", fontSize: "0.62rem", background: "rgba(255, 215, 0, 0.05)", display: "flex", alignItems: "center", gap: "4px", whiteSpace: "nowrap" }}>
+          {/* SAĞA YASLI DURUM KUTUSU */}
+          <div style={{ border: "1px solid #ffd700", borderRadius: "5px", padding: "2px 8px", fontSize: "0.62rem", background: "rgba(255, 215, 0, 0.05)", display: "flex", alignItems: "center", gap: "4px", whiteSpace: "nowrap" }}>
             <span style={{ color: "#888" }}>DURUM:</span>
-            <strong style={{ color: "#ffd700", fontSize: "0.65rem" }}>🟢 AKTİF</strong>
+            <strong style={{ color: "#ffd700", fontSize: "0.62rem" }}>🟢 AKTİF</strong>
           </div>
 
         </div>
