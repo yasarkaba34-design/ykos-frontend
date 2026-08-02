@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import SearchBar from "../components/SearchBar";
+import archiveData from "../api/archive.json";
 
 export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
   const [langOpen, setLangOpen] = useState(false);
@@ -31,6 +32,18 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
     { icon: "🗺️", count: "58", label: "Atlaslar" }
   ];
 
+  // Arama Filtreleme Mantığı
+  const filteredData = archiveData.filter((item) => {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      item.title.toLowerCase().includes(q) ||
+      item.summary.toLowerCase().includes(q) ||
+      item.analysis.toLowerCase().includes(q) ||
+      item.tags.some((tag) => tag.toLowerCase().includes(q))
+    );
+  });
+
   const cardStyle = {
     backgroundColor: "#050811",
     border: "1px solid #ffd700",
@@ -39,10 +52,6 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
     marginBottom: "15px",
     boxShadow: "0 4px 20px rgba(0, 0, 0, 0.7)",
     position: "relative"
-  };
-
-  const handleSearch = (query) => {
-    setSearchQuery(query);
   };
 
   return (
@@ -84,22 +93,14 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
           </div>
         </div>
 
-        {/* ORTA LOGO (KARTAL AMBLEMİ İLE GÜNCELLENDİ) */}
+        {/* ORTA KARTAL LOGO */}
         <div style={{ textAlign: "center", margin: "10px 0" }}>
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "8px" }}>
             <img 
               src="/ykos-logo.png" 
               alt="YKOS Kartal Amblemi" 
-              style={{ 
-                maxHeight: "85px", 
-                maxWidth: "100%", 
-                objectFit: "contain",
-                filter: "drop-shadow(0px 0px 10px rgba(255, 215, 0, 0.4))"
-              }} 
-              onError={(e) => {
-                // Görsel henüz yüklenmediyse yedek metin
-                e.target.style.display = 'none';
-              }}
+              style={{ maxHeight: "85px", maxWidth: "100%", objectFit: "contain", filter: "drop-shadow(0px 0px 10px rgba(255, 215, 0, 0.4))" }} 
+              onError={(e) => { e.target.style.display = 'none'; }}
             />
           </div>
           <h1 style={{ color: "#ffd700", fontSize: "1.7rem", fontWeight: "900", margin: "4px 0 2px 0", letterSpacing: "1.5px" }}>YKOS BİLGİ SİSTEMİ</h1>
@@ -118,9 +119,9 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
 
       </div>
 
-      {/* 2. ARAMA BARI */}
+      {/* 2. CANLI ARAMA BARI */}
       <div style={{ marginBottom: "15px", width: "100%" }}>
-        <SearchBar onSearch={handleSearch} />
+        <SearchBar onSearch={(q) => setSearchQuery(q)} />
       </div>
 
       {/* 3. İSTATİSTİK SAYAÇ KUTUSU */}
@@ -144,7 +145,7 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
         </div>
       </div>
 
-      {/* 4. ALT 2 SÜTUNLU KARTLAR */}
+      {/* 4. ALT 2 SÜTUNLU KARTLAR VEYA CANLI ARAMA SONUÇLARI */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "15px" }}>
         
         {/* SOL PANEL */}
@@ -158,23 +159,31 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
           </div>
         </div>
 
-        {/* SAĞ PANEL */}
+        {/* SAĞ PANEL: ARAMA YAPILDIĞINDA FİLTRELENEN KARTLAR GELİR */}
         <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
-          <h3 style={{ color: "#ffd700", fontSize: "0.95rem", fontWeight: "bold", marginTop: 0, marginBottom: "12px" }}>⚡ YKOS ÇÖZÜMLERİ VE İNDEKLSER</h3>
+          <h3 style={{ color: "#ffd700", fontSize: "0.95rem", fontWeight: "bold", marginTop: 0, marginBottom: "12px" }}>
+            {searchQuery ? `🔍 ARAMA SONUÇLARI (${filteredData.length})` : "⚡ YKOS ÇÖZÜMLERİ VE İNDEKLSER"}
+          </h3>
+
           <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "15px" }}>
-            <div 
-              onClick={() => onNavigateRead && onNavigateRead(1)}
-              style={{ background: "rgba(255, 215, 0, 0.05)", border: "1px solid rgba(255, 215, 0, 0.4)", borderRadius: "6px", padding: "10px", fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold", cursor: "pointer" }}
-            >
-              📜 Göbeklitepe T-Sütunu YKOS Okuması →
-            </div>
-            
-            <div 
-              onClick={() => onNavigateRead && onNavigateRead(2)}
-              style={{ background: "rgba(255, 215, 0, 0.05)", border: "1px solid rgba(255, 215, 0, 0.4)", borderRadius: "6px", padding: "10px", fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold", cursor: "pointer" }}
-            >
-              📜 Etrüsk Lemnos Kitabesi & Ön Türkçe Eşleşmesi →
-            </div>
+            {filteredData.length > 0 ? (
+              filteredData.map((item) => (
+                <div 
+                  key={item.id}
+                  onClick={() => onNavigateRead && onNavigateRead(item.id)}
+                  style={{ background: "rgba(255, 215, 0, 0.05)", border: "1px solid rgba(255, 215, 0, 0.4)", borderRadius: "6px", padding: "10px", fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold", cursor: "pointer" }}
+                >
+                  📜 {item.title} →
+                  <div style={{ fontSize: "0.7rem", color: "#ccc", fontWeight: "normal", marginTop: "4px" }}>
+                    {item.summary}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div style={{ color: "#888", fontSize: "0.8rem", textAlign: "center", padding: "10px" }}>
+                Aramanızla eşleşen veri bulunamadı.
+              </div>
+            )}
           </div>
 
           <button 
