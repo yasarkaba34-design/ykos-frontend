@@ -166,18 +166,24 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome })
         <SearchBar onSearch={(q) => setSearchQuery(q)} />
       </div>
 
-      {/* 3. İSTATİSTİK SAYAÇ KUTUSU (SOL BAŞLIK VE SAĞ SİSTEM DURUMU GERİ GELDİ) */}
+      {/* 3. İSTATİSTİK SAYAÇ KUTUSU (SOL VE SAĞ BAŞLIK KUTULU - MOBİL UYUMLU) */}
       <div style={cardStyle}>
         
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", borderBottom: "1px solid rgba(255, 215, 0, 0.2)", paddingBottom: "8px" }}>
-          <span style={{ color: "#ffd700", fontSize: "0.85rem", fontWeight: "bold", letterSpacing: "1px" }}>
-            📊 CANLI VERİ İSTATİSTİKLERİ
-          </span>
-
-          <div style={{ border: "1px solid #ffd700", borderRadius: "6px", padding: "2px 10px", textAlign: "right", fontSize: "0.65rem", background: "rgba(255, 215, 0, 0.05)", display: "flex", alignItems: "center", gap: "8px" }}>
-            <span style={{ color: "#888" }}>SİSTEM DURUMU:</span>
-            <strong style={{ color: "#ffd700", fontSize: "0.8rem" }}>🟢 AKTİF</strong>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px", marginBottom: "12px", borderBottom: "1px solid rgba(255, 215, 0, 0.2)", paddingBottom: "8px" }}>
+          
+          {/* SOL BAŞLIK KUTUSU */}
+          <div style={{ border: "1px solid #ffd700", borderRadius: "6px", padding: "3px 10px", backgroundColor: "rgba(255, 215, 0, 0.05)" }}>
+            <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold", letterSpacing: "0.5px" }}>
+              📊 CANLI VERİ İSTATİSTİKLERİ
+            </span>
           </div>
+
+          {/* SAĞ SİSTEM DURUMU KUTUSU */}
+          <div style={{ border: "1px solid #ffd700", borderRadius: "6px", padding: "3px 10px", fontSize: "0.65rem", background: "rgba(255, 215, 0, 0.05)", display: "flex", alignItems: "center", gap: "6px" }}>
+            <span style={{ color: "#888" }}>SİSTEM DURUMU:</span>
+            <strong style={{ color: "#ffd700", fontSize: "0.75rem" }}>🟢 AKTİF</strong>
+          </div>
+
         </div>
 
         <div className="stats-grid-container">
