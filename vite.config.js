@@ -1,10 +1,10 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  server: {
-    port: 3000,
-    strictPort: true // Port 3000 doluysa başka porta geçmesin, hata versin
+  build: {
+    cssMinify: false // CSS derleme hatasında Vercel'in kilitlenmesini engeller
   }
 })
