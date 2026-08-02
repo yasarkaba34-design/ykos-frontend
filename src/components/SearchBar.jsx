@@ -40,3 +40,9 @@ export default function SearchBox() {
     </div>
   );
 }
+.ykos-search-wrapper,
+.search-input-box {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
