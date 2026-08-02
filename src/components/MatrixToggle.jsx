@@ -103,7 +103,7 @@ export default function MatrixToggle({ onNavigateRead }) {
     }
   ];
 
-  // Tam Bağlantı Ağı (Çizgiler)
+  // Tam Bağlantı Ağı
   const links = [
     { from: "ykos100", to: "bir" },
     { from: "ykos100", to: "yol" },
@@ -131,10 +131,26 @@ export default function MatrixToggle({ onNavigateRead }) {
   return (
     <div className="matrix-canvas-wrapper" style={{ width: "100%", height: "650px", backgroundColor: "#030712", borderRadius: "12px", position: "relative", overflow: "hidden", border: "1px solid rgba(255,215,0,0.3)" }}>
       
-      {/* Üst Sol Başlık */}
-      <div style={{ position: "absolute", top: "20px", left: "20px", backgroundColor: "rgba(5,8,17,0.9)", border: "1px solid #ffd700", padding: "12px 20px", borderRadius: "8px", zIndex: 10 }}>
-        <h3 style={{ color: "#ffd700", margin: 0, fontSize: "1.1rem" }}>YKOS DİNAMİK ÇÖZÜMLEME MATRİSİ</h3>
-        <small style={{ color: "#38bdf8", display: "block", marginTop: "2px", fontWeight: "bold" }}>Her baloncuk tıklanabilir canlı YKOS veri kartıdır</small>
+      {/* ÜST SOL BİLGİ & AÇIKLAMA GÖSTERGESİ (LEJANT) */}
+      <div style={{ position: "absolute", top: "20px", left: "20px", backgroundColor: "rgba(5,8,17,0.92)", border: "1px solid #ffd700", padding: "14px 18px", borderRadius: "10px", zIndex: 10, boxShadow: "0 4px 20px rgba(0,0,0,0.8)" }}>
+        <h3 style={{ color: "#ffd700", margin: 0, fontSize: "1.05rem", fontWeight: "bold" }}>YKOS DİNAMİK ÇÖZÜMLEME MATRİSİ</h3>
+        <small style={{ color: "#38bdf8", display: "block", marginTop: "3px", fontWeight: "bold", fontSize: "0.75rem" }}>GLOBAL ATLAS ENTEGRASYONU</small>
+        
+        {/* KATMAN GÖSTERGE LEJANTI */}
+        <div style={{ marginTop: "10px", borderTop: "1px solid rgba(255, 215, 0, 0.2)", paddingTop: "8px", display: "flex", flexDirection: "column", gap: "5px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "0.72rem", color: "#e2e8f0" }}>
+            <span style={{ width: "10px", height: "10px", borderRadius: "50%", backgroundColor: "#3b82f6", display: "inline-block", boxShadow: "0 0 6px #3b82f6" }}></span>
+            <strong>YKOS 100:</strong> Kök-Hece Matrisi
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "0.72rem", color: "#e2e8f0" }}>
+            <span style={{ width: "10px", height: "10px", borderRadius: "50%", backgroundColor: "#10b981", display: "inline-block", boxShadow: "0 0 6px #10b981" }}></span>
+            <strong>YKOS 200:</strong> Kültür & Arkeoloji Okumaları
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "0.72rem", color: "#e2e8f0" }}>
+            <span style={{ width: "10px", height: "10px", borderRadius: "50%", backgroundColor: "#f97316", display: "inline-block", boxShadow: "0 0 6px #f97316" }}></span>
+            <strong>YKOS 300:</strong> Küresel Atlas & Göç Akışı
+          </div>
+        </div>
       </div>
 
       {/* Tuval (Çizgiler + Baloncuklar) */}
