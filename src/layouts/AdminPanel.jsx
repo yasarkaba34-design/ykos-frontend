@@ -13,7 +13,7 @@ export default function AdminPanel({ onBack }) {
     analysis: "",
     tags: "",
     imagePreview: null,
-    status: "draft" // "draft" (Onay Bekliyor) veya "published" (Yayınlandı)
+    status: "draft"
   });
 
   const [records, setRecords] = useState([
@@ -52,44 +52,38 @@ export default function AdminPanel({ onBack }) {
     }
   };
 
-  // Form Kaydetme veya Güncelleme
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.title) return alert("Lütfen eser / bulgu başlığını giriniz.");
 
     if (isEditing) {
-      // Güncelleme işlemi
       setRecords(records.map(rec => rec.id === formData.id ? { ...formData } : rec));
       alert("✏️ Kayıt başarıyla güncellendi!");
       setIsEditing(false);
     } else {
-      // Yeni Taslak Ekleme
       const newRec = {
         ...formData,
         id: Date.now(),
         status: "draft"
       };
       setRecords([newRec, ...records]);
-      alert("📝 Yeni YKOS Bulgusu taslak olarak kaydedildi. Onay bekliyor!");
+      alert("📝 Yeni YKOS Bulgusu kaydedildi. Onay bekliyor!");
     }
 
     resetForm();
   };
 
-  // Düzenleme Moduna Alma
   const handleEdit = (item) => {
     setFormData({ ...item });
     setIsEditing(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Onaylama ve Yayınlama
   const handleApprove = (id) => {
     setRecords(records.map(rec => rec.id === id ? { ...rec, status: "published" } : rec));
-    alert("✅ YKOS Bulgusu onaylandı ve ykos.net / ykos.org arama motoru canlı yayınlaşmasına aktarıldı!");
+    alert("✅ YKOS Bulgusu onaylandı ve arama motoru canlı yayınına aktarıldı!");
   };
 
-  // Silme
   const handleDelete = (id) => {
     if (window.confirm("Bu kaydı silmek istediğinizden emin misiniz?")) {
       setRecords(records.filter(rec => rec.id !== id));
@@ -149,7 +143,7 @@ export default function AdminPanel({ onBack }) {
         >
           ⬅ Ana Panele Dön
         </button>
-        <span style={{ color: "#ffd700", fontSize: "0.9rem", fontWeight: "bold" }}>🏛️ ykos.com.tr VERİ GİRİŞ VE EDİTÖR PORTALI</span>
+        <span style={{ color: "#ffd700", fontSize: "0.9rem", fontWeight: "bold" }}>🏛️ VERİ GİRİŞ PORTALI</span>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", gap: "20px" }}>
@@ -157,7 +151,7 @@ export default function AdminPanel({ onBack }) {
         {/* SOL: VERİ GİRİŞ & DÜZENLEME FORMU */}
         <div style={cardStyle}>
           <h2 style={{ color: "#ffd700", fontSize: "1.2rem", marginTop: 0, marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px" }}>
-            {isEditing ? "✏️ YKOS Bulgusunu Düzenle" : "📝 Yeni YKOS Bulgusu Gir (Taslak)"}
+            {isEditing ? "✏️ YKOS Bulgusunu Düzenle" : "📝 Yeni YKOS Bulgusu Gir"}
           </h2>
 
           <form onSubmit={handleSubmit}>
@@ -242,7 +236,7 @@ export default function AdminPanel({ onBack }) {
                   cursor: "pointer"
                 }}
               >
-                {isEditing ? "💾 GÜNCELLEMEYİ KAYDET" : "📝 TASLAK OLARAK KAYDET"}
+                {isEditing ? "💾 GÜNCELLEMEYİ KAYDET" : "📝 KAYDET"}
               </button>
 
               {isEditing && (
@@ -259,10 +253,10 @@ export default function AdminPanel({ onBack }) {
           </form>
         </div>
 
-        {/* SAĞ: ONAY BEKLEYEN VE YAYINLANAN KADİM VERİLER BÖLÜMÜ */}
+        {/* SAĞ: GİRİLEN KADİM VERİLER BÖLÜMÜ */}
         <div style={cardStyle}>
           <h2 style={{ color: "#ffd700", fontSize: "1.2rem", marginTop: 0, marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px" }}>
-            🛡️ Veri Onay Havuzu ve Yayın Listesi ({records.length})
+            🛡️ Veri Havuzu ve Yayın Listesi ({records.length})
           </h2>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "12px", maxHeight: "650px", overflowY: "auto" }}>
@@ -296,7 +290,6 @@ export default function AdminPanel({ onBack }) {
 
                 <p style={{ fontSize: "0.78rem", color: "#ddd", margin: "6px 0 10px 0" }}>{item.summary}</p>
 
-                {/* DÜZENLE - ONAYLA - SİL DÜĞMELERİ */}
                 <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", borderTop: "1px dashed rgba(255,255,255,0.1)", paddingTop: "8px" }}>
                   <button 
                     onClick={() => handleEdit(item)} 
