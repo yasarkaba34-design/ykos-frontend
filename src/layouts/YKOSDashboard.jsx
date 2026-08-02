@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import SearchBar from "../components/SearchBar";
-import "./YKOSDashboard.css";
 
 export default function YKOSDashboard({ onVisualize }) {
   const [langOpen, setLangOpen] = useState(false);
@@ -31,38 +30,47 @@ export default function YKOSDashboard({ onVisualize }) {
     { icon: "🗺️", count: "58", label: "Atlaslar" }
   ];
 
+  // Kart Kutusu Ortak Stili (Garantili Altın Çerçeve)
+  const cardStyle = {
+    backgroundColor: "#050811",
+    border: "1px solid #ffd700",
+    borderRadius: "12px",
+    padding: "18px",
+    marginBottom: "15px",
+    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.7)",
+    position: "relative"
+  };
+
   return (
-    <div className="ykos-dashboard-box">
+    <div style={{ width: "100%", maxWidth: "1240px", margin: "0 auto", padding: "10px", boxSizing: "border-box", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
       
-      {/* 1. ANA BAŞLIK VE ÜST KUTU */}
-      <div className="ykos-card-box">
+      {/* 1. ÜST HEADER KUTUSU */}
+      <div style={cardStyle}>
         
-        {/* SOL ÜST MENÜ TUŞU & SAĞ ÜST DİL MENÜSÜ */}
-        <div className="ykos-top-bar-controls">
+        {/* SOL ÜST MENÜ VE SAĞ ÜST DİL BUTONLARI */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
           <button 
-            className="ykos-hamburger-btn"
             onClick={() => { setMenuOpen(!menuOpen); setLangOpen(false); }}
+            style={{ background: "rgba(255, 215, 0, 0.1)", border: "1px solid #ffd700", color: "#ffd700", padding: "6px 14px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}
           >
             ☰ MENÜ
           </button>
 
-          <div className="ykos-lang-wrapper">
+          <div style={{ position: "relative" }}>
             <button 
-              className="ykos-lang-btn"
               onClick={() => { setLangOpen(!langOpen); setMenuOpen(false); }}
+              style={{ background: "transparent", border: "1px solid #ffd700", color: "#ffd700", padding: "6px 12px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}
             >
               🌐 {currentLang} ▾
             </button>
+
             {langOpen && (
-              <div className="ykos-lang-dropdown">
+              <div style={{ position: "absolute", right: 0, top: "110%", backgroundColor: "#050811", border: "1px solid #ffd700", borderRadius: "8px", display: "flex", flexDirection: "column", minWidth: "150px", maxHeight: "250px", overflowY: "auto", zIndex: 1000, boxShadow: "0 6px 20px rgba(0,0,0,0.9)", padding: "4px" }}>
                 {languages.map((l) => (
                   <button 
                     key={l.code}
-                    className={currentLang === l.code ? "active" : ""}
-                    onClick={() => {
-                      setCurrentLang(l.code);
-                      setLangOpen(false);
-                    }}
+                    onClick={() => { setCurrentLang(l.code); setLangOpen(false); }}
+                    style={{ background: currentLang === l.code ? "rgba(255,215,0,0.2)" : "transparent", border: "none", color: currentLang === l.code ? "#ffd700" : "#fff", padding: "8px 10px", textAlign: "left", fontSize: "0.8rem", cursor: "pointer", fontWeight: currentLang === l.code ? "bold" : "normal" }}
                   >
                     {l.label}
                   </button>
@@ -73,81 +81,85 @@ export default function YKOSDashboard({ onVisualize }) {
         </div>
 
         {/* ORTA LOGO VE BAŞLIK */}
-        <div className="ykos-header-row">
-          <div className="ykos-brand-area">
-            <span className="ykos-badge">YKOS</span>
-            <h1 className="ykos-title">YKOS BİLGİ SİSTEMİ</h1>
-            <p className="ykos-subtitle">Disiplinler Arası Algoritmik Kültür ve Dil Veri Tabanı</p>
-          </div>
+        <div style={{ textAlign: "center", margin: "10px 0" }}>
+          <span style={{ border: "1px solid #ffd700", borderRadius: "10px", padding: "2px 12px", color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>YKOS</span>
+          <h1 style={{ color: "#ffd700", fontSize: "1.7rem", fontWeight: "900", margin: "6px 0 2px 0", letterSpacing: "1.5px" }}>YKOS BİLGİ SİSTEMİ</h1>
+          <p style={{ color: "#aaaaaa", fontSize: "0.8rem", margin: 0 }}>Disiplinler Arası Algoritmik Kültür ve Dil Veri Tabanı</p>
         </div>
 
-        {/* MENÜYE BASINCA AÇILAN 9'LU KATEGORİ IZGARASI */}
+        {/* MENÜYE BASINCA AÇILAN 9 KATEGORİ */}
         {menuOpen && (
-          <div className="ykos-nav-dropdown-grid">
-            <button className="ykos-nav-btn">KURUMSAL</button>
-            <button className="ykos-nav-btn">YKOS METODOLOJİSİ</button>
-            <button className="ykos-nav-btn active">KÖK HECE MATRİSİ</button>
-            <button className="ykos-nav-btn">DAMGA ATLASI</button>
-            <button className="ykos-nav-btn">OKUMA & ANALİZ MOTORU</button>
-            <button className="ykos-nav-btn">GÖÇ & AKIŞ HARİTASI</button>
-            <button className="ykos-nav-btn">🎥 VİDEO & SUNUMLAR</button>
-            <button className="ykos-nav-btn">KÜLLİYAT & YAYINLAR</button>
-            <button className="ykos-nav-btn">DİJİTAL ARŞİV</button>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "8px", marginTop: "15px", borderTop: "1px solid rgba(255, 215, 0, 0.25)", paddingTop: "15px" }}>
+            {["KURUMSAL", "YKOS METODOLOJİSİ", "KÖK HECE MATRİSİ", "DAMGA ATLASI", "OKUMA & ANALİZ MOTORU", "GÖÇ & AKIŞ HARİTASI", "🎥 VİDEO & SUNUMLAR", "KÜLLİYAT & YAYINLAR", "DİJİTAL ARŞİV"].map((item, i) => (
+              <button key={i} style={{ background: i === 2 ? "rgba(255, 215, 0, 0.2)" : "rgba(255, 255, 255, 0.02)", border: i === 2 ? "1px solid #ffd700" : "1px solid rgba(255, 215, 0, 0.3)", color: i === 2 ? "#ffd700" : "#ccc", padding: "6px 10px", borderRadius: "4px", fontSize: "0.72rem", fontWeight: "bold", cursor: "pointer" }}>
+                {item}
+              </button>
+            ))}
           </div>
         )}
 
       </div>
 
       {/* 2. ARAMA BARI */}
-      <div className="ykos-search-row">
+      <div style={{ marginBottom: "15px", width: "100%" }}>
         <SearchBar />
       </div>
 
-      {/* 3. İSTATİSTİK KUTUSU */}
-      <div className="ykos-card-box">
-        <div className="ykos-status-header">
-          <div className="ykos-status-tag">
-            <span>SİSTEM DURUMU</span>
-            <strong>AKTİF</strong>
-            <small>YKOS v1.0 Beta</small>
+      {/* 3. İSTATİSTİK SAYAÇ KUTUSU */}
+      <div style={cardStyle}>
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "10px" }}>
+          <div style={{ border: "1px solid #ffd700", borderRadius: "6px", padding: "3px 10px", textAlign: "center", fontSize: "0.65rem", background: "rgba(255, 215, 0, 0.05)" }}>
+            <span style={{ color: "#888", display: "block" }}>SİSTEM DURUMU</span>
+            <strong style={{ color: "#ffd700", fontSize: "0.85rem", display: "block" }}>AKTİF</strong>
+            <small style={{ color: "#666" }}>YKOS v1.0 Beta</small>
           </div>
         </div>
 
-        <div className="ykos-stats-grid">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))", gap: "10px" }}>
           {stats.map((item, idx) => (
-            <div key={idx} className="ykos-stat-card">
-              <span className="icon">{item.icon}</span>
-              <span className="count">{item.count}</span>
-              <span className="label">{item.label}</span>
+            <div key={idx} style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 215, 0, 0.25)", borderRadius: "6px", padding: "10px 4px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <span style={{ fontSize: "1.1rem" }}>{item.icon}</span>
+              <span style={{ color: "#fff", fontWeight: "900", fontSize: "1rem", margin: "2px 0" }}>{item.count}</span>
+              <span style={{ color: "#888", fontSize: "0.68rem" }}>{item.label}</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* 4. ALT 2 SÜTUNLU KARTLAR */}
-      <div className="ykos-bottom-grid">
-        <div className="ykos-card-box">
-          <h3 className="ykos-section-title">MATRİSLER VE KATMANLAR</h3>
-          <ul className="ykos-layer-list">
-            <li>► <span>🔤 KÖK HECE MATRİSİ</span></li>
-            <li>► <span>🗺️ DAMGA ATLASI</span></li>
-            <li>► <span>🔬 OKUMA & ANALİZ MOTORU</span></li>
-            <li>► <span>🌏 GÖÇ & AKIŞ HARİTASI</span></li>
-          </ul>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "15px" }}>
+        
+        {/* SOL PANEL */}
+        <div style={cardStyle}>
+          <h3 style={{ color: "#ffd700", fontSize: "0.95rem", fontWeight: "bold", marginTop: 0, marginBottom: "12px" }}>MATRİSLER VE KATMANLAR</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem" }}>► <span style={{ color: "#fff" }}>🔤 KÖK HECE MATRİSİ</span></div>
+            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem" }}>► <span style={{ color: "#fff" }}>🗺️ DAMGA ATLASI</span></div>
+            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem" }}>► <span style={{ color: "#fff" }}>🔬 OKUMA & ANALİZ MOTORU</span></div>
+            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem" }}>► <span style={{ color: "#fff" }}>🌏 GÖÇ & AKIŞ HARİTASI</span></div>
+          </div>
         </div>
 
-        <div className="ykos-card-box ykos-flex-col">
-          <h3 className="ykos-section-title">⚡ YKOS ÇÖZÜMLERİ VE İNDEKLSER</h3>
-          <div className="ykos-solution-list">
-            <div className="ykos-solution-card">📜 Göbeklitepe T-Sütunu YKOS Okuması</div>
-            <div className="ykos-solution-card">📜 Etrüsk Lemnos Kitabesi & Ön Türkçe Eşleşmesi</div>
+        {/* SAĞ PANEL */}
+        <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
+          <h3 style={{ color: "#ffd700", fontSize: "0.95rem", fontWeight: "bold", marginTop: 0, marginBottom: "12px" }}>⚡ YKOS ÇÖZÜMLERİ VE İNDEKLSER</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "15px" }}>
+            <div style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 215, 0, 0.2)", borderRadius: "6px", padding: "10px", fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold" }}>
+              📜 Göbeklitepe T-Sütunu YKOS Okuması
+            </div>
+            <div style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 215, 0, 0.2)", borderRadius: "6px", padding: "10px", fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold" }}>
+              📜 Etrüsk Lemnos Kitabesi & Ön Türkçe Eşleşmesi
+            </div>
           </div>
 
-          {/* BALONCUK MATRİSİNE GEÇİŞ BUTONU */}
-          <button className="ykos-gold-action-btn" onClick={onVisualize}>
+          <button 
+            onClick={onVisualize}
+            style={{ background: "linear-gradient(135deg, #ffd700, #b8860b)", color: "#000000", border: "none", padding: "12px", borderRadius: "6px", fontWeight: "900", fontSize: "0.85rem", cursor: "pointer", marginTop: "auto", boxShadow: "0 0 12px rgba(255, 215, 0, 0.35)" }}
+          >
             🗣️ BALONCUK MATRİSİNİ GÖRSELLEŞTİR ➔
           </button>
         </div>
+
       </div>
 
     </div>
