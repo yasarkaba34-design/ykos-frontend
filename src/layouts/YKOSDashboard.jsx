@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import SearchBar from "../components/SearchBar";
 
-export default function YKOSDashboard({ onVisualize }) {
+export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
   const [langOpen, setLangOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState("TR");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const languages = [
     { code: "TR", label: "Türkçe" },
@@ -19,7 +20,7 @@ export default function YKOSDashboard({ onVisualize }) {
     { code: "DE", label: "Deutsch" }
   ];
 
-  const stats = [
+  const initialStats = [
     { icon: "🌐", count: "214", label: "Ülkeler" },
     { icon: "🏛️", count: "248", label: "Araştırmalar" },
     { icon: "🔷", count: "9.870", label: "Damgalar" },
@@ -30,7 +31,6 @@ export default function YKOSDashboard({ onVisualize }) {
     { icon: "🗺️", count: "58", label: "Atlaslar" }
   ];
 
-  // Kart Kutusu Ortak Stili (Garantili Altın Çerçeve)
   const cardStyle = {
     backgroundColor: "#050811",
     border: "1px solid #ffd700",
@@ -41,13 +41,15 @@ export default function YKOSDashboard({ onVisualize }) {
     position: "relative"
   };
 
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+  };
+
   return (
     <div style={{ width: "100%", maxWidth: "1240px", margin: "0 auto", padding: "10px", boxSizing: "border-box", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
       
       {/* 1. ÜST HEADER KUTUSU */}
       <div style={cardStyle}>
-        
-        {/* SOL ÜST MENÜ VE SAĞ ÜST DİL BUTONLARI */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
           <button 
             onClick={() => { setMenuOpen(!menuOpen); setLangOpen(false); }}
@@ -80,14 +82,12 @@ export default function YKOSDashboard({ onVisualize }) {
           </div>
         </div>
 
-        {/* ORTA LOGO VE BAŞLIK */}
         <div style={{ textAlign: "center", margin: "10px 0" }}>
           <span style={{ border: "1px solid #ffd700", borderRadius: "10px", padding: "2px 12px", color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>YKOS</span>
           <h1 style={{ color: "#ffd700", fontSize: "1.7rem", fontWeight: "900", margin: "6px 0 2px 0", letterSpacing: "1.5px" }}>YKOS BİLGİ SİSTEMİ</h1>
           <p style={{ color: "#aaaaaa", fontSize: "0.8rem", margin: 0 }}>Disiplinler Arası Algoritmik Kültür ve Dil Veri Tabanı</p>
         </div>
 
-        {/* MENÜYE BASINCA AÇILAN 9 KATEGORİ */}
         {menuOpen && (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "8px", marginTop: "15px", borderTop: "1px solid rgba(255, 215, 0, 0.25)", paddingTop: "15px" }}>
             {["KURUMSAL", "YKOS METODOLOJİSİ", "KÖK HECE MATRİSİ", "DAMGA ATLASI", "OKUMA & ANALİZ MOTORU", "GÖÇ & AKIŞ HARİTASI", "🎥 VİDEO & SUNUMLAR", "KÜLLİYAT & YAYINLAR", "DİJİTAL ARŞİV"].map((item, i) => (
@@ -102,7 +102,7 @@ export default function YKOSDashboard({ onVisualize }) {
 
       {/* 2. ARAMA BARI */}
       <div style={{ marginBottom: "15px", width: "100%" }}>
-        <SearchBar />
+        <SearchBar onSearch={handleSearch} />
       </div>
 
       {/* 3. İSTATİSTİK SAYAÇ KUTUSU */}
@@ -116,7 +116,7 @@ export default function YKOSDashboard({ onVisualize }) {
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))", gap: "10px" }}>
-          {stats.map((item, idx) => (
+          {initialStats.map((item, idx) => (
             <div key={idx} style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 215, 0, 0.25)", borderRadius: "6px", padding: "10px 4px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
               <span style={{ fontSize: "1.1rem" }}>{item.icon}</span>
               <span style={{ color: "#fff", fontWeight: "900", fontSize: "1rem", margin: "2px 0" }}>{item.count}</span>
@@ -133,10 +133,10 @@ export default function YKOSDashboard({ onVisualize }) {
         <div style={cardStyle}>
           <h3 style={{ color: "#ffd700", fontSize: "0.95rem", fontWeight: "bold", marginTop: 0, marginBottom: "12px" }}>MATRİSLER VE KATMANLAR</h3>
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem" }}>► <span style={{ color: "#fff" }}>🔤 KÖK HECE MATRİSİ</span></div>
-            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem" }}>► <span style={{ color: "#fff" }}>🗺️ DAMGA ATLASI</span></div>
-            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem" }}>► <span style={{ color: "#fff" }}>🔬 OKUMA & ANALİZ MOTORU</span></div>
-            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem" }}>► <span style={{ color: "#fff" }}>🌏 GÖÇ & AKIŞ HARİTASI</span></div>
+            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onVisualize}>► <span style={{ color: "#fff" }}>🔤 KÖK HECE MATRİSİ</span></div>
+            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onVisualize}>► <span style={{ color: "#fff" }}>🗺️ DAMGA ATLASI</span></div>
+            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onVisualize}>► <span style={{ color: "#fff" }}>🔬 OKUMA & ANALİZ MOTORU</span></div>
+            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onVisualize}>► <span style={{ color: "#fff" }}>🌏 GÖÇ & AKIŞ HARİTASI</span></div>
           </div>
         </div>
 
@@ -144,12 +144,22 @@ export default function YKOSDashboard({ onVisualize }) {
         <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
           <h3 style={{ color: "#ffd700", fontSize: "0.95rem", fontWeight: "bold", marginTop: 0, marginBottom: "12px" }}>⚡ YKOS ÇÖZÜMLERİ VE İNDEKLSER</h3>
           <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "15px" }}>
-            <div style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 215, 0, 0.2)", borderRadius: "6px", padding: "10px", fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold" }}>
-              📜 Göbeklitepe T-Sütunu YKOS Okuması
+            
+            {/* Tıklanınca Okuma Ekranına Giden Kartlar */}
+            <div 
+              onClick={() => onNavigateRead && onNavigateRead(1)}
+              style={{ background: "rgba(255, 215, 0, 0.05)", border: "1px solid rgba(255, 215, 0, 0.4)", borderRadius: "6px", padding: "10px", fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold", cursor: "pointer", transition: "all 0.2s" }}
+            >
+              📜 Göbeklitepe T-Sütunu YKOS Okuması →
             </div>
-            <div style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 215, 0, 0.2)", borderRadius: "6px", padding: "10px", fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold" }}>
-              📜 Etrüsk Lemnos Kitabesi & Ön Türkçe Eşleşmesi
+            
+            <div 
+              onClick={() => onNavigateRead && onNavigateRead(2)}
+              style={{ background: "rgba(255, 215, 0, 0.05)", border: "1px solid rgba(255, 215, 0, 0.4)", borderRadius: "6px", padding: "10px", fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold", cursor: "pointer", transition: "all 0.2s" }}
+            >
+              📜 Etrüsk Lemnos Kitabesi & Ön Türkçe Eşleşmesi →
             </div>
+
           </div>
 
           <button 
