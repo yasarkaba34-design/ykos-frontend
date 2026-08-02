@@ -91,7 +91,7 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome })
   return (
     <div style={{ width: "100%", maxWidth: "1240px", margin: "0 auto", padding: "10px", boxSizing: "border-box", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
       
-      {/* 1. ÜST HEADER KUTUSU (COMPACT LOGO) */}
+      {/* 1. ÜST HEADER KUTUSU */}
       <div style={{
         ...cardStyle,
         padding: "8px 16px 10px 16px",
@@ -166,22 +166,30 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome })
         <SearchBar onSearch={(q) => setSearchQuery(q)} />
       </div>
 
-      {/* 3. İSTATİSTİK SAYAÇ KUTUSU (SOL VE SAĞ BAŞLIK KUTULU - MOBİL UYUMLU) */}
+      {/* 3. İSTATİSTİK SAYAÇ KUTUSU (KOMPAKT, KARŞILIKLI TEK SATIR BAŞLIK) */}
       <div style={cardStyle}>
         
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px", marginBottom: "12px", borderBottom: "1px solid rgba(255, 215, 0, 0.2)", paddingBottom: "8px" }}>
+        <div style={{ 
+          display: "flex", 
+          justify: "space-between", 
+          alignItems: "center", 
+          flexWrap: "nowrap", // Kesinlikle alt alta geçmesin
+          marginBottom: "10px", 
+          borderBottom: "1px solid rgba(255, 215, 0, 0.2)", 
+          paddingBottom: "6px" 
+        }}>
           
-          {/* SOL BAŞLIK KUTUSU */}
-          <div style={{ border: "1px solid #ffd700", borderRadius: "6px", padding: "3px 10px", backgroundColor: "rgba(255, 215, 0, 0.05)" }}>
-            <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold", letterSpacing: "0.5px" }}>
+          {/* SOL BAŞLIK (Küçültülmüş Font) */}
+          <div style={{ border: "1px solid #ffd700", borderRadius: "5px", padding: "2px 6px", backgroundColor: "rgba(255, 215, 0, 0.05)" }}>
+            <span style={{ color: "#ffd700", fontSize: "0.65rem", fontWeight: "bold", letterSpacing: "0.2px", whiteSpace: "nowrap" }}>
               📊 CANLI VERİ İSTATİSTİKLERİ
             </span>
           </div>
 
-          {/* SAĞ SİSTEM DURUMU KUTUSU */}
-          <div style={{ border: "1px solid #ffd700", borderRadius: "6px", padding: "3px 10px", fontSize: "0.65rem", background: "rgba(255, 215, 0, 0.05)", display: "flex", alignItems: "center", gap: "6px" }}>
-            <span style={{ color: "#888" }}>SİSTEM DURUMU:</span>
-            <strong style={{ color: "#ffd700", fontSize: "0.75rem" }}>🟢 AKTİF</strong>
+          {/* SAĞ SİSTEM DURUMU (Küçültülmüş Font) */}
+          <div style={{ border: "1px solid #ffd700", borderRadius: "5px", padding: "2px 6px", fontSize: "0.62rem", background: "rgba(255, 215, 0, 0.05)", display: "flex", alignItems: "center", gap: "4px", whiteSpace: "nowrap" }}>
+            <span style={{ color: "#888" }}>DURUM:</span>
+            <strong style={{ color: "#ffd700", fontSize: "0.65rem" }}>🟢 AKTİF</strong>
           </div>
 
         </div>
