@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import YKOSDashboard from "./layouts/YKOSDashboard";
 import MatrixToggle from "./components/MatrixToggle";
 import ReadingScreen from "./components/ReadingScreen";
-import archiveData from "./api/archive.json";
 import "./App.css";
 
 export default function App() {
@@ -42,7 +41,7 @@ export default function App() {
             >
               ⬅ Ana Panele Dön
             </button>
-            <MatrixToggle data={archiveData} />
+            <MatrixToggle onNavigateRead={handleNavigateRead} />
           </div>
         )}
 
