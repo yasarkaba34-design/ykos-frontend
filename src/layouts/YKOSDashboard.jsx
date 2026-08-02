@@ -166,7 +166,7 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome })
         <SearchBar onSearch={(q) => setSearchQuery(q)} />
       </div>
 
-      {/* 3. İSTATİSTİK SAYAÇ KUTUSU (SOLA VE SAĞA TAM YASLI BAŞLIK KUTULARI) */}
+      {/* 3. İSTATİSTİK SAYAÇ KUTUSU */}
       <div style={cardStyle}>
         
         <div style={{ 

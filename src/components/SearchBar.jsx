@@ -62,3 +62,25 @@ export default function SearchBar({ onSearch }) {
     </div>
   );
 }
+import React, { useState } from "react";
+
+export default function SearchBar({ onSearch }) {
+  const [query, setQuery] = useState("");
+
+  const handleSearch = () => {
+    if (query.trim() === "") return;
+    onSearch(query);
+  };
+
+  return (
+    <div className="ykos-search">
+      <input
+        type="text"
+        placeholder="Arama..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      <button onClick={handleSearch}>Ara</button>
+    </div>
+  );
+}
