@@ -91,10 +91,10 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome })
   return (
     <div style={{ width: "100%", maxWidth: "1240px", margin: "0 auto", padding: "10px", boxSizing: "border-box", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
       
-      {/* 1. ÜST HEADER KUTUSU (2 CM KISALTILMIŞ COMPACT BÖLÜM) */}
+      {/* 1. ÜST HEADER KUTUSU (KARTAL YUKARI ÇEKİLDİ) */}
       <div style={{
         ...cardStyle,
-        padding: "8px 16px 10px 16px", // Dikey boşluklar düşürüldü (Tam 2 cm kısaltma sağlandı)
+        padding: "8px 16px 10px 16px",
         marginBottom: "12px"
       }}>
         
@@ -131,17 +131,17 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome })
           </div>
         </div>
 
-        {/* ORTA LOGO & BAŞLIK (TIKLANINCA ANA SAYFAYA DÖNÜŞ LINKI) */}
+        {/* ORTA LOGO (KARTAL YUKARI YAKLAŞTIRILDI) */}
         <div 
           onClick={onGoHome || (() => window.location.reload())}
           title="Ana Sayfaya Dön"
-          style={{ textAlign: "center", margin: "0 auto", cursor: "pointer", display: "block", width: "100%", marginTop: "-8px" }}
+          style={{ textAlign: "center", margin: "0 auto", cursor: "pointer", display: "block", width: "100%", marginTop: "-18px" }}
         >
-          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "2px" }}>
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "0px" }}>
             <img 
               src="/ykos-logo.png" 
               alt="YKOS Kartal Amblemi" 
-              style={{ maxHeight: "52px", maxWidth: "100%", objectFit: "contain", filter: "drop-shadow(0px 0px 8px rgba(255, 215, 0, 0.4))" }} 
+              style={{ maxHeight: "54px", maxWidth: "100%", objectFit: "contain", filter: "drop-shadow(0px 0px 8px rgba(255, 215, 0, 0.4))" }} 
               onError={(e) => { e.target.style.display = 'none'; }}
             />
           </div>
@@ -166,10 +166,10 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome })
         <SearchBar onSearch={(q) => setSearchQuery(q)} />
       </div>
 
-      {/* 3. İSTATİSTİK SAYAÇ KUTUSU */}
+      {/* 3. İSTATİSTİK SAYAÇ KUTUSU (AKTİF ROZETİ TAM ORTALANDI) */}
       <div style={cardStyle}>
-        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "10px" }}>
-          <div style={{ border: "1px solid #ffd700", borderRadius: "6px", padding: "3px 10px", textAlign: "center", fontSize: "0.65rem", background: "rgba(255, 215, 0, 0.05)" }}>
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: "12px" }}>
+          <div style={{ border: "1px solid #ffd700", borderRadius: "6px", padding: "4px 16px", textAlign: "center", fontSize: "0.65rem", background: "rgba(255, 215, 0, 0.05)", minWidth: "140px" }}>
             <span style={{ color: "#888", display: "block" }}>SİSTEM DURUMU</span>
             <strong style={{ color: "#ffd700", fontSize: "0.85rem", display: "block" }}>AKTİF</strong>
             <small style={{ color: "#666" }}>YKOS v1.0 Beta</small>
