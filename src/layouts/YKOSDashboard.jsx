@@ -158,7 +158,7 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
         <SearchBar onSearch={(q) => setSearchQuery(q)} />
       </div>
 
-      {/* 3. İSTATİSTİK SAYAÇ KUTUSU (MOBİLDE 2+2 YANİ 4 SIRA) */}
+      {/* 3. İSTATİSTİK SAYAÇ KUTUSU (KESİN 2 SÜTUN 4 SIRA) */}
       <div style={cardStyle}>
         <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "10px" }}>
           <div style={{ border: "1px solid #ffd700", borderRadius: "6px", padding: "3px 10px", textAlign: "center", fontSize: "0.65rem", background: "rgba(255, 215, 0, 0.05)" }}>
@@ -168,13 +168,31 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
           </div>
         </div>
 
-        {/* 2 SÜTUNLU NİZAMİ IZGARA (4 SIRA) */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "10px" }}>
+        {/* MOBİLDE TAM 2 SÜTUN - 4 SIRA GARANTİSİ */}
+        <div className="stats-grid-container">
+          <style>{`
+            .stats-grid-container {
+              display: grid;
+              grid-template-columns: repeat(2, 1fr);
+              gap: 10px;
+            }
+            @media (min-width: 768px) {
+              .stats-grid-container {
+                grid-template-columns: repeat(4, 1fr);
+              }
+            }
+            @media (min-width: 1024px) {
+              .stats-grid-container {
+                grid-template-columns: repeat(8, 1fr);
+              }
+            }
+          `}</style>
+
           {initialStats.map((item, idx) => (
-            <div key={idx} style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 215, 0, 0.25)", borderRadius: "8px", padding: "12px 6px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
-              <span style={{ fontSize: "1.2rem" }}>{item.icon}</span>
-              <span style={{ color: "#fff", fontWeight: "900", fontSize: "1.05rem", margin: "2px 0" }}>{item.count}</span>
-              <span style={{ color: "#888", fontSize: "0.7rem", fontWeight: "bold" }}>{item.label}</span>
+            <div key={idx} style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 215, 0, 0.25)", borderRadius: "8px", padding: "10px 4px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <span style={{ fontSize: "1.1rem" }}>{item.icon}</span>
+              <span style={{ color: "#fff", fontWeight: "900", fontSize: "1rem", margin: "2px 0" }}>{item.count}</span>
+              <span style={{ color: "#888", fontSize: "0.68rem", fontWeight: "bold" }}>{item.label}</span>
             </div>
           ))}
         </div>

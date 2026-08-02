@@ -1,34 +1,59 @@
 import React, { useState } from "react";
-import "./SearchBar.css";
 
 export default function SearchBar({ onSearch }) {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [term, setTerm] = useState("");
 
   const handleChange = (e) => {
-    const value = e.target.value;
-    setSearchTerm(value);
-    if (onSearch) {
-      onSearch(value);
-    }
+    const val = e.target.value;
+    setTerm(val);
+    if (onSearch) onSearch(val);
+  };
+
+  const handleClear = () => {
+    setTerm("");
+    if (onSearch) onSearch("");
   };
 
   return (
-    <div className="ykos-search-wrapper" style={{ width: "100%" }}>
-      <div className="search-input-box" style={{ display: "flex", alignItems: "center", backgroundColor: "#050811", border: "1px solid rgba(255, 215, 0, 0.4)", borderRadius: "25px", padding: "8px 20px" }}>
-        <span className="search-icon" style={{ color: "#ffd700", marginRight: "12px" }}>🔍</span>
+    <div style={{ width: "100%", position: "relative" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          backgroundColor: "#050811",
+          border: "1px solid #ffd700",
+          borderRadius: "8px",
+          padding: "6px 14px",
+          boxShadow: "0 0 15px rgba(255, 215, 0, 0.15)"
+        }}
+      >
+        <span style={{ fontSize: "1.1rem", marginRight: "10px", color: "#ffd700" }}>🔍</span>
         <input
           type="text"
-          className="search-input"
-          placeholder="Damga, kök hece, ülke, il veya kadim merkez ara..."
-          value={searchTerm}
+          value={term}
           onChange={handleChange}
-          style={{ width: "100%", background: "transparent", border: "none", outline: "none", color: "#ffffff", fontSize: "0.95rem" }}
+          placeholder="ykos.com.tr Arşivinde Ara: (Örn: Çatalhöyük, Göbeklitepe, YOL, Etrüsk...)"
+          style={{
+            width: "100%",
+            backgroundColor: "transparent",
+            border: "none",
+            outline: "none",
+            color: "#ffffff",
+            fontSize: "0.88rem",
+            fontFamily: "Segoe UI, sans-serif"
+          }}
         />
-        {searchTerm && (
-          <button 
-            className="search-clear-btn" 
-            onClick={() => { setSearchTerm(""); if(onSearch) onSearch(""); }}
-            style={{ background: "transparent", border: "none", color: "#ffd700", fontSize: "1rem", cursor: "pointer" }}
+        {term && (
+          <button
+            onClick={handleClear}
+            style={{
+              background: "transparent",
+              border: "none",
+              color: "#ffd700",
+              fontSize: "1rem",
+              cursor: "pointer",
+              padding: "0 4px"
+            }}
           >
             ✕
           </button>

@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import YKOSDashboard from "./layouts/YKOSDashboard";
 import MatrixToggle from "./components/MatrixToggle";
 import ReadingScreen from "./components/ReadingScreen";
+import AdminPanel from "./layouts/AdminPanel";
 import "./App.css";
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState("dashboard"); // "dashboard", "matrix", "read"
+  const [currentScreen, setCurrentScreen] = useState("dashboard"); // "dashboard", "matrix", "read", "admin"
   const [selectedReadId, setSelectedReadId] = useState(1);
 
   const handleNavigateRead = (id) => {
@@ -15,6 +16,19 @@ export default function App() {
 
   return (
     <div className="app-main-wrapper" style={{ backgroundColor: "#050811", minHeight: "100vh", color: "#fff" }}>
+      
+      {/* GİZLİ GÜVENLİ YÖNETİM PANELİ GEÇİŞ BARI */}
+      <header style={{ width: "100%", maxWidth: "1240px", margin: "0 auto", padding: "10px 10px 0 10px", display: "flex", justifyContent: "flex-end" }}>
+        {currentScreen !== "admin" && (
+          <button 
+            onClick={() => setCurrentScreen("admin")}
+            style={{ background: "transparent", border: "1px dashed rgba(255,215,0,0.4)", color: "#ffd700", padding: "4px 10px", borderRadius: "4px", fontSize: "0.7rem", cursor: "pointer" }}
+          >
+            ⚙️ ykos.com.tr Veri Giriş Portalı
+          </button>
+        )}
+      </header>
+
       <main style={{ width: "100%", padding: "10px", boxSizing: "border-box" }}>
         
         {currentScreen === "dashboard" && (
@@ -64,6 +78,10 @@ export default function App() {
             </button>
             <ReadingScreen readId={selectedReadId} />
           </div>
+        )}
+
+        {currentScreen === "admin" && (
+          <AdminPanel onBack={() => setCurrentScreen("dashboard")} />
         )}
 
       </main>
