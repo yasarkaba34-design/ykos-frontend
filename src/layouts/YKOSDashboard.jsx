@@ -1,218 +1,250 @@
-import React from "react";
+import React, { useState } from "react";
+import SearchBar from "../components/SearchBar";
 
-export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome }) {
+// İç Veri Tabanı
+const archiveData = [
+  {
+    id: 1,
+    title: "Çatalhöyük Kök Hece ve Damga Sembolizmi",
+    category: "Arkeolojik Çözümleme",
+    tags: ["çatalhöyük", "anadolu", "kök hece", "piktogram", "ykos 100"],
+    summary: "Çatalhöyük duvar resimleri ve pişmiş toprak mühürlerdeki YKOS 100 kök hece eşleşmeleri.",
+    analysis: "Çatalhöyük M.Ö. 7400 katmanlarında tespit edilen dairesel ve ışınsal motifler, YKOS 'ÇEV' ve 'BA' kök heceleriyle tam fonetik uyum gösterir."
+  },
+  {
+    id: 2,
+    title: "Göbeklitepe T-Sütunu YKOS Okuması",
+    category: "Arkeolojik Çözümleme",
+    tags: ["göbeklitepe", "t-sütun", "h sembolü", "c sembolü", "ykos 200"],
+    summary: "Şanlıurfa Göbeklitepe T-Sütunları üzerindeki ikil sembollerin YKOS çözümü.",
+    analysis: "T-sütunlardaki 'H' ve 'C' piktogramları ER-İK-AN ve KÖK-SU kavramsal kurgusunu ifade eder."
+  },
+  {
+    id: 3,
+    title: "Etrüsk Lemnos Kitabesi & Ön Türkçe Eşleşmesi",
+    category: "Dil ve Yazıt Atlası",
+    tags: ["etrüsk", "lemnos", "yazıt", "akdeniz", "ykos 300"],
+    summary: "Lemnos adası mezar taşındaki alfabetik dizilimin YKOS kök fonetiği ile okuması.",
+    analysis: "Batı Akdeniz'e taşınan alfabe dizgesi, Anadolu Ön-Türkçe kök ekleriyle deşifre edilmiştir."
+  },
+  {
+    id: 4,
+    title: "YOL Kök Hecesi ve Akış Teorisi",
+    category: "Kök Hece Matrisi",
+    tags: ["yol", "kök hece", "dinamik sistem", "ykos 100"],
+    summary: "YKOS Kavramsal Çerçevesi: 'Rulo değil yol' mantığının dilbilimsel matrisi.",
+    analysis: "Y-O-L kök hecesi; yön, hareket, süreç ve geçiş sembolizmini ifade eden ana eksendir."
+  }
+];
+
+export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
+  const [langOpen, setLangOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [currentLang, setCurrentLang] = useState("TR");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const languages = [
+    { code: "TR", label: "Türkçe" },
+    { code: "EN", label: "English" },
+    { code: "FR", label: "Français" },
+    { code: "RU", label: "Русский" },
+    { code: "ZH", label: "中文" },
+    { code: "ES", label: "Español" },
+    { code: "IT", label: "Italiano" },
+    { code: "AR", label: "العربية" },
+    { code: "JA", label: "日本語" },
+    { code: "DE", label: "Deutsch" }
+  ];
+
+  const initialStats = [
+    { icon: "🌐", count: "214", label: "Ülkeler" },
+    { icon: "🏛️", count: "248", label: "Araştırmalar" },
+    { icon: "🔷", count: "9.870", label: "Damgalar" },
+    { icon: "🗿", count: "18.420", label: "Petroglifler" },
+    { icon: "📜", count: "4.132", label: "Yazıtlar" },
+    { icon: "📚", count: "12.580", label: "Kaynaklar" },
+    { icon: "📷", count: "46.900", label: "Görseller" },
+    { icon: "🗺️", count: "58", label: "Atlaslar" }
+  ];
+
+  const filteredData = archiveData.filter((item) => {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase().trim();
+    return (
+      item.title.toLowerCase().includes(q) ||
+      item.summary.toLowerCase().includes(q) ||
+      item.analysis.toLowerCase().includes(q) ||
+      item.tags.some((tag) => tag.toLowerCase().includes(q))
+    );
+  });
+
+  const cardStyle = {
+    backgroundColor: "#050811",
+    border: "1px solid #ffd700",
+    borderRadius: "12px",
+    padding: "18px",
+    marginBottom: "15px",
+    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.7)",
+    position: "relative"
+  };
+
   return (
-    <div style={{ maxWidth: "1240px", margin: "0 auto", color: "#fff", fontFamily: "Segoe UI, sans-serif" }}>
+    <div style={{ width: "100%", maxWidth: "1240px", margin: "0 auto", padding: "10px", boxSizing: "border-box", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
       
-      {/* 🦅 ÜST LOGO & BAŞLIK ALANI (Derli Toplu & Kibar Sürüm) */}
-      <div 
-        style={{
-          backgroundColor: "#050811",
-          border: "1px solid #ffd700",
-          borderRadius: "16px",
-          padding: "15px 25px",
-          marginBottom: "15px",
-          boxShadow: "0 4px 25px rgba(0, 0, 0, 0.8)",
-          position: "relative",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center"
-        }}
-      >
-        {/* SOL MENÜ DÜĞMESİ */}
-        <button 
-          style={{
-            position: "absolute",
-            left: "25px",
-            top: "50%",
-            transform: "translateY(-50%)",
-            background: "rgba(255,215,0,0.1)",
-            border: "1px solid #ffd700",
-            color: "#ffd700",
-            padding: "8px 16px",
-            borderRadius: "8px",
-            fontWeight: "bold",
-            fontSize: "0.85rem",
-            cursor: "pointer"
-          }}
-        >
-          ☰ MENÜ
-        </button>
+      {/* 1. ÜST HEADER KUTUSU */}
+      <div style={cardStyle}>
+        
+        {/* SOL ÜST MENÜ & SAĞ ÜST DİL */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+          <button 
+            onClick={() => { setMenuOpen(!menuOpen); setLangOpen(false); }}
+            style={{ background: "rgba(255, 215, 0, 0.1)", border: "1px solid #ffd700", color: "#ffd700", padding: "6px 14px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}
+          >
+            ☰ MENÜ
+          </button>
 
-        {/* 🦅 YKOS KARTAL AMBLEMİ & LOGO (Tıklanınca Ana Sayfaya Dönüş) */}
-        <div 
-          onClick={onGoHome || (() => window.location.reload())}
-          title="Ana Sayfaya Dön"
-          style={{ 
-            cursor: "pointer", 
-            display: "flex", 
-            flexDirection: "column", 
-            alignItems: "center",
-            transition: "transform 0.2s ease"
-          }}
-          onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.03)"}
-          onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
-        >
-          <img 
-            src="/ykos-logo.png" 
-            alt="YKOS Kartal Amblemi" 
-            style={{ 
-              maxHeight: "65px",
-              filter: "drop-shadow(0px 0px 10px rgba(255,215,0,0.6))",
-              marginBottom: "4px"
-            }}
-            onError={(e) => { e.target.style.display = "none"; }}
-          />
-          <h1 style={{ 
-            color: "#ffd700", 
-            fontSize: "1.5rem", 
-            fontWeight: "900", 
-            letterSpacing: "2px", 
-            margin: 0,
-            textShadow: "0 0 12px rgba(255, 215, 0, 0.4)"
-          }}>
-            YKOS BİLGİ SİSTEMİ
-          </h1>
-          <span style={{ color: "#aaa", fontSize: "0.78rem", letterSpacing: "1px", marginTop: "2px" }}>
-            Disiplinler Arası Algoritmik Kültür ve Dil Veri Tabanı
-          </span>
+          <div style={{ position: "relative" }}>
+            <button 
+              onClick={() => { setLangOpen(!langOpen); setMenuOpen(false); }}
+              style={{ background: "transparent", border: "1px solid #ffd700", color: "#ffd700", padding: "6px 12px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}
+            >
+              🌐 {currentLang} ▾
+            </button>
+
+            {langOpen && (
+              <div style={{ position: "absolute", right: 0, top: "110%", backgroundColor: "#050811", border: "1px solid #ffd700", borderRadius: "8px", display: "flex", flexDirection: "column", minWidth: "150px", maxHeight: "250px", overflowY: "auto", zIndex: 1000, boxShadow: "0 6px 20px rgba(0,0,0,0.9)", padding: "4px" }}>
+                {languages.map((l) => (
+                  <button 
+                    key={l.code}
+                    onClick={() => { setCurrentLang(l.code); setLangOpen(false); }}
+                    style={{ background: currentLang === l.code ? "rgba(255,215,0,0.2)" : "transparent", border: "none", color: currentLang === l.code ? "#ffd700" : "#fff", padding: "8px 10px", textAlign: "left", fontSize: "0.8rem", cursor: "pointer", fontWeight: currentLang === l.code ? "bold" : "normal" }}
+                  >
+                    {l.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* SAĞ DİL SEÇİMİ */}
-        <div 
-          style={{
-            position: "absolute",
-            right: "25px",
-            top: "50%",
-            transform: "translateY(-50%)",
-            background: "rgba(255,215,0,0.1)",
-            border: "1px solid #ffd700",
-            color: "#ffd700",
-            padding: "8px 14px",
-            borderRadius: "8px",
-            fontSize: "0.85rem",
-            fontWeight: "bold",
-            cursor: "pointer"
-          }}
-        >
-          🌐 TR ▾
+        {/* ORTA LOGO */}
+        <div style={{ textAlign: "center", margin: "10px 0" }}>
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "8px" }}>
+            <img 
+              src="/ykos-logo.png" 
+              alt="YKOS Kartal Amblemi" 
+              style={{ maxHeight: "85px", maxWidth: "100%", objectFit: "contain", filter: "drop-shadow(0px 0px 10px rgba(255, 215, 0, 0.4))" }} 
+              onError={(e) => { e.target.style.display = 'none'; }}
+            />
+          </div>
+          <h1 style={{ color: "#ffd700", fontSize: "1.7rem", fontWeight: "900", margin: "4px 0 2px 0", letterSpacing: "1.5px" }}>YKOS BİLGİ SİSTEMİ</h1>
+          <p style={{ color: "#aaaaaa", fontSize: "0.8rem", margin: 0 }}>Disiplinler Arası Algoritmik Kültür ve Dil Veri Tabanı</p>
         </div>
+
+        {menuOpen && (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "8px", marginTop: "15px", borderTop: "1px solid rgba(255, 215, 0, 0.25)", paddingTop: "15px" }}>
+            {["KURUMSAL", "YKOS METODOLOJİSİ", "KÖK HECE MATRİSİ", "DAMGA ATLASI", "OKUMA & ANALİZ MOTORU", "GÖÇ & AKIŞ HARİTASI", "🎥 VİDEO & SUNUMLAR", "KÜLLİYAT & YAYINLAR", "DİJİTAL ARŞİV"].map((item, i) => (
+              <button key={i} style={{ background: i === 2 ? "rgba(255, 215, 0, 0.2)" : "rgba(255, 255, 255, 0.02)", border: i === 2 ? "1px solid #ffd700" : "1px solid rgba(255, 215, 0, 0.3)", color: i === 2 ? "#ffd700" : "#ccc", padding: "6px 10px", borderRadius: "4px", fontSize: "0.72rem", fontWeight: "bold", cursor: "pointer" }}>
+                {item}
+              </button>
+            ))}
+          </div>
+        )}
 
       </div>
 
-      {/* 🔍 ARAMA MOTORU BARI */}
-      <div style={{
-        backgroundColor: "#050811",
-        border: "1px solid #ffd700",
-        borderRadius: "12px",
-        padding: "12px 20px",
-        marginBottom: "15px",
-        display: "flex",
-        alignItems: "center",
-        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.7)"
-      }}>
-        <span style={{ color: "#ffd700", fontSize: "1.2rem", marginRight: "12px" }}>🔍</span>
-        <input 
-          type="text" 
-          placeholder="ykos.com.tr Arşivinde Ara: (Örn: Çatalhöyük, Göbeklitepe, YOL, Etrüsk...)" 
-          style={{
-            width: "100%",
-            background: "transparent",
-            border: "none",
-            color: "#fff",
-            fontSize: "0.95rem",
-            outline: "none"
-          }}
-        />
+      {/* 2. ARAMA BARI */}
+      <div style={{ marginBottom: "15px", width: "100%" }}>
+        <SearchBar onSearch={(q) => setSearchQuery(q)} />
       </div>
 
-      {/* 📊 CANLI SAYAÇLAR PANOLARI */}
-      <div style={{
-        backgroundColor: "#050811",
-        border: "1px solid #ffd700",
-        borderRadius: "16px",
-        padding: "20px",
-        marginBottom: "20px",
-        position: "relative"
-      }}>
-        <div style={{ position: "absolute", right: "20px", top: "15px", textAlign: "right" }}>
-          <span style={{ fontSize: "0.65rem", color: "#aaa", display: "block" }}>SİSTEM DURUMU</span>
-          <span style={{ fontSize: "0.85rem", color: "#ffd700", fontWeight: "900" }}>AKTİF</span>
+      {/* 3. İSTATİSTİK SAYAÇ KUTUSU (KESİN 2 SÜTUN 4 SIRA) */}
+      <div style={cardStyle}>
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "10px" }}>
+          <div style={{ border: "1px solid #ffd700", borderRadius: "6px", padding: "3px 10px", textAlign: "center", fontSize: "0.65rem", background: "rgba(255, 215, 0, 0.05)" }}>
+            <span style={{ color: "#888", display: "block" }}>SİSTEM DURUMU</span>
+            <strong style={{ color: "#ffd700", fontSize: "0.85rem", display: "block" }}>AKTİF</strong>
+            <small style={{ color: "#666" }}>YKOS v1.0 Beta</small>
+          </div>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))", gap: "10px", marginTop: "10px" }}>
-          {[
-            { label: "Ülkeler", val: "214", icon: "🌐" },
-            { label: "Araştırmalar", val: "248", icon: "🏛️" },
-            { label: "Damgalar", val: "9.870", icon: "🔹" },
-            { label: "Petroglifler", val: "18.420", icon: "🗿" },
-            { label: "Yazıtlar", val: "4.132", icon: "📜" },
-            { label: "Kaynaklar", val: "12.580", icon: "📚" },
-            { label: "Görseller", val: "46.900", icon: "📷" },
-            { label: "Atlaslar", val: "58", icon: "🗺️" }
-          ].map((st, idx) => (
-            <div key={idx} style={{
-              backgroundColor: "rgba(255, 215, 0, 0.03)",
-              border: "1px solid rgba(255, 215, 0, 0.3)",
-              borderRadius: "10px",
-              padding: "12px 8px",
-              textAlign: "center"
-            }}>
-              <div style={{ fontSize: "1.1rem", marginBottom: "4px" }}>{st.icon}</div>
-              <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "1.1rem" }}>{st.val}</div>
-              <div style={{ color: "#aaa", fontSize: "0.72rem", marginTop: "2px" }}>{st.label}</div>
+        {/* MOBİLDE TAM 2 SÜTUN - 4 SIRA GARANTİSİ */}
+        <div className="stats-grid-container">
+          <style>{`
+            .stats-grid-container {
+              display: grid;
+              grid-template-columns: repeat(2, 1fr);
+              gap: 10px;
+            }
+            @media (min-width: 768px) {
+              .stats-grid-container {
+                grid-template-columns: repeat(4, 1fr);
+              }
+            }
+            @media (min-width: 1024px) {
+              .stats-grid-container {
+                grid-template-columns: repeat(8, 1fr);
+              }
+            }
+          `}</style>
+
+          {initialStats.map((item, idx) => (
+            <div key={idx} style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 215, 0, 0.25)", borderRadius: "8px", padding: "10px 4px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <span style={{ fontSize: "1.1rem" }}>{item.icon}</span>
+              <span style={{ color: "#fff", fontWeight: "900", fontSize: "1rem", margin: "2px 0" }}>{item.count}</span>
+              <span style={{ color: "#888", fontSize: "0.68rem", fontWeight: "bold" }}>{item.label}</span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* 🧭 MATRİSLER VE YKOS İNDEKS ÇÖZÜMLERİ PANOLARI */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "20px" }}>
+      {/* 4. ALT KARTLAR */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "15px" }}>
         
-        {/* SOL: MATRİSLER */}
-        <div style={{
-          backgroundColor: "#050811",
-          border: "1px solid #ffd700",
-          borderRadius: "16px",
-          padding: "20px"
-        }}>
-          <h3 style={{ color: "#ffd700", fontSize: "1.05rem", marginTop: 0, marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "8px" }}>
-            MATRİSLER VE KATMANLAR
-          </h3>
-          <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "12px", fontSize: "0.88rem" }}>
-            <li onClick={onVisualize} style={{ cursor: "pointer", color: "#ffd700", fontWeight: "bold" }}>💻 KÖK HECE MATRİSİ</li>
-            <li style={{ color: "#ddd" }}>🗺️ DAMGA ATLASI</li>
-            <li style={{ color: "#ddd" }}>🔬 OKUMA & ANALİZ MOTORU</li>
-            <li style={{ color: "#ddd" }}>🟢 GÖÇ & AKIŞ HARİTASI</li>
-          </ul>
+        {/* SOL PANEL */}
+        <div style={cardStyle}>
+          <h3 style={{ color: "#ffd700", fontSize: "0.95rem", fontWeight: "bold", marginTop: 0, marginBottom: "12px" }}>MATRİSLER VE KATMANLAR</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onVisualize}>► <span style={{ color: "#fff" }}>🔤 KÖK HECE MATRİSİ</span></div>
+            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onVisualize}>► <span style={{ color: "#fff" }}>🗺️ DAMGA ATLASI</span></div>
+            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onVisualize}>► <span style={{ color: "#fff" }}>🔬 OKUMA & ANALİZ MOTORU</span></div>
+            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onVisualize}>► <span style={{ color: "#fff" }}>🌏 GÖÇ & AKIŞ HARİTASI</span></div>
+          </div>
         </div>
 
-        {/* SAĞ: ÇÖZÜMLER */}
-        <div style={{
-          backgroundColor: "#050811",
-          border: "1px solid #ffd700",
-          borderRadius: "16px",
-          padding: "20px"
-        }}>
-          <h3 style={{ color: "#ffd700", fontSize: "1.05rem", marginTop: 0, marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "8px" }}>
-            ⚡ YKOS ÇÖZÜMLERİ VE İNDEKLSER
+        {/* SAĞ PANEL */}
+        <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
+          <h3 style={{ color: "#ffd700", fontSize: "0.95rem", fontWeight: "bold", marginTop: 0, marginBottom: "12px" }}>
+            {searchQuery ? `🔍 ARAMA SONUÇLARI (${filteredData.length})` : "⚡ YKOS ÇÖZÜMLERİ VE İNDEKLSER"}
           </h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            {[
-              { id: 1, title: "Çatalhöyük Kök Hece ve Damga Sembolizmi ➔", desc: "Çatalhöyük duvar resimleri ve pişmiş toprak mühürlerdeki YKOS 100 kök hece eşleşmeleri." },
-              { id: 2, title: "Göbeklitepe T-Sütunu YKOS Okuması ➔", desc: "Şanlıurfa Göbeklitepe T Sütunları üzerindeki ikil sembollerin YKOS çözümü." }
-            ].map((item) => (
-              <div 
-                key={item.id} 
-                onClick={() => onNavigateRead(item.id)}
-                style={{ cursor: "pointer", backgroundColor: "rgba(255,215,0,0.03)", padding: "10px", borderRadius: "8px", border: "1px solid rgba(255,215,0,0.2)" }}
-              >
-                <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem" }}>📜 {item.title}</div>
-                <div style={{ color: "#aaa", fontSize: "0.75rem", marginTop: "4px" }}>{item.desc}</div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "15px" }}>
+            {filteredData.length > 0 ? (
+              filteredData.map((item) => (
+                <div 
+                  key={item.id}
+                  onClick={() => onNavigateRead && onNavigateRead(item.id)}
+                  style={{ background: "rgba(255, 215, 0, 0.05)", border: "1px solid rgba(255, 215, 0, 0.4)", borderRadius: "6px", padding: "10px", fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold", cursor: "pointer" }}
+                >
+                  📜 {item.title} →
+                  <div style={{ fontSize: "0.72rem", color: "#ccc", fontWeight: "normal", marginTop: "4px" }}>
+                    {item.summary}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div style={{ color: "#888", fontSize: "0.8rem", textAlign: "center", padding: "10px" }}>
+                Aramanızla eşleşen veri bulunamadı.
               </div>
-            ))}
+            )}
           </div>
+
+          <button 
+            onClick={onVisualize}
+            style={{ background: "linear-gradient(135deg, #ffd700, #b8860b)", color: "#000000", border: "none", padding: "12px", borderRadius: "6px", fontWeight: "900", fontSize: "0.85rem", cursor: "pointer", marginTop: "auto", boxShadow: "0 0 12px rgba(255, 215, 0, 0.35)" }}
+          >
+            🗣️ BALONCUK MATRİSİNİ GÖRSELLEŞTİR ➔
+          </button>
         </div>
 
       </div>
