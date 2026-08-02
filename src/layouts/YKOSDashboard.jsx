@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import SearchBar from "../components/SearchBar";
 
-// İç Veri Tabanı (Soru & Arama Uyumlu Veriler)
+// İç Veri Tabanı
 const archiveData = [
   {
     id: 1,
@@ -67,7 +67,6 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
     { icon: "🗺️", count: "58", label: "Atlaslar" }
   ];
 
-  // Güvenli Arama Filtreleme
   const filteredData = archiveData.filter((item) => {
     if (!searchQuery) return true;
     const q = searchQuery.toLowerCase().trim();
@@ -128,7 +127,7 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
           </div>
         </div>
 
-        {/* ORTA LOGO (KARTAL AMBLEMİ) */}
+        {/* ORTA LOGO */}
         <div style={{ textAlign: "center", margin: "10px 0" }}>
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "8px" }}>
             <img 
@@ -159,7 +158,7 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
         <SearchBar onSearch={(q) => setSearchQuery(q)} />
       </div>
 
-      {/* 3. İSTATİSTİK SAYAÇ KUTUSU */}
+      {/* 3. İSTATİSTİK SAYAÇ KUTUSU (MOBİLDE 2+2 YANİ 4 SIRA) */}
       <div style={cardStyle}>
         <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "10px" }}>
           <div style={{ border: "1px solid #ffd700", borderRadius: "6px", padding: "3px 10px", textAlign: "center", fontSize: "0.65rem", background: "rgba(255, 215, 0, 0.05)" }}>
@@ -169,18 +168,19 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
           </div>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))", gap: "10px" }}>
+        {/* 2 SÜTUNLU NİZAMİ IZGARA (4 SIRA) */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "10px" }}>
           {initialStats.map((item, idx) => (
-            <div key={idx} style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 215, 0, 0.25)", borderRadius: "6px", padding: "10px 4px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
-              <span style={{ fontSize: "1.1rem" }}>{item.icon}</span>
-              <span style={{ color: "#fff", fontWeight: "900", fontSize: "1rem", margin: "2px 0" }}>{item.count}</span>
-              <span style={{ color: "#888", fontSize: "0.68rem" }}>{item.label}</span>
+            <div key={idx} style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 215, 0, 0.25)", borderRadius: "8px", padding: "12px 6px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <span style={{ fontSize: "1.2rem" }}>{item.icon}</span>
+              <span style={{ color: "#fff", fontWeight: "900", fontSize: "1.05rem", margin: "2px 0" }}>{item.count}</span>
+              <span style={{ color: "#888", fontSize: "0.7rem", fontWeight: "bold" }}>{item.label}</span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* 4. ALT KARTLAR VE FİLTRELENEN ARAMA SONUÇLARI */}
+      {/* 4. ALT KARTLAR */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "15px" }}>
         
         {/* SOL PANEL */}
