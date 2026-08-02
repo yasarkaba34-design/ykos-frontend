@@ -118,3 +118,13 @@ export default function BubbleMatrixCore({ data, atlas }) {
     </div>
   );
 }
+<div
+  key={index}
+  className={`bubble ${bubble.active ? "active" : ""}`}
+  data-flux={tooltip.flux}
+  style={{
+    transform: `translate(${bubble.x}px, ${bubble.y}px)`
+  }}
+>
+  <span className="bubble-label">{bubble.label}</span>
+</div>

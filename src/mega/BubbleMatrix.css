@@ -42,3 +42,26 @@
   text-align: center;
   pointer-events: none;
 }
+@keyframes bubbleFlux {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.bubble {
+  animation: bubbleFlux 3s ease-in-out infinite;
+}
+
+.bubble[data-flux="1.5"] {
+  animation-duration: 2.5s;
+  box-shadow: 0 0 15px rgba(255,215,0,0.6);
+}
+
+.bubble[data-flux="2"] {
+  animation-duration: 2s;
+  box-shadow: 0 0 20px rgba(255,215,0,0.8);
+}
+
+.bubble[data-flux="3"] {
+  animation-duration: 1.5s;
+  box-shadow: 0 0 25px rgba(255,215,0,1);
+}

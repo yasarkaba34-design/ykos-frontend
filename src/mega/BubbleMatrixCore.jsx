@@ -70,3 +70,39 @@ export default function BubbleMatrixCore({ bubbles }) {
     </div>
   );
 }
+import { getAtlasCoordinates } from "./AtlasPositioner";
+
+const handleBubbleClick = async (e, bubble) => {
+  const rect = e.target.getBoundingClientRect();
+  const atlas = getAtlasCoordinates(bubble.label);
+  const result = await evaluateBubble(bubble);
+
+  setTooltip({
+    visible: true,
+    x: rect.left + rect.width / 2,
+    y: rect.top,
+    title: bubble.label,
+    description: result.semantic,
+    rmv: result.rmv,
+    atlas: `${atlas.region} (${atlas.x}, ${atlas.y})`,
+    flux: result.flux
+  });
+};
+import { getFluxIntensity } from "./FluxService";
+
+const handleBubbleClick = async (e, bubble) => {
+  const rect = e.target.getBoundingClientRect();
+  const result = await evaluateBubble(bubble);
+  const fluxIntensity = getFluxIntensity(result.rmv);
+
+  setTooltip({
+    visible: true,
+    x: rect.left + rect.width / 2,
+    y: rect.top,
+    title: bubble.label,
+    description: result.semantic,
+    rmv: result.rmv,
+    atlas: `${result.atlas.region} (${result.atlas.x}, ${result.atlas.y})`,
+    flux: fluxIntensity
+  });
+};
