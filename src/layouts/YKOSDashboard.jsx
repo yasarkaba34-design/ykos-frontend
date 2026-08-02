@@ -1,6 +1,41 @@
 import React, { useState } from "react";
 import SearchBar from "../components/SearchBar";
-import archiveData from "../api/archive.json";
+
+// İç Veri Tabanı (Soru & Arama Uyumlu Veriler)
+const archiveData = [
+  {
+    id: 1,
+    title: "Çatalhöyük Kök Hece ve Damga Sembolizmi",
+    category: "Arkeolojik Çözümleme",
+    tags: ["çatalhöyük", "anadolu", "kök hece", "piktogram", "ykos 100"],
+    summary: "Çatalhöyük duvar resimleri ve pişmiş toprak mühürlerdeki YKOS 100 kök hece eşleşmeleri.",
+    analysis: "Çatalhöyük M.Ö. 7400 katmanlarında tespit edilen dairesel ve ışınsal motifler, YKOS 'ÇEV' ve 'BA' kök heceleriyle tam fonetik uyum gösterir."
+  },
+  {
+    id: 2,
+    title: "Göbeklitepe T-Sütunu YKOS Okuması",
+    category: "Arkeolojik Çözümleme",
+    tags: ["göbeklitepe", "t-sütun", "h sembolü", "c sembolü", "ykos 200"],
+    summary: "Şanlıurfa Göbeklitepe T-Sütunları üzerindeki ikil sembollerin YKOS çözümü.",
+    analysis: "T-sütunlardaki 'H' ve 'C' piktogramları ER-İK-AN ve KÖK-SU kavramsal kurgusunu ifade eder."
+  },
+  {
+    id: 3,
+    title: "Etrüsk Lemnos Kitabesi & Ön Türkçe Eşleşmesi",
+    category: "Dil ve Yazıt Atlası",
+    tags: ["etrüsk", "lemnos", "yazıt", "akdeniz", "ykos 300"],
+    summary: "Lemnos adası mezar taşındaki alfabetik dizilimin YKOS kök fonetiği ile okuması.",
+    analysis: "Batı Akdeniz'e taşınan alfabe dizgesi, Anadolu Ön-Türkçe kök ekleriyle deşifre edilmiştir."
+  },
+  {
+    id: 4,
+    title: "YOL Kök Hecesi ve Akış Teorisi",
+    category: "Kök Hece Matrisi",
+    tags: ["yol", "kök hece", "dinamik sistem", "ykos 100"],
+    summary: "YKOS Kavramsal Çerçevesi: 'Rulo değil yol' mantığının dilbilimsel matrisi.",
+    analysis: "Y-O-L kök hecesi; yön, hareket, süreç ve geçiş sembolizmini ifade eden ana eksendir."
+  }
+];
 
 export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
   const [langOpen, setLangOpen] = useState(false);
@@ -32,10 +67,10 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
     { icon: "🗺️", count: "58", label: "Atlaslar" }
   ];
 
-  // Arama Filtreleme Mantığı
+  // Güvenli Arama Filtreleme
   const filteredData = archiveData.filter((item) => {
     if (!searchQuery) return true;
-    const q = searchQuery.toLowerCase();
+    const q = searchQuery.toLowerCase().trim();
     return (
       item.title.toLowerCase().includes(q) ||
       item.summary.toLowerCase().includes(q) ||
@@ -93,7 +128,7 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
           </div>
         </div>
 
-        {/* ORTA KARTAL LOGO */}
+        {/* ORTA LOGO (KARTAL AMBLEMİ) */}
         <div style={{ textAlign: "center", margin: "10px 0" }}>
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "8px" }}>
             <img 
@@ -119,7 +154,7 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
 
       </div>
 
-      {/* 2. CANLI ARAMA BARI */}
+      {/* 2. ARAMA BARI */}
       <div style={{ marginBottom: "15px", width: "100%" }}>
         <SearchBar onSearch={(q) => setSearchQuery(q)} />
       </div>
@@ -145,7 +180,7 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
         </div>
       </div>
 
-      {/* 4. ALT 2 SÜTUNLU KARTLAR VEYA CANLI ARAMA SONUÇLARI */}
+      {/* 4. ALT KARTLAR VE FİLTRELENEN ARAMA SONUÇLARI */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "15px" }}>
         
         {/* SOL PANEL */}
@@ -159,7 +194,7 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
           </div>
         </div>
 
-        {/* SAĞ PANEL: ARAMA YAPILDIĞINDA FİLTRELENEN KARTLAR GELİR */}
+        {/* SAĞ PANEL */}
         <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
           <h3 style={{ color: "#ffd700", fontSize: "0.95rem", fontWeight: "bold", marginTop: 0, marginBottom: "12px" }}>
             {searchQuery ? `🔍 ARAMA SONUÇLARI (${filteredData.length})` : "⚡ YKOS ÇÖZÜMLERİ VE İNDEKLSER"}
@@ -174,7 +209,7 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead }) {
                   style={{ background: "rgba(255, 215, 0, 0.05)", border: "1px solid rgba(255, 215, 0, 0.4)", borderRadius: "6px", padding: "10px", fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold", cursor: "pointer" }}
                 >
                   📜 {item.title} →
-                  <div style={{ fontSize: "0.7rem", color: "#ccc", fontWeight: "normal", marginTop: "4px" }}>
+                  <div style={{ fontSize: "0.72rem", color: "#ccc", fontWeight: "normal", marginTop: "4px" }}>
                     {item.summary}
                   </div>
                 </div>
