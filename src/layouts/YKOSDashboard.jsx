@@ -6,19 +6,17 @@ export default function YKOSDashboard({ onVisualize }) {
   const [langOpen, setLangOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState("TR");
 
-  // İstediğiniz 10 Dil
   const languages = [
     { code: "TR", label: "Türkçe" },
-    { code: "EN", label: "English (İngilizce)" },
-    { code: "FR", label: "Français (Fransızca)" },
-    { code: "RU", label: "Русский (Rusça)" },
-    { code: "ZH", label: "中文 (Çince)" },
-    { code: "ES", label: "Español (İspanyolca)" },
-    { code: "IT", label: "Italiano (İtalyanca)" },
-    { code: "AR", label: "العربية (Arapça)" },
-    { code: "JA", label: "日本語 (Japonca)" },
-    { code: "PT", label: "Português (Portekizce)" },
-    { code: "DE", label: "Deutsch (Almanca)" }
+    { code: "EN", label: "English" },
+    { code: "FR", label: "Français" },
+    { code: "RU", label: "Русский" },
+    { code: "ZH", label: "中文" },
+    { code: "ES", label: "Español" },
+    { code: "IT", label: "Italiano" },
+    { code: "AR", label: "العربية" },
+    { code: "JA", label: "日本語" },
+    { code: "DE", label: "Deutsch" }
   ];
 
   const stats = [
@@ -33,38 +31,37 @@ export default function YKOSDashboard({ onVisualize }) {
   ];
 
   return (
-    <div className="dashboard-container">
+    <div className="ykos-dashboard-box">
       
-      {/* 1. ÜST HEADER KUTUSU */}
-      <header className="main-header-box">
-        <div className="header-top-row">
-          <div className="logo-center">
-            <span className="logo-badge">YKOS</span>
-            <h1 className="header-title">YKOS BİLGİ SİSTEMİ</h1>
-            <p className="header-subtitle">Disiplinler Arası Algoritmik Kültür ve Dil Veri Tabanı</p>
+      {/* 1. ANA BAŞLIK VE MENÜ KUTUSU */}
+      <div className="ykos-card-box">
+        <div className="ykos-header-row">
+          <div className="ykos-brand-area">
+            <span className="ykos-badge">YKOS</span>
+            <h1 className="ykos-title">YKOS BİLGİ SİSTEMİ</h1>
+            <p className="ykos-subtitle">Disiplinler Arası Algoritmik Kültür ve Dil Veri Tabanı</p>
           </div>
 
-          {/* AÇILIR 10 DİLLİ MENÜ */}
-          <div className="lang-box-wrapper">
+          {/* 10 DİLLİ DİL MENÜSÜ */}
+          <div className="ykos-lang-wrapper">
             <button 
-              className="lang-dropdown-btn"
+              className="ykos-lang-btn"
               onClick={() => setLangOpen(!langOpen)}
             >
               🌐 {currentLang} ▾
             </button>
-
             {langOpen && (
-              <div className="lang-menu">
-                {languages.map((lang) => (
+              <div className="ykos-lang-dropdown">
+                {languages.map((l) => (
                   <button 
-                    key={lang.code}
-                    className={currentLang === lang.code ? "active-lang" : ""}
+                    key={l.code}
+                    className={currentLang === l.code ? "active" : ""}
                     onClick={() => {
-                      setCurrentLang(lang.code);
+                      setCurrentLang(l.code);
                       setLangOpen(false);
                     }}
                   >
-                    {lang.label}
+                    {l.label}
                   </button>
                 ))}
               </div>
@@ -72,52 +69,51 @@ export default function YKOSDashboard({ onVisualize }) {
           </div>
         </div>
 
-        {/* 9 BUTONLU YATAY MENÜ */}
-        <nav className="header-nav-grid">
-          <button className="nav-tab-btn">KURUMSAL</button>
-          <button className="nav-tab-btn">YKOS METODOLOJİSİ</button>
-          <button className="nav-tab-btn active">KÖK HECE MATRİSİ</button>
-          <button className="nav-tab-btn">DAMGA ATLASI</button>
-          <button className="nav-tab-btn">OKUMA & ANALİZ MOTORU</button>
-          <button className="nav-tab-btn">GÖÇ & AKIŞ HARİTASI</button>
-          <button className="nav-tab-btn">🎥 VİDEO & SUNUMLAR</button>
-          <button className="nav-tab-btn">KÜLLİYAT & YAYINLAR</button>
-          <button className="nav-tab-btn">DİJİTAL ARŞİV</button>
-        </nav>
-      </header>
+        {/* 9 BUTONLU ŞERİT */}
+        <div className="ykos-nav-row">
+          <button className="ykos-nav-btn">KURUMSAL</button>
+          <button className="ykos-nav-btn">YKOS METODOLOJİSİ</button>
+          <button className="ykos-nav-btn active">KÖK HECE MATRİSİ</button>
+          <button className="ykos-nav-btn">DAMGA ATLASI</button>
+          <button className="ykos-nav-btn">OKUMA & ANALİZ MOTORU</button>
+          <button className="ykos-nav-btn">GÖÇ & AKIŞ HARİTASI</button>
+          <button className="ykos-nav-btn">🎥 VİDEO & SUNUMLAR</button>
+          <button className="ykos-nav-btn">KÜLLİYAT & YAYINLAR</button>
+          <button className="ykos-nav-btn">DİJİTAL ARŞİV</button>
+        </div>
+      </div>
 
-      {/* 2. TAM GENİŞLİKTE ARAMA BARI */}
-      <div className="search-section">
+      {/* 2. ARAMA BARI */}
+      <div className="ykos-search-row">
         <SearchBar />
       </div>
 
-      {/* 3. İSTATİSTİK VE SAYAÇ KUTUSU */}
-      <section className="stats-header-box">
-        <div className="status-badge-container">
-          <div className="status-badge">
-            <span className="status-title">SİSTEM DURUMU</span>
-            <span className="status-state">AKTİF</span>
-            <small className="status-version">YKOS v1.0 Beta</small>
+      {/* 3. İSTATİSTİK KUTUSU */}
+      <div className="ykos-card-box">
+        <div className="ykos-status-header">
+          <div className="ykos-status-tag">
+            <span>SİSTEM DURUMU</span>
+            <strong>AKTİF</strong>
+            <small>YKOS v1.0 Beta</small>
           </div>
         </div>
 
-        <div className="stats-grid">
+        <div className="ykos-stats-grid">
           {stats.map((item, idx) => (
-            <div key={idx} className="stat-card">
-              <span className="stat-icon">{item.icon}</span>
-              <span className="stat-count">{item.count}</span>
-              <span className="stat-label">{item.label}</span>
+            <div key={idx} className="ykos-stat-card">
+              <span className="icon">{item.icon}</span>
+              <span className="count">{item.count}</span>
+              <span className="label">{item.label}</span>
             </div>
           ))}
         </div>
-      </section>
+      </div>
 
-      {/* 4. ALT ÇİFT SÜTUNLU PANEL */}
-      <div className="bottom-panels-grid">
-        {/* SOL PANEL */}
-        <div className="panel-box">
-          <h3 className="panel-title">MATRİSLER VE KATMANLAR</h3>
-          <ul className="layers-list">
+      {/* 4. ALT 2 SÜTUNLU KARTLAR */}
+      <div className="ykos-bottom-grid">
+        <div className="ykos-card-box">
+          <h3 className="ykos-section-title">MATRİSLER VE KATMANLAR</h3>
+          <ul className="ykos-layer-list">
             <li>► <span>🔤 KÖK HECE MATRİSİ</span></li>
             <li>► <span>🗺️ DAMGA ATLASI</span></li>
             <li>► <span>🔬 OKUMA & ANALİZ MOTORU</span></li>
@@ -125,19 +121,14 @@ export default function YKOSDashboard({ onVisualize }) {
           </ul>
         </div>
 
-        {/* SAĞ PANEL */}
-        <div className="panel-box">
-          <h3 className="panel-title">⚡ YKOS ÇÖZÜMLERİ VE İNDEKLSER</h3>
-          <div className="solution-cards">
-            <div className="solution-item">
-              📜 <strong>Göbeklitepe T-Sütunu YKOS Okuması</strong>
-            </div>
-            <div className="solution-item">
-              📜 <strong>Etrüsk Lemnos Kitabesi & Ön Türkçe Eşleşmesi</strong>
-            </div>
+        <div className="ykos-card-box ykos-flex-col">
+          <h3 className="ykos-section-title">⚡ YKOS ÇÖZÜMLERİ VE İNDEKLSER</h3>
+          <div className="ykos-solution-list">
+            <div className="ykos-solution-card">📜 Göbeklitepe T-Sütunu YKOS Okuması</div>
+            <div className="ykos-solution-card">📜 Etrüsk Lemnos Kitabesi & Ön Türkçe Eşleşmesi</div>
           </div>
 
-          <button className="visualize-action-btn" onClick={onVisualize}>
+          <button className="ykos-gold-action-btn" onClick={onVisualize}>
             🗣️ BALONCUK MATRİSİNİ GÖRSELLEŞTİR ➔
           </button>
         </div>
