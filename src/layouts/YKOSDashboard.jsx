@@ -4,6 +4,7 @@ import "./YKOSDashboard.css";
 
 export default function YKOSDashboard({ onVisualize }) {
   const [langOpen, setLangOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState("TR");
 
   const languages = [
@@ -33,20 +34,22 @@ export default function YKOSDashboard({ onVisualize }) {
   return (
     <div className="ykos-dashboard-box">
       
-      {/* 1. ANA BAŞLIK VE MENÜ KUTUSU */}
+      {/* 1. ANA BAŞLIK VE ÜST KUTU */}
       <div className="ykos-card-box">
-        <div className="ykos-header-row">
-          <div className="ykos-brand-area">
-            <span className="ykos-badge">YKOS</span>
-            <h1 className="ykos-title">YKOS BİLGİ SİSTEMİ</h1>
-            <p className="ykos-subtitle">Disiplinler Arası Algoritmik Kültür ve Dil Veri Tabanı</p>
-          </div>
+        
+        {/* SOL ÜST MENÜ TUŞU & SAĞ ÜST DİL MENÜSÜ */}
+        <div className="ykos-top-bar-controls">
+          <button 
+            className="ykos-hamburger-btn"
+            onClick={() => { setMenuOpen(!menuOpen); setLangOpen(false); }}
+          >
+            ☰ MENÜ
+          </button>
 
-          {/* 10 DİLLİ DİL MENÜSÜ */}
           <div className="ykos-lang-wrapper">
             <button 
               className="ykos-lang-btn"
-              onClick={() => setLangOpen(!langOpen)}
+              onClick={() => { setLangOpen(!langOpen); setMenuOpen(false); }}
             >
               🌐 {currentLang} ▾
             </button>
@@ -69,18 +72,30 @@ export default function YKOSDashboard({ onVisualize }) {
           </div>
         </div>
 
-        {/* 9 BUTONLU ŞERİT */}
-        <div className="ykos-nav-row">
-          <button className="ykos-nav-btn">KURUMSAL</button>
-          <button className="ykos-nav-btn">YKOS METODOLOJİSİ</button>
-          <button className="ykos-nav-btn active">KÖK HECE MATRİSİ</button>
-          <button className="ykos-nav-btn">DAMGA ATLASI</button>
-          <button className="ykos-nav-btn">OKUMA & ANALİZ MOTORU</button>
-          <button className="ykos-nav-btn">GÖÇ & AKIŞ HARİTASI</button>
-          <button className="ykos-nav-btn">🎥 VİDEO & SUNUMLAR</button>
-          <button className="ykos-nav-btn">KÜLLİYAT & YAYINLAR</button>
-          <button className="ykos-nav-btn">DİJİTAL ARŞİV</button>
+        {/* ORTA LOGO VE BAŞLIK */}
+        <div className="ykos-header-row">
+          <div className="ykos-brand-area">
+            <span className="ykos-badge">YKOS</span>
+            <h1 className="ykos-title">YKOS BİLGİ SİSTEMİ</h1>
+            <p className="ykos-subtitle">Disiplinler Arası Algoritmik Kültür ve Dil Veri Tabanı</p>
+          </div>
         </div>
+
+        {/* MENÜYE BASINCA AÇILAN 9'LU KATEGORİ IZGARASI */}
+        {menuOpen && (
+          <div className="ykos-nav-dropdown-grid">
+            <button className="ykos-nav-btn">KURUMSAL</button>
+            <button className="ykos-nav-btn">YKOS METODOLOJİSİ</button>
+            <button className="ykos-nav-btn active">KÖK HECE MATRİSİ</button>
+            <button className="ykos-nav-btn">DAMGA ATLASI</button>
+            <button className="ykos-nav-btn">OKUMA & ANALİZ MOTORU</button>
+            <button className="ykos-nav-btn">GÖÇ & AKIŞ HARİTASI</button>
+            <button className="ykos-nav-btn">🎥 VİDEO & SUNUMLAR</button>
+            <button className="ykos-nav-btn">KÜLLİYAT & YAYINLAR</button>
+            <button className="ykos-nav-btn">DİJİTAL ARŞİV</button>
+          </div>
+        )}
+
       </div>
 
       {/* 2. ARAMA BARI */}
@@ -128,6 +143,7 @@ export default function YKOSDashboard({ onVisualize }) {
             <div className="ykos-solution-card">📜 Etrüsk Lemnos Kitabesi & Ön Türkçe Eşleşmesi</div>
           </div>
 
+          {/* BALONCUK MATRİSİNE GEÇİŞ BUTONU */}
           <button className="ykos-gold-action-btn" onClick={onVisualize}>
             🗣️ BALONCUK MATRİSİNİ GÖRSELLEŞTİR ➔
           </button>
