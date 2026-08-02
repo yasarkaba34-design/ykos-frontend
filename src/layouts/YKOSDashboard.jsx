@@ -1,59 +1,119 @@
 import React, { useState } from "react";
-import MatrixToggle from "../components/MatrixToggle";
 import SearchBar from "../components/SearchBar";
-import archiveData from "../api/archive.json";
+import "./YKOSDashboard.css";
 
-export default function YKOSDashboard() {
-  const [filteredData, setFilteredData] = useState(archiveData);
+export default function YKOSDashboard({ onVisualize }) {
+  const [langOpen, setLangOpen] = useState(false);
 
-  const handleSearch = (query) => {
-    if (!query) {
-      setFilteredData(archiveData);
-      return;
-    }
-    const lower = query.toLowerCase();
-    const filtered = archiveData.filter(item => 
-      (item.title && item.title.toLowerCase().includes(lower)) ||
-      (item.label && item.label.toLowerCase().includes(lower)) ||
-      (item.tags && item.tags.some(t => t.toLowerCase().includes(lower)))
-    );
-    setFilteredData(filtered);
-  };
+  const stats = [
+    { icon: "🌐", count: "214", label: "Ülkeler" },
+    { icon: "🏛️", count: "248", label: "Araştırmalar" },
+    { icon: "🔷", count: "9.870", label: "Damgalar" },
+    { icon: "🗿", count: "18.420", label: "Petroglifler" },
+    { icon: "📜", count: "4.132", label: "Yazıtlar" },
+    { icon: "📚", count: "12.580", label: "Kaynaklar" },
+    { icon: "📷", count: "46.900", label: "Görseller" },
+    { icon: "🗺️", count: "58", label: "Atlaslar" }
+  ];
 
   return (
-    <div className="dashboard-main-container" style={{ width: "100%", maxWidth: "1200px", margin: "0 auto", padding: "10px", boxSizing: "border-box" }}>
+    <div className="dashboard-container">
       
-      {/* 1. ŞIK VE TAM GENİŞLİKTE ARAMA BARI */}
-      <div style={{ marginBottom: "15px" }}>
-        <SearchBar onSearch={handleSearch} />
-      </div>
-
-      {/* 2. ANA MATRİS TUVALİ (ALTIN ÇERÇEVELİ KUTU) */}
-      <div className="matrix-canvas-box" style={{ 
-        backgroundColor: "#050811", 
-        border: "1px solid rgba(255, 215, 0, 0.35)", 
-        borderRadius: "14px", 
-        padding: "20px", 
-        boxShadow: "0 6px 25px rgba(0,0,0,0.7)",
-        minHeight: "500px",
-        position: "relative"
-      }}>
-        
-        {/* Tuval Üst Başlık Çubuğu */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255, 215, 0, 0.15)", paddingBottom: "10px" }}>
-          <div>
-            <h2 style={{ color: "#ffd700", margin: 0, fontSize: "1.1rem", letterSpacing: "1px" }}>DİNAMİK OKUMA MATRİSİ</h2>
-            <small style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.75rem" }}>Disiplinler Arası Algoritmik Kültür ve Dil Veri Tabanı</small>
+      {/* 1. ÜST HEADER KUTUSU */}
+      <header className="main-header-box">
+        <div className="header-top-row">
+          <div className="logo-center">
+            <span className="logo-badge">YKOS</span>
+            <h1 className="header-title">YKOS BİLGİ SİSTEMİ</h1>
+            <p className="header-subtitle">Disiplinler Arası Algoritmik Kültür ve Dil Veri Tabanı</p>
           </div>
-          <span style={{ color: "#00ffcc", border: "1px solid #00ffcc", padding: "3px 10px", borderRadius: "6px", fontSize: "0.75rem", fontWeight: "bold" }}>GLOBAL ATLAS CANLI</span>
+
+          <div className="lang-box-wrapper">
+            <button className="lang-dropdown-btn" onClick={() => setLangOpen(!langOpen)}>
+              TR TR TR ▾
+            </button>
+            {langOpen && (
+              <div className="lang-menu">
+                <button>Türkçe (TR)</button>
+                <button>English (EN)</button>
+                <button>Azərbaycan (AZ)</button>
+                <button>Qazaqşa (KK)</button>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Canlı Baloncuk Ağı Görselleştirmesi */}
-        <div style={{ width: "100%", minHeight: "420px", position: "relative" }}>
-          <MatrixToggle data={filteredData} />
-        </div>
+        {/* 9 BUTONLU YATAY MENÜ */}
+        <nav className="header-nav-grid">
+          <button className="nav-tab-btn">KURUMSAL</button>
+          <button className="nav-tab-btn">YKOS METODOLOJİSİ</button>
+          <button className="nav-tab-btn active">KÖK HECE MATRİSİ</button>
+          <button className="nav-tab-btn">DAMGA ATLASI</button>
+          <button className="nav-tab-btn">OKUMA & ANALİZ MOTORU</button>
+          <button className="nav-tab-btn">GÖÇ & AKIŞ HARİTASI</button>
+          <button className="nav-tab-btn">🎥 VİDEO & SUNUMLAR</button>
+          <button className="nav-tab-btn">KÜLLİYAT & YAYINLAR</button>
+          <button className="nav-tab-btn">DİJİTAL ARŞİV</button>
+        </nav>
+      </header>
 
+      {/* 2. TAM GENİŞLİKTE ARAMA BARI */}
+      <div className="search-section">
+        <SearchBar />
       </div>
+
+      {/* 3. İSTATİSTİK VE SAYAÇ KUTUSU */}
+      <section className="stats-header-box">
+        <div className="status-badge-container">
+          <div className="status-badge">
+            <span className="status-title">SİSTEM DURUMU</span>
+            <span className="status-state">AKTİF</span>
+            <small className="status-version">YKOS v1.0 Beta</small>
+          </div>
+        </div>
+
+        <div className="stats-grid">
+          {stats.map((item, idx) => (
+            <div key={idx} className="stat-card">
+              <span className="stat-icon">{item.icon}</span>
+              <span className="stat-count">{item.count}</span>
+              <span className="stat-label">{item.label}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 4. ALT ÇİFT SÜTUNLU PANEL */}
+      <div className="bottom-panels-grid">
+        {/* SOL PANEL */}
+        <div className="panel-box">
+          <h3 className="panel-title">MATRİSLER VE KATMANLAR</h3>
+          <ul className="layers-list">
+            <li>► <span>🔤 KÖK HECE MATRİSİ</span></li>
+            <li>► <span>🗺️ DAMGA ATLASI</span></li>
+            <li>► <span>🔬 OKUMA & ANALİZ MOTORU</span></li>
+            <li>► <span>🌏 GÖÇ & AKIŞ HARİTASI</span></li>
+          </ul>
+        </div>
+
+        {/* SAĞ PANEL */}
+        <div className="panel-box">
+          <h3 className="panel-title">⚡ YKOS ÇÖZÜMLERİ VE İNDEKLSER</h3>
+          <div className="solution-cards">
+            <div className="solution-item">
+              📜 <strong>Göbeklitepe T-Sütunu YKOS Okuması</strong>
+            </div>
+            <div className="solution-item">
+              📜 <strong>Etrüsk Lemnos Kitabesi & Ön Türkçe Eşleşmesi</strong>
+            </div>
+          </div>
+
+          <button className="visualize-action-btn" onClick={onVisualize}>
+            🗣️ BALONCUK MATRİSİNİ GÖRSELLEŞTİR ➔
+          </button>
+        </div>
+      </div>
+
     </div>
   );
 }
