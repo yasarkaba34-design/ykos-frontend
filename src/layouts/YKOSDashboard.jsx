@@ -4,6 +4,22 @@ import "./YKOSDashboard.css";
 
 export default function YKOSDashboard({ onVisualize }) {
   const [langOpen, setLangOpen] = useState(false);
+  const [currentLang, setCurrentLang] = useState("TR");
+
+  // İstediğiniz 10 Dil
+  const languages = [
+    { code: "TR", label: "Türkçe" },
+    { code: "EN", label: "English (İngilizce)" },
+    { code: "FR", label: "Français (Fransızca)" },
+    { code: "RU", label: "Русский (Rusça)" },
+    { code: "ZH", label: "中文 (Çince)" },
+    { code: "ES", label: "Español (İspanyolca)" },
+    { code: "IT", label: "Italiano (İtalyanca)" },
+    { code: "AR", label: "العربية (Arapça)" },
+    { code: "JA", label: "日本語 (Japonca)" },
+    { code: "PT", label: "Português (Portekizce)" },
+    { code: "DE", label: "Deutsch (Almanca)" }
+  ];
 
   const stats = [
     { icon: "🌐", count: "214", label: "Ülkeler" },
@@ -28,16 +44,29 @@ export default function YKOSDashboard({ onVisualize }) {
             <p className="header-subtitle">Disiplinler Arası Algoritmik Kültür ve Dil Veri Tabanı</p>
           </div>
 
+          {/* AÇILIR 10 DİLLİ MENÜ */}
           <div className="lang-box-wrapper">
-            <button className="lang-dropdown-btn" onClick={() => setLangOpen(!langOpen)}>
-              TR TR TR ▾
+            <button 
+              className="lang-dropdown-btn"
+              onClick={() => setLangOpen(!langOpen)}
+            >
+              🌐 {currentLang} ▾
             </button>
+
             {langOpen && (
               <div className="lang-menu">
-                <button>Türkçe (TR)</button>
-                <button>English (EN)</button>
-                <button>Azərbaycan (AZ)</button>
-                <button>Qazaqşa (KK)</button>
+                {languages.map((lang) => (
+                  <button 
+                    key={lang.code}
+                    className={currentLang === lang.code ? "active-lang" : ""}
+                    onClick={() => {
+                      setCurrentLang(lang.code);
+                      setLangOpen(false);
+                    }}
+                  >
+                    {lang.label}
+                  </button>
+                ))}
               </div>
             )}
           </div>
