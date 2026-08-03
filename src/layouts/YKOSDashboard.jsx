@@ -37,7 +37,7 @@ const archiveData = [
   }
 ];
 
-export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome }) {
+export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome, onNavigateLogin }) {
   const [langOpen, setLangOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState("TR");
@@ -88,13 +88,22 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome })
     position: "relative"
   };
 
+  const handlePortalClick = (role) => {
+    setMenuOpen(false);
+    if (onNavigateLogin) {
+      onNavigateLogin(role);
+    } else {
+      alert(`🔑 ${role === "researcher" ? "ARAŞTIRMACI" : "YÖNETİCİ"} Veri Giriş Portalı Yükleniyor...`);
+    }
+  };
+
   return (
     <div style={{ width: "100%", maxWidth: "1240px", margin: "0 auto", padding: "10px", boxSizing: "border-box", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
       
       {/* 1. ÜST HEADER KUTUSU */}
       <div style={{
         ...cardStyle,
-        padding: "8px 16px 10px 16px",
+        padding: "12px 16px 14px 16px",
         marginBottom: "12px"
       }}>
         
@@ -102,7 +111,7 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome })
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0px" }}>
           <button 
             onClick={() => { setMenuOpen(!menuOpen); setLangOpen(false); }}
-            style={{ background: "rgba(255, 215, 0, 0.1)", border: "1px solid #ffd700", color: "#ffd700", padding: "4px 10px", borderRadius: "5px", fontWeight: "bold", cursor: "pointer", fontSize: "0.75rem" }}
+            style={{ background: menuOpen ? "rgba(255, 215, 0, 0.25)" : "rgba(255, 215, 0, 0.1)", border: "1px solid #ffd700", color: "#ffd700", padding: "5px 12px", borderRadius: "5px", fontWeight: "bold", cursor: "pointer", fontSize: "0.78rem" }}
           >
             ☰ MENÜ
           </button>
@@ -149,13 +158,36 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome })
           <p style={{ color: "#aaaaaa", fontSize: "0.72rem", margin: "2px 0 0 0" }}>Disiplinler Arası Algoritmik Kültür ve Dil Veri Tabanı</p>
         </div>
 
+        {/* AÇILIR MENÜ PANELİ */}
         {menuOpen && (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "6px", marginTop: "10px", borderTop: "1px solid rgba(255, 215, 0, 0.25)", paddingTop: "10px" }}>
-            {["KURUMSAL", "YKOS METODOLOJİSİ", "KÖK HECE MATRİSİ", "DAMGA ATLASI", "OKUMA & ANALİZ MOTORU", "GÖÇ & AKIŞ HARİTASI", "🎥 VİDEO & SUNUMLAR", "KÜLLİYAT & YAYINLAR", "DİJİTAL ARŞİV"].map((item, i) => (
-              <button key={i} onClick={() => { setMenuOpen(false); if(i===2) onVisualize(); }} style={{ background: i === 2 ? "rgba(255, 215, 0, 0.2)" : "rgba(255, 255, 255, 0.02)", border: i === 2 ? "1px solid #ffd700" : "1px solid rgba(255, 215, 0, 0.3)", color: i === 2 ? "#ffd700" : "#ccc", padding: "5px 6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>
-                {item}
+          <div style={{ marginTop: "12px", borderTop: "1px solid rgba(255, 215, 0, 0.3)", paddingTop: "12px" }}>
+            
+            {/* PORTAL GİRİŞLERİ (ÖZEL VURGULU BUTONLAR) */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "8px", marginBottom: "10px", paddingBottom: "10px", borderBottom: "1px dashed rgba(255, 215, 0, 0.25)" }}>
+              <button 
+                onClick={() => handlePortalClick("researcher")} 
+                style={{ background: "linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(0, 0, 0, 0.6))", border: "1px solid #ffd700", color: "#ffd700", padding: "8px 10px", borderRadius: "6px", fontSize: "0.75rem", fontWeight: "bold", cursor: "pointer", textAlign: "left", display: "flex", alignItems: "center", gap: "6px" }}
+              >
+                <span>📝</span> ARAŞTIRMACI VERİ GİRİŞ PORTALI
               </button>
-            ))}
+
+              <button 
+                onClick={() => handlePortalClick("admin")} 
+                style={{ background: "linear-gradient(135deg, rgba(255, 215, 0, 0.25), rgba(184, 134, 11, 0.3))", border: "1px solid #ffd700", color: "#ffffff", padding: "8px 10px", borderRadius: "6px", fontSize: "0.75rem", fontWeight: "bold", cursor: "pointer", textAlign: "left", display: "flex", alignItems: "center", gap: "6px" }}
+              >
+                <span>⚙️</span> YÖNETİCİ VERİ GİRİŞ PORTALI
+              </button>
+            </div>
+
+            {/* GENEL DİZİN BUTONLARI */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "6px" }}>
+              {["KURUMSAL", "YKOS METODOLOJİSİ", "KÖK HECE MATRİSİ", "DAMGA ATLASI", "OKUMA & ANALİZ MOTORU", "GÖÇ & AKIŞ HARİTASI", "🎥 VİDEO & SUNUMLAR", "KÜLLİYAT & YAYINLAR", "DİJİTAL ARŞİV"].map((item, i) => (
+                <button key={i} onClick={() => { setMenuOpen(false); if(i===2) onVisualize(); }} style={{ background: i === 2 ? "rgba(255, 215, 0, 0.2)" : "rgba(255, 255, 255, 0.02)", border: i === 2 ? "1px solid #ffd700" : "1px solid rgba(255, 215, 0, 0.3)", color: i === 2 ? "#ffd700" : "#ccc", padding: "6px 8px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer", textAlign: "center" }}>
+                  {item}
+                </button>
+              ))}
+            </div>
+
           </div>
         )}
 
