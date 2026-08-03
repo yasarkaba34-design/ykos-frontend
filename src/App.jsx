@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import YKOSDashboard from "./layouts/YKOSDashboard";
-import YKOSVisualization from "./layouts/YKOSVisualization";
 
 export default function App() {
   const [currentView, setCurrentView] = useState("dashboard"); // "dashboard", "visualize", "read", "login"
@@ -14,8 +13,6 @@ export default function App() {
   return (
     <div className="app-main-wrapper" style={{ backgroundColor: "#050811", minHeight: "100vh", color: "#ffffff" }}>
       
-      {/* SAĞ ÜSTTEKİ EKSİ KÜÇÜK LINK BURADAN KESİNLİKLE KALDIRILDI */}
-
       {/* SAYFA İÇERİKLERİ */}
       {currentView === "dashboard" && (
         <YKOSDashboard 
@@ -26,38 +23,65 @@ export default function App() {
         />
       )}
 
+      {/* BALONCUK GÖRSELLEŞTİRME EKRANI */}
       {currentView === "visualize" && (
-        <YKOSVisualization onBack={() => setCurrentView("dashboard")} />
+        <div style={{ maxWidth: "1240px", margin: "20px auto", padding: "20px", backgroundColor: "#050811", border: "1px solid #ffd700", borderRadius: "12px", textAlign: "center" }}>
+          <h2 style={{ color: "#ffd700", marginBottom: "15px" }}>🗣️ YKOS BALONCUK MATRİSİ & SEMBOL İLİŞKİ AĞI</h2>
+          <p style={{ color: "#aaa", fontSize: "0.85rem", marginBottom: "25px" }}>
+            Kök heceler ve piktogramlar arası dinamik bağlantı görselleştirmesi.
+          </p>
+
+          <div style={{ height: "400px", border: "1px dashed rgba(255, 215, 0, 0.4)", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(255, 215, 0, 0.02)", marginBottom: "20px" }}>
+            <span style={{ color: "#ffd700", fontWeight: "bold" }}>🌐 DİNAMİK GRAFİK MOTORMU YÜKLENİYOR...</span>
+          </div>
+
+          <button 
+            onClick={() => setCurrentView("dashboard")}
+            style={{ padding: "10px 24px", background: "linear-gradient(135deg, #ffd700, #b8860b)", border: "none", color: "#000", fontWeight: "bold", borderRadius: "6px", cursor: "pointer" }}
+          >
+            ← ANA PANEL'E DÖN
+          </button>
+        </div>
       )}
 
+      {/* GİRİŞ PORTALI EKRANI */}
       {currentView === "login" && (
-        <div style={{ maxWidth: "500px", margin: "60px auto", padding: "30px", backgroundColor: "#050811", border: "1px solid #ffd700", borderRadius: "12px", textAlign: "center" }}>
-          <h2 style={{ color: "#ffd700", marginBottom: "10px" }}>
+        <div style={{ maxWidth: "450px", margin: "60px auto", padding: "30px", backgroundColor: "#050811", border: "1px solid #ffd700", borderRadius: "12px", textAlign: "center", boxShadow: "0 4px 25px rgba(0,0,0,0.8)" }}>
+          <h2 style={{ color: "#ffd700", marginBottom: "8px", fontSize: "1.2rem" }}>
             🔑 {userRole === "admin" ? "YÖNETİCİ" : "ARAŞTIRMACI"} VERİ GİRİŞ PORTALI
           </h2>
-          <p style={{ color: "#aaa", fontSize: "0.85rem", marginBottom: "20px" }}>
-            Lütfen yetkili kullanıcı bilgilerinizi giriniz.
+          <p style={{ color: "#aaa", fontSize: "0.78rem", marginBottom: "20px" }}>
+            Lütfen yetkili erişim bilgilerinizi giriniz.
           </p>
-          <input 
-            type="text" 
-            placeholder="Kullanıcı Adı / E-posta" 
-            style={{ width: "100%", padding: "10px", marginBottom: "12px", background: "rgba(255,255,255,0.05)", border: "1px solid #ffd700", color: "#fff", borderRadius: "6px" }}
-          />
-          <input 
-            type="password" 
-            placeholder="Şifre" 
-            style={{ width: "100%", padding: "10px", marginBottom: "20px", background: "rgba(255,255,255,0.05)", border: "1px solid #ffd700", color: "#fff", borderRadius: "6px" }}
-          />
+
+          <div style={{ textAlign: "left", marginBottom: "12px" }}>
+            <label style={{ color: "#ffd700", fontSize: "0.75rem", display: "block", marginBottom: "4px" }}>Kullanıcı Adı / E-Posta</label>
+            <input 
+              type="text" 
+              placeholder="E-posta adresiniz" 
+              style={{ width: "100%", padding: "10px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,215,0,0.4)", color: "#fff", borderRadius: "6px", boxSizing: "border-box", outline: "none" }}
+            />
+          </div>
+
+          <div style={{ textAlign: "left", marginBottom: "20px" }}>
+            <label style={{ color: "#ffd700", fontSize: "0.75rem", display: "block", marginBottom: "4px" }}>Şifre</label>
+            <input 
+              type="password" 
+              placeholder="••••••••" 
+              style={{ width: "100%", padding: "10px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,215,0,0.4)", color: "#fff", borderRadius: "6px", boxSizing: "border-box", outline: "none" }}
+            />
+          </div>
+
           <div style={{ display: "flex", gap: "10px" }}>
             <button 
               onClick={() => setCurrentView("dashboard")}
-              style={{ flex: 1, padding: "10px", background: "transparent", border: "1px solid #888", color: "#ccc", borderRadius: "6px", cursor: "pointer" }}
+              style={{ flex: 1, padding: "10px", background: "transparent", border: "1px solid #888", color: "#ccc", borderRadius: "6px", cursor: "pointer", fontWeight: "bold", fontSize: "0.8rem" }}
             >
               ← İPTAL
             </button>
             <button 
-              onClick={() => alert("Giriş yapıldı.")}
-              style={{ flex: 1, padding: "10px", background: "#ffd700", border: "none", color: "#000", fontWeight: "bold", borderRadius: "6px", cursor: "pointer" }}
+              onClick={() => alert("Giriş işlemi simüle edildi.")}
+              style={{ flex: 1, padding: "10px", background: "linear-gradient(135deg, #ffd700, #b8860b)", border: "none", color: "#000", fontWeight: "900", borderRadius: "6px", cursor: "pointer", fontSize: "0.8rem" }}
             >
               GİRİŞ YAP ➔
             </button>
