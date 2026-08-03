@@ -92,33 +92,30 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome, o
     setMenuOpen(false);
     if (onNavigateLogin) {
       onNavigateLogin(role);
-    } else {
-      alert(`🔑 ${role === "researcher" ? "ARAŞTIRMACI" : "YÖNETİCİ"} Veri Giriş Portalı Yükleniyor...`);
     }
   };
 
-  // İki Portal Kutusu İçin Birebir Aynı Özel Stil
   const portalButtonStyle = {
     background: "linear-gradient(135deg, rgba(255, 215, 0, 0.25), rgba(184, 134, 11, 0.2))",
     border: "1px solid #ffd700",
     color: "#ffd700",
     padding: "9px 12px",
     borderRadius: "6px",
-    fontSize: "0.76rem",
+    fontSize: "0.75rem",
     fontWeight: "800",
     cursor: "pointer",
     textAlign: "left",
     display: "flex",
     alignItems: "center",
-    gap: "8px",
+    gap: "6px",
     boxShadow: "0 0 10px rgba(255, 215, 0, 0.15)",
-    letterSpacing: "0.5px"
+    letterSpacing: "0.3px"
   };
 
   return (
     <div style={{ width: "100%", maxWidth: "1240px", margin: "0 auto", padding: "10px", boxSizing: "border-box", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
       
-      {/* 1. ÜST HEADER KUTUSU (SAĞ ÜSTTEKİ KÜÇÜK GİRİŞ LINKI KALDIRILDI) */}
+      {/* 1. ÜST HEADER KUTUSU */}
       <div style={{
         ...cardStyle,
         padding: "12px 16px 14px 16px",
@@ -180,20 +177,27 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome, o
         {menuOpen && (
           <div style={{ marginTop: "12px", borderTop: "1px solid rgba(255, 215, 0, 0.3)", paddingTop: "12px" }}>
             
-            {/* RENKLERİ BİREBİR AYNI VE DİĞER MENÜ BAŞLIKLARINDAN AYRILAN İKİ PORTAL KUTUSU */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "10px", marginBottom: "12px", paddingBottom: "12px", borderBottom: "1px dashed rgba(255, 215, 0, 0.25)" }}>
+            {/* 3'LÜ NİZAMDA PORTAL GİRİŞLERİ (KONUK, ARAŞTIRMACI, YÖNETİCİ) */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "8px", marginBottom: "12px", paddingBottom: "12px", borderBottom: "1px dashed rgba(255, 215, 0, 0.25)" }}>
+              <button 
+                onClick={() => handlePortalClick("guest")} 
+                style={portalButtonStyle}
+              >
+                <span>👤</span> KONUK PANELİ GİRİŞİ
+              </button>
+
               <button 
                 onClick={() => handlePortalClick("researcher")} 
                 style={portalButtonStyle}
               >
-                <span>📝</span> ARAŞTIRMACI VERİ GİRİŞ PORTALI
+                <span>📝</span> ARAŞTIRMACI VERİ GİRİŞİ
               </button>
 
               <button 
                 onClick={() => handlePortalClick("admin")} 
                 style={portalButtonStyle}
               >
-                <span>⚙️</span> YÖNETİCİ VERİ GİRİŞ PORTALI
+                <span>⚙️</span> YÖNETİCİ VERİ GİRİŞİ
               </button>
             </div>
 
@@ -229,14 +233,12 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome, o
           paddingBottom: "6px" 
         }}>
           
-          {/* SOLA YASLI BAŞLIK KUTUSU */}
           <div style={{ border: "1px solid #ffd700", borderRadius: "5px", padding: "2px 8px", backgroundColor: "rgba(255, 215, 0, 0.05)" }}>
             <span style={{ color: "#ffd700", fontSize: "0.62rem", fontWeight: "bold", letterSpacing: "0.2px", whiteSpace: "nowrap" }}>
               📊 CANLI VERİ İSTATİSTİKLERİ
             </span>
           </div>
 
-          {/* SAĞA YASLI DURUM KUTUSU */}
           <div style={{ border: "1px solid #ffd700", borderRadius: "5px", padding: "2px 8px", fontSize: "0.62rem", background: "rgba(255, 215, 0, 0.05)", display: "flex", alignItems: "center", gap: "4px", whiteSpace: "nowrap" }}>
             <span style={{ color: "#888" }}>DURUM:</span>
             <strong style={{ color: "#ffd700", fontSize: "0.62rem" }}>🟢 AKTİF</strong>
