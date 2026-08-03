@@ -112,6 +112,17 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome, o
     letterSpacing: "0.3px"
   };
 
+  const handleLogoClick = () => {
+    setSearchQuery("");
+    setMenuOpen(false);
+    setLangOpen(false);
+    if (onGoHome) {
+      onGoHome();
+    } else {
+      window.location.reload();
+    }
+  };
+
   return (
     <div style={{ width: "100%", maxWidth: "1240px", margin: "0 auto", padding: "10px", boxSizing: "border-box", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
       
@@ -155,11 +166,19 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome, o
           </div>
         </div>
 
-        {/* ORTA LOGO */}
+        {/* ORTA LOGO (ANA SAYFA LİNKİ EKLENDİ) */}
         <div 
-          onClick={onGoHome || (() => window.location.reload())}
+          onClick={handleLogoClick}
           title="Ana Sayfaya Dön"
-          style={{ textAlign: "center", margin: "0 auto", cursor: "pointer", display: "block", width: "100%", marginTop: "-18px" }}
+          style={{ 
+            textAlign: "center", 
+            margin: "0 auto", 
+            cursor: "pointer", 
+            display: "block", 
+            width: "fit-content", 
+            marginTop: "-18px",
+            userSelect: "none"
+          }}
         >
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "0px" }}>
             <img 
@@ -177,7 +196,7 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome, o
         {menuOpen && (
           <div style={{ marginTop: "12px", borderTop: "1px solid rgba(255, 215, 0, 0.3)", paddingTop: "12px" }}>
             
-            {/* 3'LÜ NİZAMDA PORTAL GİRİŞLERİ (KONUK, ARAŞTIRMACI, YÖNETİCİ) */}
+            {/* PORTAL GİRİŞLERİ */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "8px", marginBottom: "12px", paddingBottom: "12px", borderBottom: "1px dashed rgba(255, 215, 0, 0.25)" }}>
               <button 
                 onClick={() => handlePortalClick("guest")} 
@@ -204,7 +223,7 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome, o
             {/* GENEL DİZİN BAŞLIKLARI */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "6px" }}>
               {["KURUMSAL", "YKOS METODOLOJİSİ", "KÖK HECE MATRİSİ", "DAMGA ATLASI", "OKUMA & ANALİZ MOTORU", "GÖÇ & AKIŞ HARİTASI", "🎥 VİDEO & SUNUMLAR", "KÜLLİYAT & YAYINLAR", "DİJİTAL ARŞİV"].map((item, i) => (
-                <button key={i} onClick={() => { setMenuOpen(false); if(i===2) onVisualize(); }} style={{ background: i === 2 ? "rgba(255, 215, 0, 0.2)" : "rgba(255, 255, 255, 0.02)", border: i === 2 ? "1px solid #ffd700" : "1px solid rgba(255, 215, 0, 0.3)", color: i === 2 ? "#ffd700" : "#ccc", padding: "6px 8px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer", textAlign: "center" }}>
+                <button key={i} onClick={() => { setMenuOpen(false); if(i===2) onVisualize(); else handleLogoClick(); }} style={{ background: i === 2 ? "rgba(255, 215, 0, 0.2)" : "rgba(255, 255, 255, 0.02)", border: i === 2 ? "1px solid #ffd700" : "1px solid rgba(255, 215, 0, 0.3)", color: i === 2 ? "#ffd700" : "#ccc", padding: "6px 8px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer", textAlign: "center" }}>
                   {item}
                 </button>
               ))}
