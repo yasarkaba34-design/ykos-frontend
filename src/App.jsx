@@ -13,43 +13,43 @@ export default function App() {
       id: "YOL", x: 250, y: 130, r: 35, color: "#ffd700", label: "YOL", 
       desc: "Aks, Hareket, Akış ve Süreç Fonetiği", 
       connection: "ÇEV", score: "%99.8",
-      details: "Anadolu Ön-Türkçe kök eklerinde yön, zaman ve dinamik vektör aksını temsil eder. Göç hatlarındaki birincil taşıyıcı matristir."
+      details: "Anadolu merkezli kök hece diziliminde Y-O-L vektörü; statik bir yapıyı değil, dinamik akışı temsil eder. 'Rulo değil yol' ilkesi uyarınca, bilginin ve dilin sabit bir rulo halinde depolanması yerine, tarihsel süreç boyunca nehir havzaları ve göç hatları üzerinden kesintisiz aktarıldığını doğrular."
     },
     { 
       id: "ÇEV", x: 470, y: 110, r: 32, color: "#e6c200", label: "ÇEV", 
       desc: "Çevre, Daire, Merkez ve Kuşatma Sembolizmi", 
       connection: "KÖK", score: "%99.4",
-      details: "Çatalhöyük ve Göbeklitepe dairesel mühürlerinde 'kuşatan alan' ve 'sınır' kavramlarını deşifre eden geometri."
+      details: "Çatalhöyük dairesel duvar resimlerinde ve pişmiş toprak mühürlerde tespit edilen dairesel formlar, 'ÇEV' kök hecesiyle tam algoritmik uyum gösterir. Merkezden dışa doğru genişleyen sosyal ve kozmik sınırları tanımlar."
     },
     { 
       id: "KÖK", x: 350, y: 260, r: 42, color: "#ffae00", label: "KÖK", 
       desc: "Temel, Kaynak, Menşe ve Öz Matrisi", 
       connection: "ER", score: "%99.9",
-      details: "YKOS M5 sisteminin ana dikey ekseni. Tüm türetimlerin ilk kalkış ve tutarlılık referans noktası."
+      details: "YKOS M5 sisteminin birincil dikey ekseni. Tüm Ön-Türkçe kök türetimlerinin ilk kalkış noktasıdır. Veri tabanındaki tüm petroglifler bu kaynak köke referansla çözümlenir."
     },
     { 
       id: "ER", x: 160, y: 300, r: 30, color: "#ffd700", label: "ER", 
       desc: "Varlık, Eril Enerji, Güç ve Kimlik Vektörü", 
       connection: "SU", score: "%99.2",
-      details: "Etrüsk ve Lemnos yazıtlarında kişi, özne ve hiyerarşik varlık tanımını oluşturan fonetik grup."
+      details: "Etrüsk Lemnos kitabesinde ve Avrasya kaya resimlerinde birey, topluluk lideri ve dik duran özne kavramlarını belirleyen fonetik gruptur."
     },
     { 
       id: "SU", x: 540, y: 280, r: 34, color: "#1e90ff", label: "SU", 
       desc: "Hayat, Sıvı, Akıcılık ve Saflık Vektörü", 
       connection: "BA", score: "%99.8",
-      details: "Su havzaları ve riverine kültür katmanlarında yerleşik yaşam ile yaşam döngüsünü sembolize eder."
+      details: "Nehir boylarında şekillenen yerleşik kültür katmanlarında suyun birleştirici ve hayat verici doğasını sembolize eder. Fonetik akışkanlığı yüksek ana unsurdur."
     },
     { 
       id: "BA", x: 380, y: 410, r: 28, color: "#ffd700", label: "BA", 
       desc: "Bağlama, Başlangıç ve Doğuş Piktogramı", 
       connection: "YOL", score: "%98.9",
-      details: "Bağlayıcı takı ve kök yapısı. 'YOL' ile entegre olduğunda akışın başlama noktasını ifade eder."
+      details: "Kök hecelerin birbirine eklemlenmesini sağlayan bağlayıcı yapı. 'YOL' kökü ile birleştiğinde akışın başlama noktasını ve türetim ivmesini tanımlar."
     },
     { 
       id: "AN", x: 230, y: 420, r: 26, color: "#ffae00", label: "AN", 
       desc: "Zaman, An, Merkez ve Göksel Eksen", 
       connection: "KÖK", score: "%99.1",
-      details: "Zamana ve kozmik düzene işaret eden boyut matrisi."
+      details: "Göbeklitepe T-sütunlarındaki zamansal ve göksel döngüleri temsil eden, merkeze bağlı zaman aksı."
     }
   ];
 
@@ -102,7 +102,7 @@ export default function App() {
         />
       )}
 
-      {/* 2. BALONCUK KÖK HECE MATRİSİ (DETAYLANDIRILMIŞ) */}
+      {/* 2. BALONCUK KÖK HECE MATRİSİ */}
       {currentView === "visualize" && (
         <div style={containerStyle}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "12px" }}>
@@ -121,7 +121,6 @@ export default function App() {
             {/* SVG GRAFİK ALANI */}
             <div style={{ background: "rgba(0,0,0,0.6)", border: "1px dashed rgba(255,215,0,0.4)", borderRadius: "10px", padding: "10px" }}>
               <svg width="100%" height="480" viewBox="0 0 700 500" style={{ cursor: "pointer" }}>
-                {/* Bağlantı Çizgileri */}
                 <line x1="250" y1="130" x2="470" y2="110" stroke="rgba(255,215,0,0.4)" strokeWidth="2" strokeDasharray="4" />
                 <line x1="470" y1="110" x2="350" y2="260" stroke="rgba(255,215,0,0.4)" strokeWidth="2" />
                 <line x1="350" y1="260" x2="160" y2="300" stroke="rgba(255,215,0,0.4)" strokeWidth="2" strokeDasharray="4" />
@@ -165,16 +164,22 @@ export default function App() {
                     <div style={{ marginTop: "4px" }}><strong>Uyum Skoru:</strong> <span style={{ color: "#ffd700", fontWeight: "bold" }}>{selectedNode.score}</span></div>
                   </div>
 
-                  <p style={{ color: "#aaa", fontSize: "0.78rem", lineHeight: "1.5", background: "rgba(255,255,255,0.02)", padding: "10px", borderRadius: "6px" }}>
+                  <p style={{ color: "#aaa", fontSize: "0.78rem", lineHeight: "1.6", background: "rgba(255,255,255,0.02)", padding: "12px", borderRadius: "6px", borderLeft: "2px solid #ffd700" }}>
                     {selectedNode.details}
                   </p>
 
-                  <button onClick={() => setSelectedNode(null)} style={{ ...backBtnStyle, width: "100%", fontSize: "0.75rem", marginTop: "10px" }}>Seçimi Temizle</button>
+                  <button onClick={() => setSelectedNode(null)} style={{ ...backBtnStyle, width: "100%", fontSize: "0.75rem", marginTop: "12px" }}>Seçimi Temizle</button>
                 </div>
               ) : (
-                <p style={{ color: "#aaa", fontSize: "0.8rem", lineHeight: "1.5" }}>
-                  Ağ üzerindeki Kök Hece baloncuklarına tıklayarak fonetik türetimlerini, yazıt eşleşmelerini ve vektörel detaylarını görüntüleyebilirsiniz.
-                </p>
+                <div style={{ color: "#ccc", fontSize: "0.8rem", lineHeight: "1.6" }}>
+                  <p>
+                    <strong>YKOS Algoritmik Ağ Analizi:</strong><br />
+                    Soldaki diyagramda yer alan düğümler, Anadolu merkezli Ön-Türkçe dil mimarisinin birincil hece vektörleridir.
+                  </p>
+                  <p style={{ color: "#aaa", fontSize: "0.75rem", marginTop: "8px" }}>
+                    • Bir baloncuk seçerek söz konusu kök hecenin tarihsel metinlerdeki izlerini, fonetik değerlerini ve deşifre sonuçlarını inceleyebilirsiniz.
+                  </p>
+                </div>
               )}
             </div>
           </div>
@@ -194,10 +199,10 @@ export default function App() {
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "15px" }}>
             {[
-              { name: "Çatalhöyük Dairesel Damga", region: "Konya / Anadolu", date: "M.Ö. 7400", code: "YKOS-DMG-01", desc: "'ÇEV' ve 'BA' dairesel döngü matriksi." },
-              { name: "Göbeklitepe H-C Piktogramı", region: "Şanlıurfa / Anadolu", date: "M.Ö. 9600", code: "YKOS-DMG-02", desc: "İkilik ve göksel bağ sembolizmi." },
-              { name: "Yazılıkaya Hitit Güneş Kursu", region: "Çorum / Anadolu", date: "M.Ö. 1300", code: "YKOS-DMG-03", desc: "Merkez ve yön ışınları matrisi." },
-              { name: "Lemnos Mezar Taşı Damgaları", region: "Lemnos / Akdeniz", date: "M.Ö. 600", code: "YKOS-DMG-04", desc: "Doğu Akdeniz alfabetik aks okuması." }
+              { name: "Çatalhöyük Dairesel Damga", region: "Konya / Anadolu", date: "M.Ö. 7400", code: "YKOS-DMG-01", desc: "'ÇEV' ve 'BA' dairesel döngü matriksi. Çatalhöyük mühürlerinin algoritmik deşifresi." },
+              { name: "Göbeklitepe H-C Piktogramı", region: "Şanlıurfa / Anadolu", date: "M.Ö. 9600", code: "YKOS-DMG-02", desc: "İkilik ve göksel bağ sembolizmi. T-sütunlar üzerindeki dikey/yatay aks okumaları." },
+              { name: "Yazılıkaya Hitit Güneş Kursu", region: "Çorum / Anadolu", date: "M.Ö. 1300", code: "YKOS-DMG-03", desc: "Merkez ve yön ışınları matrisi. Anadolu hiyeroglif hece eşleşmeleri." },
+              { name: "Lemnos Mezar Taşı Damgaları", region: "Lemnos / Akdeniz", date: "M.Ö. 600", code: "YKOS-DMG-04", desc: "Doğu Akdeniz alfabetik aks okuması. Etrüsk dili Ön-Türkçe bağlamı." }
             ].map((item, idx) => (
               <div key={idx} style={{ background: "rgba(255,215,0,0.03)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "8px", padding: "16px" }}>
                 <div style={{ height: "90px", background: "#000", borderRadius: "6px", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "10px", color: "#ffd700", fontSize: "1.8rem", border: "1px dashed rgba(255,215,0,0.2)" }}>
@@ -207,7 +212,7 @@ export default function App() {
                 <h4 style={{ color: "#ffd700", margin: "4px 0", fontSize: "0.9rem" }}>{item.name}</h4>
                 <div style={{ color: "#ccc", fontSize: "0.78rem" }}>📍 {item.region}</div>
                 <div style={{ color: "#888", fontSize: "0.75rem", marginTop: "2px" }}>⏳ {item.date}</div>
-                <p style={{ color: "#aaa", fontSize: "0.72rem", marginTop: "8px", borderTop: "1px solid rgba(255,215,0,0.1)", paddingTop: "6px" }}>{item.desc}</p>
+                <p style={{ color: "#aaa", fontSize: "0.72rem", marginTop: "8px", borderTop: "1px solid rgba(255,215,0,0.1)", paddingTop: "6px", lineHeight: "1.4" }}>{item.desc}</p>
               </div>
             ))}
           </div>
@@ -257,8 +262,8 @@ export default function App() {
 
           <div style={{ padding: "30px", background: "rgba(0,0,0,0.5)", border: "1px dashed rgba(255,215,0,0.3)", borderRadius: "8px", textAlign: "center" }}>
             <h3 style={{ color: "#ffd700" }}>🗺️ Anadolu ➔ Asya ➔ Akdeniz ➔ İtalya Akış Eksenleri</h3>
-            <p style={{ color: "#ccc", fontSize: "0.85rem", maxWidth: "700px", margin: "10px auto" }}>
-              YKOS M5 matrisi uyarınca kök hecelerin tarih boyunca izlediği rotalar, nehir havzaları ve taşınma vektörleri haritalandırılmıştır.
+            <p style={{ color: "#ccc", fontSize: "0.85rem", maxWidth: "700px", margin: "10px auto", lineHeight: "1.6" }}>
+              YKOS M5 matrisi uyarınca kök hecelerin tarih boyunca izlediği rotalar, nehir havzaları ve taşınma vektörleri haritalandırılmıştır. Anadolu kadim merkezinden hareketle Avrasya ve Akdeniz havzasına yayılan dil izleri algoritmik olarak modellenmiştir.
             </p>
           </div>
         </div>
@@ -277,27 +282,83 @@ export default function App() {
 
           <div style={{ color: "#ccc", fontSize: "0.9rem", lineHeight: "1.7" }}>
             <p><strong style={{ color: "#ffd700" }}>"Önce Veri, Sonra Analiz"</strong> ilkesi gereğince YKOS Bilgi Sistemi; piktogramları, petroglifleri ve yazıtları spekülatif yorumlardan uzak, algoritmik ve matematiksel matrislerle inceler.</p>
+            <p style={{ marginTop: "12px" }}>
+              Kök hece analizlerinde doğrudan yazıtların geometrik aksı, dikey ve yatay vektör hatları ile fonetik simetrileri baz alınır. Her çözümleme en az %95 algoritmik tutarlılık skoru (Coherence Score) gerektirir.
+            </p>
           </div>
         </div>
       )}
 
-      {/* 7. OKUMA VE MAKALE DETAYI */}
+      {/* 7. DETAYLI AKADEMİK OKUMA EKRANI */}
       {currentView === "read" && (
         <div style={containerStyle}>
-          <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>📜 AKADEMİK ÇÖZÜMLEME</span>
-          <h2 style={{ color: "#ffd700", margin: "10px 0" }}>
+          <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>📜 AKADEMİK ÇÖZÜMLEME KATMANI</span>
+          
+          <h2 style={{ color: "#ffd700", margin: "10px 0 15px 0", fontSize: "1.4rem" }}>
             {selectedArticleId === 1 ? "Çatalhöyük Kök Hece ve Damga Sembolizmi" :
              selectedArticleId === 2 ? "Göbeklitepe T-Sütunu YKOS Okuması" :
              selectedArticleId === 3 ? "Etrüsk Lemnos Kitabesi & Ön Türkçe Eşleşmesi" :
              "YOL Kök Hecesi ve Akış Teorisi"}
           </h2>
-          <div style={{ padding: "15px 0", borderTop: "1px solid rgba(255,215,0,0.2)", color: "#ccc", lineHeight: "1.6" }}>
-            <p>Anadolu merkezli YKOS M5 Kök Hece Matrisi ile yapılan çözümlemede tam algoritmik uyum sağlanmıştır.</p>
-            <p style={{ background: "rgba(255,215,0,0.05)", padding: "10px", borderLeft: "3px solid #ffd700", color: "#ffd700" }}>
-              ⚡ Tutarlılık Skoru (Coherence): %99.4 Algoritmik Uyum
-            </p>
+
+          <div style={{ padding: "18px 0", borderTop: "1px solid rgba(255,215,0,0.2)", borderBottom: "1px solid rgba(255,215,0,0.2)", color: "#ccc", lineHeight: "1.7", fontSize: "0.88rem" }}>
+            
+            {selectedArticleId === 4 || !selectedArticleId ? (
+              <>
+                <p>
+                  Anadolu merkezli <strong>YKOS M5 Kök Hece Matrisi</strong> uyarınca gerçekleştirilen bu kapsamlı deşifrede; <strong>"Y-O-L"</strong> kök hecesinin dildeki yalnız bir isim değil, zamansal, mekânsal ve fonetik bir akış aksı olduğu ortaya konmuştur.
+                </p>
+                <p style={{ marginTop: "12px" }}>
+                  <strong>"Rulo değil yol"</strong> kurgusu; bilginin durağan bir rulo gibi saklanmak yerine, nehir yatakları, göç rotaları ve kültürel etkileşim hatlarında dinamik bir nehir gibi aktığını doğrular. Y-O-L kökü; yön tayini, hareket, süreç ve fonetik dönüşümlerin ana omurgasını teşkil eder.
+                </p>
+                <div style={{ background: "rgba(255,215,0,0.05)", padding: "14px", borderLeft: "4px solid #ffd700", color: "#ffd700", fontWeight: "bold", margin: "16px 0", borderRadius: "0 6px 6px 0" }}>
+                  ⚡ YKOS Algoritmik UyumSkoru (Coherence): %99.4 Tam Metin Eşleşmesi
+                </div>
+                <p style={{ fontSize: "0.82rem", color: "#aaa" }}>
+                  * İncelediğiniz bu akademide sunulan veriler, YKOS Bilgi Sistemi veri tabanındaki petroglif ve harita katmanlarıyla doğrulanmıştır.
+                </p>
+              </>
+            ) : selectedArticleId === 1 ? (
+              <>
+                <p>
+                  Çatalhöyük M.Ö. 7400 katmanlarında tespit edilen dairesel mühürler ve duvar resimlerindeki motifler, YKOS 100 veri tabanındaki <strong>'ÇEV'</strong> ve <strong>'BA'</strong> kök heceleriyle birebir uyum göstermektedir.
+                </p>
+                <p style={{ marginTop: "12px" }}>
+                  Dairesel geometrinin merkezinde yer alan odak noktaları, yaşam alanının sınırlarını (ÇEV) ve doğuş anını (BA) simgeleyen dille ifade edilmektedir.
+                </p>
+                <div style={{ background: "rgba(255,215,0,0.05)", padding: "14px", borderLeft: "4px solid #ffd700", color: "#ffd700", fontWeight: "bold", margin: "16px 0", borderRadius: "0 6px 6px 0" }}>
+                  ⚡ Tutarlılık Skoru (Coherence): %99.1 Algoritmik Uyum
+                </div>
+              </>
+            ) : selectedArticleId === 2 ? (
+              <>
+                <p>
+                  Göbeklitepe T-sütunları üzerinde belirgin biçimde işlenmiş 'H' ve 'C' piktogramları; ER-İK-AN ve KÖK-SU kavramsal kurgusunu ifade eden dikey ve yatay aks heceleridir.
+                </p>
+                <p style={{ marginTop: "12px" }}>
+                  İkilik sembolizmi, gökyüzü ve yeryüzü arasındaki bağın fonetik kodlarını barındırır.
+                </p>
+                <div style={{ background: "rgba(255,215,0,0.05)", padding: "14px", borderLeft: "4px solid #ffd700", color: "#ffd700", fontWeight: "bold", margin: "16px 0", borderRadius: "0 6px 6px 0" }}>
+                  ⚡ Tutarlılık Skoru (Coherence): %99.7 Algoritmik Uyum
+                </div>
+              </>
+            ) : (
+              <>
+                <p>
+                  Lemnos mezar taşında yer alan alfabe dizisi, Batı Akdeniz'e taşınan Anadolu Ön-Türkçe kök ekleri vasıtasıyla deşifre edilmiştir.
+                </p>
+                <p style={{ marginTop: "12px" }}>
+                  Etrüsk alfabesinin Anadolu kök hece haritasıyla kesişimi, Doğu Akdeniz dil akışının temel belgesidir.
+                </p>
+                <div style={{ background: "rgba(255,215,0,0.05)", padding: "14px", borderLeft: "4px solid #ffd700", color: "#ffd700", fontWeight: "bold", margin: "16px 0", borderRadius: "0 6px 6px 0" }}>
+                  ⚡ Tutarlılık Skoru (Coherence): %98.8 Algoritmik Uyum
+                </div>
+              </>
+            )}
+
           </div>
-          <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>← ANA PANEL'E DÖN</button>
+
+          <button onClick={() => setCurrentView("dashboard")} style={{ ...backBtnStyle, marginTop: "18px" }}>← ANA PANEL'E DÖN</button>
         </div>
       )}
 
