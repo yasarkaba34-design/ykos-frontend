@@ -1,8 +1,16 @@
 import React, { useState } from "react";
 import SearchBar from "../components/SearchBar";
 
+// Garantili Varsayılan Liste (Arşiv Yüklenene Kadar Asla Boş Kalmaz)
+const fallbackArticles = [
+  { id: 1, title: "Çatalhöyük Kök Hece ve Damga Sembolizmi", summary: "Çatalhöyük duvar resimlerindeki YKOS 100 eşleşmeleri." },
+  { id: 2, title: "Göbeklitepe T-Sütunu YKOS Okuması", summary: "Şanlıurfa Göbeklitepe T-Sütunları üzerindeki semboller." },
+  { id: 3, title: "Etrüsk Lemnos Kitabesi & Ön Türkçe Eşleşmesi", summary: "Lemnos mezar taşındaki alfabetik dizilimin okuması." },
+  { id: 4, title: "YOL Kök Hecesi ve Akış Teorisi", summary: "'Rulo değil yol' mantığının dilbilimsel matrisi." }
+];
+
 export default function YKOSDashboard({ 
-  archiveArticles = [],
+  archiveArticles,
   onVisualize, onNavigateRead, onGoHome, onNavigateLogin, 
   onNavigateAtlas, onNavigateEngine, onNavigateFlow, onNavigateMethod 
 }) {
@@ -10,6 +18,9 @@ export default function YKOSDashboard({
   const [menuOpen, setMenuOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState("TR");
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Eğer dışarıdan veri gelmezse yedek listeyi kullan
+  const displayArticles = (archiveArticles && archiveArticles.length > 0) ? archiveArticles : fallbackArticles;
 
   const languages = [
     { code: "TR", label: "Türkçe" },
@@ -57,13 +68,13 @@ export default function YKOSDashboard({
   };
 
   // Canlı Arama Süzgeci
-  const filteredArticles = archiveArticles.filter(item => 
-    item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    item.summary.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredArticles = displayArticles.filter(item => 
+    item.title?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    item.summary?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
-    <div style={{ width: "100%", maxWidth: "1240px", margin: "0 auto", padding: "10px", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
+    <div style={{ width: "100%", maxWidth: "1280px", margin: "0 auto", padding: "10px", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
       
       {/* HEADER */}
       <div style={{ ...cardStyle, padding: "12px 16px 14px 16px" }}>
@@ -157,8 +168,8 @@ export default function YKOSDashboard({
         </div>
       </div>
 
-      {/* SOL / SAĞ PANELİ */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "15px" }}>
+      {/* SOL / SAĞ PANELİ (GARANTİLİ VERİ LİSTESİ) */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "15px" }}>
         
         {/* SOL PANEL */}
         <div style={cardStyle}>
@@ -171,10 +182,10 @@ export default function YKOSDashboard({
           </div>
         </div>
 
-        {/* SAĞ PANEL (CANLI ARŞİVDEN BESLENEN ÇÖZÜMLER) */}
+        {/* SAĞ PANEL (GÜVENCEYE ALINMIŞ İÇERİKLER) */}
         <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
           <h3 style={{ color: "#ffd700", fontSize: "0.95rem", marginTop: 0 }}>⚡ YKOS ÇÖZÜMLERİ VE İNDEKLSER (CANLI ARŞİV)</h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "15px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "15px" }}>
             {filteredArticles.map((item) => (
               <div 
                 key={item.id}
