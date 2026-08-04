@@ -7,14 +7,50 @@ export default function App() {
   const [selectedArticleId, setSelectedArticleId] = useState(null);
   const [selectedNode, setSelectedNode] = useState(null);
 
-  // Baloncuk Matrisi Düğümleri
+  // Genişletilmiş Kök Hece Matrisi Veri Seti
   const matrixNodes = [
-    { id: "YOL", x: 250, y: 150, r: 35, color: "#ffd700", label: "YOL", desc: "Aks, Hareket, Süreç ve Akış Fonetiği", connection: "ÇEV" },
-    { id: "ÇEV", x: 450, y: 120, r: 30, color: "#e6c200", label: "ÇEV", desc: "Çevre, Daire, Merkez ve Kuşatma Sembolizmi", connection: "KÖK" },
-    { id: "KÖK", x: 350, y: 280, r: 40, color: "#ffae00", label: "KÖK", desc: "Temel, Bağ, Kaynak ve Menşe Matrisi", connection: "ER" },
-    { id: "ER", x: 180, y: 320, r: 28, color: "#ffd700", label: "ER", desc: "Varlık, Eril Enerji, Güç ve Kimlik", connection: "SU" },
-    { id: "SU", x: 520, y: 300, r: 32, color: "#1e90ff", label: "SU", desc: "Hayat, Sıvı, Akıcılık ve Saflık Vektörü", connection: "BA" },
-    { id: "BA", x: 380, y: 420, r: 26, color: "#ffd700", label: "BA", desc: "Bağlama, Başlangıç ve Doğan Varlık", connection: "YOL" }
+    { 
+      id: "YOL", x: 250, y: 130, r: 35, color: "#ffd700", label: "YOL", 
+      desc: "Aks, Hareket, Akış ve Süreç Fonetiği", 
+      connection: "ÇEV", score: "%99.8",
+      details: "Anadolu Ön-Türkçe kök eklerinde yön, zaman ve dinamik vektör aksını temsil eder. Göç hatlarındaki birincil taşıyıcı matristir."
+    },
+    { 
+      id: "ÇEV", x: 470, y: 110, r: 32, color: "#e6c200", label: "ÇEV", 
+      desc: "Çevre, Daire, Merkez ve Kuşatma Sembolizmi", 
+      connection: "KÖK", score: "%99.4",
+      details: "Çatalhöyük ve Göbeklitepe dairesel mühürlerinde 'kuşatan alan' ve 'sınır' kavramlarını deşifre eden geometri."
+    },
+    { 
+      id: "KÖK", x: 350, y: 260, r: 42, color: "#ffae00", label: "KÖK", 
+      desc: "Temel, Kaynak, Menşe ve Öz Matrisi", 
+      connection: "ER", score: "%99.9",
+      details: "YKOS M5 sisteminin ana dikey ekseni. Tüm türetimlerin ilk kalkış ve tutarlılık referans noktası."
+    },
+    { 
+      id: "ER", x: 160, y: 300, r: 30, color: "#ffd700", label: "ER", 
+      desc: "Varlık, Eril Enerji, Güç ve Kimlik Vektörü", 
+      connection: "SU", score: "%99.2",
+      details: "Etrüsk ve Lemnos yazıtlarında kişi, özne ve hiyerarşik varlık tanımını oluşturan fonetik grup."
+    },
+    { 
+      id: "SU", x: 540, y: 280, r: 34, color: "#1e90ff", label: "SU", 
+      desc: "Hayat, Sıvı, Akıcılık ve Saflık Vektörü", 
+      connection: "BA", score: "%99.8",
+      details: "Su havzaları ve riverine kültür katmanlarında yerleşik yaşam ile yaşam döngüsünü sembolize eder."
+    },
+    { 
+      id: "BA", x: 380, y: 410, r: 28, color: "#ffd700", label: "BA", 
+      desc: "Bağlama, Başlangıç ve Doğuş Piktogramı", 
+      connection: "YOL", score: "%98.9",
+      details: "Bağlayıcı takı ve kök yapısı. 'YOL' ile entegre olduğunda akışın başlama noktasını ifade eder."
+    },
+    { 
+      id: "AN", x: 230, y: 420, r: 26, color: "#ffae00", label: "AN", 
+      desc: "Zaman, An, Merkez ve Göksel Eksen", 
+      connection: "KÖK", score: "%99.1",
+      details: "Zamana ve kozmik düzene işaret eden boyut matrisi."
+    }
   ];
 
   const handleNavigateLogin = (role) => {
@@ -28,7 +64,7 @@ export default function App() {
   };
 
   const containerStyle = {
-    maxWidth: "1150px",
+    maxWidth: "1180px",
     margin: "25px auto",
     padding: "25px",
     backgroundColor: "#050811",
@@ -66,7 +102,7 @@ export default function App() {
         />
       )}
 
-      {/* 2. BALONCUK KÖK HECE MATRİSİ (CANLI GRAFİK) */}
+      {/* 2. BALONCUK KÖK HECE MATRİSİ (DETAYLANDIRILMIŞ) */}
       {currentView === "visualize" && (
         <div style={containerStyle}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "12px" }}>
@@ -78,18 +114,22 @@ export default function App() {
           </div>
 
           <p style={{ color: "#ccc", fontSize: "0.85rem", marginBottom: "20px" }}>
-            Baloncuklara tıklayarak kök heceler arasındaki semantik ve fonetik bağları inceleyebilirsiniz.
+            Baloncuklara tıklayarak kök heceler arasındaki semantik, fonetik ve kavramsal bağları detaylıca inceleyebilirsiniz.
           </p>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: "20px", alignItems: "start" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "20px", alignItems: "start" }}>
+            {/* SVG GRAFİK ALANI */}
             <div style={{ background: "rgba(0,0,0,0.6)", border: "1px dashed rgba(255,215,0,0.4)", borderRadius: "10px", padding: "10px" }}>
               <svg width="100%" height="480" viewBox="0 0 700 500" style={{ cursor: "pointer" }}>
-                <line x1="250" y1="150" x2="450" y2="120" stroke="rgba(255,215,0,0.4)" strokeWidth="2" strokeDasharray="4" />
-                <line x1="450" y1="120" x2="350" y2="280" stroke="rgba(255,215,0,0.4)" strokeWidth="2" />
-                <line x1="350" y1="280" x2="180" y2="320" stroke="rgba(255,215,0,0.4)" strokeWidth="2" strokeDasharray="4" />
-                <line x1="350" y1="280" x2="520" y2="300" stroke="rgba(255,215,0,0.4)" strokeWidth="2" />
-                <line x1="520" y1="300" x2="380" y2="420" stroke="rgba(255,215,0,0.4)" strokeWidth="2" />
-                <line x1="380" y1="420" x2="250" y2="150" stroke="rgba(255,215,0,0.4)" strokeWidth="2" strokeDasharray="4" />
+                {/* Bağlantı Çizgileri */}
+                <line x1="250" y1="130" x2="470" y2="110" stroke="rgba(255,215,0,0.4)" strokeWidth="2" strokeDasharray="4" />
+                <line x1="470" y1="110" x2="350" y2="260" stroke="rgba(255,215,0,0.4)" strokeWidth="2" />
+                <line x1="350" y1="260" x2="160" y2="300" stroke="rgba(255,215,0,0.4)" strokeWidth="2" strokeDasharray="4" />
+                <line x1="350" y1="260" x2="540" y2="280" stroke="rgba(255,215,0,0.4)" strokeWidth="2" />
+                <line x1="540" y1="280" x2="380" y2="410" stroke="rgba(255,215,0,0.4)" strokeWidth="2" />
+                <line x1="380" y1="410" x2="250" y2="130" stroke="rgba(255,215,0,0.4)" strokeWidth="2" strokeDasharray="4" />
+                <line x1="380" y1="410" x2="230" y2="420" stroke="rgba(255,215,0,0.4)" strokeWidth="2" />
+                <line x1="230" y1="420" x2="350" y2="260" stroke="rgba(255,215,0,0.4)" strokeWidth="2" strokeDasharray="4" />
 
                 {matrixNodes.map((node) => (
                   <g key={node.id} onClick={() => setSelectedNode(node)}>
@@ -101,7 +141,7 @@ export default function App() {
                       stroke={selectedNode?.id === node.id ? "#ffffff" : node.color} 
                       strokeWidth={selectedNode?.id === node.id ? "3" : "2"} 
                     />
-                    <text x={node.x} y={node.y + 5} textAnchor="middle" fill={node.color} fontSize="14" fontWeight="bold">
+                    <text x={node.x} y={node.y + 5} textAnchor="middle" fill={node.color} fontSize="13" fontWeight="bold">
                       {node.label}
                     </text>
                   </g>
@@ -109,6 +149,7 @@ export default function App() {
               </svg>
             </div>
 
+            {/* BİLGİ VE ANALİZ DETAY PANELİ */}
             <div style={{ background: "rgba(255,215,0,0.04)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "18px" }}>
               <h3 style={{ color: "#ffd700", fontSize: "0.95rem", margin: "0 0 12px 0", borderBottom: "1px solid rgba(255,215,0,0.2)", paddingBottom: "6px" }}>
                 {selectedNode ? `SEÇİLİ KÖK HECE: [${selectedNode.label}]` : "📌 MATRİS REHBERİ"}
@@ -116,17 +157,23 @@ export default function App() {
               
               {selectedNode ? (
                 <div>
-                  <p style={{ color: "#fff", fontSize: "0.85rem", fontWeight: "bold" }}>{selectedNode.desc}</p>
-                  <div style={{ margin: "15px 0", padding: "10px", background: "rgba(0,0,0,0.4)", borderRadius: "6px", fontSize: "0.78rem", color: "#ccc" }}>
-                    <div><strong>Algoritmik Aks:</strong> 360° Dönüşüm</div>
+                  <p style={{ color: "#fff", fontSize: "0.85rem", fontWeight: "bold", marginBottom: "8px" }}>{selectedNode.desc}</p>
+                  
+                  <div style={{ margin: "12px 0", padding: "10px", background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,215,0,0.2)", borderRadius: "6px", fontSize: "0.78rem", color: "#ccc" }}>
+                    <div><strong>Algoritmik Aks:</strong> 360° Dönüşüm Vektörü</div>
                     <div style={{ marginTop: "4px" }}><strong>Eşleşen Kök:</strong> {selectedNode.connection}</div>
-                    <div style={{ marginTop: "4px" }}><strong>Uyum Skoru:</strong> %99.8</div>
+                    <div style={{ marginTop: "4px" }}><strong>Uyum Skoru:</strong> <span style={{ color: "#ffd700", fontWeight: "bold" }}>{selectedNode.score}</span></div>
                   </div>
-                  <button onClick={() => setSelectedNode(null)} style={{ ...backBtnStyle, width: "100%", fontSize: "0.75rem" }}>Temizle</button>
+
+                  <p style={{ color: "#aaa", fontSize: "0.78rem", lineHeight: "1.5", background: "rgba(255,255,255,0.02)", padding: "10px", borderRadius: "6px" }}>
+                    {selectedNode.details}
+                  </p>
+
+                  <button onClick={() => setSelectedNode(null)} style={{ ...backBtnStyle, width: "100%", fontSize: "0.75rem", marginTop: "10px" }}>Seçimi Temizle</button>
                 </div>
               ) : (
                 <p style={{ color: "#aaa", fontSize: "0.8rem", lineHeight: "1.5" }}>
-                  Ağ üzerindeki Kök Hece baloncuklarına tıklayarak fonetik türetimlerini ve kavramsal bağlantılarını görüntüleyebilirsiniz.
+                  Ağ üzerindeki Kök Hece baloncuklarına tıklayarak fonetik türetimlerini, yazıt eşleşmelerini ve vektörel detaylarını görüntüleyebilirsiniz.
                 </p>
               )}
             </div>
@@ -147,19 +194,20 @@ export default function App() {
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "15px" }}>
             {[
-              { name: "Çatalhöyük Dairesel Damga", region: "Konya / Anadolu", date: "M.Ö. 7400", code: "YKOS-DMG-01" },
-              { name: "Göbeklitepe H-C Piktogramı", region: "Şanlıurfa / Anadolu", date: "M.Ö. 9600", code: "YKOS-DMG-02" },
-              { name: "Yazılıkaya Hitit Güneş Kursu", region: "Çorum / Anadolu", date: "M.Ö. 1300", code: "YKOS-DMG-03" },
-              { name: "Lemnos Mezar Taşı Damgaları", region: "Lemnos / Akdeniz", date: "M.Ö. 600", code: "YKOS-DMG-04" }
+              { name: "Çatalhöyük Dairesel Damga", region: "Konya / Anadolu", date: "M.Ö. 7400", code: "YKOS-DMG-01", desc: "'ÇEV' ve 'BA' dairesel döngü matriksi." },
+              { name: "Göbeklitepe H-C Piktogramı", region: "Şanlıurfa / Anadolu", date: "M.Ö. 9600", code: "YKOS-DMG-02", desc: "İkilik ve göksel bağ sembolizmi." },
+              { name: "Yazılıkaya Hitit Güneş Kursu", region: "Çorum / Anadolu", date: "M.Ö. 1300", code: "YKOS-DMG-03", desc: "Merkez ve yön ışınları matrisi." },
+              { name: "Lemnos Mezar Taşı Damgaları", region: "Lemnos / Akdeniz", date: "M.Ö. 600", code: "YKOS-DMG-04", desc: "Doğu Akdeniz alfabetik aks okuması." }
             ].map((item, idx) => (
               <div key={idx} style={{ background: "rgba(255,215,0,0.03)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "8px", padding: "16px" }}>
-                <div style={{ height: "100px", background: "#000", borderRadius: "6px", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "10px", color: "#ffd700", fontSize: "1.8rem", border: "1px dashed rgba(255,215,0,0.2)" }}>
+                <div style={{ height: "90px", background: "#000", borderRadius: "6px", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "10px", color: "#ffd700", fontSize: "1.8rem", border: "1px dashed rgba(255,215,0,0.2)" }}>
                   🔷
                 </div>
                 <span style={{ color: "#888", fontSize: "0.7rem", fontWeight: "bold" }}>{item.code}</span>
                 <h4 style={{ color: "#ffd700", margin: "4px 0", fontSize: "0.9rem" }}>{item.name}</h4>
                 <div style={{ color: "#ccc", fontSize: "0.78rem" }}>📍 {item.region}</div>
                 <div style={{ color: "#888", fontSize: "0.75rem", marginTop: "2px" }}>⏳ {item.date}</div>
+                <p style={{ color: "#aaa", fontSize: "0.72rem", marginTop: "8px", borderTop: "1px solid rgba(255,215,0,0.1)", paddingTop: "6px" }}>{item.desc}</p>
               </div>
             ))}
           </div>
