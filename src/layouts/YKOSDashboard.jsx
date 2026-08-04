@@ -17,6 +17,20 @@ export default function YKOSDashboard({
   const [currentLang, setCurrentLang] = useState("TR");
   const [searchQuery, setSearchQuery] = useState("");
 
+  // 10 Dünya Dili Listesi
+  const languages = [
+    { code: "TR", label: "Türkçe" },
+    { code: "EN", label: "English" },
+    { code: "FR", label: "Français" },
+    { code: "RU", label: "Русский" },
+    { code: "ZH", label: "中文" },
+    { code: "JA", label: "日本語" },
+    { code: "PT", label: "Português" },
+    { code: "ES", label: "Español" },
+    { code: "AR", label: "العربية" },
+    { code: "DE", label: "Deutsch" }
+  ];
+
   const initialStats = [
     { icon: "🌐", count: "214", label: "Ülkeler" },
     { icon: "🏛️", count: "248", label: "Araştırmalar" },
@@ -55,19 +69,38 @@ export default function YKOSDashboard({
       {/* HEADER */}
       <div style={{ ...cardStyle, padding: "12px 16px 14px 16px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          
+          {/* MENÜ BUTONU */}
           <button 
-            onClick={() => setMenuOpen(!menuOpen)}
+            onClick={() => { setMenuOpen(!menuOpen); setLangOpen(false); }}
             style={{ background: menuOpen ? "rgba(255, 215, 0, 0.25)" : "rgba(255, 215, 0, 0.1)", border: "1px solid #ffd700", color: "#ffd700", padding: "5px 12px", borderRadius: "5px", fontWeight: "bold", cursor: "pointer", fontSize: "0.78rem" }}
           >
             ☰ MENÜ
           </button>
 
-          <button 
-            onClick={() => setLangOpen(!langOpen)}
-            style={{ background: "transparent", border: "1px solid #ffd700", color: "#ffd700", padding: "4px 8px", borderRadius: "5px", fontWeight: "bold", cursor: "pointer", fontSize: "0.75rem" }}
-          >
-            🌐 {currentLang} ▾
-          </button>
+          {/* 10 DİLLİ SEÇİM BUTONU & MENÜSÜ */}
+          <div style={{ position: "relative" }}>
+            <button 
+              onClick={() => { setLangOpen(!langOpen); setMenuOpen(false); }}
+              style={{ background: "transparent", border: "1px solid #ffd700", color: "#ffd700", padding: "4px 10px", borderRadius: "5px", fontWeight: "bold", cursor: "pointer", fontSize: "0.75rem" }}
+            >
+              🌐 {currentLang} ▾
+            </button>
+
+            {langOpen && (
+              <div style={{ position: "absolute", right: 0, top: "110%", backgroundColor: "#050811", border: "1px solid #ffd700", borderRadius: "8px", display: "flex", flexDirection: "column", minWidth: "140px", maxHeight: "220px", overflowY: "auto", zIndex: 1000, boxShadow: "0 6px 20px rgba(0,0,0,0.9)", padding: "4px" }}>
+                {languages.map((l) => (
+                  <button 
+                    key={l.code}
+                    onClick={() => { setCurrentLang(l.code); setLangOpen(false); }}
+                    style={{ background: currentLang === l.code ? "rgba(255,215,0,0.2)" : "transparent", border: "none", color: currentLang === l.code ? "#ffd700" : "#fff", padding: "6px 10px", textAlign: "left", fontSize: "0.75rem", cursor: "pointer", fontWeight: currentLang === l.code ? "bold" : "normal" }}
+                  >
+                    {l.label} ({l.code})
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* LOGO */}
@@ -79,8 +112,6 @@ export default function YKOSDashboard({
         {/* AÇILIR MENÜ */}
         {menuOpen && (
           <div style={{ marginTop: "12px", borderTop: "1px solid rgba(255, 215, 0, 0.3)", paddingTop: "12px" }}>
-            
-            {/* 1. ÜSTTE ANA İÇERİK BAŞLIKLARI */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "6px", marginBottom: "12px" }}>
               <button onClick={() => { setMenuOpen(false); onNavigateMethod(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>KURUMSAL</button>
               <button onClick={() => { setMenuOpen(false); onNavigateMethod(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>YKOS METODOLOJİSİ</button>
@@ -90,7 +121,7 @@ export default function YKOSDashboard({
               <button onClick={() => { setMenuOpen(false); onNavigateFlow(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>GÖÇ & AKIŞ HARİTASI</button>
             </div>
 
-            {/* 2. EN ALTTTAKİ GİRİŞ PORTALLARI */}
+            {/* EN ALTTTAKİ GİRİŞ PORTALLARI */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "8px", paddingTop: "10px", borderTop: "1px dashed rgba(255, 215, 0, 0.25)" }}>
               <button onClick={() => { setMenuOpen(false); onNavigateLogin("guest"); }} style={portalButtonStyle}>👤 KONUK PANELİ GİRİŞİ</button>
               <button onClick={() => { setMenuOpen(false); onNavigateLogin("researcher"); }} style={portalButtonStyle}>📝 ARAŞTIRMACI VERİ GİRİŞİ</button>
