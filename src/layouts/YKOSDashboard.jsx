@@ -1,14 +1,8 @@
 import React, { useState } from "react";
 import SearchBar from "../components/SearchBar";
 
-const archiveData = [
-  { id: 1, title: "Çatalhöyük Kök Hece ve Damga Sembolizmi", summary: "Çatalhöyük duvar resimlerindeki YKOS 100 eşleşmeleri." },
-  { id: 2, title: "Göbeklitepe T-Sütunu YKOS Okuması", summary: "Şanlıurfa Göbeklitepe T-Sütunları üzerindeki semboller." },
-  { id: 3, title: "Etrüsk Lemnos Kitabesi & Ön Türkçe Eşleşmesi", summary: "Lemnos mezar taşındaki alfabetik dizilimin okuması." },
-  { id: 4, title: "YOL Kök Hecesi ve Akış Teorisi", summary: "'Rulo değil yol' mantığının dilbilimsel matrisi." }
-];
-
 export default function YKOSDashboard({ 
+  archiveArticles = [],
   onVisualize, onNavigateRead, onGoHome, onNavigateLogin, 
   onNavigateAtlas, onNavigateEngine, onNavigateFlow, onNavigateMethod 
 }) {
@@ -62,6 +56,12 @@ export default function YKOSDashboard({
     textAlign: "center"
   };
 
+  // Canlı Arama Süzgeci
+  const filteredArticles = archiveArticles.filter(item => 
+    item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    item.summary.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div style={{ width: "100%", maxWidth: "1240px", margin: "0 auto", padding: "10px", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
       
@@ -69,7 +69,6 @@ export default function YKOSDashboard({
       <div style={{ ...cardStyle, padding: "12px 16px 14px 16px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           
-          {/* MENÜ BUTONU */}
           <button 
             onClick={() => { setMenuOpen(!menuOpen); setLangOpen(false); }}
             style={{ background: menuOpen ? "rgba(255, 215, 0, 0.25)" : "rgba(255, 215, 0, 0.1)", border: "1px solid #ffd700", color: "#ffd700", padding: "5px 12px", borderRadius: "5px", fontWeight: "bold", cursor: "pointer", fontSize: "0.78rem" }}
@@ -77,7 +76,6 @@ export default function YKOSDashboard({
             ☰ MENÜ
           </button>
 
-          {/* DİL SEÇİM BUTONU */}
           <div style={{ position: "relative" }}>
             <button 
               onClick={() => { setLangOpen(!langOpen); setMenuOpen(false); }}
@@ -123,9 +121,7 @@ export default function YKOSDashboard({
         {menuOpen && (
           <div style={{ marginTop: "12px", borderTop: "1px solid rgba(255, 215, 0, 0.3)", paddingTop: "12px" }}>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "6px", marginBottom: "12px" }}>
-              {/* ANASAYFA LİNKİ EN BAŞA EKLENDİ */}
               <button onClick={() => { setMenuOpen(false); onGoHome(); }} style={{ background: "rgba(255, 215, 0, 0.3)", border: "1px solid #ffd700", color: "#ffd700", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>🏠 ANASAYFA</button>
-              
               <button onClick={() => { setMenuOpen(false); onNavigateMethod(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>KURUMSAL</button>
               <button onClick={() => { setMenuOpen(false); onNavigateMethod(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>YKOS METODOLOJİSİ</button>
               <button onClick={() => { setMenuOpen(false); onVisualize(); }} style={{ background: "rgba(255, 215, 0, 0.15)", border: "1px solid #ffd700", color: "#ffd700", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>KÖK HECE MATRİSİ</button>
@@ -134,7 +130,6 @@ export default function YKOSDashboard({
               <button onClick={() => { setMenuOpen(false); onNavigateFlow(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>GÖÇ & AKIŞ HARİTASI</button>
             </div>
 
-            {/* EN ALTTTAKİ GİRİŞ PORTALLARI */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "8px", paddingTop: "10px", borderTop: "1px dashed rgba(255, 215, 0, 0.25)" }}>
               <button onClick={() => { setMenuOpen(false); onNavigateLogin("guest"); }} style={portalButtonStyle}>👤 KONUK PANELİ GİRİŞİ</button>
               <button onClick={() => { setMenuOpen(false); onNavigateLogin("researcher"); }} style={portalButtonStyle}>📝 ARAŞTIRMACI VERİ GİRİŞİ</button>
@@ -176,11 +171,11 @@ export default function YKOSDashboard({
           </div>
         </div>
 
-        {/* SAĞ PANEL */}
+        {/* SAĞ PANEL (CANLI ARŞİVDEN BESLENEN ÇÖZÜMLER) */}
         <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
-          <h3 style={{ color: "#ffd700", fontSize: "0.95rem", marginTop: 0 }}>⚡ YKOS ÇÖZÜMLERİ VE İNDEKLSER</h3>
+          <h3 style={{ color: "#ffd700", fontSize: "0.95rem", marginTop: 0 }}>⚡ YKOS ÇÖZÜMLERİ VE İNDEKLSER (CANLI ARŞİV)</h3>
           <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "15px" }}>
-            {archiveData.map((item) => (
+            {filteredArticles.map((item) => (
               <div 
                 key={item.id}
                 onClick={() => onNavigateRead(item.id)}
