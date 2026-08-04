@@ -17,7 +17,6 @@ export default function YKOSDashboard({
   const [currentLang, setCurrentLang] = useState("TR");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // 10 Dünya Dili Listesi
   const languages = [
     { code: "TR", label: "Türkçe" },
     { code: "EN", label: "English" },
@@ -78,7 +77,7 @@ export default function YKOSDashboard({
             ☰ MENÜ
           </button>
 
-          {/* 10 DİLLİ SEÇİM BUTONU & MENÜSÜ */}
+          {/* DİL SEÇİM BUTONU */}
           <div style={{ position: "relative" }}>
             <button 
               onClick={() => { setLangOpen(!langOpen); setMenuOpen(false); }}
@@ -103,8 +102,20 @@ export default function YKOSDashboard({
           </div>
         </div>
 
-        {/* LOGO */}
-        <div onClick={onGoHome} style={{ textAlign: "center", cursor: "pointer", marginTop: "-18px" }}>
+        {/* LOGO VE KARTAL AMBLEMİ */}
+        <div onClick={onGoHome} style={{ textAlign: "center", cursor: "pointer", marginTop: "-18px", userSelect: "none" }}>
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "4px" }}>
+            <img 
+              src="/ykos-logo.png" 
+              alt="YKOS Kartal Amblemi" 
+              style={{ maxHeight: "56px", maxWidth: "100%", objectFit: "contain", filter: "drop-shadow(0px 0px 8px rgba(255, 215, 0, 0.5))" }} 
+              onError={(e) => {
+                // Görsel dosya bulunamazsa ikon/fallback gösterimi
+                e.target.onerror = null; 
+                e.target.style.display = 'none';
+              }}
+            />
+          </div>
           <h1 style={{ color: "#ffd700", fontSize: "1.35rem", fontWeight: "900", margin: "0", letterSpacing: "1.5px" }}>YKOS BİLGİ SİSTEMİ</h1>
           <p style={{ color: "#aaaaaa", fontSize: "0.72rem", margin: "2px 0 0 0" }}>Disiplinler Arası Algoritmik Kültür ve Dil Veri Tabanı</p>
         </div>
