@@ -1,60 +1,21 @@
 import React, { useState } from "react";
 import SearchBar from "../components/SearchBar";
 
-// İç Veri Tabanı
 const archiveData = [
-  {
-    id: 1,
-    title: "Çatalhöyük Kök Hece ve Damga Sembolizmi",
-    category: "Arkeolojik Çözümleme",
-    tags: ["çatalhöyük", "anadolu", "kök hece", "piktogram", "ykos 100"],
-    summary: "Çatalhöyük duvar resimleri ve pişmiş toprak mühürlerdeki YKOS 100 kök hece eşleşmeleri.",
-    analysis: "Çatalhöyük M.Ö. 7400 katmanlarında tespit edilen dairesel ve ışınsal motifler, YKOS 'ÇEV' ve 'BA' kök heceleriyle tam fonetik uyum gösterir."
-  },
-  {
-    id: 2,
-    title: "Göbeklitepe T-Sütunu YKOS Okuması",
-    category: "Arkeolojik Çözümleme",
-    tags: ["göbeklitepe", "t-sütun", "h sembolü", "c sembolü", "ykos 200"],
-    summary: "Şanlıurfa Göbeklitepe T-Sütunları üzerindeki ikil sembollerin YKOS çözümü.",
-    analysis: "T-sütunlardaki 'H' ve 'C' piktogramları ER-İK-AN ve KÖK-SU kavramsal kurgusunu ifade eder."
-  },
-  {
-    id: 3,
-    title: "Etrüsk Lemnos Kitabesi & Ön Türkçe Eşleşmesi",
-    category: "Dil ve Yazıt Atlası",
-    tags: ["etrüsk", "lemnos", "yazıt", "akdeniz", "ykos 300"],
-    summary: "Lemnos adası mezar taşındaki alfabetik dizilimin YKOS kök fonetiği ile okuması.",
-    analysis: "Batı Akdeniz'e taşınan alfabe dizgesi, Anadolu Ön-Türkçe kök ekleriyle deşifre edilmiştir."
-  },
-  {
-    id: 4,
-    title: "YOL Kök Hecesi ve Akış Teorisi",
-    category: "Kök Hece Matrisi",
-    tags: ["yol", "kök hece", "dinamik sistem", "ykos 100"],
-    summary: "YKOS Kavramsal Çerçevesi: 'Rulo değil yol' mantığının dilbilimsel matrisi.",
-    analysis: "Y-O-L kök hecesi; yön, hareket, süreç ve geçiş sembolizmini ifade eden ana eksendir."
-  }
+  { id: 1, title: "Çatalhöyük Kök Hece ve Damga Sembolizmi", summary: "Çatalhöyük duvar resimlerindeki YKOS 100 eşleşmeleri." },
+  { id: 2, title: "Göbeklitepe T-Sütunu YKOS Okuması", summary: "Şanlıurfa Göbeklitepe T-Sütunları üzerindeki semboller." },
+  { id: 3, title: "Etrüsk Lemnos Kitabesi & Ön Türkçe Eşleşmesi", summary: "Lemnos mezar taşındaki alfabetik dizilimin okuması." },
+  { id: 4, title: "YOL Kök Hecesi ve Akış Teorisi", summary: "'Rulo değil yol' mantığının dilbilimsel matrisi." }
 ];
 
-export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome, onNavigateLogin }) {
+export default function YKOSDashboard({ 
+  onVisualize, onNavigateRead, onGoHome, onNavigateLogin, 
+  onNavigateAtlas, onNavigateEngine, onNavigateFlow, onNavigateMethod 
+}) {
   const [langOpen, setLangOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState("TR");
   const [searchQuery, setSearchQuery] = useState("");
-
-  const languages = [
-    { code: "TR", label: "Türkçe" },
-    { code: "EN", label: "English" },
-    { code: "FR", label: "Français" },
-    { code: "RU", label: "Русский" },
-    { code: "ZH", label: "中文" },
-    { code: "ES", label: "Español" },
-    { code: "IT", label: "Italiano" },
-    { code: "AR", label: "العربية" },
-    { code: "JA", label: "日本語" },
-    { code: "DE", label: "Deutsch" }
-  ];
 
   const initialStats = [
     { icon: "🌐", count: "214", label: "Ülkeler" },
@@ -67,277 +28,129 @@ export default function YKOSDashboard({ onVisualize, onNavigateRead, onGoHome, o
     { icon: "🗺️", count: "58", label: "Atlaslar" }
   ];
 
-  const filteredData = archiveData.filter((item) => {
-    if (!searchQuery) return true;
-    const q = searchQuery.toLowerCase().trim();
-    return (
-      item.title.toLowerCase().includes(q) ||
-      item.summary.toLowerCase().includes(q) ||
-      item.analysis.toLowerCase().includes(q) ||
-      item.tags.some((tag) => tag.toLowerCase().includes(q))
-    );
-  });
-
   const cardStyle = {
     backgroundColor: "#050811",
     border: "1px solid #ffd700",
     borderRadius: "12px",
     padding: "16px 20px",
     marginBottom: "15px",
-    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.7)",
-    position: "relative"
-  };
-
-  const handlePortalClick = (role) => {
-    setMenuOpen(false);
-    if (onNavigateLogin) {
-      onNavigateLogin(role);
-    }
+    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.7)"
   };
 
   const portalButtonStyle = {
-    background: "linear-gradient(135deg, rgba(255, 215, 0, 0.25), rgba(184, 134, 11, 0.2))",
-    border: "1px solid #ffd700",
+    background: "linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(184, 134, 11, 0.1))",
+    border: "1px solid rgba(255, 215, 0, 0.5)",
     color: "#ffd700",
-    padding: "9px 12px",
+    padding: "8px 12px",
     borderRadius: "6px",
-    fontSize: "0.75rem",
+    fontSize: "0.72rem",
     fontWeight: "800",
     cursor: "pointer",
-    textAlign: "left",
-    display: "flex",
-    alignItems: "center",
-    gap: "6px",
-    boxShadow: "0 0 10px rgba(255, 215, 0, 0.15)",
-    letterSpacing: "0.3px"
-  };
-
-  const handleLogoClick = () => {
-    setSearchQuery("");
-    setMenuOpen(false);
-    setLangOpen(false);
-    if (onGoHome) {
-      onGoHome();
-    } else {
-      window.location.reload();
-    }
+    textAlign: "center"
   };
 
   return (
-    <div style={{ width: "100%", maxWidth: "1240px", margin: "0 auto", padding: "10px", boxSizing: "border-box", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
+    <div style={{ width: "100%", maxWidth: "1240px", margin: "0 auto", padding: "10px", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
       
-      {/* 1. ÜST HEADER KUTUSU */}
-      <div style={{
-        ...cardStyle,
-        padding: "12px 16px 14px 16px",
-        marginBottom: "12px"
-      }}>
-        
-        {/* SOL ÜST MENÜ & SAĞ ÜST DİL */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0px" }}>
+      {/* HEADER */}
+      <div style={{ ...cardStyle, padding: "12px 16px 14px 16px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <button 
-            onClick={() => { setMenuOpen(!menuOpen); setLangOpen(false); }}
+            onClick={() => setMenuOpen(!menuOpen)}
             style={{ background: menuOpen ? "rgba(255, 215, 0, 0.25)" : "rgba(255, 215, 0, 0.1)", border: "1px solid #ffd700", color: "#ffd700", padding: "5px 12px", borderRadius: "5px", fontWeight: "bold", cursor: "pointer", fontSize: "0.78rem" }}
           >
             ☰ MENÜ
           </button>
 
-          <div style={{ position: "relative" }}>
-            <button 
-              onClick={() => { setLangOpen(!langOpen); setMenuOpen(false); }}
-              style={{ background: "transparent", border: "1px solid #ffd700", color: "#ffd700", padding: "4px 8px", borderRadius: "5px", fontWeight: "bold", cursor: "pointer", fontSize: "0.75rem" }}
-            >
-              🌐 {currentLang} ▾
-            </button>
-
-            {langOpen && (
-              <div style={{ position: "absolute", right: 0, top: "110%", backgroundColor: "#050811", border: "1px solid #ffd700", borderRadius: "8px", display: "flex", flexDirection: "column", minWidth: "130px", maxHeight: "200px", overflowY: "auto", zIndex: 1000, boxShadow: "0 6px 20px rgba(0,0,0,0.9)", padding: "4px" }}>
-                {languages.map((l) => (
-                  <button 
-                    key={l.code}
-                    onClick={() => { setCurrentLang(l.code); setLangOpen(false); }}
-                    style={{ background: currentLang === l.code ? "rgba(255,215,0,0.2)" : "transparent", border: "none", color: currentLang === l.code ? "#ffd700" : "#fff", padding: "5px 8px", textAlign: "left", fontSize: "0.75rem", cursor: "pointer", fontWeight: currentLang === l.code ? "bold" : "normal" }}
-                  >
-                    {l.label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          <button 
+            onClick={() => setLangOpen(!langOpen)}
+            style={{ background: "transparent", border: "1px solid #ffd700", color: "#ffd700", padding: "4px 8px", borderRadius: "5px", fontWeight: "bold", cursor: "pointer", fontSize: "0.75rem" }}
+          >
+            🌐 {currentLang} ▾
+          </button>
         </div>
 
-        {/* ORTA LOGO (ANA SAYFA LİNKİ EKLENDİ) */}
-        <div 
-          onClick={handleLogoClick}
-          title="Ana Sayfaya Dön"
-          style={{ 
-            textAlign: "center", 
-            margin: "0 auto", 
-            cursor: "pointer", 
-            display: "block", 
-            width: "fit-content", 
-            marginTop: "-18px",
-            userSelect: "none"
-          }}
-        >
-          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "0px" }}>
-            <img 
-              src="/ykos-logo.png" 
-              alt="YKOS Kartal Amblemi" 
-              style={{ maxHeight: "54px", maxWidth: "100%", objectFit: "contain", filter: "drop-shadow(0px 0px 8px rgba(255, 215, 0, 0.4))" }} 
-              onError={(e) => { e.target.style.display = 'none'; }}
-            />
-          </div>
-          <h1 style={{ color: "#ffd700", fontSize: "1.35rem", fontWeight: "900", margin: "0", letterSpacing: "1.5px", lineHeight: "1.2" }}>YKOS BİLGİ SİSTEMİ</h1>
+        {/* LOGO */}
+        <div onClick={onGoHome} style={{ textAlign: "center", cursor: "pointer", marginTop: "-18px" }}>
+          <h1 style={{ color: "#ffd700", fontSize: "1.35rem", fontWeight: "900", margin: "0", letterSpacing: "1.5px" }}>YKOS BİLGİ SİSTEMİ</h1>
           <p style={{ color: "#aaaaaa", fontSize: "0.72rem", margin: "2px 0 0 0" }}>Disiplinler Arası Algoritmik Kültür ve Dil Veri Tabanı</p>
         </div>
 
-        {/* AÇILIR MENÜ PANELİ */}
+        {/* AÇILIR MENÜ */}
         {menuOpen && (
           <div style={{ marginTop: "12px", borderTop: "1px solid rgba(255, 215, 0, 0.3)", paddingTop: "12px" }}>
             
-            {/* PORTAL GİRİŞLERİ */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "8px", marginBottom: "12px", paddingBottom: "12px", borderBottom: "1px dashed rgba(255, 215, 0, 0.25)" }}>
-              <button 
-                onClick={() => handlePortalClick("guest")} 
-                style={portalButtonStyle}
-              >
-                <span>👤</span> KONUK PANELİ GİRİŞİ
-              </button>
-
-              <button 
-                onClick={() => handlePortalClick("researcher")} 
-                style={portalButtonStyle}
-              >
-                <span>📝</span> ARAŞTIRMACI VERİ GİRİŞİ
-              </button>
-
-              <button 
-                onClick={() => handlePortalClick("admin")} 
-                style={portalButtonStyle}
-              >
-                <span>⚙️</span> YÖNETİCİ VERİ GİRİŞİ
-              </button>
+            {/* 1. ÜSTTE ANA İÇERİK BAŞLIKLARI */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "6px", marginBottom: "12px" }}>
+              <button onClick={() => { setMenuOpen(false); onNavigateMethod(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>KURUMSAL</button>
+              <button onClick={() => { setMenuOpen(false); onNavigateMethod(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>YKOS METODOLOJİSİ</button>
+              <button onClick={() => { setMenuOpen(false); onVisualize(); }} style={{ background: "rgba(255, 215, 0, 0.2)", border: "1px solid #ffd700", color: "#ffd700", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>KÖK HECE MATRİSİ</button>
+              <button onClick={() => { setMenuOpen(false); onNavigateAtlas(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>DAMGA ATLASI</button>
+              <button onClick={() => { setMenuOpen(false); onNavigateEngine(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>OKUMA & ANALİZ MOTORU</button>
+              <button onClick={() => { setMenuOpen(false); onNavigateFlow(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>GÖÇ & AKIŞ HARİTASI</button>
             </div>
 
-            {/* GENEL DİZİN BAŞLIKLARI */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "6px" }}>
-              {["KURUMSAL", "YKOS METODOLOJİSİ", "KÖK HECE MATRİSİ", "DAMGA ATLASI", "OKUMA & ANALİZ MOTORU", "GÖÇ & AKIŞ HARİTASI", "🎥 VİDEO & SUNUMLAR", "KÜLLİYAT & YAYINLAR", "DİJİTAL ARŞİV"].map((item, i) => (
-                <button key={i} onClick={() => { setMenuOpen(false); if(i===2) onVisualize(); else handleLogoClick(); }} style={{ background: i === 2 ? "rgba(255, 215, 0, 0.2)" : "rgba(255, 255, 255, 0.02)", border: i === 2 ? "1px solid #ffd700" : "1px solid rgba(255, 215, 0, 0.3)", color: i === 2 ? "#ffd700" : "#ccc", padding: "6px 8px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer", textAlign: "center" }}>
-                  {item}
-                </button>
-              ))}
+            {/* 2. EN ALTTTAKİ GİRİŞ PORTALLARI */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "8px", paddingTop: "10px", borderTop: "1px dashed rgba(255, 215, 0, 0.25)" }}>
+              <button onClick={() => { setMenuOpen(false); onNavigateLogin("guest"); }} style={portalButtonStyle}>👤 KONUK PANELİ GİRİŞİ</button>
+              <button onClick={() => { setMenuOpen(false); onNavigateLogin("researcher"); }} style={portalButtonStyle}>📝 ARAŞTIRMACI VERİ GİRİŞİ</button>
+              <button onClick={() => { setMenuOpen(false); onNavigateLogin("admin"); }} style={portalButtonStyle}>⚙️ YÖNETİCİ VERİ GİRİŞİ</button>
             </div>
-
           </div>
         )}
-
       </div>
 
-      {/* 2. ARAMA BARI */}
-      <div style={{ marginBottom: "15px", width: "100%" }}>
+      {/* ARAMA BARI */}
+      <div style={{ marginBottom: "15px" }}>
         <SearchBar onSearch={(q) => setSearchQuery(q)} />
       </div>
 
-      {/* 3. İSTATİSTİK SAYAÇ KUTUSU */}
+      {/* İSTATİSTİK SAYAÇLARI */}
       <div style={cardStyle}>
-        
-        <div style={{ 
-          display: "flex", 
-          justifyContent: "space-between", 
-          alignItems: "center", 
-          width: "100%",
-          marginBottom: "10px", 
-          borderBottom: "1px solid rgba(255, 215, 0, 0.2)", 
-          paddingBottom: "6px" 
-        }}>
-          
-          <div style={{ border: "1px solid #ffd700", borderRadius: "5px", padding: "2px 8px", backgroundColor: "rgba(255, 215, 0, 0.05)" }}>
-            <span style={{ color: "#ffd700", fontSize: "0.62rem", fontWeight: "bold", letterSpacing: "0.2px", whiteSpace: "nowrap" }}>
-              📊 CANLI VERİ İSTATİSTİKLERİ
-            </span>
-          </div>
-
-          <div style={{ border: "1px solid #ffd700", borderRadius: "5px", padding: "2px 8px", fontSize: "0.62rem", background: "rgba(255, 215, 0, 0.05)", display: "flex", alignItems: "center", gap: "4px", whiteSpace: "nowrap" }}>
-            <span style={{ color: "#888" }}>DURUM:</span>
-            <strong style={{ color: "#ffd700", fontSize: "0.62rem" }}>🟢 AKTİF</strong>
-          </div>
-
-        </div>
-
-        <div className="stats-grid-container">
-          <style>{`
-            .stats-grid-container {
-              display: grid;
-              grid-template-columns: repeat(2, 1fr);
-              gap: 10px;
-            }
-            @media (min-width: 768px) {
-              .stats-grid-container {
-                grid-template-columns: repeat(4, 1fr);
-              }
-            }
-            @media (min-width: 1024px) {
-              .stats-grid-container {
-                grid-template-columns: repeat(8, 1fr);
-              }
-            }
-          `}</style>
-
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))", gap: "10px" }}>
           {initialStats.map((item, idx) => (
-            <div key={idx} style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 215, 0, 0.25)", borderRadius: "8px", padding: "10px 4px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <div key={idx} style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 215, 0, 0.25)", borderRadius: "8px", padding: "10px 4px", textAlign: "center" }}>
               <span style={{ fontSize: "1.1rem" }}>{item.icon}</span>
-              <span style={{ color: "#fff", fontWeight: "900", fontSize: "1rem", margin: "2px 0" }}>{item.count}</span>
-              <span style={{ color: "#888", fontSize: "0.68rem", fontWeight: "bold" }}>{item.label}</span>
+              <div style={{ color: "#fff", fontWeight: "900", fontSize: "1rem" }}>{item.count}</div>
+              <div style={{ color: "#888", fontSize: "0.68rem", fontWeight: "bold" }}>{item.label}</div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* 4. ALT KARTLAR */}
+      {/* SOL / SAĞ PANELİ */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "15px" }}>
         
         {/* SOL PANEL */}
         <div style={cardStyle}>
-          <h3 style={{ color: "#ffd700", fontSize: "0.95rem", fontWeight: "bold", marginTop: 0, marginBottom: "12px" }}>MATRİSLER VE KATMANLAR</h3>
+          <h3 style={{ color: "#ffd700", fontSize: "0.95rem", marginTop: 0 }}>MATRİSLER VE KATMANLAR</h3>
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onVisualize}>► <span style={{ color: "#fff" }}>💻 KÖK HECE MATRİSİ</span></div>
-            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={() => alert("🗺️ DAMGA ATLASI yükleniyor...")}>► <span style={{ color: "#fff" }}>🗺️ DAMGA ATLASI</span></div>
-            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={() => alert("🔬 OKUMA & ANALİZ MOTORU başlatılıyor...")}>► <span style={{ color: "#fff" }}>🔬 OKUMA & ANALİZ MOTORU</span></div>
-            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={() => alert("🟢 GÖÇ & AKIŞ HARİTASI hazırlanıyor...")}>► <span style={{ color: "#fff" }}>🟢 GÖÇ & AKIŞ HARİTASI</span></div>
+            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onNavigateAtlas}>► <span style={{ color: "#fff" }}>🗺️ DAMGA ATLASI</span></div>
+            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onNavigateEngine}>► <span style={{ color: "#fff" }}>🔬 OKUMA & ANALİZ MOTORU</span></div>
+            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onNavigateFlow}>► <span style={{ color: "#fff" }}>🟢 GÖÇ & AKIŞ HARİTASI</span></div>
           </div>
         </div>
 
         {/* SAĞ PANEL */}
         <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
-          <h3 style={{ color: "#ffd700", fontSize: "0.95rem", fontWeight: "bold", marginTop: 0, marginBottom: "12px" }}>
-            {searchQuery ? `🔍 ARAMA SONUÇLARI (${filteredData.length})` : "⚡ YKOS ÇÖZÜMLERİ VE İNDEKLSER"}
-          </h3>
-
+          <h3 style={{ color: "#ffd700", fontSize: "0.95rem", marginTop: 0 }}>⚡ YKOS ÇÖZÜMLERİ VE İNDEKLSER</h3>
           <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "15px" }}>
-            {filteredData.length > 0 ? (
-              filteredData.map((item) => (
-                <div 
-                  key={item.id}
-                  onClick={() => onNavigateRead && onNavigateRead(item.id)}
-                  style={{ background: "rgba(255, 215, 0, 0.05)", border: "1px solid rgba(255, 215, 0, 0.4)", borderRadius: "6px", padding: "10px", fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold", cursor: "pointer" }}
-                >
-                  📜 {item.title} →
-                  <div style={{ fontSize: "0.72rem", color: "#ccc", fontWeight: "normal", marginTop: "4px" }}>
-                    {item.summary}
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div style={{ color: "#888", fontSize: "0.8rem", textAlign: "center", padding: "10px" }}>
-                Aramanızla eşleşen veri bulunamadı.
+            {archiveData.map((item) => (
+              <div 
+                key={item.id}
+                onClick={() => onNavigateRead(item.id)}
+                style={{ background: "rgba(255, 215, 0, 0.05)", border: "1px solid rgba(255, 215, 0, 0.4)", borderRadius: "6px", padding: "10px", fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold", cursor: "pointer" }}
+              >
+                📜 {item.title} →
+                <div style={{ fontSize: "0.72rem", color: "#ccc", fontWeight: "normal", marginTop: "4px" }}>{item.summary}</div>
               </div>
-            )}
+            ))}
           </div>
 
           <button 
             onClick={onVisualize}
-            style={{ background: "linear-gradient(135deg, #ffd700, #b8860b)", color: "#000000", border: "none", padding: "12px", borderRadius: "6px", fontWeight: "900", fontSize: "0.85rem", cursor: "pointer", marginTop: "auto", boxShadow: "0 0 12px rgba(255, 215, 0, 0.35)" }}
+            style={{ background: "linear-gradient(135deg, #ffd700, #b8860b)", color: "#000000", border: "none", padding: "12px", borderRadius: "6px", fontWeight: "900", fontSize: "0.85rem", cursor: "pointer", marginTop: "auto" }}
           >
             🗣️ BALONCUK MATRİSİNİ GÖRSELLEŞTİR ➔
           </button>
