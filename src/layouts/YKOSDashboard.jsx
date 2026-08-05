@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import SearchBar from "../components/SearchBar";
+import { translations } from "../data/i18n";
 
-// Garantili Varsayılan Liste (Arşiv Yüklenene Kadar Asla Boş Kalmaz)
 const fallbackArticles = [
   { id: 1, title: "Çatalhöyük Kök Hece ve Damga Sembolizmi", summary: "Çatalhöyük duvar resimlerindeki YKOS 100 eşleşmeleri." },
   { id: 2, title: "Göbeklitepe T-Sütunu YKOS Okuması", summary: "Şanlıurfa Göbeklitepe T-Sütunları üzerindeki semboller." },
@@ -19,7 +19,7 @@ export default function YKOSDashboard({
   const [currentLang, setCurrentLang] = useState("TR");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Eğer dışarıdan veri gelmezse yedek listeyi kullan
+  const t = translations[currentLang] || translations.TR;
   const displayArticles = (archiveArticles && archiveArticles.length > 0) ? archiveArticles : fallbackArticles;
 
   const languages = [
@@ -36,14 +36,14 @@ export default function YKOSDashboard({
   ];
 
   const initialStats = [
-    { icon: "🌐", count: "214", label: "Ülkeler" },
-    { icon: "🏛️", count: "248", label: "Araştırmalar" },
-    { icon: "🔷", count: "9.870", label: "Damgalar" },
-    { icon: "🗿", count: "18.420", label: "Petroglifler" },
-    { icon: "📜", count: "4.132", label: "Yazıtlar" },
-    { icon: "📚", count: "12.580", label: "Kaynaklar" },
-    { icon: "📷", count: "46.900", label: "Görseller" },
-    { icon: "🗺️", count: "58", label: "Atlaslar" }
+    { icon: "🌐", count: "214", label: t.countries },
+    { icon: "🏛️", count: "248", label: t.researches },
+    { icon: "🔷", count: "9.870", label: t.stamps },
+    { icon: "🗿", count: "18.420", label: t.petroglyphs },
+    { icon: "📜", count: "4.132", label: t.inscriptions },
+    { icon: "📚", count: "12.580", label: t.sources },
+    { icon: "📷", count: "46.900", label: t.images },
+    { icon: "🗺️", count: "58", label: t.atlases }
   ];
 
   const cardStyle = {
@@ -67,7 +67,6 @@ export default function YKOSDashboard({
     textAlign: "center"
   };
 
-  // Canlı Arama Süzgeci
   const filteredArticles = displayArticles.filter(item => 
     item.title?.toLowerCase().includes(searchQuery.toLowerCase()) || 
     item.summary?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -84,7 +83,7 @@ export default function YKOSDashboard({
             onClick={() => { setMenuOpen(!menuOpen); setLangOpen(false); }}
             style={{ background: menuOpen ? "rgba(255, 215, 0, 0.25)" : "rgba(255, 215, 0, 0.1)", border: "1px solid #ffd700", color: "#ffd700", padding: "5px 12px", borderRadius: "5px", fontWeight: "bold", cursor: "pointer", fontSize: "0.78rem" }}
           >
-            ☰ MENÜ
+            {t.menu}
           </button>
 
           <div style={{ position: "relative" }}>
@@ -124,27 +123,27 @@ export default function YKOSDashboard({
               }}
             />
           </div>
-          <h1 style={{ color: "#ffd700", fontSize: "1.35rem", fontWeight: "900", margin: "0", letterSpacing: "1.5px" }}>YKOS BİLGİ SİSTEMİ</h1>
-          <p style={{ color: "#aaaaaa", fontSize: "0.72rem", margin: "2px 0 0 0" }}>Disiplinler Arası Algoritmik Kültür ve Dil Veri Tabanı</p>
+          <h1 style={{ color: "#ffd700", fontSize: "1.35rem", fontWeight: "900", margin: "0", letterSpacing: "1.5px" }}>{t.systemTitle}</h1>
+          <p style={{ color: "#aaaaaa", fontSize: "0.72rem", margin: "2px 0 0 0" }}>{t.subTitle}</p>
         </div>
 
         {/* AÇILIR MENÜ */}
         {menuOpen && (
           <div style={{ marginTop: "12px", borderTop: "1px solid rgba(255, 215, 0, 0.3)", paddingTop: "12px" }}>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "6px", marginBottom: "12px" }}>
-              <button onClick={() => { setMenuOpen(false); onGoHome(); }} style={{ background: "rgba(255, 215, 0, 0.3)", border: "1px solid #ffd700", color: "#ffd700", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>🏠 ANASAYFA</button>
-              <button onClick={() => { setMenuOpen(false); onNavigateMethod(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>KURUMSAL</button>
-              <button onClick={() => { setMenuOpen(false); onNavigateMethod(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>YKOS METODOLOJİSİ</button>
-              <button onClick={() => { setMenuOpen(false); onVisualize(); }} style={{ background: "rgba(255, 215, 0, 0.15)", border: "1px solid #ffd700", color: "#ffd700", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>KÖK HECE MATRİSİ</button>
-              <button onClick={() => { setMenuOpen(false); onNavigateAtlas(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>DAMGA ATLASI</button>
-              <button onClick={() => { setMenuOpen(false); onNavigateEngine(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>OKUMA & ANALİZ MOTORU</button>
-              <button onClick={() => { setMenuOpen(false); onNavigateFlow(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>GÖÇ & AKIŞ HARİTASI</button>
+              <button onClick={() => { setMenuOpen(false); onGoHome(); }} style={{ background: "rgba(255, 215, 0, 0.3)", border: "1px solid #ffd700", color: "#ffd700", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.home}</button>
+              <button onClick={() => { setMenuOpen(false); onNavigateMethod(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.corporate}</button>
+              <button onClick={() => { setMenuOpen(false); onNavigateMethod(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.methodology}</button>
+              <button onClick={() => { setMenuOpen(false); onVisualize(); }} style={{ background: "rgba(255, 215, 0, 0.15)", border: "1px solid #ffd700", color: "#ffd700", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.matrix}</button>
+              <button onClick={() => { setMenuOpen(false); onNavigateAtlas(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.atlas}</button>
+              <button onClick={() => { setMenuOpen(false); onNavigateEngine(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.engine}</button>
+              <button onClick={() => { setMenuOpen(false); onNavigateFlow(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.flow}</button>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "8px", paddingTop: "10px", borderTop: "1px dashed rgba(255, 215, 0, 0.25)" }}>
-              <button onClick={() => { setMenuOpen(false); onNavigateLogin("guest"); }} style={portalButtonStyle}>👤 KONUK PANELİ GİRİŞİ</button>
-              <button onClick={() => { setMenuOpen(false); onNavigateLogin("researcher"); }} style={portalButtonStyle}>📝 ARAŞTIRMACI VERİ GİRİŞİ</button>
-              <button onClick={() => { setMenuOpen(false); onNavigateLogin("admin"); }} style={portalButtonStyle}>⚙️ YÖNETİCİ VERİ GİRİŞİ</button>
+              <button onClick={() => { setMenuOpen(false); onNavigateLogin("guest"); }} style={portalButtonStyle}>{t.guestLogin}</button>
+              <button onClick={() => { setMenuOpen(false); onNavigateLogin("researcher"); }} style={portalButtonStyle}>{t.researcherLogin}</button>
+              <button onClick={() => { setMenuOpen(false); onNavigateLogin("admin"); }} style={portalButtonStyle}>{t.adminLogin}</button>
             </div>
           </div>
         )}
@@ -168,23 +167,23 @@ export default function YKOSDashboard({
         </div>
       </div>
 
-      {/* SOL / SAĞ PANELİ (GARANTİLİ VERİ LİSTESİ) */}
+      {/* SOL / SAĞ PANELİ */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "15px" }}>
         
         {/* SOL PANEL */}
         <div style={cardStyle}>
-          <h3 style={{ color: "#ffd700", fontSize: "0.95rem", marginTop: 0 }}>MATRİSLER VE KATMANLAR</h3>
+          <h3 style={{ color: "#ffd700", fontSize: "0.95rem", marginTop: 0 }}>{t.matricesTitle}</h3>
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onVisualize}>► <span style={{ color: "#fff" }}>💻 KÖK HECE MATRİSİ</span></div>
-            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onNavigateAtlas}>► <span style={{ color: "#fff" }}>🗺️ DAMGA ATLASI</span></div>
-            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onNavigateEngine}>► <span style={{ color: "#fff" }}>🔬 OKUMA & ANALİZ MOTORU</span></div>
-            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onNavigateFlow}>► <span style={{ color: "#fff" }}>🟢 GÖÇ & AKIŞ HARİTASI</span></div>
+            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onVisualize}>► <span style={{ color: "#fff" }}>💻 {t.matrix}</span></div>
+            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onNavigateAtlas}>► <span style={{ color: "#fff" }}>🗺️ {t.atlas}</span></div>
+            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onNavigateEngine}>► <span style={{ color: "#fff" }}>🔬 {t.engine}</span></div>
+            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onNavigateFlow}>► <span style={{ color: "#fff" }}>🟢 {t.flow}</span></div>
           </div>
         </div>
 
-        {/* SAĞ PANEL (GÜVENCEYE ALINMIŞ İÇERİKLER) */}
+        {/* SAĞ PANEL */}
         <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
-          <h3 style={{ color: "#ffd700", fontSize: "0.95rem", marginTop: 0 }}>⚡ YKOS ÇÖZÜMLERİ VE İNDEKLSER (CANLI ARŞİV)</h3>
+          <h3 style={{ color: "#ffd700", fontSize: "0.95rem", marginTop: 0 }}>{t.solutionsTitle}</h3>
           <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "15px" }}>
             {filteredArticles.map((item) => (
               <div 
@@ -202,7 +201,7 @@ export default function YKOSDashboard({
             onClick={onVisualize}
             style={{ background: "linear-gradient(135deg, #ffd700, #b8860b)", color: "#000000", border: "none", padding: "12px", borderRadius: "6px", fontWeight: "900", fontSize: "0.85rem", cursor: "pointer", marginTop: "auto" }}
           >
-            🗣️ BALONCUK MATRİSİNİ GÖRSELLEŞTİR ➔
+            {t.visualizeBtn}
           </button>
         </div>
 
