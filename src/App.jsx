@@ -150,7 +150,7 @@ export default function App() {
     </div>
   );
 
-  // ETİKET ÇEVİRİ YARDIMCISI
+  // ETİKET VE PARAGRAF ÇEVİRİ DESTEĞİ
   const getPanelLabel = (key) => {
     const labels = {
       selectedLayer: { TR: "SEÇİLİ KATMAN / HECE", EN: "SELECTED LAYER / SYLLABLE", ZH: "所选图层 / 音节", DE: "AUSGEWÄHLTE SCHICHT / SILBE", FR: "COUCHE SÉLECTIONNÉE / SYLLABE", RU: "VYBRANNYY SLOI / SLOG" },
@@ -158,7 +158,10 @@ export default function App() {
       derivatives: { TR: "TÜRETİLEN KÖK SÖZCÜKLER / BİLEŞENLER:", EN: "DERIVED ROOT WORDS / COMPONENTS:", ZH: "派生根词 / 组件：", DE: "ABGELEITETE WURZELWÖRTER:", FR: "MOTS RACINES DÉRIVÉS:", RU: "PROIZVODNYE KORNEVYE SLOVA:" },
       connections: { TR: "Algoritmik Bağlantılar:", EN: "Algorithmic Connections:", ZH: "算法连接：", DE: "Algorithmische Verbindungen:", FR: "Connexions algorithmiques:", RU: "Algoritmicheskiye svyazi:" },
       coherence: { TR: "Coherence Skoru:", EN: "Coherence Score:", ZH: "一致性得分：", DE: "Kohärenz-Score:", FR: "Score de cohérence:", RU: "Koeffitsiyent kogerentnosti:" },
-      guideTitle: { TR: "📌 MATRİS VE GLOBAL ATLAS REHBERİ", EN: "📌 MATRIX & GLOBAL ATLAS GUIDE", ZH: "📌 矩阵与全球地图集指南", DE: "📌 MATRIX & GLOBAL ATLAS LEITFADEN" }
+      guideTitle: { TR: "📌 MATRİS VE GLOBAL ATLAS REHBERİ", EN: "📌 MATRIX & GLOBAL ATLAS GUIDE", ZH: "📌 矩阵与全球地图集指南", DE: "📌 MATRIX & GLOBAL ATLAS LEITFADEN" },
+      motiveTitle: { TR: "ÖNCE VERİ, SONRA ANALİZ, SONRA YORUM", EN: "FIRST DATA, THEN ANALYSIS, THEN INTERPRETATION", ZH: "先数据，后分析，再解释", DE: "ZUERST DATEN, DANN ANALYSE, DANN INTERPRETATION", FR: "D'ABORD LES DONNÉES, PUIS L'ANALYSE, PUIS L'INTERPRÉTATION", RU: "SNABHALA DANNYE, POTOM ANALIZ, POTOM INTERPRETATSIYA" },
+      motiveSub: { TR: "40 Kök Sistem, Karşılaştırmalı Arkeolojik Katmanlar", EN: "40 Root Systems, Comparative Archaeological Layers", ZH: "40个根系统，比较考古图层", DE: "40 Wurzelsysteme, Vergleichende archäologische Schichten", FR: "40 systèmes racines, couches archéologiques comparatives", RU: "40 kornevykh sistem, sravnitel'nye arkheologicheskiye sloi" },
+      guideDesc: { TR: "YKOS Canlı Küresel Ağ: Genişletilmiş baloncuklar ve bağlantı çizgileri algoritmik akışı net olarak göstermektedir.", EN: "YKOS Live Global Network: Expanded bubbles and connecting lines clearly display the algorithmic flow.", ZH: "YKOS 实时全球网络：扩展的气泡和连接线清晰地展示了算法流动。", DE: "YKOS Live-Globales Netzwerk: Erweiterte Blasen und Verbindungslinien zeigen den algorithmischen Fluss klar an.", FR: "Réseau mondial en direct YKOS: Les bulles agrandies et les lignes de connexion affichent clairement le flux algorithmique.", RU: "Zhivaya global'naya set' YKOS: Rasshirennye puzyri i soyedinitel'nye linii chetko otobrazhayut algoritmicheskiy potok." }
     };
     return labels[key]?.[currentLang] || labels[key]?.TR;
   };
@@ -210,7 +213,7 @@ export default function App() {
         />
       )}
 
-      {/* 2. CANLI KÖK HECE MATRİS EKRANI (SAĞ PANEL ÇEVİRİLİ) */}
+      {/* 2. CANLI KÖK HECE MATRİS EKRANI (%100 ÇEVRİLİ BİLEŞENLER) */}
       {currentView === "visualize" && (
         <div style={containerStyle}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px" }}>
@@ -229,8 +232,8 @@ export default function App() {
             
             <div style={{ background: "#02040a", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "10px", overflow: "hidden", position: "relative" }}>
               <div style={{ position: "absolute", top: "15px", left: "15px", background: "rgba(5,8,17,0.85)", border: "1px solid rgba(255,215,0,0.4)", padding: "8px 12px", borderRadius: "6px", fontSize: "0.72rem", zIndex: 10 }}>
-                <strong style={{ color: "#ffd700", display: "block" }}>ÖNCE VERİ, SONRA ANALİZ, SONRA YORUM</strong>
-                <span style={{ color: "#aaa" }}>40 Kök Sistem, Karşılaştırmalı Arkeolojik Katmanlar</span>
+                <strong style={{ color: "#ffd700", display: "block" }}>{getPanelLabel("motiveTitle")}</strong>
+                <span style={{ color: "#aaa" }}>{getPanelLabel("motiveSub")}</span>
               </div>
 
               <svg width="100%" height="560" viewBox="0 0 700 560" style={{ overflow: "visible" }}>
@@ -279,7 +282,6 @@ export default function App() {
               </svg>
             </div>
 
-            {/* SAĞ DETAY PANELİ (DİNANİK ÇEVRİLEN METİNLER) */}
             <div style={{ background: "rgba(255,215,0,0.04)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "16px" }}>
               <h3 style={{ color: "#ffd700", fontSize: "0.88rem", margin: "0 0 10px 0", borderBottom: "1px solid rgba(255,215,0,0.2)", paddingBottom: "6px" }}>
                 {selectedNode ? `${getPanelLabel("selectedLayer")}: [${selectedNode.label}]` : getPanelLabel("guideTitle")}
@@ -311,10 +313,7 @@ export default function App() {
                 </div>
               ) : (
                 <div style={{ color: "#ccc", fontSize: "0.78rem", lineHeight: "1.5" }}>
-                  <p>
-                    <strong>YKOS Canlı Küresel Ağ:</strong><br />
-                    Genişletilmiş baloncuklar ve bağlantı çizgileri algoritmik akışı net olarak göstermektedir.
-                  </p>
+                  <p>{getPanelLabel("guideDesc")}</p>
                 </div>
               )}
             </div>
