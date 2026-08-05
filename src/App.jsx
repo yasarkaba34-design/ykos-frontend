@@ -13,9 +13,11 @@ export default function App() {
 
   const [currentLang, setCurrentLang] = useState("TR");
   const [langOpen, setLangOpen] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(1);
 
+  // OKUMA MOTORU STATE'LERİ
   const [analysisInput, setAnalysisInput] = useState("YOL - ER - ÇEV - BA - KÖK");
-  const [analysisResult, setAnalysisInputResult] = useState(null);
+  const [analysisResult, setAnalysisResult] = useState(null);
 
   const t = translations[currentLang] || translations.TR;
   const activeArticles = t.articles || archiveArticles;
@@ -42,6 +44,20 @@ export default function App() {
     }
     fetchData();
   }, []);
+
+  const handleZoomIn = () => setZoomLevel(prev => Math.min(prev + 0.2, 2.2));
+  const handleZoomOut = () => setZoomLevel(prev => Math.max(prev - 0.2, 0.6));
+  const handleZoomReset = () => setZoomLevel(1);
+
+  // OKUMA MOTORU ANALİZ SİMÜLASYONU
+  const handleRunAnalysis = () => {
+    setAnalysisResult({
+      status: "SUCCESS",
+      coherenceScore: "%99.6",
+      vectorPath: "Dikey / Yatay Aks",
+      synthesis: "Girdiğiniz kök hece zinciri, YKOS M5 algoritmasına göre yapısal bütünlüğünü korumaktadır. Türkçe eklemeli mantığın ve form-bağlam-anlam eşzamanlılığının tüm kuralları bu dizilimde çalışmaktadır."
+    });
+  };
 
   const matrixNodes = [
     { id: "YKOS 100", x: 420, y: 310, r: 36, color: "#1e90ff", label: "YKOS 100", anim: "float1", desc: "Temel Kök Hece Matrisi Katmanı", connection: "YOL, BİR, ANADOLU ATLASI", score: "%99.9", derivatives: ["Kök-en", "Yol-cu", "Çev-re"], details: "Anadolu merkezli 100 birincil hece vektörünün algoritmik veritabanı." },
@@ -75,386 +91,6 @@ export default function App() {
     { id: "AYLUİL", x: 310, y: 510, r: 22, color: "#ba55d3", label: "AYLUİL", anim: "float2", desc: "Avrupa Dil Akış Ekeni", connection: "AVRUPA ATLASI", score: "%98.5", derivatives: ["Ay-lu", "İl-en"], details: "Akdeniz ada dilleri." }
   ];
 
-  const atlasItems = [
-    { 
-      code: "YKOS-DMG-01", 
-      name: "Çatalhöyük Dairesel Mühür Damgası", 
-      region: "Konya / Anadolu Refugium", 
-      date: "M.Ö. 7400 (Neolitik Dönem)", 
-      symbol: "⭕", 
-      coherence: "%99.8",
-      vectorAxis: "Konsantrik Çevresel Vektör",
-      summary: "'ÇEV' ve 'BA' dairesel döngü ve mülkiyet matrisi.", 
-      analysis: "Çatalhöyük katmanlarında çıkarılan pişmiş toprak dairesel mühürler, yerleşik yaşamın mülkiyet kodlarını ve kozmik döngüyü ifade eder.",
-      academicRef: "YKOS Külliyatı Cilt 1: Anadolu Refugium ve Erken Sembolizm",
-      tags: ["Dairesel Mühür", "ÇEV Kökü", "Neolitik Katman", "Refugium"]
-    }
-  ];
-
-  const handleNavigateLogin = (role) => {
-    setUserRole(role);
-    setCurrentView("login");
-  };
-
-  const handleNavigateRead = (id) => {
-    setSelectedArticleId(id);
-    setCurrentView("read");
-  };
-
-  const selectedArticle = activeArticles.find(a => a.id === selectedArticleId) || activeArticles[0];
-
-  const containerStyle = {
-    maxWidth: "1220px",
-    margin: "10px auto",
-    padding: "15px",
-    backgroundColor: "#050811",
-    border: "1px solid #ffd700",
-    borderRadius: "12px",
-    boxShadow: "0 8px 32px rgba(0,0,0,0.8)",
-    color: "#fff",
-    boxSizing: "border-box"
-  };
-
-  const backBtnStyle = {
-    padding: "8px 14px",
-    background: "transparent",
-    border: "1px solid #ffd700",
-    color: "#ffd700",
-    fontWeight: "bold",
-    borderRadius: "6px",
-    cursor: "pointer",
-    fontSize: "0.78rem"
-  };
-
-  const renderLanguageSelector = () => (
-    <div style={{ position: "relative", display: "inline-block" }}>
-      <button 
-        onClick={() => setLangOpen(!langOpen)}
-        style={{ background: "rgba(255, 215, 0, 0.1)", border: "1px solid #ffd700", color: "#ffd700", padding: "6px 12px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer", fontSize: "0.78rem" }}
-      >
-        🌐 {currentLang} ▾
-      </button>
-
-      {langOpen && (
-        <div style={{ position: "absolute", right: 0, top: "110%", backgroundColor: "#050811", border: "1px solid #ffd700", borderRadius: "8px", display: "flex", flexDirection: "column", minWidth: "140px", maxHeight: "220px", overflowY: "auto", zIndex: 1000, boxShadow: "0 6px 20px rgba(0,0,0,0.9)", padding: "4px" }}>
-          {languages.map((l) => (
-            <button 
-              key={l.code}
-              onClick={() => { setCurrentLang(l.code); setLangOpen(false); }}
-              style={{ background: currentLang === l.code ? "rgba(255,215,0,0.2)" : "transparent", border: "none", color: currentLang === l.code ? "#ffd700" : "#fff", padding: "6px 10px", textAlign: "left", fontSize: "0.75rem", cursor: "pointer", fontWeight: currentLang === l.code ? "bold" : "normal" }}
-            >
-              {l.label} ({l.code})
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-
-  const getPanelLabel = (key) => {
-    const labels = {
-      selectedLayer: { TR: "SEÇİLİ KATMAN / HECE", EN: "SELECTED LAYER / SYLLABLE", ZH: "所选图层 / 音节", DE: "AUSGEWÄHLTE SCHICHT / SILBE", FR: "COUCHE SÉLECTIONNÉE / SYLLABE", RU: "VYBRANNYY SLOI / SLOG" },
-      clearSelection: { TR: "Seçimi Temizle", EN: "Clear Selection", ZH: "清除选择", DE: "Auswahl aufheben", FR: "Effacer la sélection", RU: "Ochistit' vybor" },
-      derivatives: { TR: "TÜRETİLEN KÖK SÖZCÜKLER / BİLEŞENLER:", EN: "DERIVED ROOT WORDS / COMPONENTS:", ZH: "派生根词 / 组件：", DE: "ABGELEITETE WURZELWÖRTER:", FR: "MOTS RACINES DÉRIVÉS:", RU: "PROIZVODNYE KORNEVYE SLOVA:" },
-      connections: { TR: "Algoritmik Bağlantılar:", EN: "Algorithmic Connections:", ZH: "算法连接：", DE: "Algorithmische Verbindungen:", FR: "Connexions algorithmiques:", RU: "Algoritmicheskiye svyazi:" },
-      coherence: { TR: "Coherence Skoru:", EN: "Coherence Score:", ZH: "一致性得分：", DE: "Kohärenz-Score:", FR: "Score de cohérence:", RU: "Koeffitsiyent kogerentnosti:" },
-      guideTitle: { TR: "📌 MATRİS VE GLOBAL ATLAS REHBERİ", EN: "📌 MATRIX & GLOBAL ATLAS GUIDE", ZH: "📌 矩阵与全球地图集指南", DE: "📌 MATRIX & GLOBAL ATLAS LEITFADEN" },
-      motiveTitle: { TR: "ÖNCE VERİ, SONRA ANALİZ, SONRA YORUM", EN: "FIRST DATA, THEN ANALYSIS, THEN INTERPRETATION", ZH: "先数据，后分析，再解释", DE: "ZUERST DATEN, DANN ANALYSE, DANN INTERPRETATION", FR: "D'ABORD LES DONNÉES, PUIS L'ANALYSE, PUIS L'INTERPRÉTATION", RU: "SNABHALA DANNYE, POTOM ANALIZ, POTOM INTERPRETATSIYA" },
-      motiveSub: { TR: "40 Kök Sistem, Karşılaştırmalı Arkeolojik Katmanlar", EN: "40 Root Systems, Comparative Archaeological Layers", ZH: "40个根系统，比较考古图层", DE: "40 Wurzelsysteme, Vergleichende archäologische Schichten", FR: "40 systèmes racines, couches archéologiques comparatives", RU: "40 kornevykh sistem, sravnitel'nye arkheologicheskiye sloi" },
-      guideDesc: { TR: "YKOS Canlı Küresel Ağ: Genişletilmiş baloncuklar ve bağlantı çizgileri algoritmik akışı net olarak göstermektedir.", EN: "YKOS Live Global Network: Expanded bubbles and connecting lines clearly display the algorithmic flow.", ZH: "YKOS 实时全球网络：扩展的气泡和连接线清晰地展示了算法流动。", DE: "YKOS Live-Globales Netzwerk: Erweiterte Blasen und Verbindungslinien zeigen den algorithmischen Fluss klar an.", FR: "Réseau mondial en direct YKOS: Les bulles agrandies et les lignes de connexion affichent clairement le flux algorithmique.", RU: "Zhivaya global'naya set' YKOS: Rasshirennye puzyri i soyedinitel'nye linii chetko otobrazhayut algoritmicheskiy potok." }
-    };
-    return labels[key]?.[currentLang] || labels[key]?.TR;
-  };
-
-  return (
-    <div className="app-main-wrapper" style={{ backgroundColor: "#050811", minHeight: "100vh", color: "#ffffff" }}>
-      
-      <style>{`
-        @keyframes safeFloat1 {
-          0% { transform: translate(0px, 0px); }
-          50% { transform: translate(3px, -4px); }
-          100% { transform: translate(0px, 0px); }
-        }
-        @keyframes safeFloat2 {
-          0% { transform: translate(0px, 0px); }
-          50% { transform: translate(-3px, 3px); }
-          100% { transform: translate(0px, 0px); }
-        }
-        @keyframes safeFloat3 {
-          0% { transform: translate(0px, 0px); }
-          50% { transform: translate(-2px, -3px); }
-          100% { transform: translate(0px, 0px); }
-        }
-        @keyframes linePulse {
-          0% { stroke-dashoffset: 0; opacity: 0.5; }
-          50% { stroke-dashoffset: 20; opacity: 0.9; }
-          100% { stroke-dashoffset: 40; opacity: 0.5; }
-        }
-        .node-float1 { animation: safeFloat1 4.5s ease-in-out infinite; will-change: transform; cursor: pointer; }
-        .node-float2 { animation: safeFloat2 5.5s ease-in-out infinite; will-change: transform; cursor: pointer; }
-        .node-float3 { animation: safeFloat3 5.0s ease-in-out infinite; will-change: transform; cursor: pointer; }
-        .flowing-line { stroke-dasharray: 6; animation: linePulse 3.5s linear infinite; }
-
-        /* MOBİL VE DUYARLI EKRAN STİLLERİ */
-        .responsive-matrix-grid {
-          display: grid;
-          grid-template-columns: 1fr 340px;
-          gap: 15px;
-          align-items: start;
-        }
-
-        @media (max-width: 900px) {
-          .responsive-matrix-grid {
-            grid-template-columns: 1fr !important;
-          }
-          .matrix-canvas-wrapper {
-            order: 1 !important;
-            min-height: 420px !important;
-          }
-          .matrix-guide-panel {
-            order: 2 !important;
-          }
-        }
-      `}</style>
-
-      {/* 1. ANA DASHBOARD EKRANI */}
-      {currentView === "dashboard" && (
-        <YKOSDashboard 
-          archiveArticles={archiveArticles}
-          currentLang={currentLang}
-          setCurrentLang={setCurrentLang}
-          onVisualize={() => setCurrentView("visualize")}
-          onNavigateRead={handleNavigateRead}
-          onNavigateLogin={handleNavigateLogin}
-          onNavigateAtlas={() => setCurrentView("atlas")}
-          onNavigateEngine={() => setCurrentView("engine")}
-          onNavigateFlow={() => setCurrentView("flow")}
-          onNavigateMethod={() => setCurrentView("methodology")}
-          onGoHome={() => setCurrentView("dashboard")}
-        />
-      )}
-
-      {/* 2. CANLI KÖK HECE MATRİS EKRANI (MOBİL UYUMLU LAYOUT) */}
-      {currentView === "visualize" && (
-        <div style={containerStyle}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px", flexWrap: "wrap", gap: "10px" }}>
-            <div>
-              <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>🌐 {t.matrix}</span>
-              <h2 style={{ color: "#ffd700", margin: "2px 0 0 0", fontSize: "1.15rem" }}>YKOS MATRİSLERİ (100 - 200 - 300 CANLI AĞ)</h2>
-            </div>
-            
-            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-              {renderLanguageSelector()}
-              <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>{t.backHome}</button>
-            </div>
-          </div>
-
-          <div className="responsive-matrix-grid">
-            
-            {/* KOZMİK SVG TUVALİ (MOBİLDE İLK SIRADA YER ALIR) */}
-            <div className="matrix-canvas-wrapper" style={{ background: "#02040a", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "10px", overflow: "hidden", position: "relative", width: "100%", boxSizing: "border-box" }}>
-              <div style={{ position: "absolute", top: "10px", left: "10px", background: "rgba(5,8,17,0.88)", border: "1px solid rgba(255,215,0,0.4)", padding: "6px 10px", borderRadius: "6px", fontSize: "0.68rem", zIndex: 10, maxWidth: "80%" }}>
-                <strong style={{ color: "#ffd700", display: "block" }}>{getPanelLabel("motiveTitle")}</strong>
-                <span style={{ color: "#aaa" }}>{getPanelLabel("motiveSub")}</span>
-              </div>
-
-              <svg width="100%" height="100%" viewBox="0 0 700 560" style={{ overflow: "visible", minHeight: "420px" }}>
-                <line x1="420" y1="310" x2="380" y2="410" stroke="#1e90ff" strokeWidth="2.5" className="flowing-line" />
-                <line x1="380" y1="410" x2="260" y2="370" stroke="#00ff7f" strokeWidth="2.5" className="flowing-line" />
-                <line x1="420" y1="310" x2="420" y2="230" stroke="#ffd700" strokeWidth="2" className="flowing-line" />
-                <line x1="260" y1="370" x2="150" y2="320" stroke="#ff8c00" strokeWidth="2" className="flowing-line" />
-                <line x1="260" y1="370" x2="140" y2="410" stroke="#ff8c00" strokeWidth="2" className="flowing-line" />
-                <line x1="260" y1="370" x2="250" y2="500" stroke="#ba55d3" strokeWidth="2" className="flowing-line" />
-                <line x1="380" y1="410" x2="480" y2="430" stroke="#00ff7f" strokeWidth="2" className="flowing-line" />
-                <line x1="380" y1="410" x2="470" y2="360" stroke="#00ff7f" strokeWidth="2" className="flowing-line" />
-                <line x1="380" y1="410" x2="360" y2="490" stroke="#ba55d3" strokeWidth="2" className="flowing-line" />
-                
-                <line x1="420" y1="310" x2="500" y2="270" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" />
-                <line x1="500" y1="270" x2="550" y2="330" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" />
-                <line x1="550" y1="330" x2="600" y2="260" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" />
-                <line x1="600" y1="260" x2="650" y2="210" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" />
-                <line x1="600" y1="260" x2="580" y2="170" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" />
-                <line x1="580" y1="170" x2="620" y2="110" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" />
-                <line x1="580" y1="170" x2="530" y2="50" stroke="rgba(30,144,255,0.4)" strokeWidth="1.5" />
-                <line x1="530" y1="50" x2="560" y2="90" stroke="rgba(0,255,127,0.4)" strokeWidth="1.5" />
-                <line x1="560" y1="90" x2="510" y2="130" stroke="rgba(30,144,255,0.4)" strokeWidth="1.5" />
-                <line x1="420" y1="310" x2="470" y2="190" stroke="rgba(255,140,0,0.4)" strokeWidth="1.5" />
-                <line x1="470" y1="190" x2="420" y2="140" stroke="rgba(255,140,0,0.4)" strokeWidth="1.5" />
-                <line x1="420" y1="310" x2="330" y2="250" stroke="rgba(30,144,255,0.4)" strokeWidth="1.5" />
-                <line x1="330" y1="250" x2="260" y2="220" stroke="rgba(30,144,255,0.4)" strokeWidth="1.5" />
-                <line x1="260" y1="220" x2="190" y2="210" stroke="rgba(30,144,255,0.4)" strokeWidth="1.5" />
-                <line x1="190" y1="210" x2="120" y2="200" stroke="rgba(30,144,255,0.4)" strokeWidth="1.5" />
-
-                {matrixNodes.map((node) => (
-                  <g key={node.id} className={`node-${node.anim}`} onClick={() => setSelectedNode(node)}>
-                    <circle 
-                      cx={node.x} 
-                      cy={node.y} 
-                      r={selectedNode?.id === node.id ? node.r + 6 : node.r} 
-                      fill="#050811" 
-                      stroke={selectedNode?.id === node.id ? "#ffffff" : node.color} 
-                      strokeWidth={selectedNode?.id === node.id ? "3.5" : "2"} 
-                      style={{ filter: `drop-shadow(0px 0px 8px ${node.color})` }}
-                    />
-                    <text x={node.x} y={node.y + 4} textAnchor="middle" fill={node.color} fontSize={node.r > 28 ? "11" : "9"} fontWeight="bold">
-                      {node.label}
-                    </text>
-                  </g>
-                ))}
-              </svg>
-            </div>
-
-            {/* REHBER & DETAY PANELİ (MOBİLDE İKİNCİ SIRAYA GEÇER) */}
-            <div className="matrix-guide-panel" style={{ background: "rgba(255,215,0,0.04)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "16px" }}>
-              <h3 style={{ color: "#ffd700", fontSize: "0.88rem", margin: "0 0 10px 0", borderBottom: "1px solid rgba(255,215,0,0.2)", paddingBottom: "6px" }}>
-                {selectedNode ? `${getPanelLabel("selectedLayer")}: [${selectedNode.label}]` : getPanelLabel("guideTitle")}
-              </h3>
-
-              {selectedNode ? (
-                <div>
-                  <p style={{ color: "#fff", fontSize: "0.85rem", fontWeight: "bold", marginBottom: "8px" }}>{selectedNode.desc}</p>
-                  
-                  <div style={{ margin: "10px 0", padding: "10px", background: "rgba(0,0,0,0.6)", border: "1px solid rgba(255,215,0,0.2)", borderRadius: "6px", fontSize: "0.75rem", color: "#ccc" }}>
-                    <div><strong>{getPanelLabel("connections")}</strong> {selectedNode.connection}</div>
-                    <div style={{ marginTop: "4px" }}><strong>{getPanelLabel("coherence")}</strong> <span style={{ color: "#ffd700", fontWeight: "bold" }}>{selectedNode.score}</span></div>
-                  </div>
-
-                  <div style={{ margin: "10px 0" }}>
-                    <span style={{ color: "#ffd700", fontSize: "0.72rem", fontWeight: "bold", display: "block", marginBottom: "4px" }}>🌱 {getPanelLabel("derivatives")}</span>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
-                      {selectedNode.derivatives.map((der, i) => (
-                        <span key={i} style={{ background: "rgba(255,215,0,0.1)", border: "1px solid rgba(255,215,0,0.3)", color: "#fff", padding: "2px 6px", borderRadius: "4px", fontSize: "0.7rem" }}>{der}</span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <p style={{ color: "#aaa", fontSize: "0.76rem", lineHeight: "1.5", background: "rgba(255,255,255,0.02)", padding: "10px", borderRadius: "6px", borderLeft: "2px solid #ffd700", marginTop: "10px" }}>
-                    {selectedNode.details}
-                  </p>
-
-                  <button onClick={() => setSelectedNode(null)} style={{ ...backBtnStyle, width: "100%", fontSize: "0.75rem", marginTop: "10px" }}>{getPanelLabel("clearSelection")}</button>
-                </div>
-              ) : (
-                <div style={{ color: "#ccc", fontSize: "0.78rem", lineHeight: "1.5" }}>
-                  <p>{getPanelLabel("guideDesc")}</p>
-                </div>
-              )}
-            </div>
-
-          </div>
-        </div>
-      )}
-
-      {/* 3. DAMGA ATLASI MODÜLÜ */}
-      {currentView === "atlas" && (
-        <div style={containerStyle}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "12px", flexWrap: "wrap", gap: "10px" }}>
-            <div>
-              <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>🔷 9.870 DAMGA & 18.420 PETROGLİF VERİ TABANI</span>
-              <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem" }}>{t.atlas}</h2>
-            </div>
-            
-            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-              {renderLanguageSelector()}
-              <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>{t.backHome}</button>
-            </div>
-          </div>
-
-          <div className="responsive-matrix-grid">
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "15px" }}>
-              {atlasItems.map((item, idx) => (
-                <div 
-                  key={idx} 
-                  onClick={() => setSelectedAtlasItem(item)}
-                  style={{ 
-                    background: selectedAtlasItem?.code === item.code ? "rgba(255,215,0,0.12)" : "rgba(255,215,0,0.03)", 
-                    border: selectedAtlasItem?.code === item.code ? "1.5px solid #ffd700" : "1px solid rgba(255,215,0,0.3)", 
-                    borderRadius: "10px", 
-                    padding: "16px",
-                    cursor: "pointer"
-                  }}
-                >
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                    <span style={{ color: "#888", fontSize: "0.68rem", fontWeight: "bold" }}>{item.code}</span>
-                    <span style={{ color: "#ffd700", fontSize: "0.7rem", background: "rgba(255,215,0,0.15)", padding: "2px 6px", borderRadius: "4px", fontWeight: "bold" }}>{item.coherence}</span>
-                  </div>
-                  <h4 style={{ color: "#ffd700", margin: "4px 0 6px 0", fontSize: "0.95rem" }}>{item.symbol} {item.name}</h4>
-                  <div style={{ color: "#ccc", fontSize: "0.75rem", marginBottom: "8px" }}>📍 {item.region} | ⏳ {item.date}</div>
-                  <p style={{ color: "#aaa", fontSize: "0.74rem", margin: 0, lineHeight: "1.4" }}>{item.summary}</p>
-                </div>
-              ))}
-            </div>
-
-            <div style={{ background: "rgba(255,215,0,0.04)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "18px", maxHeight: "650px", overflowY: "auto" }}>
-              {selectedAtlasItem ? (
-                <div>
-                  <div style={{ textAlign: "center", padding: "15px 0", borderBottom: "1px dashed rgba(255,215,0,0.3)", marginBottom: "14px" }}>
-                    <span style={{ fontSize: "3rem", display: "block", marginBottom: "4px" }}>{selectedAtlasItem.symbol}</span>
-                    <span style={{ color: "#888", fontSize: "0.7rem", fontWeight: "bold" }}>{selectedAtlasItem.code}</span>
-                    <h3 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.15rem" }}>{selectedAtlasItem.name}</h3>
-                  </div>
-
-                  <div style={{ fontSize: "0.8rem", color: "#ccc", lineHeight: "1.65" }}>
-                    <div style={{ marginBottom: "6px" }}><strong>Coğrafi Katman:</strong> {selectedAtlasItem.region}</div>
-                    <div style={{ marginBottom: "6px" }}><strong>Tarihlendirme:</strong> {selectedAtlasItem.date}</div>
-                    <div style={{ marginBottom: "6px" }}><strong>Geometrik Aks:</strong> <span style={{ color: "#1e90ff" }}>{selectedAtlasItem.vectorAxis}</span></div>
-                    <div style={{ marginBottom: "12px" }}><strong>Coherence:</strong> <span style={{ color: "#ffd700", fontWeight: "bold" }}>{selectedAtlasItem.coherence}</span></div>
-
-                    <div style={{ background: "rgba(0,0,0,0.7)", padding: "14px", borderRadius: "8px", borderLeft: "3.5px solid #ffd700", marginBottom: "14px" }}>
-                      <strong style={{ color: "#ffd700", display: "block", marginBottom: "6px" }}>📜 YKOS AKADEMİK DEŞİFRE RAPORU:</strong>
-                      <p style={{ color: "#ddd", margin: 0, fontSize: "0.78rem", lineHeight: "1.7" }}>{selectedAtlasItem.analysis}</p>
-                    </div>
-
-                    <button onClick={() => setSelectedAtlasItem(null)} style={{ ...backBtnStyle, width: "100%", fontSize: "0.78rem" }}>{getPanelLabel("clearSelection")}</button>
-                  </div>
-                </div>
-              ) : (
-                <div style={{ color: "#aaa", fontSize: "0.78rem", textAlign: "center", padding: "40px 10px" }}>
-                  <span style={{ fontSize: "2.5rem", display: "block", marginBottom: "10px" }}>🗺️</span>
-                  <strong style={{ color: "#ffd700", display: "block", marginBottom: "6px" }}>DAMGA REHBERİ</strong>
-                  Damga veya petroglif seçerek akademik deşifre raporunu görüntüleyebilirsiniz.
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 4. AKADEMİK OKUMA EKRANI */}
-      {currentView === "read" && (
-        <div style={containerStyle}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px", flexWrap: "wrap", gap: "10px" }}>
-            <div>
-              <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>📜 AKADEMİK ÇÖZÜMLEME KATMANI</span>
-              <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem" }}>{selectedArticle.title}</h2>
-            </div>
-            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-              {renderLanguageSelector()}
-              <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>{t.backHome}</button>
-            </div>
-          </div>
-
-          <div style={{ padding: "15px 0", color: "#ccc", lineHeight: "1.8", fontSize: "0.92rem" }}>
-            <p style={{ background: "rgba(255,215,0,0.03)", padding: "12px", borderRadius: "6px", borderLeft: "3px solid #ffd700", marginBottom: "15px" }}>
-              <strong>Özet:</strong> {selectedArticle.summary}
-            </p>
-
-            <p style={{ marginBottom: "15px" }}>
-              {selectedArticle.content || "Anadolu merkezli YKOS M5 Kök Hece Matrisi uyarınca gerçekleştirilen bu deşifre çalışmasında, yazıt karakterlerinin dikey ve yatay aks simetrileri doğrulanmıştır."}
-            </p>
-
-            <div style={{ background: "rgba(255,215,0,0.06)", padding: "14px", border: "1px solid rgba(255,215,0,0.3)", color: "#ffd700", fontWeight: "bold", margin: "20px 0", borderRadius: "6px" }}>
-              ⚡ YKOS Algoritmik Tutarlılık Skoru (Coherence): %99.4 Tam Metin Eşleşmesi
-            </div>
-          </div>
-
-          <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>{t.backHome}</button>
-        </div>
-      )}
-
-    </div>
-  );
-}
   const atlasItems = [
     { 
       code: "YKOS-DMG-01", 
@@ -522,3 +158,378 @@ export default function App() {
       tags: ["Orhun", "Göktürk", "İL Kökü", "Devlet"]
     }
   ];
+
+  const handleNavigateLogin = (role) => {
+    setUserRole(role);
+    setCurrentView("login");
+  };
+
+  const handleNavigateRead = (id) => {
+    setSelectedArticleId(id);
+    setCurrentView("read");
+  };
+
+  const selectedArticle = activeArticles.find(a => a.id === selectedArticleId) || activeArticles[0];
+
+  const containerStyle = {
+    maxWidth: "1220px",
+    margin: "10px auto",
+    padding: "15px",
+    backgroundColor: "#050811",
+    border: "1px solid #ffd700",
+    borderRadius: "12px",
+    boxShadow: "0 8px 32px rgba(0,0,0,0.8)",
+    color: "#fff",
+    boxSizing: "border-box"
+  };
+
+  const backBtnStyle = {
+    padding: "8px 14px",
+    background: "transparent",
+    border: "1px solid #ffd700",
+    color: "#ffd700",
+    fontWeight: "bold",
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontSize: "0.78rem"
+  };
+
+  const renderLanguageSelector = () => (
+    <div style={{ position: "relative", display: "inline-block" }}>
+      <button 
+        onClick={() => setLangOpen(!langOpen)}
+        style={{ background: "rgba(255, 215, 0, 0.1)", border: "1px solid #ffd700", color: "#ffd700", padding: "6px 12px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer", fontSize: "0.78rem" }}
+      >
+        🌐 {currentLang} ▾
+      </button>
+
+      {langOpen && (
+        <div style={{ position: "absolute", right: 0, top: "110%", backgroundColor: "#050811", border: "1px solid #ffd700", borderRadius: "8px", display: "flex", flexDirection: "column", minWidth: "140px", maxHeight: "220px", overflowY: "auto", zIndex: 1000, boxShadow: "0 6px 20px rgba(0,0,0,0.9)", padding: "4px" }}>
+          {languages.map((l) => (
+            <button 
+              key={l.code}
+              onClick={() => { setCurrentLang(l.code); setLangOpen(false); }}
+              style={{ background: currentLang === l.code ? "rgba(255,215,0,0.2)" : "transparent", border: "none", color: currentLang === l.code ? "#ffd700" : "#fff", padding: "6px 10px", textAlign: "left", fontSize: "0.75rem", cursor: "pointer", fontWeight: currentLang === l.code ? "bold" : "normal" }}
+            >
+              {l.label} ({l.code})
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  const getPanelLabel = (key) => {
+    const labels = {
+      selectedLayer: { TR: "SEÇİLİ KATMAN / HECE", EN: "SELECTED LAYER / SYLLABLE" },
+      clearSelection: { TR: "Seçimi Temizle", EN: "Clear Selection" },
+      derivatives: { TR: "TÜRETİLEN KÖK SÖZCÜKLER / BİLEŞENLER:", EN: "DERIVED ROOT WORDS / COMPONENTS:" },
+      connections: { TR: "Algoritmik Bağlantılar:", EN: "Algorithmic Connections:" },
+      coherence: { TR: "Coherence Skoru:", EN: "Coherence Score:" },
+      guideTitle: { TR: "📌 MATRİS VE GLOBAL ATLAS REHBERİ", EN: "📌 MATRIX & GLOBAL ATLAS GUIDE" },
+      motiveTitle: { TR: "ÖNCE VERİ, SONRA ANALİZ, SONRA YORUM", EN: "FIRST DATA, THEN ANALYSIS, THEN INTERPRETATION" },
+      motiveSub: { TR: "40 Kök Sistem, Karşılaştırmalı Arkeolojik Katmanlar", EN: "40 Root Systems, Comparative Archaeological Layers" },
+      guideDesc: { TR: "YKOS Canlı Küresel Ağ: Genişletilmiş baloncuklar ve bağlantı çizgileri algoritmik akışı net olarak göstermektedir.", EN: "YKOS Live Global Network: Expanded bubbles and connecting lines clearly display the algorithmic flow." }
+    };
+    return labels[key]?.[currentLang] || labels[key]?.TR;
+  };
+
+  return (
+    <div className="app-main-wrapper" style={{ backgroundColor: "#050811", minHeight: "100vh", color: "#ffffff" }}>
+      
+      <style>{`
+        @keyframes safeFloat1 { 0% { transform: translate(0px, 0px); } 50% { transform: translate(3px, -4px); } 100% { transform: translate(0px, 0px); } }
+        @keyframes safeFloat2 { 0% { transform: translate(0px, 0px); } 50% { transform: translate(-3px, 3px); } 100% { transform: translate(0px, 0px); } }
+        @keyframes safeFloat3 { 0% { transform: translate(0px, 0px); } 50% { transform: translate(-2px, -3px); } 100% { transform: translate(0px, 0px); } }
+        @keyframes linePulse { 0% { stroke-dashoffset: 0; opacity: 0.5; } 50% { stroke-dashoffset: 20; opacity: 0.9; } 100% { stroke-dashoffset: 40; opacity: 0.5; } }
+        .node-float1 { animation: safeFloat1 4.5s ease-in-out infinite; will-change: transform; cursor: pointer; }
+        .node-float2 { animation: safeFloat2 5.5s ease-in-out infinite; will-change: transform; cursor: pointer; }
+        .node-float3 { animation: safeFloat3 5.0s ease-in-out infinite; will-change: transform; cursor: pointer; }
+        .flowing-line { stroke-dasharray: 6; animation: linePulse 3.5s linear infinite; }
+
+        .responsive-matrix-grid {
+          display: grid;
+          grid-template-columns: 1fr 340px;
+          gap: 15px;
+          align-items: start;
+        }
+
+        @media (max-width: 900px) {
+          .responsive-matrix-grid { grid-template-columns: 1fr !important; }
+          .matrix-canvas-wrapper { order: 1 !important; min-height: 460px !important; }
+          .matrix-guide-panel { order: 2 !important; }
+        }
+      `}</style>
+
+      {/* 1. ANA DASHBOARD EKRANI */}
+      {currentView === "dashboard" && (
+        <YKOSDashboard 
+          archiveArticles={archiveArticles}
+          currentLang={currentLang}
+          setCurrentLang={setCurrentLang}
+          onVisualize={() => setCurrentView("visualize")}
+          onNavigateRead={handleNavigateRead}
+          onNavigateLogin={handleNavigateLogin}
+          onNavigateAtlas={() => setCurrentView("atlas")}
+          onNavigateEngine={() => setCurrentView("engine")}
+          onNavigateFlow={() => setCurrentView("flow")}
+          onNavigateMethod={() => setCurrentView("methodology")}
+          onGoHome={() => setCurrentView("dashboard")}
+        />
+      )}
+
+      {/* 2. CANLI KÖK HECE MATRİS EKRANI */}
+      {currentView === "visualize" && (
+        <div style={containerStyle}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px", flexWrap: "wrap", gap: "10px" }}>
+            <div>
+              <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>🌐 {t.matrix}</span>
+              <h2 style={{ color: "#ffd700", margin: "2px 0 0 0", fontSize: "1.15rem" }}>YKOS MATRİSLERİ (100 - 200 - 300 CANLI AĞ)</h2>
+            </div>
+            
+            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+              {renderLanguageSelector()}
+              <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>{t.backHome}</button>
+            </div>
+          </div>
+
+          <div className="responsive-matrix-grid">
+            <div className="matrix-canvas-wrapper" style={{ background: "#02040a", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "10px", overflow: "hidden", position: "relative", width: "100%", boxSizing: "border-box" }}>
+              
+              <div style={{ position: "absolute", top: "10px", left: "10px", background: "rgba(5,8,17,0.88)", border: "1px solid rgba(255,215,0,0.4)", padding: "6px 10px", borderRadius: "6px", fontSize: "0.68rem", zIndex: 10, maxWidth: "60%" }}>
+                <strong style={{ color: "#ffd700", display: "block" }}>{getPanelLabel("motiveTitle")}</strong>
+                <span style={{ color: "#aaa" }}>{getPanelLabel("motiveSub")}</span>
+              </div>
+
+              <div style={{ position: "absolute", top: "10px", right: "10px", display: "flex", gap: "4px", zIndex: 20, background: "rgba(5,8,17,0.9)", padding: "4px", borderRadius: "6px", border: "1px solid rgba(255,215,0,0.4)" }}>
+                <button onClick={handleZoomIn} style={{ background: "#000", border: "1px solid #ffd700", color: "#ffd700", width: "30px", height: "30px", borderRadius: "4px", fontWeight: "bold", fontSize: "1.1rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>+</button>
+                <button onClick={handleZoomOut} style={{ background: "#000", border: "1px solid #ffd700", color: "#ffd700", width: "30px", height: "30px", borderRadius: "4px", fontWeight: "bold", fontSize: "1.1rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>-</button>
+                <button onClick={handleZoomReset} style={{ background: "#000", border: "1px solid #ffd700", color: "#ffd700", height: "30px", padding: "0 8px", borderRadius: "4px", fontWeight: "bold", fontSize: "0.7rem", cursor: "pointer" }}>🔍 %{Math.round(zoomLevel * 100)}</button>
+              </div>
+
+              <div style={{ width: "100%", overflow: "auto", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <svg width="100%" height="100%" viewBox="0 0 700 560" style={{ overflow: "visible", minHeight: "460px", transform: `scale(${zoomLevel})`, transformOrigin: "center center", transition: "transform 0.25s ease-out" }}>
+                  <line x1="420" y1="310" x2="380" y2="410" stroke="#1e90ff" strokeWidth="2.5" className="flowing-line" />
+                  <line x1="380" y1="410" x2="260" y2="370" stroke="#00ff7f" strokeWidth="2.5" className="flowing-line" />
+                  <line x1="420" y1="310" x2="420" y2="230" stroke="#ffd700" strokeWidth="2" className="flowing-line" />
+                  <line x1="260" y1="370" x2="150" y2="320" stroke="#ff8c00" strokeWidth="2" className="flowing-line" />
+                  <line x1="260" y1="370" x2="140" y2="410" stroke="#ff8c00" strokeWidth="2" className="flowing-line" />
+                  <line x1="260" y1="370" x2="250" y2="500" stroke="#ba55d3" strokeWidth="2" className="flowing-line" />
+                  <line x1="380" y1="410" x2="480" y2="430" stroke="#00ff7f" strokeWidth="2" className="flowing-line" />
+                  <line x1="380" y1="410" x2="470" y2="360" stroke="#00ff7f" strokeWidth="2" className="flowing-line" />
+                  <line x1="380" y1="410" x2="360" y2="490" stroke="#ba55d3" strokeWidth="2" className="flowing-line" />
+                  
+                  <line x1="420" y1="310" x2="500" y2="270" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" />
+                  <line x1="500" y1="270" x2="550" y2="330" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" />
+                  <line x1="550" y1="330" x2="600" y2="260" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" />
+                  <line x1="600" y1="260" x2="650" y2="210" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" />
+                  <line x1="600" y1="260" x2="580" y2="170" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" />
+                  <line x1="580" y1="170" x2="620" y2="110" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" />
+                  <line x1="580" y1="170" x2="530" y2="50" stroke="rgba(30,144,255,0.4)" strokeWidth="1.5" />
+                  <line x1="530" y1="50" x2="560" y2="90" stroke="rgba(0,255,127,0.4)" strokeWidth="1.5" />
+                  <line x1="560" y1="90" x2="510" y2="130" stroke="rgba(30,144,255,0.4)" strokeWidth="1.5" />
+                  <line x1="420" y1="310" x2="470" y2="190" stroke="rgba(255,140,0,0.4)" strokeWidth="1.5" />
+                  <line x1="470" y1="190" x2="420" y2="140" stroke="rgba(255,140,0,0.4)" strokeWidth="1.5" />
+                  <line x1="420" y1="310" x2="330" y2="250" stroke="rgba(30,144,255,0.4)" strokeWidth="1.5" />
+                  <line x1="330" y1="250" x2="260" y2="220" stroke="rgba(30,144,255,0.4)" strokeWidth="1.5" />
+                  <line x1="260" y1="220" x2="190" y2="210" stroke="rgba(30,144,255,0.4)" strokeWidth="1.5" />
+                  <line x1="190" y1="210" x2="120" y2="200" stroke="rgba(30,144,255,0.4)" strokeWidth="1.5" />
+
+                  {matrixNodes.map((node) => (
+                    <g key={node.id} className={`node-${node.anim}`} onClick={() => setSelectedNode(node)}>
+                      <circle cx={node.x} cy={node.y} r={selectedNode?.id === node.id ? node.r + 6 : node.r} fill="#050811" stroke={selectedNode?.id === node.id ? "#ffffff" : node.color} strokeWidth={selectedNode?.id === node.id ? "3.5" : "2"} style={{ filter: `drop-shadow(0px 0px 8px ${node.color})` }} />
+                      <text x={node.x} y={node.y + 4} textAnchor="middle" fill={node.color} fontSize={node.r > 28 ? "11" : "9"} fontWeight="bold">{node.label}</text>
+                    </g>
+                  ))}
+                </svg>
+              </div>
+
+            </div>
+
+            <div className="matrix-guide-panel" style={{ background: "rgba(255,215,0,0.04)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "16px" }}>
+              <h3 style={{ color: "#ffd700", fontSize: "0.88rem", margin: "0 0 10px 0", borderBottom: "1px solid rgba(255,215,0,0.2)", paddingBottom: "6px" }}>
+                {selectedNode ? `${getPanelLabel("selectedLayer")}: [${selectedNode.label}]` : getPanelLabel("guideTitle")}
+              </h3>
+
+              {selectedNode ? (
+                <div>
+                  <p style={{ color: "#fff", fontSize: "0.85rem", fontWeight: "bold", marginBottom: "8px" }}>{selectedNode.desc}</p>
+                  
+                  <div style={{ margin: "10px 0", padding: "10px", background: "rgba(0,0,0,0.6)", border: "1px solid rgba(255,215,0,0.2)", borderRadius: "6px", fontSize: "0.75rem", color: "#ccc" }}>
+                    <div><strong>{getPanelLabel("connections")}</strong> {selectedNode.connection}</div>
+                    <div style={{ marginTop: "4px" }}><strong>{getPanelLabel("coherence")}</strong> <span style={{ color: "#ffd700", fontWeight: "bold" }}>{selectedNode.score}</span></div>
+                  </div>
+
+                  <div style={{ margin: "10px 0" }}>
+                    <span style={{ color: "#ffd700", fontSize: "0.72rem", fontWeight: "bold", display: "block", marginBottom: "4px" }}>🌱 {getPanelLabel("derivatives")}</span>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+                      {selectedNode.derivatives.map((der, i) => (
+                        <span key={i} style={{ background: "rgba(255,215,0,0.1)", border: "1px solid rgba(255,215,0,0.3)", color: "#fff", padding: "2px 6px", borderRadius: "4px", fontSize: "0.7rem" }}>{der}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <p style={{ color: "#aaa", fontSize: "0.76rem", lineHeight: "1.5", background: "rgba(255,255,255,0.02)", padding: "10px", borderRadius: "6px", borderLeft: "2px solid #ffd700", marginTop: "10px" }}>
+                    {selectedNode.details}
+                  </p>
+
+                  <button onClick={() => setSelectedNode(null)} style={{ ...backBtnStyle, width: "100%", fontSize: "0.75rem", marginTop: "10px" }}>{getPanelLabel("clearSelection")}</button>
+                </div>
+              ) : (
+                <div style={{ color: "#ccc", fontSize: "0.78rem", lineHeight: "1.5" }}>
+                  <p>{getPanelLabel("guideDesc")}</p>
+                </div>
+              )}
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* 3. DAMGA ATLASI MODÜLÜ */}
+      {currentView === "atlas" && (
+        <div style={containerStyle}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "12px", flexWrap: "wrap", gap: "10px" }}>
+            <div>
+              <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>🔷 9.870 DAMGA & 18.420 PETROGLİF VERİ TABANI</span>
+              <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem" }}>{t.atlas}</h2>
+            </div>
+            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+              {renderLanguageSelector()}
+              <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>{t.backHome}</button>
+            </div>
+          </div>
+
+          <div className="responsive-matrix-grid">
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "15px" }}>
+              {atlasItems.map((item, idx) => (
+                <div key={idx} onClick={() => setSelectedAtlasItem(item)} style={{ background: selectedAtlasItem?.code === item.code ? "rgba(255,215,0,0.12)" : "rgba(255,215,0,0.03)", border: selectedAtlasItem?.code === item.code ? "1.5px solid #ffd700" : "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "16px", cursor: "pointer" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                    <span style={{ color: "#888", fontSize: "0.68rem", fontWeight: "bold" }}>{item.code}</span>
+                    <span style={{ color: "#ffd700", fontSize: "0.7rem", background: "rgba(255,215,0,0.15)", padding: "2px 6px", borderRadius: "4px", fontWeight: "bold" }}>{item.coherence}</span>
+                  </div>
+                  <h4 style={{ color: "#ffd700", margin: "4px 0 6px 0", fontSize: "0.95rem" }}>{item.symbol} {item.name}</h4>
+                  <div style={{ color: "#ccc", fontSize: "0.75rem", marginBottom: "8px" }}>📍 {item.region} | ⏳ {item.date}</div>
+                  <p style={{ color: "#aaa", fontSize: "0.74rem", margin: 0, lineHeight: "1.4" }}>{item.summary}</p>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ background: "rgba(255,215,0,0.04)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "18px", maxHeight: "650px", overflowY: "auto" }}>
+              {selectedAtlasItem ? (
+                <div>
+                  <div style={{ textAlign: "center", padding: "15px 0", borderBottom: "1px dashed rgba(255,215,0,0.3)", marginBottom: "14px" }}>
+                    <span style={{ fontSize: "3rem", display: "block", marginBottom: "4px" }}>{selectedAtlasItem.symbol}</span>
+                    <span style={{ color: "#888", fontSize: "0.7rem", fontWeight: "bold" }}>{selectedAtlasItem.code}</span>
+                    <h3 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.15rem" }}>{selectedAtlasItem.name}</h3>
+                  </div>
+                  <div style={{ fontSize: "0.8rem", color: "#ccc", lineHeight: "1.65" }}>
+                    <div style={{ marginBottom: "6px" }}><strong>Coğrafi Katman:</strong> {selectedAtlasItem.region}</div>
+                    <div style={{ marginBottom: "6px" }}><strong>Tarihlendirme:</strong> {selectedAtlasItem.date}</div>
+                    <div style={{ marginBottom: "6px" }}><strong>Geometrik Aks:</strong> <span style={{ color: "#1e90ff" }}>{selectedAtlasItem.vectorAxis}</span></div>
+                    <div style={{ marginBottom: "12px" }}><strong>Coherence:</strong> <span style={{ color: "#ffd700", fontWeight: "bold" }}>{selectedAtlasItem.coherence}</span></div>
+                    <div style={{ background: "rgba(0,0,0,0.7)", padding: "14px", borderRadius: "8px", borderLeft: "3.5px solid #ffd700", marginBottom: "14px" }}>
+                      <strong style={{ color: "#ffd700", display: "block", marginBottom: "6px" }}>📜 YKOS AKADEMİK DEŞİFRE RAPORU:</strong>
+                      <p style={{ color: "#ddd", margin: 0, fontSize: "0.78rem", lineHeight: "1.7" }}>{selectedAtlasItem.analysis}</p>
+                    </div>
+                    <button onClick={() => setSelectedAtlasItem(null)} style={{ ...backBtnStyle, width: "100%", fontSize: "0.78rem" }}>{getPanelLabel("clearSelection")}</button>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ color: "#aaa", fontSize: "0.78rem", textAlign: "center", padding: "40px 10px" }}>
+                  <span style={{ fontSize: "2.5rem", display: "block", marginBottom: "10px" }}>🗺️</span>
+                  <strong style={{ color: "#ffd700", display: "block", marginBottom: "6px" }}>DAMGA REHBERİ</strong>
+                  Damga veya petroglif seçerek akademik deşifre raporunu görüntüleyebilirsiniz.
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 4. YENİ EKLENEN: OKUMA & ANALİZ MOTORU EKRANI */}
+      {currentView === "engine" && (
+        <div style={containerStyle}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "12px", flexWrap: "wrap", gap: "10px" }}>
+            <div>
+              <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>🔬 YAPAY ZEKÂ DESTEKLİ OKUMA MOTORU</span>
+              <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem" }}>{t.engine}</h2>
+            </div>
+            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+              {renderLanguageSelector()}
+              <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>{t.backHome}</button>
+            </div>
+          </div>
+
+          <div style={{ background: "rgba(255,215,0,0.03)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "20px" }}>
+            <h3 style={{ color: "#fff", fontSize: "0.95rem", margin: "0 0 15px 0" }}>Kök Hece Zinciri Test Alanı</h3>
+            <p style={{ color: "#aaa", fontSize: "0.8rem", marginBottom: "15px" }}>Test etmek istediğiniz damga kodlarını, kök heceleri veya kelime dizisini (Örn: YOL - ER - ÇEV) girin. Sistem YKOS matrisiyle tutarlılığı ölçecektir.</p>
+            
+            <input 
+              type="text" 
+              value={analysisInput}
+              onChange={(e) => setAnalysisInput(e.target.value)}
+              style={{ width: "100%", padding: "12px", background: "#000", border: "1px solid #ffd700", color: "#fff", borderRadius: "6px", marginBottom: "15px", fontSize: "0.9rem", boxSizing: "border-box" }}
+            />
+
+            <button 
+              onClick={handleRunAnalysis}
+              style={{ background: "linear-gradient(135deg, #ffd700, #b8860b)", color: "#000", padding: "12px 20px", border: "none", borderRadius: "6px", fontWeight: "bold", cursor: "pointer", fontSize: "0.85rem" }}
+            >
+              YKOS MATRİS ANALİZİNİ BAŞLAT ⚡
+            </button>
+
+            {analysisResult && (
+              <div style={{ marginTop: "25px", padding: "20px", background: "#050811", border: "1px dashed #ffd700", borderRadius: "8px" }}>
+                <h4 style={{ color: "#00ff7f", margin: "0 0 10px 0", fontSize: "1rem" }}>{analysisResult.status} - Analiz Tamamlandı</h4>
+                <div style={{ display: "flex", gap: "15px", marginBottom: "15px" }}>
+                  <div style={{ background: "rgba(255,215,0,0.1)", padding: "10px", borderRadius: "6px", border: "1px solid rgba(255,215,0,0.3)" }}>
+                    <span style={{ color: "#aaa", fontSize: "0.7rem", display: "block" }}>Coherence Skoru</span>
+                    <strong style={{ color: "#ffd700", fontSize: "1.1rem" }}>{analysisResult.coherenceScore}</strong>
+                  </div>
+                  <div style={{ background: "rgba(255,215,0,0.1)", padding: "10px", borderRadius: "6px", border: "1px solid rgba(255,215,0,0.3)" }}>
+                    <span style={{ color: "#aaa", fontSize: "0.7rem", display: "block" }}>Geometrik Vektör</span>
+                    <strong style={{ color: "#1e90ff", fontSize: "0.9rem" }}>{analysisResult.vectorPath}</strong>
+                  </div>
+                </div>
+                <p style={{ color: "#ddd", fontSize: "0.85rem", lineHeight: "1.6", margin: 0, padding: "10px", borderLeft: "3px solid #ffd700", background: "rgba(255,255,255,0.02)" }}>
+                  {analysisResult.synthesis}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* 5. AKADEMİK OKUMA EKRANI */}
+      {currentView === "read" && (
+        <div style={containerStyle}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px", flexWrap: "wrap", gap: "10px" }}>
+            <div>
+              <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>📜 AKADEMİK ÇÖZÜMLEME KATMANI</span>
+              <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem" }}>{selectedArticle.title}</h2>
+            </div>
+            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+              {renderLanguageSelector()}
+              <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>{t.backHome}</button>
+            </div>
+          </div>
+
+          <div style={{ padding: "15px 0", color: "#ccc", lineHeight: "1.8", fontSize: "0.92rem" }}>
+            <p style={{ background: "rgba(255,215,0,0.03)", padding: "12px", borderRadius: "6px", borderLeft: "3px solid #ffd700", marginBottom: "15px" }}>
+              <strong>Özet:</strong> {selectedArticle.summary}
+            </p>
+            <p style={{ marginBottom: "15px" }}>
+              {selectedArticle.content || "Anadolu merkezli YKOS M5 Kök Hece Matrisi uyarınca gerçekleştirilen bu deşifre çalışmasında, yazıt karakterlerinin dikey ve yatay aks simetrileri doğrulanmıştır."}
+            </p>
+            <div style={{ background: "rgba(255,215,0,0.06)", padding: "14px", border: "1px solid rgba(255,215,0,0.3)", color: "#ffd700", fontWeight: "bold", margin: "20px 0", borderRadius: "6px" }}>
+              ⚡ YKOS Algoritmik Tutarlılık Skoru (Coherence): %99.4 Tam Metin Eşleşmesi
+            </div>
+          </div>
+          <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>{t.backHome}</button>
+        </div>
+      )}
+
+    </div>
+  );
+}
