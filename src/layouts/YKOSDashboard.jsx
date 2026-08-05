@@ -3,18 +3,15 @@ import SearchBar from "../components/SearchBar";
 import { translations } from "../data/i18n";
 
 export default function YKOSDashboard({ 
-  archiveArticles,
+  archiveArticles, currentLang, setCurrentLang,
   onVisualize, onNavigateRead, onGoHome, onNavigateLogin, 
   onNavigateAtlas, onNavigateEngine, onNavigateFlow, onNavigateMethod 
 }) {
   const [langOpen, setLangOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [currentLang, setCurrentLang] = useState("TR");
   const [searchQuery, setSearchQuery] = useState("");
 
   const t = translations[currentLang] || translations.TR;
-  
-  // Seçilen dile göre makale listesini çek
   const activeArticles = t.articles || archiveArticles;
 
   const languages = [
@@ -162,7 +159,7 @@ export default function YKOSDashboard({
         </div>
       </div>
 
-      {/* SOL / SAĞ PANELİ (DİNAMİK ÇEVRİLEN MAKALE LİSTESİ) */}
+      {/* SOL / SAĞ PANELİ */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "15px" }}>
         
         {/* SOL PANEL */}
@@ -176,7 +173,7 @@ export default function YKOSDashboard({
           </div>
         </div>
 
-        {/* SAĞ PANEL (TAM ÇEVRİLEN LİSTE) */}
+        {/* SAĞ PANEL */}
         <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
           <h3 style={{ color: "#ffd700", fontSize: "0.95rem", marginTop: 0 }}>{t.solutionsTitle}</h3>
           <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "15px" }}>
