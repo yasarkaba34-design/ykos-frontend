@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SearchBar from "../components/SearchBar";
 import { translations } from "../data/i18n";
 import { getArchiveSynthesis } from "../data/ykosArchiveSynthesis";
+import { searchYkosApi } from "../data/ykosApiService";
 
 export default function YKOSDashboard({ 
   archiveArticles, currentLang, setCurrentLang,
@@ -11,6 +12,7 @@ export default function YKOSDashboard({
   const [langOpen, setLangOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [apiSynthesis, setApiSynthesis] = useState(null);
 
   const t = translations[currentLang] || translations.TR;
   const activeArticles = t.articles || archiveArticles;
@@ -60,7 +62,26 @@ export default function YKOSDashboard({
     textAlign: "center"
   };
 
-  // Dinamik arama filtreleme
+  // API VE YEREL DİNAMİK ARAMA YÖNETİMİ
+  useEffect(() => {
+    async function handleSearchApi() {
+      if (!searchQuery || searchQuery.trim().length < 2) {
+        setApiSynthesis(null);
+        return;
+      }
+      
+      const apiResult = await searchYkosApi(searchQuery);
+      if (apiResult && apiResult.synthesis) {
+        setApiSynthesis(apiResult);
+      } else {
+        const localResult = getArchiveSynthesis(searchQuery);
+        setApiSynthesis(localResult);
+      }
+    }
+
+    handleSearchApi();
+  }, [searchQuery]);
+
   const filteredArticles = activeArticles.filter(item => {
     const q = searchQuery.toLowerCase().trim();
     if (!q) return true;
@@ -70,9 +91,6 @@ export default function YKOSDashboard({
       item.content?.toLowerCase().includes(q)
     );
   });
-
-  // Arama sorgusuna göre derlenmiş tek yanıt sentezi
-  const archiveSynthesis = getArchiveSynthesis(searchQuery);
 
   return (
     <div style={{ width: "100%", maxWidth: "1280px", margin: "0 auto", padding: "10px", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
@@ -156,19 +174,41 @@ export default function YKOSDashboard({
         <SearchBar onSearch={(q) => setSearchQuery(q)} />
       </div>
 
-      {/* ARAMA YAPILDIĞINDA ORTAYA ÇIKAN AKILLI ARŞİV SENTEZ RAPOR KARTI */}
-      {archiveSynthesis && (
+      {/* ARAMA YAPILDIĞINDA GELECEK AKILLI RAPOR & YÖNLENDİRME BAĞLANTILARI */}
+      {apiSynthesis && (
         <div style={{ ...cardStyle, background: "rgba(255, 215, 0, 0.08)", border: "1.5px solid #ffd700" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-            <span style={{ fontSize: "1.2rem" }}>⚡</span>
-            <h4 style={{ color: "#ffd700", margin: 0, fontSize: "0.95rem" }}>YKOS AKADEMİK ARŞİV DERLEME RAPORU</h4>
+            <span style={{ fontSize: "1.2rem" }}>🌐</span>
+            <h4 style={{ color: "#ffd700", margin: 0, fontSize: "0.95rem" }}>YKOS AKADEMİK ARŞİV & API DERLEME RAPORU</h4>
           </div>
-          <h5 style={{ color: "#fff", margin: "4px 0 8px 0", fontSize: "0.88rem" }}>{archiveSynthesis.title}</h5>
-          <p style={{ color: "#ddd", fontSize: "0.82rem", lineHeight: "1.6", margin: "0 0 8px 0" }}>
-            {archiveSynthesis.synthesis}
+          <h5 style={{ color: "#fff", margin: "4px 0 8px 0", fontSize: "0.88rem" }}>{apiSynthesis.title}</h5>
+          <p style={{ color: "#ddd", fontSize: "0.82rem", lineHeight: "1.6", margin: "0 0 10px 0" }}>
+            {apiSynthesis.synthesis}
           </p>
-          <div style={{ fontSize: "0.7rem", color: "#888", fontStyle: "italic" }}>
-            📚 Kaynak: {archiveSynthesis.sourceVolume}
+          <div style={{ fontSize: "0.72rem", color: "#aaa", fontStyle: "italic", marginBottom: "12px" }}>
+            📚 Kaynak: {apiSynthesis.sourceVolume || "YKOS Genel Veri Tabanı & Külliyat İndeksi"}
+          </div>
+
+          {/* RAPOR ALTINA EKLENEN CANLI BAĞLANTI BUTONLARI */}
+          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", borderTop: "1px dashed rgba(255,215,0,0.3)", paddingTop: "10px" }}>
+            <button 
+              onClick={() => onNavigateRead(1)}
+              style={{ background: "#ffd700", color: "#000", border: "none", padding: "6px 12px", borderRadius: "4px", fontWeight: "bold", fontSize: "0.75rem", cursor: "pointer" }}
+            >
+              📖 Akademik Rapor Detayını Oku →
+            </button>
+            <button 
+              onClick={onVisualize}
+              style={{ background: "rgba(255,215,0,0.15)", color: "#ffd700", border: "1px solid #ffd700", padding: "6px 12px", borderRadius: "4px", fontWeight: "bold", fontSize: "0.75rem", cursor: "pointer" }}
+            >
+              💻 Kök Hece Matrisinde Göster
+            </button>
+            <button 
+              onClick={onNavigateAtlas}
+              style={{ background: "transparent", color: "#ccc", border: "1px solid rgba(255,255,255,0.3)", padding: "6px 12px", borderRadius: "4px", fontSize: "0.75rem", cursor: "pointer" }}
+            >
+              🗺️ Damga Atlasında İncele
+            </button>
           </div>
         </div>
       )}
