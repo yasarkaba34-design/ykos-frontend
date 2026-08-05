@@ -23,7 +23,6 @@ export default function App() {
     fetchData();
   }, []);
 
-  // MATRİS DÜĞÜMLERİ
   const matrixNodes = [
     { id: "YKOS 100", x: 420, y: 310, r: 36, color: "#1e90ff", label: "YKOS 100", anim: "float1", desc: "Temel Kök Hece Matrisi Katmanı", connection: "YOL, BİR, ANADOLU ATLASI", score: "%99.9", derivatives: ["Kök-en", "Yol-cu", "Çev-re"], details: "Anadolu merkezli 100 birincil hece vektörünün algoritmik veritabanı." },
     { id: "YKOS 200", x: 380, y: 410, r: 35, color: "#00ff7f", label: "YKOS 200", anim: "float2", desc: "Bölgesel ve Derin Arkeolojik Katman", connection: "Göbeklitepe, ROL, Sümer", score: "%99.6", derivatives: ["Rol-daş", "Er-en", "Süm-er"], details: "Doğu Akdeniz, Mezopotamya ve Ön Asya petroglif katmanları." },
@@ -50,85 +49,91 @@ export default function App() {
     { id: "DA", x: 470, y: 190, r: 22, color: "#ff8c00", label: "DA", anim: "float2", desc: "Dağ, Yükseklik ve Yer", connection: "KUR, BİR", score: "%98.8", derivatives: ["Da-ğ", "Da-im"], details: "Yeryüzü şekilleri ve kalıcılık." },
     { id: "ÇEV", x: 330, y: 250, r: 22, color: "#1e90ff", label: "ÇEV", anim: "float3", desc: "Çevre ve Daire", connection: "DİŞ, BİR", score: "%99.4", derivatives: ["Çev-re", "Çev-rik"], details: "Dairesel kuşatma alanı." },
     { id: "DİŞ", x: 260, y: 220, r: 20, color: "#1e90ff", label: "DİŞ", anim: "float1", desc: "Dış, Sınır ve Yapı", connection: "ÇEV, YÜZ", score: "%98.4", derivatives: ["Dış-arı", "Diş-i"], details: "Dış sınır ve biçim." },
-    { id: "YÜZ", x: 190, y: 210, r: 20, color: "#1e90ff", label: "YÜZ", anim: "float2", desc: "Yüzey, Çehre ve Taraf", connection: "DİŞ, ULUN", score: "%98.6", derivatives: ["Yüz-ey", "Yüz-le"], details: "Ön görünüm me alan." },
-    { id: "ULUN", x: 120, y: 200, r: 20, color: "#1e90ff", label: "ULUN", anim: "float3", desc: "Ulu, Yüce ve Büyük", connection: "YÜZ", score: "%98.9", derivatives: ["Ulu-luk", "Ulu-s"], details: "Büyüklük ve hiyerarşi." },
+    { id: "YÜZ", x: 190, y: 210, r: 20, color: "#1e90ff", label: "YÜZ", anim: "float2", desc: "Yüzey, Çehre ve Taraf", connection: "DİŞ, ULUN", score: "%98.6", derivatives: ["Yüz-ey", "Yüz-le"], details: "Ön görünüm ve alan." },
+    { id: "ULUN", x: 120, y: 200, r: 20, color: "#1e90ff", label: "ULUN", anim: "float3", desc: "Ulu, Yüce me Büyük", connection: "YÜZ", score: "%98.9", derivatives: ["Ulu-luk", "Ulu-s"], details: "Büyüklük ve hiyerarşi." },
     { id: "ROL", x: 360, y: 490, r: 22, color: "#ba55d3", label: "ROL", anim: "float1", desc: "İşlev ve Görev", connection: "YKOS 200", score: "%98.7", derivatives: ["Rol-daş"], details: "Toplumsal işlev." },
     { id: "AYLUİL", x: 310, y: 510, r: 22, color: "#ba55d3", label: "AYLUİL", anim: "float2", desc: "Avrupa Dil Akış Ekeni", connection: "AVRUPA ATLASI", score: "%98.5", derivatives: ["Ay-lu", "İl-en"], details: "Akdeniz ada dilleri." }
   ];
 
-  // DETAYLANDIRILMIŞ VE ZENGİNLEŞTİRİLMİŞ DAMGA ATLASI VERİ KATMANI
+  // DERİN VE AKADEMİK METİNLERLE DONATILMIŞ DAMGA KATMANI
   const atlasItems = [
     { 
       code: "YKOS-DMG-01", 
       name: "Çatalhöyük Dairesel Mühür Damgası", 
-      region: "Konya / Anadolu", 
-      date: "M.Ö. 7400", 
+      region: "Konya / Anadolu Refugium", 
+      date: "M.Ö. 7400 (Neolitik Dönem)", 
       symbol: "⭕", 
       coherence: "%99.8",
       vectorAxis: "Konsantrik Çevresel Vektör",
-      summary: "'ÇEV' ve 'BA' dairesel döngü matrisi.", 
-      analysis: "Çatalhöyük Neolitik katmanlarında bulunan dairesel pişmiş toprak damga mühürler, YKOS 'ÇEV' (kuşatma/daire) ve 'BA' (bağlantı) kök heceleriyle tam geometrik ve anlamsal eşleşme gösterir.",
-      tags: ["Dairesel Mühür", "ÇEV Kökü", "Neolitik Katman"]
+      summary: "'ÇEV' ve 'BA' dairesel döngü ve mülkiyet matrisi.", 
+      analysis: "Çatalhöyük katmanlarında çıkarılan pişmiş toprak dairesel mühürler, yerleşik yaşamın mülkiyet kodlarını ve kozmik döngüyü ifade eder. YKOS 100 analizinde bu motifler 'ÇEV' (daire/kuşatma) ve 'BA' (bağ/mühür) kök heceleriyle %99.8 simetri gösterir. Pleistosen buzul çağı sonrası Anadolu sığınağında şekillenen ilk grafik hafıza örneklerindendir.",
+      academicRef: "YKOS Külliyatı Cilt 1: Anadolu Refugium ve Erken Sembolizm",
+      tags: ["Dairesel Mühür", "ÇEV Kökü", "Neolitik Katman", "Refugium"]
     },
     { 
       code: "YKOS-DMG-02", 
       name: "Göbeklitepe T-Sütunu H-C Piktogramı", 
-      region: "Şanlıurfa / Anadolu", 
-      date: "M.Ö. 9600", 
+      region: "Şanlıurfa / Anadolu (Sıfır Noktası)", 
+      date: "M.Ö. 9600 (Epipaleolitik)", 
       symbol: "🏛️", 
       coherence: "%99.9",
-      vectorAxis: "Dikey / Yatay Aks İkiliği",
-      summary: "İkilik, göksel bağ ve yer-gök sembolizmi.", 
-      analysis: "Göbeklitepe dikili taşları üzerindeki 'H' sembolü dikey varlık aksı ile yatay bağın birlikteliğini, 'C' simgesi ise aydönümü ve döngüsel hafızayı kodlar.",
-      tags: ["T-Sütun", "H-C Piktogramı", "Sıfır Noktası"]
+      vectorAxis: "Dikey / Yatay Varlık Aksı",
+      summary: "İkilik, göksel bağ ve yer-gök sembolizmi deşifresi.", 
+      analysis: "Göbeklitepe T-sütunları üzerindeki 'H' piktogramı; iki dikey çizginin orta yatay bağla birleştiği, insan ile gökyüzü arasındaki iletişim kanalını temsil eder. 'C' motifleri ise aydönümü ve göksel takvim döngüsünü simgeler. YKOS analizlerinde bu grafik kodlar rastgele süsleme değil; Türkçe eklemeli mantığın ilk görsel yazılım mühürleridir.",
+      academicRef: "YKOS Külliyatı Cilt 1-2: Göbeklitepe ve Grafik Algoritma",
+      tags: ["T-Sütun", "H-C Piktogramı", "Sıfır Noktası", "Grafik Algoritma"]
     },
     { 
       code: "YKOS-DMG-03", 
       name: "Yazılıkaya Hitit Güneş Kursu", 
-      region: "Çorum / Anadolu", 
-      date: "M.Ö. 1300", 
+      region: "Hattuşa / Çorum", 
+      date: "M.Ö. 1300 (Tunc Çağı)", 
       symbol: "☀️", 
       coherence: "%99.4",
-      vectorAxis: "Işınsal Yönsel Vektör",
+      vectorAxis: "Işınsal Vektör & Yön Aksı",
       summary: "Merkez ve yön ışınları algoritmik matrisi.", 
-      analysis: "Hattuşa Yazılıkaya kabartmalarındaki güneş kursu motifleri, sadece dini bir figür değil; yönsel hece akslarının (AN, KÖK, ER) grafik koordinat mühürüdür.",
-      tags: ["Hitit Güneş Kursu", "Hattuşa", "Luvi Hiyeroglif"]
+      analysis: "Hitit ve Luvi hiyeroglif mühürlerinin temelini oluşturan Güneş Kursları, evrenin merkezdeki 'KÖK' hecesinden 4 ana yöne dağılımını gösterir. Luvi hiyeroglif yazısı sadece resim yazısı değil, Türkçenin görsel işletim sisteminin Anadolu'daki büyük mühürleridir.",
+      academicRef: "YKOS Külliyatı Cilt 7-8: Hitit-Luvi Hiyeroglif Mühürleri",
+      tags: ["Hitit Güneş Kursu", "Hattuşa", "Luvi Hiyeroglif", "Damga"]
     },
     { 
       code: "YKOS-DMG-04", 
       name: "Lemnos Mezar Taşı Damgaları", 
-      region: "Lemnos / Akdeniz", 
-      date: "M.Ö. 600", 
+      region: "Lemnos Adası / Akdeniz", 
+      date: "M.Ö. 600 (Demir Çağı)", 
       symbol: "📜", 
       coherence: "%98.9",
       vectorAxis: "Akdeniz Doğrusal Alfabe Aksı",
-      summary: "Doğu Akdeniz alfabetik aks okuması.", 
-      analysis: "Lemnos mezar steli üzerindeki alfabetik dizilim, Etrüsk ve Anadolu Ön-Türkçe kök ekleri vasıtasıyla deşifre edilmiş, fonetik süreklilik belgelenmiştir.",
-      tags: ["Lemnos Steli", "Etrüskçe", "Ön-Türkçe Aksı"]
+      summary: "Doğu Akdeniz alfabetik aks okuması ve Ön-Türkçe.", 
+      analysis: "Lemnos adasında bulunan stel üzerindeki alfabetik metin, Etrüsk dili ve Ön-Türkçe kök ekleri ile deşifre edilmiştir. Anadolu'dan Akdeniz ve İtalya'ya (Etruria) uzanan 'Yol' aksının en güçlü dilsel ve epigrafik kanıtlarındandır.",
+      academicRef: "YKOS Külliyatı Cilt 5-6: Etrüsk ve Akdeniz Rotaları",
+      tags: ["Lemnos Steli", "Etrüskçe", "Ön-Türkçe Aksı", "Akdeniz Göçü"]
     },
     { 
       code: "YKOS-DMG-05", 
       name: "Fransa Glozel Tablet Damgaları", 
-      region: "Vichy / Fransa", 
+      region: "Vichy / Fransa (Avrupa Katmanı)", 
       date: "M.Ö. 2500", 
       symbol: "🏺", 
       coherence: "%98.7",
       vectorAxis: "Batı Avrupa Tipolojik Akış",
       summary: "Batı Avrupa kaya ve kil tablet deşifresi.", 
-      analysis: "Glozel buluntuları üzerindeki çizgi damgalar, Kazım Mirşan ve YKOS karşılaştırmalı fonetik matrislerinde Orhun ve Anadolu damgalarıyla %90 tipolojik uyum verir.",
-      tags: ["Glozel Tabletleri", "Avrupa Katmanı", "Runik Kök"]
+      analysis: "Fransa Glozel buluntuları üzerindeki 100'e yakın çizgi damga, Kazım Mirşan ve YKOS karşılaştırmalı fonetik matrislerinde Orhun ve Anadolu damgalarıyla %90 tipolojik uyum gösterir. Batı Avrupa'nın saklı hafızası Türkçe işletim sistemiyle çözümlenmektedir.",
+      academicRef: "YKOS Külliyatı Cilt 5-6: Fransa Glozel Tablet Buluntuları",
+      tags: ["Glozel Tabletleri", "Avrupa Katmanı", "Runik Kök", "Mirşan Matrisi"]
     },
     { 
       code: "YKOS-DMG-06", 
       name: "Arizona (Amerika) Petroglif Aksı", 
-      region: "Arizona / Amerika", 
+      region: "Arizona / Kuzey Amerika", 
       date: "M.Ö. 3000", 
       symbol: "🧗", 
       coherence: "%98.5",
       vectorAxis: "Trans-Bering Göç Vektörü",
       summary: "Kuzey Amerika kaya resmi ve damga eşleşmesi.", 
-      analysis: "Arizona petrogliflerindeki spral ve insan motifli grafik kodlar, Trans-Bering vasıtasıyla Asya ve Anadolu refugium kökenli damga aksının Amerika kıtasındaki izleridir.",
-      tags: ["Petroglif", "Amerika Katmanı", "Bering Aksı"]
+      analysis: "Amerika Arizona bölgesindeki petrogliflerde yer alan spiral (döngü) ve atlı/okçu grafik figürleri, Trans-Bering aksı üzerinden Avrasya ve Anadolu kökenli damga kültürünün Amerika kıtasına taşındığını gösterir.",
+      academicRef: "YKOS Külliyatı Cilt 9-11: Amerika Arizona Petroglifleri",
+      tags: ["Petroglif", "Amerika Katmanı", "Bering Aksı", "Küresel Atlas"]
     }
   ];
 
@@ -329,7 +334,7 @@ export default function App() {
         </div>
       )}
 
-      {/* 3. ZENGİNLEŞTİRİLMİŞ DAMGA VE PETROGLİF ATLASI MODÜLÜ */}
+      {/* 3. ZENGİN VE AKADEMİK DERİNLİKLİ DAMGA VE PETROGLİF ATLASI */}
       {currentView === "atlas" && (
         <div style={containerStyle}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "12px" }}>
@@ -340,10 +345,10 @@ export default function App() {
             <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>← ANA PANEL'E DÖN</button>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 360px", gap: "20px", alignItems: "start" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 400px", gap: "20px", alignItems: "start" }}>
             
             {/* DAMGA KARTLARI LİSTESİ */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "15px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "15px" }}>
               {atlasItems.map((item, idx) => (
                 <div 
                   key={idx} 
@@ -368,41 +373,48 @@ export default function App() {
               ))}
             </div>
 
-            {/* DETAYLI PANOLAR VE ANALİZ MODAL/PANELİ */}
-            <div style={{ background: "rgba(255,215,0,0.04)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "18px", sticky: "top", top: "20px" }}>
+            {/* AKADEMİK DERİNLİKTE KAYDIRILABİLİR DETAY PANELİ */}
+            <div style={{ background: "rgba(255,215,0,0.04)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "18px", maxHeight: "650px", overflowY: "auto" }}>
               {selectedAtlasItem ? (
                 <div>
-                  <div style={{ textAlign: "center", padding: "15px 0", borderBottom: "1px dashed rgba(255,215,0,0.3)", marginBottom: "12px" }}>
-                    <span style={{ fontSize: "2.8rem", display: "block" }}>{selectedAtlasItem.symbol}</span>
-                    <span style={{ color: "#888", fontSize: "0.7rem" }}>{selectedAtlasItem.code}</span>
-                    <h3 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.1rem" }}>{selectedAtlasItem.name}</h3>
+                  <div style={{ textAlign: "center", padding: "15px 0", borderBottom: "1px dashed rgba(255,215,0,0.3)", marginBottom: "14px" }}>
+                    <span style={{ fontSize: "3rem", display: "block", marginBottom: "4px" }}>{selectedAtlasItem.symbol}</span>
+                    <span style={{ color: "#888", fontSize: "0.7rem", fontWeight: "bold" }}>{selectedAtlasItem.code}</span>
+                    <h3 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.15rem" }}>{selectedAtlasItem.name}</h3>
                   </div>
 
-                  <div style={{ fontSize: "0.78rem", color: "#ccc", lineHeight: "1.6" }}>
-                    <div style={{ marginBottom: "6px" }}><strong>Coğrafya / Katman:</strong> {selectedAtlasItem.region}</div>
-                    <div style={{ marginBottom: "6px" }}><strong>Tarihlendirme:</strong> {selectedAtlasItem.date}</div>
+                  <div style={{ fontSize: "0.8rem", color: "#ccc", lineHeight: "1.65" }}>
+                    <div style={{ marginBottom: "6px" }}><strong>Coğrafi Katman:</strong> <span style={{ color: "#fff" }}>{selectedAtlasItem.region}</span></div>
+                    <div style={{ marginBottom: "6px" }}><strong>Tarihlendirme:</strong> <span style={{ color: "#fff" }}>{selectedAtlasItem.date}</span></div>
                     <div style={{ marginBottom: "6px" }}><strong>Geometrik Aks / Vektör:</strong> <span style={{ color: "#1e90ff" }}>{selectedAtlasItem.vectorAxis}</span></div>
-                    <div style={{ marginBottom: "10px" }}><strong>Algoritmik Coherence:</strong> <span style={{ color: "#ffd700", fontWeight: "bold" }}>{selectedAtlasItem.coherence}</span></div>
+                    <div style={{ marginBottom: "12px" }}><strong>Algoritmik Coherence:</strong> <span style={{ color: "#ffd700", fontWeight: "bold" }}>{selectedAtlasItem.coherence}</span></div>
 
-                    <div style={{ background: "rgba(0,0,0,0.6)", padding: "10px", borderRadius: "6px", borderLeft: "3px solid #ffd700", marginBottom: "12px" }}>
-                      <strong style={{ color: "#ffd700", display: "block", marginBottom: "4px" }}>YKOS Algoritmik Deşifresi:</strong>
-                      {selectedAtlasItem.analysis}
+                    <div style={{ background: "rgba(0,0,0,0.7)", padding: "14px", borderRadius: "8px", borderLeft: "3.5px solid #ffd700", marginBottom: "14px", border: "1px solid rgba(255,215,0,0.2)" }}>
+                      <strong style={{ color: "#ffd700", display: "block", marginBottom: "6px", fontSize: "0.85rem" }}>📜 YKOS AKADEMİK DEŞİFRE RAPORU:</strong>
+                      <p style={{ color: "#ddd", margin: 0, fontSize: "0.78rem", lineHeight: "1.7" }}>
+                        {selectedAtlasItem.analysis}
+                      </p>
                     </div>
 
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+                    <div style={{ background: "rgba(255,215,0,0.03)", padding: "10px", borderRadius: "6px", border: "1px dashed rgba(255,215,0,0.3)", marginBottom: "14px" }}>
+                      <span style={{ color: "#888", fontSize: "0.7rem", display: "block" }}>📚 KÜLLİYAT REFERANSI:</span>
+                      <span style={{ color: "#ffd700", fontSize: "0.74rem", fontWeight: "bold" }}>{selectedAtlasItem.academicRef}</span>
+                    </div>
+
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", marginBottom: "15px" }}>
                       {selectedAtlasItem.tags.map((t, idx) => (
-                        <span key={idx} style={{ background: "rgba(255,215,0,0.1)", color: "#ffd700", border: "1px solid rgba(255,215,0,0.25)", padding: "2px 6px", borderRadius: "4px", fontSize: "0.68rem" }}>#{t}</span>
+                        <span key={idx} style={{ background: "rgba(255,215,0,0.1)", color: "#ffd700", border: "1px solid rgba(255,215,0,0.25)", padding: "3px 8px", borderRadius: "4px", fontSize: "0.7rem" }}>#{t}</span>
                       ))}
                     </div>
                   </div>
 
-                  <button onClick={() => setSelectedAtlasItem(null)} style={{ ...backBtnStyle, width: "100%", marginTop: "15px", fontSize: "0.75rem" }}>Seçimi Temizle</button>
+                  <button onClick={() => setSelectedAtlasItem(null)} style={{ ...backBtnStyle, width: "100%", fontSize: "0.78rem" }}>Seçimi Temizle</button>
                 </div>
               ) : (
-                <div style={{ color: "#aaa", fontSize: "0.78rem", lineHeight: "1.6", textAlign: "center", padding: "30px 10px" }}>
-                  <span style={{ fontSize: "2rem", display: "block", marginBottom: "10px" }}>🗺️</span>
-                  <strong style={{ color: "#ffd700", display: "block", marginBottom: "6px" }}>DAMGA DETAY REHBERİ</strong>
-                  Sol taraftaki kartlardan herhangi bir damga veya petroglife tıklayarak tipolojik vektör analizlerini ve YKOS algoritmik deşifre detaylarını inceleyebilirsiniz.
+                <div style={{ color: "#aaa", fontSize: "0.78rem", lineHeight: "1.6", textAlign: "center", padding: "40px 10px" }}>
+                  <span style={{ fontSize: "2.5rem", display: "block", marginBottom: "10px" }}>🗺️</span>
+                  <strong style={{ color: "#ffd700", display: "block", marginBottom: "6px", fontSize: "0.9rem" }}>AKADEMİK DAMGA REHBERİ</strong>
+                  Sol taraftaki damga veya petroglif kartlarından birine tıklayarak 11 Ciltlik külliyattan aktarılan derin akademik deşifre metinlerini ve tipolojik analiz raporlarını görüntüleyebilirsiniz.
                 </div>
               )}
             </div>
