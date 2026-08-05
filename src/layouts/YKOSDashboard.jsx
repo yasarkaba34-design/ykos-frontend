@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import SearchBar from "../components/SearchBar";
 import { translations } from "../data/i18n";
+import { getArchiveSynthesis } from "../data/ykosArchiveSynthesis";
 
 export default function YKOSDashboard({ 
   archiveArticles, currentLang, setCurrentLang,
@@ -59,17 +60,19 @@ export default function YKOSDashboard({
     textAlign: "center"
   };
 
-  // ÇOK YÖNLÜ DERİN ARAMA FİLTRESİ
+  // Dinamik arama filtreleme
   const filteredArticles = activeArticles.filter(item => {
     const q = searchQuery.toLowerCase().trim();
     if (!q) return true;
     return (
       item.title?.toLowerCase().includes(q) || 
       item.summary?.toLowerCase().includes(q) ||
-      item.content?.toLowerCase().includes(q) ||
-      item.volume?.toLowerCase().includes(q)
+      item.content?.toLowerCase().includes(q)
     );
   });
+
+  // Arama sorgusuna göre derlenmiş tek yanıt sentezi
+  const archiveSynthesis = getArchiveSynthesis(searchQuery);
 
   return (
     <div style={{ width: "100%", maxWidth: "1280px", margin: "0 auto", padding: "10px", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
@@ -109,7 +112,7 @@ export default function YKOSDashboard({
           </div>
         </div>
 
-        {/* LOGO VE ANASAYFA YÖNLENDİRME LİNKİ */}
+        {/* LOGO VE ANASAYFA LİNKİ */}
         <div onClick={onGoHome} style={{ textAlign: "center", cursor: "pointer", marginTop: "-18px", userSelect: "none" }}>
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "4px" }}>
             <img 
@@ -153,6 +156,23 @@ export default function YKOSDashboard({
         <SearchBar onSearch={(q) => setSearchQuery(q)} />
       </div>
 
+      {/* ARAMA YAPILDIĞINDA ORTAYA ÇIKAN AKILLI ARŞİV SENTEZ RAPOR KARTI */}
+      {archiveSynthesis && (
+        <div style={{ ...cardStyle, background: "rgba(255, 215, 0, 0.08)", border: "1.5px solid #ffd700" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
+            <span style={{ fontSize: "1.2rem" }}>⚡</span>
+            <h4 style={{ color: "#ffd700", margin: 0, fontSize: "0.95rem" }}>YKOS AKADEMİK ARŞİV DERLEME RAPORU</h4>
+          </div>
+          <h5 style={{ color: "#fff", margin: "4px 0 8px 0", fontSize: "0.88rem" }}>{archiveSynthesis.title}</h5>
+          <p style={{ color: "#ddd", fontSize: "0.82rem", lineHeight: "1.6", margin: "0 0 8px 0" }}>
+            {archiveSynthesis.synthesis}
+          </p>
+          <div style={{ fontSize: "0.7rem", color: "#888", fontStyle: "italic" }}>
+            📚 Kaynak: {archiveSynthesis.sourceVolume}
+          </div>
+        </div>
+      )}
+
       {/* İSTATİSTİK SAYAÇLARI */}
       <div style={cardStyle}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))", gap: "10px" }}>
@@ -180,29 +200,23 @@ export default function YKOSDashboard({
           </div>
         </div>
 
-        {/* SAĞ PANEL (SÜZÜLEN CANLI SONUÇLAR) */}
+        {/* SAĞ PANEL */}
         <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
           <h3 style={{ color: "#ffd700", fontSize: "0.95rem", marginTop: 0 }}>
-            {t.solutionsTitle} {searchQuery && <span style={{ fontSize: "0.75rem", color: "#fff", fontWeight: "normal" }}>({filteredArticles.length} Sonuç Bulundu)</span>}
+            {t.solutionsTitle} {searchQuery && <span style={{ fontSize: "0.75rem", color: "#fff", fontWeight: "normal" }}>({filteredArticles.length} Kayıt)</span>}
           </h3>
           
           <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "15px", maxHeight: "400px", overflowY: "auto" }}>
-            {filteredArticles.length > 0 ? (
-              filteredArticles.map((item) => (
-                <div 
-                  key={item.id}
-                  onClick={() => onNavigateRead(item.id)}
-                  style={{ background: "rgba(255, 215, 0, 0.05)", border: "1px solid rgba(255, 215, 0, 0.4)", borderRadius: "6px", padding: "10px", fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold", cursor: "pointer" }}
-                >
-                  📜 {item.title} →
-                  <div style={{ fontSize: "0.72rem", color: "#ccc", fontWeight: "normal", marginTop: "4px" }}>{item.summary}</div>
-                </div>
-              ))
-            ) : (
-              <div style={{ color: "#aaa", fontSize: "0.8rem", textAlign: "center", padding: "20px" }}>
-                Aramanıza uygun kayıt bulunamadı.
+            {filteredArticles.map((item) => (
+              <div 
+                key={item.id}
+                onClick={() => onNavigateRead(item.id)}
+                style={{ background: "rgba(255, 215, 0, 0.05)", border: "1px solid rgba(255, 215, 0, 0.4)", borderRadius: "6px", padding: "10px", fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold", cursor: "pointer" }}
+              >
+                📜 {item.title} →
+                <div style={{ fontSize: "0.72rem", color: "#ccc", fontWeight: "normal", marginTop: "4px" }}>{item.summary}</div>
               </div>
-            )}
+            ))}
           </div>
 
           <button 
