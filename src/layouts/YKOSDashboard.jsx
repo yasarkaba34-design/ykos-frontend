@@ -62,7 +62,6 @@ export default function YKOSDashboard({
     textAlign: "center"
   };
 
-  // API VE YEREL DİNAMİK ARAMA YÖNETİMİ
   useEffect(() => {
     async function handleSearchApi() {
       if (!searchQuery || searchQuery.trim().length < 2) {
@@ -174,7 +173,7 @@ export default function YKOSDashboard({
         <SearchBar onSearch={(q) => setSearchQuery(q)} />
       </div>
 
-      {/* ARAMA YAPILDIĞINDA GELECEK AKILLI RAPOR & YÖNLENDİRME BAĞLANTILARI */}
+      {/* ARAMA RAPORU & YÖNLENDİRME BAĞLANTILARI */}
       {apiSynthesis && (
         <div style={{ ...cardStyle, background: "rgba(255, 215, 0, 0.08)", border: "1.5px solid #ffd700" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
@@ -186,17 +185,26 @@ export default function YKOSDashboard({
             {apiSynthesis.synthesis}
           </p>
           <div style={{ fontSize: "0.72rem", color: "#aaa", fontStyle: "italic", marginBottom: "12px" }}>
-            📚 Kaynak: {apiSynthesis.sourceVolume || "YKOS Genel Veri Tabanı & Külliyat İndeksi"}
+            📚 Kaynak: {apiSynthesis.sourceVolume || "YKOS Genel Veri Tabanı & Külliyat İndeksi"} — {" "}
+            <a 
+              href="https://ykos.com.tr" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              style={{ color: "#ffd700", textDecoration: "underline", fontWeight: "bold" }}
+            >
+              ykos.com.tr
+            </a>
           </div>
 
-          {/* RAPOR ALTINA EKLENEN CANLI BAĞLANTI BUTONLARI */}
           <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", borderTop: "1px dashed rgba(255,215,0,0.3)", paddingTop: "10px" }}>
-            <button 
-              onClick={() => onNavigateRead(1)}
-              style={{ background: "#ffd700", color: "#000", border: "none", padding: "6px 12px", borderRadius: "4px", fontWeight: "bold", fontSize: "0.75rem", cursor: "pointer" }}
+            <a 
+              href="https://ykos.com.tr" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              style={{ background: "#ffd700", color: "#000", border: "none", padding: "6px 12px", borderRadius: "4px", fontWeight: "bold", fontSize: "0.75rem", textDecoration: "none", display: "inline-block" }}
             >
-              📖 Akademik Rapor Detayını Oku →
-            </button>
+              📖 ykos.com.tr 'de İncele →
+            </a>
             <button 
               onClick={onVisualize}
               style={{ background: "rgba(255,215,0,0.15)", color: "#ffd700", border: "1px solid #ffd700", padding: "6px 12px", borderRadius: "4px", fontWeight: "bold", fontSize: "0.75rem", cursor: "pointer" }}
