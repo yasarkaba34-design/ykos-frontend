@@ -2,37 +2,92 @@ import React, { useState, useEffect } from "react";
 import YKOSDashboard from "./layouts/YKOSDashboard";
 import { defaultArchiveArticles, loadArchiveData } from "./data/ykosDataService";
 import { translations } from "./data/i18n";
+import AtlasMap from "./mega/AtlasMap";
 
-export default function App() {
+export function App() {
   const [currentView, setCurrentView] = useState("dashboard"); 
   const [userRole, setUserRole] = useState("guest");
   const [selectedArticleId, setSelectedArticleId] = useState(1);
   const [selectedNode, setSelectedNode] = useState(null);
-  const [selectedAtlasItem, setSelectedAtlasItem] = useState(null);
   const [archiveArticles, setArchiveArticles] = useState(defaultArchiveArticles);
 
   const [currentLang, setCurrentLang] = useState("TR");
   const [langOpen, setLangOpen] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
 
-  // OKUMA MOTORU STATE'LERİ
+  // MOTOR VE YKOS 1000 STATE'LERİ
   const [analysisInput, setAnalysisInput] = useState("YOL - ER - ÇEV - BA - KÖK");
   const [analysisResult, setAnalysisResult] = useState(null);
+  const [selectedMasterLayer, setSelectedMasterLayer] = useState(null);
 
   const t = translations[currentLang] || translations.TR;
   const activeArticles = t.articles || archiveArticles;
 
+  // YKOS 1000 - 10 DİKEY VERİ KATMANI
+  const ykos1000Layers = [
+    { no: 1, title: "Kozmik ve Jeolojik Katman", desc: "Evrenin ve Dünya'nın oluşumu, süperkıtalar, buzul çağı döngüleri.", status: "AKTİF" },
+    { no: 2, title: "Anadolu Jeolojisi ve Coğrafyası", desc: "Dağ kuşakları, sığınak havzalar (Refugium), hidrolojik hafıza ve mikroklimalar.", status: "AKTİF" },
+    { no: 3, title: "İlk İnsan İzleri ve Yerleşimler", desc: "Yarımburgaz, Karain Mağaraları, avcı-toplayıcı yaşam ve Neolitik geçiş.", status: "AKTİF" },
+    { no: 4, title: "İlk Semboller ve Damgalar", desc: "Kaya resimleri, piktogramlar ve fikirlerin algoritmik grafik kodlara dönüşümü.", status: "AKTİF" },
+    { no: 5, title: "Anadolu'nun Kadim Merkezleri", desc: "Göbeklitepe, Çatalhöyük, Hattuşa, Alacahöyük, Efes ve Troya medeniyet ağları.", status: "AKTİF" },
+    { no: 6, title: "Yazının Doğuşu ve Gelişimi", desc: "Çivi yazısı, hiyeroglifler, runik yazılar ve Türk alfabesinin evrimi.", status: "AKTİF" },
+    { no: 7, title: "Dil ve Türkçe Katmanı", desc: "Kök-hece sistemi (M5), eklemeli yapı ve anlam ağlarının algoritmik analizi.", status: "AKTİF" },
+    { no: 8, title: "Türk Dilleri ve Lehçeleri Atlası", desc: "30+ lehçenin köksel bütünlüğü, fonetik korunumu ve Avrasya yayılımı.", status: "AKTİF" },
+    { no: 9, title: "Dünya Dilleri ve Kültürler Atlası", desc: "Küresel dil ailelerinin Anadolu merkezli göç ve etkileşim haritası.", status: "AKTİF" },
+    { no: 10, title: "YKOS Entegrasyon & Yapay Zekâ", desc: "10 dilde çalışan, sorgulanabilir dijital bilgi ve canlı veri tabanı ağı.", status: "CANLI" }
+  ];
+
+  const migrationRoutes = [
+    {
+      id: "FLOW-01",
+      title: "Anadolu Refugium ➔ Doğu Akdeniz & Sümer Hatları",
+      period: "M.Ö. 10.000 - M.Ö. 4.000",
+      origin: "Anadolu (Buzul Çağı Sığınağı)",
+      destination: "Mezopotamya / Basra Körfezi",
+      description: "Buzulların erimesi ve Karadeniz tatlı su golünün tuzlu denizle birleşmesi sonrası Anadolu'dan güneye inen eklemeli dil ve çivi yazısı kök aktarımı.",
+      coherence: "%99.6"
+    },
+    {
+      id: "FLOW-02",
+      title: "Anadolu ➔ Kafkasya, Altay & Orhun Havzaları",
+      period: "M.Ö. 8.000 - M.Ö. 1.000",
+      origin: "Anadolu Merkez (Hattuşa / Çorum / Van)",
+      destination: "Saymalıtaş / Altay Dağları / Orhun Vadisi",
+      description: "Anadolu'dan Asya'ya büyük dil ve damga akışı. 'GÖK', 'ÇİK' ve 'İL' kök hecelerinin Doğu Bozkırlarına taşınması.",
+      coherence: "%99.8"
+    },
+    {
+      id: "FLOW-03",
+      title: "Anadolu ➔ Lemnos & Etrüsk (Etruria / İtalya)",
+      period: "M.Ö. 2.000 - M.Ö. 600",
+      origin: "Batı Anadolu & Ege Adaları",
+      destination: "Lemnos Adası & Etruria (İtalya)",
+      description: "Lemnos steli ve Etrüsk yazıtlarındaki 'YOL' ve 'EL' köklerinin Akdeniz deniz rotası vasıtasıyla batıya yayılımı.",
+      coherence: "%98.9"
+    },
+    {
+      id: "FLOW-04",
+      title: "Avrasya ➔ Bering & Amerika (Maya / Olmek Hatları)",
+      period: "M.Ö. 12.000 - M.Ö. 3.000",
+      origin: "Sibirya / Avrasya Hattı",
+      destination: "Kuzey & Orta Amerika (Arizona / Maya Katmanı)",
+      description: "Trans-Bering hattını izleyen kök-piktogram ve kaya resimlerinin Amerika yerli dillerindeki fonetik izleri.",
+      coherence: "%98.5"
+    }
+  ];
+
+  const atlasLocations = [
+    { id: "ANADOLU-01", name: "Çatalhöyük & Konya Havzası", region: "Anadolu Refugium Katmanı", details: "M.Ö. 7400 Neolitik dairesel mühürler, 'ÇEV' ve 'BA' kök hece mülkiyet matrisinin merkez üssüdür." },
+    { id: "ANADOLU-02", name: "Göbeklitepe & Şanlıurfa", region: "Epipaleolitik Grafik Algoritma", details: "M.Ö. 9600 T-sütunları üzerindeki 'H' piktogramı dikey varlık ve yatay bağ aksını kodlar." },
+    { id: "ANADOLU-03", name: "Hattuşa & Çorum Havzası", region: "Hatti - Hitit Ön-Türkçe Kök Katmanı", details: "Hatti yazıtları ve mühürleri, YKOS KUR, DA ve ÇEV hece türetimleri ile %99.4 simetri gösterir." },
+    { id: "AVRASYA-01", name: "Saymalıtaş & Altay Rotaları", region: "Kaya Resimleri ve Petroglif Hatları", details: "Anadolu çıkışlı göç dalgalarının Avrasya bozkırlarındaki 'GÖK' ve 'ÇİK' yükselim grafik izleri." },
+    { id: "AKDENIZ-01", name: "Lemnos & Etruria (İtalya)", region: "Akdeniz & Etrüsk Alfabetik Aksı", details: "Lemnos mezar steli ve Etrüsk yazıtlarındaki 'YOL' kökü vasıtasıyla kanıtlanan Akdeniz dil akışı." }
+  ];
+
   const languages = [
-    { code: "TR", label: "Türkçe" },
-    { code: "EN", label: "English" },
-    { code: "FR", label: "Français" },
-    { code: "RU", label: "Русский" },
-    { code: "ZH", label: "中文" },
-    { code: "JA", label: "日本語" },
-    { code: "PT", label: "Português" },
-    { code: "ES", label: "Español" },
-    { code: "AR", label: "العربية" },
-    { code: "DE", label: "Deutsch" }
+    { code: "TR", label: "Türkçe" }, { code: "EN", label: "English" }, { code: "FR", label: "Français" }, 
+    { code: "RU", label: "Русский" }, { code: "ZH", label: "中文" }, { code: "JA", label: "日本語" }, 
+    { code: "PT", label: "Português" }, { code: "ES", label: "Español" }, { code: "AR", label: "العربية" }, { code: "DE", label: "Deutsch" }
   ];
 
   useEffect(() => {
@@ -49,7 +104,6 @@ export default function App() {
   const handleZoomOut = () => setZoomLevel(prev => Math.max(prev - 0.2, 0.6));
   const handleZoomReset = () => setZoomLevel(1);
 
-  // OKUMA MOTORU ANALİZ SİMÜLASYONU
   const handleRunAnalysis = () => {
     setAnalysisResult({
       status: "SUCCESS",
@@ -60,6 +114,7 @@ export default function App() {
   };
 
   const matrixNodes = [
+    { id: "YKOS 1000", x: 350, y: 180, r: 42, color: "#ffd700", label: "YKOS 1000", anim: "float1", desc: "Ana Bilgi Entegrasyon Matrisi", connection: "YKOS 100, YKOS 200, YKOS 300", score: "%100", derivatives: ["Master-Veri", "Yapay-Zekâ"], details: "Sistemin tüm katmanlarını bağlayan yapay zekâ destekli üst entegrasyon matrisi." },
     { id: "YKOS 100", x: 420, y: 310, r: 36, color: "#1e90ff", label: "YKOS 100", anim: "float1", desc: "Temel Kök Hece Matrisi Katmanı", connection: "YOL, BİR, ANADOLU ATLASI", score: "%99.9", derivatives: ["Kök-en", "Yol-cu", "Çev-re"], details: "Anadolu merkezli 100 birincil hece vektörünün algoritmik veritabanı." },
     { id: "YKOS 200", x: 380, y: 410, r: 35, color: "#00ff7f", label: "YKOS 200", anim: "float2", desc: "Bölgesel ve Derin Arkeolojik Katman", connection: "Göbeklitepe, ROL, Sümer", score: "%99.6", derivatives: ["Rol-daş", "Er-en", "Süm-er"], details: "Doğu Akdeniz, Mezopotamya ve Ön Asya petroglif katmanları." },
     { id: "YKOS 300", x: 260, y: 370, r: 36, color: "#ff8c00", label: "YKOS 300", anim: "float3", desc: "Global Atlas & Avrasya / Amerika Katmanı", connection: "ÖN ASYA ATLASI, AMERİKA ATLASI, AVRUPA ATLASI", score: "%99.4", derivatives: ["At-las", "Av-rasya", "Koz-mos"], details: "Avrasya ve Amerika kıtaları arası Ön-Türkçe kültür ve damga aksı." },
@@ -89,74 +144,6 @@ export default function App() {
     { id: "ULUN", x: 120, y: 200, r: 20, color: "#1e90ff", label: "ULUN", anim: "float3", desc: "Ulu, Yüce ve Büyük", connection: "YÜZ", score: "%98.9", derivatives: ["Ulu-luk", "Ulu-s"], details: "Büyüklük ve hiyerarşi." },
     { id: "ROL", x: 360, y: 490, r: 22, color: "#ba55d3", label: "ROL", anim: "float1", desc: "İşlev ve Görev", connection: "YKOS 200", score: "%98.7", derivatives: ["Rol-daş"], details: "Toplumsal işlev." },
     { id: "AYLUİL", x: 310, y: 510, r: 22, color: "#ba55d3", label: "AYLUİL", anim: "float2", desc: "Avrupa Dil Akış Ekeni", connection: "AVRUPA ATLASI", score: "%98.5", derivatives: ["Ay-lu", "İl-en"], details: "Akdeniz ada dilleri." }
-  ];
-
-  const atlasItems = [
-    { 
-      code: "YKOS-DMG-01", 
-      name: "Çatalhöyük Dairesel Mühür Damgası", 
-      region: "Konya / Anadolu Refugium", 
-      date: "M.Ö. 7400 (Neolitik Dönem)", 
-      symbol: "⭕", 
-      coherence: "%99.8",
-      vectorAxis: "Konsantrik Çevresel Vektör",
-      summary: "'ÇEV' ve 'BA' dairesel döngü ve mülkiyet matrisi.", 
-      analysis: "Çatalhöyük katmanlarında çıkarılan pişmiş toprak dairesel mühürler, yerleşik yaşamın mülkiyet kodlarını ve kozmik döngüyü ifade eder.",
-      academicRef: "YKOS Külliyatı Cilt 1: Anadolu Refugium ve Erken Sembolizm",
-      tags: ["Dairesel Mühür", "ÇEV Kökü", "Neolitik Katman", "Refugium"]
-    },
-    { 
-      code: "YKOS-DMG-02", 
-      name: "Göbeklitepe H-Piktogramı ve T-Sütun Bağ Mührü", 
-      region: "Şanlıurfa / Göbeklitepe B Yapısı", 
-      date: "M.Ö. 9600 (Epipaleolitik)", 
-      symbol: "🈴", 
-      coherence: "%99.7",
-      vectorAxis: "Dikey Varlık ve Yatay Bağ Aksı",
-      summary: "İnsan-gök iletişimi, dikey aks ve 'BA' kök bağlama simetrisi.", 
-      analysis: "Göbeklitepe T-sütunlarındaki 'H' sembolü dikey varlık aksı ile yatay bağın birlikteliğini, 'C' simgesi ise aydönümü ve döngüsel hafızayı kodlar.",
-      academicRef: "YKOS Külliyatı Cilt 2: Göbeklitepe ve Grafik Algoritma",
-      tags: ["Göbeklitepe", "H-Piktogramı", "T-Sütun", "Kök Bağ"]
-    },
-    { 
-      code: "YKOS-DMG-03", 
-      name: "Lemnos Mezar Steli Etrüsk / Ön-Türkçe Damgası", 
-      region: "Lemnos Adası / Akdeniz Aksı", 
-      date: "M.Ö. 600 (Arkaik Dönem)", 
-      symbol: "🔤", 
-      coherence: "%98.9",
-      vectorAxis: "Çevresel Alfabetik Aks",
-      summary: "'YOL' ve 'EL' köklerinin Akdeniz/Etrüsk dil akışındaki deşifresi.", 
-      analysis: "Lemnos steli üzerindeki alfabetik metin, Ön-Türkçe kök ekleri vasıtasıyla çözümlenmiş; Anadolu'dan Etruria hattına uzanan dilsel sürekliliği doğrulamıştır.",
-      academicRef: "YKOS Külliyatı Cilt 5-6: Etrüsk ve Akdeniz Rotaları",
-      tags: ["Lemnos", "Etrüsk", "YOL Aksı", "Akdeniz"]
-    },
-    { 
-      code: "YKOS-DMG-04", 
-      name: "Altay / Saymalıtaş Dağ Keçisi Petroglifi", 
-      region: "Kırgızistan / Saymalıtaş Katmanı", 
-      date: "M.Ö. 3000 (Bronz Çağı)", 
-      symbol: "🐐", 
-      coherence: "%99.4",
-      vectorAxis: "Gök-Yer Yükselim Vektörü",
-      summary: "'GÖK' ve 'ÇİK' yükselim hareketi ve kozmik temsil.", 
-      analysis: "Saymalıtaş kaya resimlerindeki dağ keçisi motifi yalnızca bir hayvan tasviri değil, göksel yükselimi ve ruhsal hafifliği ifade eden piktografik bir koddur.",
-      academicRef: "YKOS Külliyatı Cilt 4: Avrasya Petroglif Atlası",
-      tags: ["Saymalıtaş", "Petroglif", "GÖK Kökü", "Altay"]
-    },
-    { 
-      code: "YKOS-DMG-05", 
-      name: "Orhun Kül Tigin 'EL' Devlet Damgası", 
-      region: "Moğolistan / Orhun Vadisi", 
-      date: "M.S. 732 (Göktürk Dönemi)", 
-      symbol: "🛡️", 
-      coherence: "%99.9",
-      vectorAxis: "Merkezi Egemenlik Aksı",
-      summary: "'EL / İL' organizasyon ve toplumsal birlik kök yazılımı.", 
-      analysis: "Kül Tigin yazıtının tepesindeki kıvrımlı damga, kağanlık yetkisini ve il (devlet) teşkilatlanmasının kök hece algoritmasını simgeler.",
-      academicRef: "YKOS Külliyatı Cilt 7: Orhun Yazıtları ve Devlet Kök Analizi",
-      tags: ["Orhun", "Göktürk", "İL Kökü", "Devlet"]
-    }
   ];
 
   const handleNavigateLogin = (role) => {
@@ -273,18 +260,58 @@ export default function App() {
           onNavigateAtlas={() => setCurrentView("atlas")}
           onNavigateEngine={() => setCurrentView("engine")}
           onNavigateFlow={() => setCurrentView("flow")}
+          onNavigateYkos1000={() => setCurrentView("ykos1000")}
           onNavigateMethod={() => setCurrentView("methodology")}
           onGoHome={() => setCurrentView("dashboard")}
         />
       )}
 
-      {/* 2. CANLI KÖK HECE MATRİS EKRANI */}
+      {/* 2. YKOS 1000 MASTER MATRİS MODÜLÜ */}
+      {currentView === "ykos1000" && (
+        <div style={containerStyle}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "12px", flexWrap: "wrap", gap: "10px" }}>
+            <div>
+              <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>👑 YKOS 1000 MASTER BİLGİ ENTEGRASYON MATRİSİ</span>
+              <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem" }}>10 Dikey Veri Katmanı ve Yapay Zekâ Şemsiyesi</h2>
+            </div>
+            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+              {renderLanguageSelector()}
+              <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>{t.backHome}</button>
+            </div>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "12px" }}>
+            {ykos1000Layers.map((layer) => (
+              <div 
+                key={layer.no}
+                onClick={() => setSelectedMasterLayer(layer)}
+                style={{
+                  background: selectedMasterLayer?.no === layer.no ? "rgba(255, 215, 0, 0.15)" : "rgba(255, 215, 0, 0.03)",
+                  border: selectedMasterLayer?.no === layer.no ? "1.5px solid #ffd700" : "1px solid rgba(255, 215, 0, 0.25)",
+                  borderRadius: "8px",
+                  padding: "14px",
+                  cursor: "pointer"
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                  <span style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.75rem" }}>KATMAN {layer.no}</span>
+                  <span style={{ color: "#00ff7f", fontSize: "0.68rem", border: "1px solid #00ff7f", padding: "1px 5px", borderRadius: "3px" }}>{layer.status}</span>
+                </div>
+                <h4 style={{ color: "#fff", margin: "0 0 6px 0", fontSize: "0.92rem" }}>{layer.title}</h4>
+                <p style={{ color: "#aaa", fontSize: "0.75rem", margin: 0, lineHeight: "1.4" }}>{layer.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 3. CANLI KÖK HECE MATRİS EKRANI (TAM İNTERAKTİF SVG VE REHBER PANELİ) */}
       {currentView === "visualize" && (
         <div style={containerStyle}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px", flexWrap: "wrap", gap: "10px" }}>
             <div>
               <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>🌐 {t.matrix}</span>
-              <h2 style={{ color: "#ffd700", margin: "2px 0 0 0", fontSize: "1.15rem" }}>YKOS MATRİSLERİ (100 - 200 - 300 CANLI AĞ)</h2>
+              <h2 style={{ color: "#ffd700", margin: "2px 0 0 0", fontSize: "1.15rem" }}>YKOS MATRİSLERİ (100 - 200 - 300 - 1000 CANLI AĞ)</h2>
             </div>
             
             <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
@@ -309,6 +336,10 @@ export default function App() {
 
               <div style={{ width: "100%", overflow: "auto", display: "flex", justifyContent: "center", alignItems: "center" }}>
                 <svg width="100%" height="100%" viewBox="0 0 700 560" style={{ overflow: "visible", minHeight: "460px", transform: `scale(${zoomLevel})`, transformOrigin: "center center", transition: "transform 0.25s ease-out" }}>
+                  <line x1="350" y1="180" x2="420" y2="310" stroke="#ffd700" strokeWidth="3" className="flowing-line" />
+                  <line x1="350" y1="180" x2="380" y2="410" stroke="#ffd700" strokeWidth="3" className="flowing-line" />
+                  <line x1="350" y1="180" x2="260" y2="370" stroke="#ffd700" strokeWidth="3" className="flowing-line" />
+
                   <line x1="420" y1="310" x2="380" y2="410" stroke="#1e90ff" strokeWidth="2.5" className="flowing-line" />
                   <line x1="380" y1="410" x2="260" y2="370" stroke="#00ff7f" strokeWidth="2.5" className="flowing-line" />
                   <line x1="420" y1="310" x2="420" y2="230" stroke="#ffd700" strokeWidth="2" className="flowing-line" />
@@ -317,7 +348,6 @@ export default function App() {
                   <line x1="260" y1="370" x2="250" y2="500" stroke="#ba55d3" strokeWidth="2" className="flowing-line" />
                   <line x1="380" y1="410" x2="480" y2="430" stroke="#00ff7f" strokeWidth="2" className="flowing-line" />
                   <line x1="380" y1="410" x2="470" y2="360" stroke="#00ff7f" strokeWidth="2" className="flowing-line" />
-                  <line x1="380" y1="410" x2="360" y2="490" stroke="#ba55d3" strokeWidth="2" className="flowing-line" />
                   
                   <line x1="420" y1="310" x2="500" y2="270" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" />
                   <line x1="500" y1="270" x2="550" y2="330" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" />
@@ -325,15 +355,6 @@ export default function App() {
                   <line x1="600" y1="260" x2="650" y2="210" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" />
                   <line x1="600" y1="260" x2="580" y2="170" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" />
                   <line x1="580" y1="170" x2="620" y2="110" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" />
-                  <line x1="580" y1="170" x2="530" y2="50" stroke="rgba(30,144,255,0.4)" strokeWidth="1.5" />
-                  <line x1="530" y1="50" x2="560" y2="90" stroke="rgba(0,255,127,0.4)" strokeWidth="1.5" />
-                  <line x1="560" y1="90" x2="510" y2="130" stroke="rgba(30,144,255,0.4)" strokeWidth="1.5" />
-                  <line x1="420" y1="310" x2="470" y2="190" stroke="rgba(255,140,0,0.4)" strokeWidth="1.5" />
-                  <line x1="470" y1="190" x2="420" y2="140" stroke="rgba(255,140,0,0.4)" strokeWidth="1.5" />
-                  <line x1="420" y1="310" x2="330" y2="250" stroke="rgba(30,144,255,0.4)" strokeWidth="1.5" />
-                  <line x1="330" y1="250" x2="260" y2="220" stroke="rgba(30,144,255,0.4)" strokeWidth="1.5" />
-                  <line x1="260" y1="220" x2="190" y2="210" stroke="rgba(30,144,255,0.4)" strokeWidth="1.5" />
-                  <line x1="190" y1="210" x2="120" y2="200" stroke="rgba(30,144,255,0.4)" strokeWidth="1.5" />
 
                   {matrixNodes.map((node) => (
                     <g key={node.id} className={`node-${node.anim}`} onClick={() => setSelectedNode(node)}>
@@ -386,13 +407,30 @@ export default function App() {
         </div>
       )}
 
-      {/* 3. DAMGA ATLASI MODÜLÜ */}
+      {/* 4. COĞRAFİ ATLAS HARİTASI MODÜLÜ */}
       {currentView === "atlas" && (
+        <div style={containerStyle}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px", flexWrap: "wrap", gap: "10px" }}>
+            <div>
+              <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>🗺️ ANADOLU & KÜRESEL COĞRAFİ KATMAN HARİTASI</span>
+              <h2 style={{ color: "#ffd700", margin: "2px 0 0 0", fontSize: "1.15rem" }}>{t.atlas}</h2>
+            </div>
+            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+              {renderLanguageSelector()}
+              <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>{t.backHome}</button>
+            </div>
+          </div>
+          <AtlasMap locations={atlasLocations} />
+        </div>
+      )}
+
+      {/* 5. GÖÇ & AKIŞ HARİTASI MODÜLÜ */}
+      {currentView === "flow" && (
         <div style={containerStyle}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "12px", flexWrap: "wrap", gap: "10px" }}>
             <div>
-              <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>🔷 9.870 DAMGA & 18.420 PETROGLİF VERİ TABANI</span>
-              <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem" }}>{t.atlas}</h2>
+              <span style={{ color: "#00ff7f", fontSize: "0.75rem", fontWeight: "bold" }}>🟢 ANADOLU MERKEZLİ DİL VE KÜLTÜR AKIŞ SİMÜLASYONU</span>
+              <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem" }}>{t.flow}</h2>
             </div>
             <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
               {renderLanguageSelector()}
@@ -400,54 +438,18 @@ export default function App() {
             </div>
           </div>
 
-          <div className="responsive-matrix-grid">
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "15px" }}>
-              {atlasItems.map((item, idx) => (
-                <div key={idx} onClick={() => setSelectedAtlasItem(item)} style={{ background: selectedAtlasItem?.code === item.code ? "rgba(255,215,0,0.12)" : "rgba(255,215,0,0.03)", border: selectedAtlasItem?.code === item.code ? "1.5px solid #ffd700" : "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "16px", cursor: "pointer" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                    <span style={{ color: "#888", fontSize: "0.68rem", fontWeight: "bold" }}>{item.code}</span>
-                    <span style={{ color: "#ffd700", fontSize: "0.7rem", background: "rgba(255,215,0,0.15)", padding: "2px 6px", borderRadius: "4px", fontWeight: "bold" }}>{item.coherence}</span>
-                  </div>
-                  <h4 style={{ color: "#ffd700", margin: "4px 0 6px 0", fontSize: "0.95rem" }}>{item.symbol} {item.name}</h4>
-                  <div style={{ color: "#ccc", fontSize: "0.75rem", marginBottom: "8px" }}>📍 {item.region} | ⏳ {item.date}</div>
-                  <p style={{ color: "#aaa", fontSize: "0.74rem", margin: 0, lineHeight: "1.4" }}>{item.summary}</p>
-                </div>
-              ))}
-            </div>
-
-            <div style={{ background: "rgba(255,215,0,0.04)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "18px", maxHeight: "650px", overflowY: "auto" }}>
-              {selectedAtlasItem ? (
-                <div>
-                  <div style={{ textAlign: "center", padding: "15px 0", borderBottom: "1px dashed rgba(255,215,0,0.3)", marginBottom: "14px" }}>
-                    <span style={{ fontSize: "3rem", display: "block", marginBottom: "4px" }}>{selectedAtlasItem.symbol}</span>
-                    <span style={{ color: "#888", fontSize: "0.7rem", fontWeight: "bold" }}>{selectedAtlasItem.code}</span>
-                    <h3 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.15rem" }}>{selectedAtlasItem.name}</h3>
-                  </div>
-                  <div style={{ fontSize: "0.8rem", color: "#ccc", lineHeight: "1.65" }}>
-                    <div style={{ marginBottom: "6px" }}><strong>Coğrafi Katman:</strong> {selectedAtlasItem.region}</div>
-                    <div style={{ marginBottom: "6px" }}><strong>Tarihlendirme:</strong> {selectedAtlasItem.date}</div>
-                    <div style={{ marginBottom: "6px" }}><strong>Geometrik Aks:</strong> <span style={{ color: "#1e90ff" }}>{selectedAtlasItem.vectorAxis}</span></div>
-                    <div style={{ marginBottom: "12px" }}><strong>Coherence:</strong> <span style={{ color: "#ffd700", fontWeight: "bold" }}>{selectedAtlasItem.coherence}</span></div>
-                    <div style={{ background: "rgba(0,0,0,0.7)", padding: "14px", borderRadius: "8px", borderLeft: "3.5px solid #ffd700", marginBottom: "14px" }}>
-                      <strong style={{ color: "#ffd700", display: "block", marginBottom: "6px" }}>📜 YKOS AKADEMİK DEŞİFRE RAPORU:</strong>
-                      <p style={{ color: "#ddd", margin: 0, fontSize: "0.78rem", lineHeight: "1.7" }}>{selectedAtlasItem.analysis}</p>
-                    </div>
-                    <button onClick={() => setSelectedAtlasItem(null)} style={{ ...backBtnStyle, width: "100%", fontSize: "0.78rem" }}>{getPanelLabel("clearSelection")}</button>
-                  </div>
-                </div>
-              ) : (
-                <div style={{ color: "#aaa", fontSize: "0.78rem", textAlign: "center", padding: "40px 10px" }}>
-                  <span style={{ fontSize: "2.5rem", display: "block", marginBottom: "10px" }}>🗺️</span>
-                  <strong style={{ color: "#ffd700", display: "block", marginBottom: "6px" }}>DAMGA REHBERİ</strong>
-                  Damga veya petroglif seçerek akademik deşifre raporunu görüntüleyebilirsiniz.
-                </div>
-              )}
-            </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "15px" }}>
+            {migrationRoutes.map((route) => (
+              <div key={route.id} style={{ background: "rgba(255,215,0,0.03)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "16px" }}>
+                <h4 style={{ color: "#ffd700", margin: "0 0 8px 0" }}>{route.title}</h4>
+                <p style={{ color: "#ddd", fontSize: "0.78rem" }}>{route.description}</p>
+              </div>
+            ))}
           </div>
         </div>
       )}
 
-      {/* 4. YENİ EKLENEN: OKUMA & ANALİZ MOTORU EKRANI */}
+      {/* 6. OKUMA & ANALİZ MOTORU EKRANI */}
       {currentView === "engine" && (
         <div style={containerStyle}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "12px", flexWrap: "wrap", gap: "10px" }}>
@@ -462,46 +464,19 @@ export default function App() {
           </div>
 
           <div style={{ background: "rgba(255,215,0,0.03)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "20px" }}>
-            <h3 style={{ color: "#fff", fontSize: "0.95rem", margin: "0 0 15px 0" }}>Kök Hece Zinciri Test Alanı</h3>
-            <p style={{ color: "#aaa", fontSize: "0.8rem", marginBottom: "15px" }}>Test etmek istediğiniz damga kodlarını, kök heceleri veya kelime dizisini (Örn: YOL - ER - ÇEV) girin. Sistem YKOS matrisiyle tutarlılığı ölçecektir.</p>
-            
             <input 
               type="text" 
               value={analysisInput}
               onChange={(e) => setAnalysisInput(e.target.value)}
-              style={{ width: "100%", padding: "12px", background: "#000", border: "1px solid #ffd700", color: "#fff", borderRadius: "6px", marginBottom: "15px", fontSize: "0.9rem", boxSizing: "border-box" }}
+              style={{ width: "100%", padding: "12px", background: "#000", border: "1px solid #ffd700", color: "#fff", borderRadius: "6px", marginBottom: "15px" }}
             />
-
-            <button 
-              onClick={handleRunAnalysis}
-              style={{ background: "linear-gradient(135deg, #ffd700, #b8860b)", color: "#000", padding: "12px 20px", border: "none", borderRadius: "6px", fontWeight: "bold", cursor: "pointer", fontSize: "0.85rem" }}
-            >
-              YKOS MATRİS ANALİZİNİ BAŞLAT ⚡
-            </button>
-
-            {analysisResult && (
-              <div style={{ marginTop: "25px", padding: "20px", background: "#050811", border: "1px dashed #ffd700", borderRadius: "8px" }}>
-                <h4 style={{ color: "#00ff7f", margin: "0 0 10px 0", fontSize: "1rem" }}>{analysisResult.status} - Analiz Tamamlandı</h4>
-                <div style={{ display: "flex", gap: "15px", marginBottom: "15px" }}>
-                  <div style={{ background: "rgba(255,215,0,0.1)", padding: "10px", borderRadius: "6px", border: "1px solid rgba(255,215,0,0.3)" }}>
-                    <span style={{ color: "#aaa", fontSize: "0.7rem", display: "block" }}>Coherence Skoru</span>
-                    <strong style={{ color: "#ffd700", fontSize: "1.1rem" }}>{analysisResult.coherenceScore}</strong>
-                  </div>
-                  <div style={{ background: "rgba(255,215,0,0.1)", padding: "10px", borderRadius: "6px", border: "1px solid rgba(255,215,0,0.3)" }}>
-                    <span style={{ color: "#aaa", fontSize: "0.7rem", display: "block" }}>Geometrik Vektör</span>
-                    <strong style={{ color: "#1e90ff", fontSize: "0.9rem" }}>{analysisResult.vectorPath}</strong>
-                  </div>
-                </div>
-                <p style={{ color: "#ddd", fontSize: "0.85rem", lineHeight: "1.6", margin: 0, padding: "10px", borderLeft: "3px solid #ffd700", background: "rgba(255,255,255,0.02)" }}>
-                  {analysisResult.synthesis}
-                </p>
-              </div>
-            )}
+            <button onClick={handleRunAnalysis} style={{ background: "#ffd700", color: "#000", padding: "10px 18px", border: "none", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}>ANALİZİ BAŞLAT ⚡</button>
+            {analysisResult && <div style={{ marginTop: "15px", color: "#00ff7f" }}>{analysisResult.synthesis}</div>}
           </div>
         </div>
       )}
 
-      {/* 5. AKADEMİK OKUMA EKRANI */}
+      {/* 7. AKADEMİK OKUMA EKRANI */}
       {currentView === "read" && (
         <div style={containerStyle}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px", flexWrap: "wrap", gap: "10px" }}>
@@ -533,3 +508,5 @@ export default function App() {
     </div>
   );
 }
+
+export default App;

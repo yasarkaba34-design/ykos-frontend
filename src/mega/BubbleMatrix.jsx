@@ -1,130 +1,63 @@
-import { useState, useEffect } from "react";
-import "./BubbleMatrix.css"; // 31‑7 görünüm CSS’i aktif
+import React, { useState } from "react";
 
-// Eksik yardımcı motorlar projeyi kilitlemesin diye isteğe bağlı import yapısı:
-// import Evaluator from "./ykos-term-evaluator";
-// import FeedbackLoop from "./YKOSFeedbackLoop";
-// import Sync from "./YKOSSync";
-// import FinalStabilizer from "./FinalStabilizer";
+export function BubbleMatrix({ bubbles = [], onSelectBubble }) {
+  const [activeBubble, setActiveBubble] = useState(null);
 
-export default function BubbleMatrixCore({ data, atlas }) {
-  const [bubbles, setBubbles] = useState([]);
-
-  // Atlas koordinatları (Anadolu, Orta Asya, Avrupa, Amerika, Mezopotamya)
-  const atlasCoords = {
-    "Anadolu": { x: 140, y: 160 },
-    "Orta Asya": { x: 260, y: 120 },
-    "Avrupa": { x: 180, y: 80 },
-    "Amerika": { x: 320, y: 200 },
-    "Mezopotamya": { x: 160, y: 200 }
+  const handleBubbleClick = (bubble) => {
+    setActiveBubble(bubble);
+    if (onSelectBubble) {
+      onSelectBubble(bubble);
+    }
   };
 
-  // 31‑7 Motor Entegrasyonu (Modüller gelince güvenli çalışacak şekilde korumaya alındı)
-  useEffect(() => {
-    if (bubbles.length === 0) return;
-
-    /*
-    if (typeof Evaluator !== "undefined") Evaluator.run(bubbles);
-    if (typeof FeedbackLoop !== "undefined") FeedbackLoop.apply(bubbles);
-    if (typeof Sync !== "undefined") Sync.update(bubbles);
-    if (typeof FinalStabilizer !== "undefined") FinalStabilizer.balance(bubbles);
-    */
-  }, [bubbles]);
-
-  // Veri yükleme (27‑7 çekirdeği)
-  useEffect(() => {
-    if (!data) return;
-
-    // Tek kayıt (ReadingScreen)
-    if (!Array.isArray(data)) {
-      const activeAtlas = atlas || data.atlas || "Anadolu";
-      const coord = atlasCoords[activeAtlas] || { x: 120, y: 120 };
-
-      const bubble = {
-        label: data.title || data.label || "YKOS Matris",
-        x: coord.x,
-        y: coord.y,
-        size: 80,
-        color: "#d4af37",
-        flux: 1.2,
-        atlas: activeAtlas,
-        matrix: data.matrix,
-        tags: data.tags
-      };
-
-      setBubbles([bubble]);
-      return;
-    }
-
-    // Çoklu kayıt (Home / Dashboard)
-    const mapped = data.map((item, i) => {
-      const activeAtlas = atlas || item.atlas || "Anadolu";
-      const coord = atlasCoords[activeAtlas] || {
-        x: 100 + (i % 4) * 80,
-        y: 100 + Math.floor(i / 4) * 60
-      };
-
-      return {
-        label: item.label || item.title || `Baloncuk ${i + 1}`,
-        x: coord.x,
-        y: coord.y,
-        size: 60 + i * 5,
-        color: item.color || "#d4af37",
-        flux: item.flux || 1.0,
-        atlas: activeAtlas,
-        matrix: item.matrix,
-        tags: item.tags
-      };
-    });
-
-    setBubbles(mapped);
-  }, [data, atlas]);
-
-  // Flux motoru (Sinüs/Kosinüs salınımı)
-  useEffect(() => {
-    if (bubbles.length === 0) return;
-
-    const interval = setInterval(() => {
-      setBubbles(prev =>
-        prev.map(b => ({
-          ...b,
-          x: b.x + Math.sin(Date.now() / 300) * b.flux * 0.8,
-          y: b.y + Math.cos(Date.now() / 400) * b.flux * 0.6,
-          size: b.size + Math.sin(Date.now() / 500) * 0.3
-        }))
-      );
-    }, 60);
-
-    return () => clearInterval(interval);
-  }, [bubbles.length]);
-
   return (
-    <div className="bubble-area">
-      {bubbles.map((b, i) => (
-        <div
-          key={i}
-          className="bubble"
-          style={{
-            left: `${b.x}px`,
-            top: `${b.y}px`,
-            width: `${b.size}px`,
-            height: `${b.size}px`,
-            backgroundColor: b.color
-          }}
-        >
-          <span className="bubble-label">{b.label}</span>
+    <div style={{ width: "100%", position: "relative", backgroundColor: "#02040a", padding: "15px", borderRadius: "10px", border: "1px solid rgba(255, 215, 0, 0.3)", boxSizing: "border-box" }}>
+      <h3 style={{ color: "#ffd700", margin: "0 0 10px 0", fontSize: "1rem" }}>
+        YKOS CANLI BALONCUK MATRİSİ
+      </h3>
+      
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", alignItems: "center", justifyContent: "center", minHeight: "300px" }}>
+        {bubbles && bubbles.length > 0 ? (
+          bubbles.map((b, i) => (
+            <div
+              key={b.id || i}
+              onClick={() => handleBubbleClick(b)}
+              style={{
+                width: b.size || "70px",
+                height: b.size || "70px",
+                borderRadius: "50%",
+                backgroundColor: "#050811",
+                border: `2px solid ${b.color || "#ffd700"}`,
+                boxShadow: `0 0 12px ${b.color || "rgba(255, 215, 0, 0.5)"}`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: b.color || "#ffd700",
+                fontWeight: "bold",
+                fontSize: "0.8rem",
+                cursor: "pointer",
+                transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                transform: activeBubble?.id === b.id ? "scale(1.15)" : "scale(1)"
+              }}
+            >
+              {b.label || b.id}
+            </div>
+          ))
+        ) : (
+          <div style={{ color: "#aaa", fontSize: "0.85rem" }}>
+            Yükleniyor veya gösterilecek baloncuk bulunamadı.
+          </div>
+        )}
+      </div>
+
+      {activeBubble && (
+        <div style={{ marginTop: "15px", padding: "10px", background: "rgba(255, 215, 0, 0.08)", border: "1px solid #ffd700", borderRadius: "6px", fontSize: "0.8rem", color: "#fff" }}>
+          <strong style={{ color: "#ffd700" }}>Seçili Kök: {activeBubble.label || activeBubble.id}</strong>
+          <div>{activeBubble.desc || "YKOS Katman Deşifre Detayı"}</div>
         </div>
-      ))}
+      )}
     </div>
   );
 }
-<div
-  key={index}
-  className={`bubble ${bubble.active ? "active" : ""}`}
-  data-flux={tooltip.flux}
-  style={{
-    transform: `translate(${bubble.x}px, ${bubble.y}px)`
-  }}
->
-  <span className="bubble-label">{bubble.label}</span>
-</div>
+
+export default BubbleMatrix;
