@@ -2,13 +2,6 @@ import React, { useState } from "react";
 import SearchBar from "../components/SearchBar";
 import { translations } from "../data/i18n";
 
-const fallbackArticles = [
-  { id: 1, title: "Çatalhöyük Kök Hece ve Damga Sembolizmi", summary: "Çatalhöyük duvar resimlerindeki YKOS 100 eşleşmeleri." },
-  { id: 2, title: "Göbeklitepe T-Sütunu YKOS Okuması", summary: "Şanlıurfa Göbeklitepe T-Sütunları üzerindeki semboller." },
-  { id: 3, title: "Etrüsk Lemnos Kitabesi & Ön Türkçe Eşleşmesi", summary: "Lemnos mezar taşındaki alfabetik dizilimin okuması." },
-  { id: 4, title: "YOL Kök Hecesi ve Akış Teorisi", summary: "'Rulo değil yol' mantığının dilbilimsel matrisi." }
-];
-
 export default function YKOSDashboard({ 
   archiveArticles,
   onVisualize, onNavigateRead, onGoHome, onNavigateLogin, 
@@ -20,7 +13,9 @@ export default function YKOSDashboard({
   const [searchQuery, setSearchQuery] = useState("");
 
   const t = translations[currentLang] || translations.TR;
-  const displayArticles = (archiveArticles && archiveArticles.length > 0) ? archiveArticles : fallbackArticles;
+  
+  // Seçilen dile göre makale listesini çek
+  const activeArticles = t.articles || archiveArticles;
 
   const languages = [
     { code: "TR", label: "Türkçe" },
@@ -67,7 +62,7 @@ export default function YKOSDashboard({
     textAlign: "center"
   };
 
-  const filteredArticles = displayArticles.filter(item => 
+  const filteredArticles = activeArticles.filter(item => 
     item.title?.toLowerCase().includes(searchQuery.toLowerCase()) || 
     item.summary?.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -167,7 +162,7 @@ export default function YKOSDashboard({
         </div>
       </div>
 
-      {/* SOL / SAĞ PANELİ */}
+      {/* SOL / SAĞ PANELİ (DİNAMİK ÇEVRİLEN MAKALE LİSTESİ) */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "15px" }}>
         
         {/* SOL PANEL */}
@@ -181,7 +176,7 @@ export default function YKOSDashboard({
           </div>
         </div>
 
-        {/* SAĞ PANEL */}
+        {/* SAĞ PANEL (TAM ÇEVRİLEN LİSTE) */}
         <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
           <h3 style={{ color: "#ffd700", fontSize: "0.95rem", marginTop: 0 }}>{t.solutionsTitle}</h3>
           <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "15px" }}>
