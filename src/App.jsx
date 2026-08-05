@@ -11,7 +11,6 @@ export default function App() {
   const [selectedAtlasItem, setSelectedAtlasItem] = useState(null);
   const [archiveArticles, setArchiveArticles] = useState(defaultArchiveArticles);
 
-  // DİL STATE'İ ANA APPA TAŞINDI (BÖYLECE SAYFA GEÇİŞLERİNDE SIFIRLANMAZ)
   const [currentLang, setCurrentLang] = useState("TR");
   const [langOpen, setLangOpen] = useState(false);
 
@@ -86,22 +85,9 @@ export default function App() {
       coherence: "%99.8",
       vectorAxis: "Konsantrik Çevresel Vektör",
       summary: "'ÇEV' ve 'BA' dairesel döngü ve mülkiyet matrisi.", 
-      analysis: "Çatalhöyük katmanlarında çıkarılan pişmiş toprak dairesel mühürler, yerleşik yaşamın mülkiyet kodlarını ve kozmik döngüyü ifade eder. YKOS 100 analizinde bu motifler 'ÇEV' ve 'BA' kök heceleriyle %99.8 simetri gösterir.",
+      analysis: "Çatalhöyük katmanlarında çıkarılan pişmiş toprak dairesel mühürler, yerleşik yaşamın mülkiyet kodlarını ve kozmik döngüyü ifade eder.",
       academicRef: "YKOS Külliyatı Cilt 1: Anadolu Refugium ve Erken Sembolizm",
       tags: ["Dairesel Mühür", "ÇEV Kökü", "Neolitik Katman", "Refugium"]
-    },
-    { 
-      code: "YKOS-DMG-02", 
-      name: "Göbeklitepe T-Sütunu H-C Piktogramı", 
-      region: "Şanlıurfa / Anadolu (Sıfır Noktası)", 
-      date: "M.Ö. 9600 (Epipaleolitik)", 
-      symbol: "🏛️", 
-      coherence: "%99.9",
-      vectorAxis: "Dikey / Yatay Varlık Aksı",
-      summary: "İkilik, göksel bağ ve yer-gök sembolizmi deşifresi.", 
-      analysis: "Göbeklitepe T-sütunları üzerindeki 'H' piktogramı; iki dikey çizginin orta yatay bağla birleştiği, insan ile gökyüzü arasındaki iletişim kanalını temsil eder.",
-      academicRef: "YKOS Külliyatı Cilt 1-2: Göbeklitepe ve Grafik Algoritma",
-      tags: ["T-Sütun", "H-C Piktogramı", "Sıfır Noktası", "Grafik Algoritma"]
     }
   ];
 
@@ -139,7 +125,6 @@ export default function App() {
     fontSize: "0.8rem"
   };
 
-  // İÇ SAYFA DİL DEĞİŞTİRME BUTONU BİLEŞENİ
   const renderLanguageSelector = () => (
     <div style={{ position: "relative", display: "inline-block" }}>
       <button 
@@ -164,6 +149,19 @@ export default function App() {
       )}
     </div>
   );
+
+  // ETİKET ÇEVİRİ YARDIMCISI
+  const getPanelLabel = (key) => {
+    const labels = {
+      selectedLayer: { TR: "SEÇİLİ KATMAN / HECE", EN: "SELECTED LAYER / SYLLABLE", ZH: "所选图层 / 音节", DE: "AUSGEWÄHLTE SCHICHT / SILBE", FR: "COUCHE SÉLECTIONNÉE / SYLLABE", RU: "VYBRANNYY SLOI / SLOG" },
+      clearSelection: { TR: "Seçimi Temizle", EN: "Clear Selection", ZH: "清除选择", DE: "Auswahl aufheben", FR: "Effacer la sélection", RU: "Ochistit' vybor" },
+      derivatives: { TR: "TÜRETİLEN KÖK SÖZCÜKLER / BİLEŞENLER:", EN: "DERIVED ROOT WORDS / COMPONENTS:", ZH: "派生根词 / 组件：", DE: "ABGELEITETE WURZELWÖRTER:", FR: "MOTS RACINES DÉRIVÉS:", RU: "PROIZVODNYE KORNEVYE SLOVA:" },
+      connections: { TR: "Algoritmik Bağlantılar:", EN: "Algorithmic Connections:", ZH: "算法连接：", DE: "Algorithmische Verbindungen:", FR: "Connexions algorithmiques:", RU: "Algoritmicheskiye svyazi:" },
+      coherence: { TR: "Coherence Skoru:", EN: "Coherence Score:", ZH: "一致性得分：", DE: "Kohärenz-Score:", FR: "Score de cohérence:", RU: "Koeffitsiyent kogerentnosti:" },
+      guideTitle: { TR: "📌 MATRİS VE GLOBAL ATLAS REHBERİ", EN: "📌 MATRIX & GLOBAL ATLAS GUIDE", ZH: "📌 矩阵与全球地图集指南", DE: "📌 MATRIX & GLOBAL ATLAS LEITFADEN" }
+    };
+    return labels[key]?.[currentLang] || labels[key]?.TR;
+  };
 
   return (
     <div className="app-main-wrapper" style={{ backgroundColor: "#050811", minHeight: "100vh", color: "#ffffff" }}>
@@ -212,7 +210,7 @@ export default function App() {
         />
       )}
 
-      {/* 2. CANLI KÖK HECE MATRİS EKRANI (İÇ SAYFADA DİL BUTONUYLA BİRLİKTE) */}
+      {/* 2. CANLI KÖK HECE MATRİS EKRANI (SAĞ PANEL ÇEVİRİLİ) */}
       {currentView === "visualize" && (
         <div style={containerStyle}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px" }}>
@@ -281,9 +279,10 @@ export default function App() {
               </svg>
             </div>
 
+            {/* SAĞ DETAY PANELİ (DİNANİK ÇEVRİLEN METİNLER) */}
             <div style={{ background: "rgba(255,215,0,0.04)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "16px" }}>
-              <h3 style={{ color: "#ffd700", fontSize: "0.9rem", margin: "0 0 10px 0", borderBottom: "1px solid rgba(255,215,0,0.2)", paddingBottom: "6px" }}>
-                {selectedNode ? `SEÇİLİ KATMAN / HECE: [${selectedNode.label}]` : "📌 MATRİS VE GLOBAL ATLAS REHBERİ"}
+              <h3 style={{ color: "#ffd700", fontSize: "0.88rem", margin: "0 0 10px 0", borderBottom: "1px solid rgba(255,215,0,0.2)", paddingBottom: "6px" }}>
+                {selectedNode ? `${getPanelLabel("selectedLayer")}: [${selectedNode.label}]` : getPanelLabel("guideTitle")}
               </h3>
 
               {selectedNode ? (
@@ -291,12 +290,12 @@ export default function App() {
                   <p style={{ color: "#fff", fontSize: "0.85rem", fontWeight: "bold", marginBottom: "8px" }}>{selectedNode.desc}</p>
                   
                   <div style={{ margin: "10px 0", padding: "10px", background: "rgba(0,0,0,0.6)", border: "1px solid rgba(255,215,0,0.2)", borderRadius: "6px", fontSize: "0.75rem", color: "#ccc" }}>
-                    <div><strong>Algoritmik Bağlantılar:</strong> {selectedNode.connection}</div>
-                    <div style={{ marginTop: "4px" }}><strong>Coherence Skoru:</strong> <span style={{ color: "#ffd700", fontWeight: "bold" }}>{selectedNode.score}</span></div>
+                    <div><strong>{getPanelLabel("connections")}</strong> {selectedNode.connection}</div>
+                    <div style={{ marginTop: "4px" }}><strong>{getPanelLabel("coherence")}</strong> <span style={{ color: "#ffd700", fontWeight: "bold" }}>{selectedNode.score}</span></div>
                   </div>
 
                   <div style={{ margin: "10px 0" }}>
-                    <span style={{ color: "#ffd700", fontSize: "0.72rem", fontWeight: "bold", display: "block", marginBottom: "4px" }}>🌱 TÜRETİLEN KÖK SÖZCÜKLER / BİLEŞENLER:</span>
+                    <span style={{ color: "#ffd700", fontSize: "0.72rem", fontWeight: "bold", display: "block", marginBottom: "4px" }}>🌱 {getPanelLabel("derivatives")}</span>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
                       {selectedNode.derivatives.map((der, i) => (
                         <span key={i} style={{ background: "rgba(255,215,0,0.1)", border: "1px solid rgba(255,215,0,0.3)", color: "#fff", padding: "2px 6px", borderRadius: "4px", fontSize: "0.7rem" }}>{der}</span>
@@ -308,7 +307,7 @@ export default function App() {
                     {selectedNode.details}
                   </p>
 
-                  <button onClick={() => setSelectedNode(null)} style={{ ...backBtnStyle, width: "100%", fontSize: "0.75rem", marginTop: "10px" }}>Seçimi Temizle</button>
+                  <button onClick={() => setSelectedNode(null)} style={{ ...backBtnStyle, width: "100%", fontSize: "0.75rem", marginTop: "10px" }}>{getPanelLabel("clearSelection")}</button>
                 </div>
               ) : (
                 <div style={{ color: "#ccc", fontSize: "0.78rem", lineHeight: "1.5" }}>
@@ -324,7 +323,7 @@ export default function App() {
         </div>
       )}
 
-      {/* 3. DAMGA ATLASI MODÜLÜ (DİL SEÇİCİ İLE) */}
+      {/* 3. DAMGA ATLASI MODÜLÜ */}
       {currentView === "atlas" && (
         <div style={containerStyle}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "12px" }}>
@@ -384,7 +383,7 @@ export default function App() {
                       <p style={{ color: "#ddd", margin: 0, fontSize: "0.78rem", lineHeight: "1.7" }}>{selectedAtlasItem.analysis}</p>
                     </div>
 
-                    <button onClick={() => setSelectedAtlasItem(null)} style={{ ...backBtnStyle, width: "100%", fontSize: "0.78rem" }}>Seçimi Temizle</button>
+                    <button onClick={() => setSelectedAtlasItem(null)} style={{ ...backBtnStyle, width: "100%", fontSize: "0.78rem" }}>{getPanelLabel("clearSelection")}</button>
                   </div>
                 </div>
               ) : (
