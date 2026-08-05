@@ -59,10 +59,17 @@ export default function YKOSDashboard({
     textAlign: "center"
   };
 
-  const filteredArticles = activeArticles.filter(item => 
-    item.title?.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    item.summary?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // ÇOK YÖNLÜ DERİN ARAMA FİLTRESİ
+  const filteredArticles = activeArticles.filter(item => {
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return true;
+    return (
+      item.title?.toLowerCase().includes(q) || 
+      item.summary?.toLowerCase().includes(q) ||
+      item.content?.toLowerCase().includes(q) ||
+      item.volume?.toLowerCase().includes(q)
+    );
+  });
 
   return (
     <div style={{ width: "100%", maxWidth: "1280px", margin: "0 auto", padding: "10px", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
@@ -102,7 +109,7 @@ export default function YKOSDashboard({
           </div>
         </div>
 
-        {/* LOGO VE KARTAL AMBLEMİ */}
+        {/* LOGO VE ANASAYFA YÖNLENDİRME LİNKİ */}
         <div onClick={onGoHome} style={{ textAlign: "center", cursor: "pointer", marginTop: "-18px", userSelect: "none" }}>
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "4px" }}>
             <img 
@@ -141,7 +148,7 @@ export default function YKOSDashboard({
         )}
       </div>
 
-      {/* ARAMA BARI */}
+      {/* DİNAMİK ARAMA BARI */}
       <div style={{ marginBottom: "15px" }}>
         <SearchBar onSearch={(q) => setSearchQuery(q)} />
       </div>
@@ -173,20 +180,29 @@ export default function YKOSDashboard({
           </div>
         </div>
 
-        {/* SAĞ PANEL */}
+        {/* SAĞ PANEL (SÜZÜLEN CANLI SONUÇLAR) */}
         <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
-          <h3 style={{ color: "#ffd700", fontSize: "0.95rem", marginTop: 0 }}>{t.solutionsTitle}</h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "15px" }}>
-            {filteredArticles.map((item) => (
-              <div 
-                key={item.id}
-                onClick={() => onNavigateRead(item.id)}
-                style={{ background: "rgba(255, 215, 0, 0.05)", border: "1px solid rgba(255, 215, 0, 0.4)", borderRadius: "6px", padding: "10px", fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold", cursor: "pointer" }}
-              >
-                📜 {item.title} →
-                <div style={{ fontSize: "0.72rem", color: "#ccc", fontWeight: "normal", marginTop: "4px" }}>{item.summary}</div>
+          <h3 style={{ color: "#ffd700", fontSize: "0.95rem", marginTop: 0 }}>
+            {t.solutionsTitle} {searchQuery && <span style={{ fontSize: "0.75rem", color: "#fff", fontWeight: "normal" }}>({filteredArticles.length} Sonuç Bulundu)</span>}
+          </h3>
+          
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "15px", maxHeight: "400px", overflowY: "auto" }}>
+            {filteredArticles.length > 0 ? (
+              filteredArticles.map((item) => (
+                <div 
+                  key={item.id}
+                  onClick={() => onNavigateRead(item.id)}
+                  style={{ background: "rgba(255, 215, 0, 0.05)", border: "1px solid rgba(255, 215, 0, 0.4)", borderRadius: "6px", padding: "10px", fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold", cursor: "pointer" }}
+                >
+                  📜 {item.title} →
+                  <div style={{ fontSize: "0.72rem", color: "#ccc", fontWeight: "normal", marginTop: "4px" }}>{item.summary}</div>
+                </div>
+              ))
+            ) : (
+              <div style={{ color: "#aaa", fontSize: "0.8rem", textAlign: "center", padding: "20px" }}>
+                Aramanıza uygun kayıt bulunamadı.
               </div>
-            ))}
+            )}
           </div>
 
           <button 
