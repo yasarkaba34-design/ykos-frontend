@@ -10,11 +10,9 @@ export default function App() {
   const [selectedAtlasItem, setSelectedAtlasItem] = useState(null);
   const [archiveArticles, setArchiveArticles] = useState(defaultArchiveArticles);
 
-  // Analiz Motoru İçin Input State'i
   const [analysisInput, setAnalysisInput] = useState("YOL - ER - ÇEV - BA - KÖK");
   const [analysisResult, setAnalysisInputResult] = useState(null);
 
-  // Uygulama Açılışında JSON Arşiv Verilerini Yükle
   useEffect(() => {
     async function fetchData() {
       const data = await loadArchiveData();
@@ -25,7 +23,6 @@ export default function App() {
     fetchData();
   }, []);
 
-  // YKOS 100 - 200 - 300 GLOBAL ATLAS CANLI MATRİS DÜĞÜMLERİ
   const matrixNodes = [
     { id: "YKOS 100", x: 480, y: 360, r: 38, color: "#1e90ff", label: "YKOS 100", anim: "float1", desc: "Temel Kök Hece Matrisi Katmanı", connection: "YOL, BİR, ANADOLU ATLASI", score: "%99.9", derivatives: ["Kök-en", "Yol-cu", "Çev-re"], details: "Anadolu merkezli 100 birincil hece vektörünün algoritmik veritabanı." },
     { id: "YKOS 200", x: 410, y: 430, r: 35, color: "#00ff7f", label: "YKOS 200", anim: "float2", desc: "Bölgesel ve Derin Arkeolojik Katman", connection: "Göbeklitepe, ROL, Sümer", score: "%99.6", derivatives: ["Rol-daş", "Er-en", "Süm-er"], details: "Doğu Akdeniz, Mezopotamya ve Ön Asya petroglif katmanları." },
@@ -74,7 +71,6 @@ export default function App() {
     setCurrentView("read");
   };
 
-  // Seçili Makale / Fallback Güvencesi
   const selectedArticle = archiveArticles.find(a => a.id === selectedArticleId) || archiveArticles[0] || defaultArchiveArticles[0];
 
   const containerStyle = {
@@ -99,7 +95,6 @@ export default function App() {
     fontSize: "0.8rem"
   };
 
-  // Analiz Çalıştırma Fonksiyonu
   const runAlgorithmicAnalysis = () => {
     setAnalysisInputResult({
       input: analysisInput,
@@ -113,32 +108,32 @@ export default function App() {
   return (
     <div className="app-main-wrapper" style={{ backgroundColor: "#050811", minHeight: "100vh", color: "#ffffff" }}>
       
-      {/* CANLI HAREKET ANİMASYON CSS STİLLERİ */}
+      {/* SÜREKLİ VE GÜVENLİ ANİMASYON STİLLERİ */}
       <style>{`
-        @keyframes float1 {
-          0% { transform: translateY(0px) translateX(0px); }
-          50% { transform: translateY(-7px) translateX(3px); }
-          100% { transform: translateY(0px) translateX(0px); }
+        @keyframes safeFloat1 {
+          0% { transform: translate(0px, 0px); }
+          50% { transform: translate(3px, -5px); }
+          100% { transform: translate(0px, 0px); }
         }
-        @keyframes float2 {
-          0% { transform: translateY(0px) translateX(0px); }
-          50% { transform: translateY(6px) translateX(-5px); }
-          100% { transform: translateY(0px) translateX(0px); }
+        @keyframes safeFloat2 {
+          0% { transform: translate(0px, 0px); }
+          50% { transform: translate(-4px, 4px); }
+          100% { transform: translate(0px, 0px); }
         }
-        @keyframes float3 {
-          0% { transform: translateY(0px) translateX(0px); }
-          50% { transform: translateY(-5px) translateX(-4px); }
-          100% { transform: translateY(0px) translateX(0px); }
+        @keyframes safeFloat3 {
+          0% { transform: translate(0px, 0px); }
+          50% { transform: translate(-3px, -4px); }
+          100% { transform: translate(0px, 0px); }
         }
         @keyframes linePulse {
-          0% { stroke-dashoffset: 0; opacity: 0.4; }
+          0% { stroke-dashoffset: 0; opacity: 0.5; }
           50% { stroke-dashoffset: 20; opacity: 0.9; }
-          100% { stroke-dashoffset: 40; opacity: 0.4; }
+          100% { stroke-dashoffset: 40; opacity: 0.5; }
         }
-        .node-float1 { animation: float1 4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; cursor: pointer; }
-        .node-float2 { animation: float2 5.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; cursor: pointer; }
-        .node-float3 { animation: float3 4.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; cursor: pointer; }
-        .flowing-line { stroke-dasharray: 6; animation: linePulse 3s linear infinite; }
+        .node-float1 { animation: safeFloat1 4.5s ease-in-out infinite; will-change: transform; cursor: pointer; }
+        .node-float2 { animation: safeFloat2 5.5s ease-in-out infinite; will-change: transform; cursor: pointer; }
+        .node-float3 { animation: safeFloat3 5.0s ease-in-out infinite; will-change: transform; cursor: pointer; }
+        .flowing-line { stroke-dasharray: 6; animation: linePulse 3.5s linear infinite; }
       `}</style>
 
       {/* 1. ANA DASHBOARD EKRANI */}
@@ -156,12 +151,12 @@ export default function App() {
         />
       )}
 
-      {/* 2. CANLI HAREKETLİ GLOBAL ATLAS VE MATRİS KATMANI */}
+      {/* 2. CANLI VE GÜVENLİ YKOS MATRİS EKRANI */}
       {currentView === "visualize" && (
         <div style={containerStyle}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px" }}>
             <div>
-              <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>🌐 GLOBAL ATLAS & ARKEOLOJİK KATMANLAR (DİNAMİK)</span>
+              <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>🌐 GLOBAL ATLAS & ARKEOLOJİK KATMANLAR (STABİL DİNAMİK)</span>
               <h2 style={{ color: "#ffd700", margin: "2px 0 0 0", fontSize: "1.25rem" }}>YKOS MATRİSLERİ (100 - 200 - 300 CANLI AĞ)</h2>
             </div>
             <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>← ANA PANEL'E DÖN</button>
@@ -169,13 +164,14 @@ export default function App() {
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "15px", alignItems: "start" }}>
             
+            {/* KOZMİK AĞ SVG TUVALİ */}
             <div style={{ background: "#02040a", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "10px", overflow: "hidden", position: "relative" }}>
               <div style={{ position: "absolute", top: "15px", left: "15px", background: "rgba(5,8,17,0.85)", border: "1px solid rgba(255,215,0,0.4)", padding: "8px 12px", borderRadius: "6px", fontSize: "0.72rem", zIndex: 10 }}>
                 <strong style={{ color: "#ffd700", display: "block" }}>ÖNCE VERİ, SONRA ANALİZ, SONRA YORUM</strong>
                 <span style={{ color: "#aaa" }}>40 Kök Sistem, Karşılaştırmalı Arkeolojik Katmanlar ve Canlı Kültür Atlası</span>
               </div>
 
-              <svg width="100%" height="560" viewBox="0 0 700 560">
+              <svg width="100%" height="560" viewBox="0 0 700 560" style={{ overflow: "visible" }}>
                 <line x1="480" y1="360" x2="410" y2="430" stroke="#1e90ff" strokeWidth="2.5" className="flowing-line" />
                 <line x1="410" y1="430" x2="330" y2="400" stroke="#00ff7f" strokeWidth="2.5" className="flowing-line" />
                 <line x1="480" y1="360" x2="440" y2="340" stroke="#ffd700" strokeWidth="2" className="flowing-line" />
@@ -288,7 +284,7 @@ export default function App() {
         </div>
       )}
 
-      {/* 4. OKUMA & ANALİZ MOTORU (DOLU) */}
+      {/* 4. OKUMA & ANALİZ MOTORU */}
       {currentView === "engine" && (
         <div style={containerStyle}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "12px" }}>
