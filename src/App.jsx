@@ -105,24 +105,25 @@ export default function App() {
 
   const containerStyle = {
     maxWidth: "1220px",
-    margin: "20px auto",
-    padding: "20px",
+    margin: "10px auto",
+    padding: "15px",
     backgroundColor: "#050811",
     border: "1px solid #ffd700",
     borderRadius: "12px",
     boxShadow: "0 8px 32px rgba(0,0,0,0.8)",
-    color: "#fff"
+    color: "#fff",
+    boxSizing: "border-box"
   };
 
   const backBtnStyle = {
-    padding: "8px 18px",
+    padding: "8px 14px",
     background: "transparent",
     border: "1px solid #ffd700",
     color: "#ffd700",
     fontWeight: "bold",
     borderRadius: "6px",
     cursor: "pointer",
-    fontSize: "0.8rem"
+    fontSize: "0.78rem"
   };
 
   const renderLanguageSelector = () => (
@@ -150,7 +151,6 @@ export default function App() {
     </div>
   );
 
-  // ETİKET VE PARAGRAF ÇEVİRİ DESTEĞİ
   const getPanelLabel = (key) => {
     const labels = {
       selectedLayer: { TR: "SEÇİLİ KATMAN / HECE", EN: "SELECTED LAYER / SYLLABLE", ZH: "所选图层 / 音节", DE: "AUSGEWÄHLTE SCHICHT / SILBE", FR: "COUCHE SÉLECTIONNÉE / SYLLABE", RU: "VYBRANNYY SLOI / SLOG" },
@@ -194,6 +194,27 @@ export default function App() {
         .node-float2 { animation: safeFloat2 5.5s ease-in-out infinite; will-change: transform; cursor: pointer; }
         .node-float3 { animation: safeFloat3 5.0s ease-in-out infinite; will-change: transform; cursor: pointer; }
         .flowing-line { stroke-dasharray: 6; animation: linePulse 3.5s linear infinite; }
+
+        /* MOBİL VE DUYARLI EKRAN STİLLERİ */
+        .responsive-matrix-grid {
+          display: grid;
+          grid-template-columns: 1fr 340px;
+          gap: 15px;
+          align-items: start;
+        }
+
+        @media (max-width: 900px) {
+          .responsive-matrix-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .matrix-canvas-wrapper {
+            order: 1 !important;
+            min-height: 420px !important;
+          }
+          .matrix-guide-panel {
+            order: 2 !important;
+          }
+        }
       `}</style>
 
       {/* 1. ANA DASHBOARD EKRANI */}
@@ -213,30 +234,31 @@ export default function App() {
         />
       )}
 
-      {/* 2. CANLI KÖK HECE MATRİS EKRANI (%100 ÇEVRİLİ BİLEŞENLER) */}
+      {/* 2. CANLI KÖK HECE MATRİS EKRANI (MOBİL UYUMLU LAYOUT) */}
       {currentView === "visualize" && (
         <div style={containerStyle}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px", flexWrap: "wrap", gap: "10px" }}>
             <div>
               <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>🌐 {t.matrix}</span>
-              <h2 style={{ color: "#ffd700", margin: "2px 0 0 0", fontSize: "1.25rem" }}>YKOS MATRİSLERİ (100 - 200 - 300 CANLI AĞ)</h2>
+              <h2 style={{ color: "#ffd700", margin: "2px 0 0 0", fontSize: "1.15rem" }}>YKOS MATRİSLERİ (100 - 200 - 300 CANLI AĞ)</h2>
             </div>
             
-            <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
               {renderLanguageSelector()}
               <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>{t.backHome}</button>
             </div>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "15px", alignItems: "start" }}>
+          <div className="responsive-matrix-grid">
             
-            <div style={{ background: "#02040a", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "10px", overflow: "hidden", position: "relative" }}>
-              <div style={{ position: "absolute", top: "15px", left: "15px", background: "rgba(5,8,17,0.85)", border: "1px solid rgba(255,215,0,0.4)", padding: "8px 12px", borderRadius: "6px", fontSize: "0.72rem", zIndex: 10 }}>
+            {/* KOZMİK SVG TUVALİ (MOBİLDE İLK SIRADA YER ALIR) */}
+            <div className="matrix-canvas-wrapper" style={{ background: "#02040a", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "10px", overflow: "hidden", position: "relative", width: "100%", boxSizing: "border-box" }}>
+              <div style={{ position: "absolute", top: "10px", left: "10px", background: "rgba(5,8,17,0.88)", border: "1px solid rgba(255,215,0,0.4)", padding: "6px 10px", borderRadius: "6px", fontSize: "0.68rem", zIndex: 10, maxWidth: "80%" }}>
                 <strong style={{ color: "#ffd700", display: "block" }}>{getPanelLabel("motiveTitle")}</strong>
                 <span style={{ color: "#aaa" }}>{getPanelLabel("motiveSub")}</span>
               </div>
 
-              <svg width="100%" height="560" viewBox="0 0 700 560" style={{ overflow: "visible" }}>
+              <svg width="100%" height="100%" viewBox="0 0 700 560" style={{ overflow: "visible", minHeight: "420px" }}>
                 <line x1="420" y1="310" x2="380" y2="410" stroke="#1e90ff" strokeWidth="2.5" className="flowing-line" />
                 <line x1="380" y1="410" x2="260" y2="370" stroke="#00ff7f" strokeWidth="2.5" className="flowing-line" />
                 <line x1="420" y1="310" x2="420" y2="230" stroke="#ffd700" strokeWidth="2" className="flowing-line" />
@@ -282,7 +304,8 @@ export default function App() {
               </svg>
             </div>
 
-            <div style={{ background: "rgba(255,215,0,0.04)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "16px" }}>
+            {/* REHBER & DETAY PANELİ (MOBİLDE İKİNCİ SIRAYA GEÇER) */}
+            <div className="matrix-guide-panel" style={{ background: "rgba(255,215,0,0.04)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "16px" }}>
               <h3 style={{ color: "#ffd700", fontSize: "0.88rem", margin: "0 0 10px 0", borderBottom: "1px solid rgba(255,215,0,0.2)", paddingBottom: "6px" }}>
                 {selectedNode ? `${getPanelLabel("selectedLayer")}: [${selectedNode.label}]` : getPanelLabel("guideTitle")}
               </h3>
@@ -325,20 +348,20 @@ export default function App() {
       {/* 3. DAMGA ATLASI MODÜLÜ */}
       {currentView === "atlas" && (
         <div style={containerStyle}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "12px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "12px", flexWrap: "wrap", gap: "10px" }}>
             <div>
               <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>🔷 9.870 DAMGA & 18.420 PETROGLİF VERİ TABANI</span>
               <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem" }}>{t.atlas}</h2>
             </div>
             
-            <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
               {renderLanguageSelector()}
               <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>{t.backHome}</button>
             </div>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 400px", gap: "20px", alignItems: "start" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "15px" }}>
+          <div className="responsive-matrix-grid">
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "15px" }}>
               {atlasItems.map((item, idx) => (
                 <div 
                   key={idx} 
@@ -400,12 +423,12 @@ export default function App() {
       {/* 4. AKADEMİK OKUMA EKRANI */}
       {currentView === "read" && (
         <div style={containerStyle}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px", flexWrap: "wrap", gap: "10px" }}>
             <div>
               <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>📜 AKADEMİK ÇÖZÜMLEME KATMANI</span>
               <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem" }}>{selectedArticle.title}</h2>
             </div>
-            <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
               {renderLanguageSelector()}
               <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>{t.backHome}</button>
             </div>
