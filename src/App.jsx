@@ -455,3 +455,70 @@ export default function App() {
     </div>
   );
 }
+  const atlasItems = [
+    { 
+      code: "YKOS-DMG-01", 
+      name: "Çatalhöyük Dairesel Mühür Damgası", 
+      region: "Konya / Anadolu Refugium", 
+      date: "M.Ö. 7400 (Neolitik Dönem)", 
+      symbol: "⭕", 
+      coherence: "%99.8",
+      vectorAxis: "Konsantrik Çevresel Vektör",
+      summary: "'ÇEV' ve 'BA' dairesel döngü ve mülkiyet matrisi.", 
+      analysis: "Çatalhöyük katmanlarında çıkarılan pişmiş toprak dairesel mühürler, yerleşik yaşamın mülkiyet kodlarını ve kozmik döngüyü ifade eder.",
+      academicRef: "YKOS Külliyatı Cilt 1: Anadolu Refugium ve Erken Sembolizm",
+      tags: ["Dairesel Mühür", "ÇEV Kökü", "Neolitik Katman", "Refugium"]
+    },
+    { 
+      code: "YKOS-DMG-02", 
+      name: "Göbeklitepe H-Piktogramı ve T-Sütun Bağ Mührü", 
+      region: "Şanlıurfa / Göbeklitepe B Yapısı", 
+      date: "M.Ö. 9600 (Epipaleolitik)", 
+      symbol: "🈴", 
+      coherence: "%99.7",
+      vectorAxis: "Dikey Varlık ve Yatay Bağ Aksı",
+      summary: "İnsan-gök iletişimi, dikey aks ve 'BA' kök bağlama simetrisi.", 
+      analysis: "Göbeklitepe T-sütunlarındaki 'H' sembolü dikey varlık aksı ile yatay bağın birlikteliğini, 'C' simgesi ise aydönümü ve döngüsel hafızayı kodlar.",
+      academicRef: "YKOS Külliyatı Cilt 2: Göbeklitepe ve Grafik Algoritma",
+      tags: ["Göbeklitepe", "H-Piktogramı", "T-Sütun", "Kök Bağ"]
+    },
+    { 
+      code: "YKOS-DMG-03", 
+      name: "Lemnos Mezar Steli Etrüsk / Ön-Türkçe Damgası", 
+      region: "Lemnos Adası / Akdeniz Aksı", 
+      date: "M.Ö. 600 (Arkaik Dönem)", 
+      symbol: "🔤", 
+      coherence: "%98.9",
+      vectorAxis: "Çevresel Alfabetik Aks",
+      summary: "'YOL' ve 'EL' köklerinin Akdeniz/Etrüsk dil akışındaki deşifresi.", 
+      analysis: "Lemnos steli üzerindeki alfabetik metin, Ön-Türkçe kök ekleri vasıtasıyla çözümlenmiş; Anadolu'dan Etruria hattına uzanan dilsel sürekliliği doğrulamıştır.",
+      academicRef: "YKOS Külliyatı Cilt 5-6: Etrüsk ve Akdeniz Rotaları",
+      tags: ["Lemnos", "Etrüsk", "YOL Aksı", "Akdeniz"]
+    },
+    { 
+      code: "YKOS-DMG-04", 
+      name: "Altay / Saymalıtaş Dağ Keçisi Petroglifi", 
+      region: "Kırgızistan / Saymalıtaş Katmanı", 
+      date: "M.Ö. 3000 (Bronz Çağı)", 
+      symbol: "🐐", 
+      coherence: "%99.4",
+      vectorAxis: "Gök-Yer Yükselim Vektörü",
+      summary: "'GÖK' ve 'ÇİK' yükselim hareketi ve kozmik temsil.", 
+      analysis: "Saymalıtaş kaya resimlerindeki dağ keçisi motifi yalnızca bir hayvan tasviri değil, göksel yükselimi ve ruhsal hafifliği ifade eden piktografik bir koddur.",
+      academicRef: "YKOS Külliyatı Cilt 4: Avrasya Petroglif Atlası",
+      tags: ["Saymalıtaş", "Petroglif", "GÖK Kökü", "Altay"]
+    },
+    { 
+      code: "YKOS-DMG-05", 
+      name: "Orhun Kül Tigin 'EL' Devlet Damgası", 
+      region: "Moğolistan / Orhun Vadisi", 
+      date: "M.S. 732 (Göktürk Dönemi)", 
+      symbol: "🛡️", 
+      coherence: "%99.9",
+      vectorAxis: "Merkezi Egemenlik Aksı",
+      summary: "'EL / İL' organizasyon ve toplumsal birlik kök yazılımı.", 
+      analysis: "Kül Tigin yazıtının tepesindeki kıvrımlı damga, kağanlık yetkisini ve il (devlet) teşkilatlanmasının kök hece algoritmasını simgeler.",
+      academicRef: "YKOS Külliyatı Cilt 7: Orhun Yazıtları ve Devlet Kök Analizi",
+      tags: ["Orhun", "Göktürk", "İL Kökü", "Devlet"]
+    }
+  ];
