@@ -1,4 +1,28 @@
 import React, { useState, useEffect } from "react";
+// App.jsx içine eklenecek import
+import { fetchRssData } from "./data/ykosApiService";
+
+// App fonksiyonu içinde state'i tanımlayın
+const [rssArticles, setRssArticles] = useState([]);
+
+// Mevcut useEffect'inizi şu şekilde güncelleyin:
+useEffect(() => {
+  async function fetchData() {
+    // 1. Yerel arşiv yükle
+    const data = await loadArchiveData();
+    if (data && data.articles) {
+      setArchiveArticles(data.articles);
+    }
+    
+    // 2. Canlı RSS akışını çek
+    const rssData = await fetchRssData();
+    if (rssData.length > 0) {
+      setRssArticles(rssData);
+    }
+  }
+  fetchData();
+}, []);
+
 import YKOSDashboard from "./layouts/YKOSDashboard";
 import { defaultArchiveArticles, loadArchiveData } from "./data/ykosDataService";
 import { translations } from "./data/i18n";
@@ -483,18 +507,49 @@ export function App() {
             </div>
           </div>
 
-          <div style={{ background: "rgba(255,215,0,0.03)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "20px" }}>
+          <div style={{ background: "rgba(255,215,0,0.03)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "20px", boxSizing: "border-box" }}>
             <input 
               type="text" 
               value={analysisInput}
               onChange={(e) => setAnalysisInput(e.target.value)}
+              placeholder="Kök hece veya terim girin (Örn: YOL, ÇEV, ER)..."
               style={{ width: "100%", padding: "12px", background: "#000", border: "1px solid #ffd700", color: "#fff", borderRadius: "6px", marginBottom: "15px", boxSizing: "border-box" }}
             />
             <button onClick={handleRunAnalysis} style={{ background: "#ffd700", color: "#000", padding: "10px 18px", border: "none", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}>ANALİZİ BAŞLAT ⚡</button>
-            {analysisResult && <div style={{ marginTop: "15px", color: "#00ff7f", background: "rgba(0,255,127,0.1)", padding: "12px", borderRadius: "6px", border: "1px solid #00ff7f" }}>{analysisResult.synthesis}</div>}
+            
+            {analysisResult && (
+              <div style={{ marginTop: "15px", color: "#00ff7f", background: "rgba(0,255,127,0.08)", padding: "12px", borderRadius: "6px", border: "1px solid #00ff7f" }}>
+                {analysisResult.synthesis}
+              </div>
+            )}
+
+            {/* CANLI YKOS.COM.TR RSS AKADEMİK AKIŞ BÖLÜMÜ */}
+            <div style={{ marginTop: "30px", borderTop: "1px solid rgba(255,215,0,0.2)", paddingTop: "20px" }}>
+              <h3 style={{ color: "#ffd700", fontSize: "1rem", marginBottom: "15px" }}>📡 CANLI AKADEMİK AKIŞ (YKOS.COM.TR)</h3>
+              
+              {rssArticles && rssArticles.length > 0 ? (
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                  {rssArticles.map((article, index) => (
+                    <div key={index} style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,215,0,0.2)", padding: "14px", borderRadius: "8px" }}>
+                      <h4 style={{ color: "#fff", margin: "0 0 6px 0", fontSize: "0.95rem" }}>{article.title}</h4>
+                      <p style={{ color: "#aaa", fontSize: "0.78rem", margin: "0 0 10px 0", lineHeight: "1.4" }}>{article.description}</p>
+                      <a href={article.link} target="_blank" rel="noopener noreferrer" style={{ color: "#ffd700", fontSize: "0.75rem", textDecoration: "none", fontWeight: "bold" }}>
+                        Tam Metni Oku ve İncele →
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div style={{ color: "#888", fontSize: "0.82rem", fontStyle: "italic", padding: "10px 0" }}>
+                  Canlı RSS veri akışı bekleniyor veya yerel modda çalışılıyor...
+                </div>
+              )}
+            </div>
+
           </div>
         </div>
       )}
+
 
       {/* 7. METODOLOJİ MODÜLÜ */}
       {currentView === "methodology" && (
