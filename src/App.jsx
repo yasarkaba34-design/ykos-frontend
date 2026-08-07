@@ -10,8 +10,6 @@ export function App() {
   const [selectedArticleId, setSelectedArticleId] = useState(1);
   const [selectedNode, setSelectedNode] = useState(null);
   const [archiveArticles, setArchiveArticles] = useState(defaultArchiveArticles);
-  
-  // RSS yerine doğrudan JSON matris haber linkleri state'i
   const [ykosCoreData, setYkosCoreData] = useState({ nodes: [], links: [] });
 
   const [currentLang, setCurrentLang] = useState("TR");
@@ -64,7 +62,6 @@ export function App() {
       const data = await loadArchiveData();
       if (data && data.articles) setArchiveArticles(data.articles);
 
-      // Doğrudan ykos_core JSON yapısını çeken güvenli blok
       try {
         const response = await fetch("https://www.ykos.com.tr/api/ykos-core");
         if (response.ok) {
@@ -93,7 +90,6 @@ export function App() {
     });
   };
 
-  // Matris düğümleri (Her düğüme doğrudan ykos.com.tr haber linki eklendi)
   const matrixNodes = [
     { id: "YKOS 1000", x: 350, y: 180, r: 42, color: "#ffd700", label: "YKOS 1000", anim: "float1", desc: "Ana Bilgi Entegrasyon Matrisi", connection: "YKOS 100, YKOS 200, YKOS 300", score: "%100", derivatives: ["Master-Veri", "Yapay-Zekâ"], details: "Sistemin tüm katmanlarını bağlayan yapay zekâ destekli üst entegrasyon matrisi.", url: "https://www.ykos.com.tr/ykos-master-ykos1000/101/" },
     { id: "YKOS 100", x: 420, y: 310, r: 36, color: "#1e90ff", label: "YKOS 100", anim: "float1", desc: "Temel Kök Hece Matrisi Katmanı", connection: "YOL, BİR, ÇEV", score: "%99.9", derivatives: ["Kök-en", "Yol-cu", "Çev-re"], details: "Anadolu merkezli 100 birincil hece vektörünün algoritmik veritabanı.", url: "https://www.ykos.com.tr/ykos-master-ykos100/102/" },
@@ -128,7 +124,6 @@ export function App() {
   const handleNavigateRead = (id) => { setSelectedArticleId(id); setCurrentView("read"); };
   const selectedArticle = activeArticles.find(a => a.id === selectedArticleId) || activeArticles[0];
 
-  // Düğüm tıklama fonksiyonu: Eğer URL varsa direkt haber linkine gider
   const handleNodeClick = (node) => {
     if (node.url) {
       window.open(node.url, "_blank");
@@ -159,11 +154,6 @@ export function App() {
 
   const getPanelLabel = (key) => {
     const labels = {
-      selectedLayer: { TR: "SEÇİLİ KATMAN / HECE", EN: "SELECTED LAYER / SYLLABLE" },
-      clearSelection: { TR: "Seçimi Temizle", EN: "Clear Selection" },
-      derivatives: { TR: "TÜRETİLEN KÖK SÖZCÜKLER / BİLEŞENLER:", EN: "DERIVED ROOT WORDS / COMPONENTS:" },
-      connections: { TR: "Algoritmik Bağlantılar:", EN: "Algorithmic Connections:" },
-      coherence: { TR: "Coherence Skoru:", EN: "Coherence Score:" },
       guideTitle: { TR: "📌 MATRİS VE GLOBAL ATLAS REHBERİ", EN: "📌 MATRIX & GLOBAL ATLAS GUIDE" },
       motiveTitle: { TR: "ÖNCE VERİ, SONRA ANALİZ, SONRA YORUM", EN: "FIRST DATA, THEN ANALYSIS, THEN INTERPRETATION" },
       motiveSub: { TR: "40 Kök Sistem, Karşılaştırmalı Arkeolojik Katmanlar", EN: "40 Root Systems, Comparative Archaeological Layers" },
@@ -283,8 +273,8 @@ export function App() {
                   <line x1="260" y1="220" x2="190" y2="210" stroke="#1e90ff" strokeWidth="2" className="flowing-line" />
                   <line x1="190" y1="210" x2="120" y2="200" stroke="#1e90ff" strokeWidth="2" className="flowing-line" />
                   {matrixNodes.map((node) => (
-                    <g key={node.id} className={`node-${node.anim}`} onClick={() => handleNodeClick(node)} title="Habere Gitmek İçin Tıkla">
-                      <circle cx={node.x} cy={node.y} r={selectedNode?.id === node.id ? node.r + 6 : node.r} fill="#050811" stroke={selectedNode?.id === node.id ? "#ffffff" : node.color} strokeWidth={selectedNode?.id === node.id ? "3.5" : "2"} style={{ filter: `drop-shadow(0px 0px 8px ${node.color})` }} />
+                    <g key={node.id} className={`node-${node.anim}`} onClick={() => handleNodeClick(node)} style={{ cursor: "pointer" }}>
+                      <circle cx={node.x} cy={node.y} r={node.r} fill="#050811" stroke={node.color} strokeWidth="2" style={{ filter: `drop-shadow(0px 0px 8px ${node.color})` }} />
                       <text x={node.x} y={node.y + 4} textAnchor="middle" fill={node.color} fontSize={node.r > 28 ? "11" : "9"} fontWeight="bold">{node.label}</text>
                     </g>
                   ))}
@@ -361,7 +351,6 @@ export function App() {
               <div style={{ marginTop: "15px", color: "#00ff7f", background: "rgba(0,255,127,0.08)", padding: "12px", borderRadius: "6px", border: "1px solid #00ff7f" }}>{analysisResult.synthesis}</div>
             )}
             
-            {/* Canlı Matris Haber Bağlantıları Listesi */}
             <div style={{ marginTop: "30px", borderTop: "1px solid rgba(255,215,0,0.2)", paddingTop: "20px" }}>
               <h3 style={{ color: "#ffd700", fontSize: "1rem", marginBottom: "15px" }}>📡 CANLI HABER VE MATRİS BAĞLANTILARI (YKOS.COM.TR)</h3>
               <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -435,7 +424,7 @@ export function App() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px", flexWrap: "wrap", gap: "10px" }}>
             <div>
               <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>📜 AKADEMİK ÇÖZÜMLEME KATMANI</span>
-              <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem"}>{selectedArticle.title}</h2>
+              <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem" }}>{selectedArticle.title}</h2>
             </div>
             <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
               {renderLanguageSelector()}
