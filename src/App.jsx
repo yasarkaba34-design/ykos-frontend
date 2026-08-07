@@ -44,7 +44,7 @@ export function App() {
       period: "M.Ö. 10.000 - M.Ö. 4.000",
       origin: "Anadolu (Buzul Çağı Sığınağı)",
       destination: "Mezopotamya / Basra Körfezi",
-      description: "Buzulların erimesi ve Karadeniz tatlı su golünün tuzlu denizle birleşmesi sonrası Anadolu'dan güneye inen eklemeli dil ve çivi yazısı kök aktarımı.",
+      description: "Buzulların erimesi ve Karadeniz tatlı su gölünün tuzlu denizle birleşmesi sonrası Anadolu'dan güneye inen eklemeli dil ve çivi yazısı kök aktarımı.",
       coherence: "%99.6"
     },
     {
@@ -115,7 +115,7 @@ export function App() {
 
   const matrixNodes = [
     { id: "YKOS 1000", x: 350, y: 180, r: 42, color: "#ffd700", label: "YKOS 1000", anim: "float1", desc: "Ana Bilgi Entegrasyon Matrisi", connection: "YKOS 100, YKOS 200, YKOS 300", score: "%100", derivatives: ["Master-Veri", "Yapay-Zekâ"], details: "Sistemin tüm katmanlarını bağlayan yapay zekâ destekli üst entegrasyon matrisi." },
-    { id: "YKOS 100", x: 420, y: 310, r: 36, color: "#1e90ff", label: "YKOS 100", anim: "float1", desc: "Temel Kök Hece Matrisi Katmanı", connection: "YOL, BİR, ANADOLU ATLASI", score: "%99.9", derivatives: ["Kök-en", "Yol-cu", "Çev-re"], details: "Anadolu merkezli 100 birincil hece vektörünün algoritmik veritabanı." },
+    { id: "YKOS 100", x: 420, y: 310, r: 36, color: "#1e90ff", label: "YKOS 100", anim: "float1", desc: "Temel Kök Hece Matrisi Katmanı", connection: "YOL, BİR, ANADOLU ATLASI, ÇEV", score: "%99.9", derivatives: ["Kök-en", "Yol-cu", "Çev-re"], details: "Anadolu merkezli 100 birincil hece vektörünün algoritmik veritabanı." },
     { id: "YKOS 200", x: 380, y: 410, r: 35, color: "#00ff7f", label: "YKOS 200", anim: "float2", desc: "Bölgesel ve Derin Arkeolojik Katman", connection: "Göbeklitepe, ROL, Sümer", score: "%99.6", derivatives: ["Rol-daş", "Er-en", "Süm-er"], details: "Doğu Akdeniz, Mezopotamya ve Ön Asya petroglif katmanları." },
     { id: "YKOS 300", x: 260, y: 370, r: 36, color: "#ff8c00", label: "YKOS 300", anim: "float3", desc: "Global Atlas & Avrasya / Amerika Katmanı", connection: "ÖN ASYA ATLASI, AMERİKA ATLASI, AVRUPA ATLASI", score: "%99.4", derivatives: ["At-las", "Av-rasya", "Koz-mos"], details: "Avrasya ve Amerika kıtaları arası Ön-Türkçe kültür ve damga aksı." },
 
@@ -130,15 +130,15 @@ export function App() {
     { id: "YOL", x: 550, y: 330, r: 24, color: "#ffd700", label: "YOL", anim: "float2", desc: "Aks, Hareket ve Akış", connection: "BİR, O", score: "%99.8", derivatives: ["Yol-cu", "Yol-daş"], details: "'Rulo değil yol' mantığının merkez hecesi." },
     { id: "O", x: 600, y: 260, r: 25, color: "#ffd700", label: "O", anim: "float3", desc: "Evrensel Öz ve Odak", connection: "YOL, OL, KÖK", score: "%99.5", derivatives: ["O-na", "O-radan"], details: "Merkez ve yön gösterici zamir kökü." },
     { id: "OL", x: 650, y: 210, r: 22, color: "#ffd700", label: "OL", anim: "float1", desc: "Oluş, Varlık ve Doğuş", connection: "O", score: "%99.3", derivatives: ["Ol-gu", "Ol-ay"], details: "Varlığa geliş eylemi." },
-    { id: "KÖK", x: 580, y: 170, r: 24, color: "#ffd700", label: "KÖK", anim: "float2", desc: "Kaynak ve Menşe", connection: "O, VAN, ÇİK", score: "%99.9", derivatives: ["Kök-en", "Kök-ten"], details: "Ana kök katmanı." },
+    { id: "KÖK", x: 580, y: 170, r: 24, color: "#ffd700", label: "KÖK", anim: "float2", desc: "Kaynak ve Menşe", connection: "O, VAN, ÇİK, AL", score: "%99.9", derivatives: ["Kök-en", "Kök-ten"], details: "Ana kök katmanı." },
     { id: "VAN", x: 620, y: 110, r: 20, color: "#ffd700", label: "VAN", anim: "float3", desc: "Su ve Havza Kimliği", connection: "KÖK", score: "%98.7", derivatives: ["Van-gölü", "Var-an"], details: "Doğu Anadolu havza kurgusu." },
     { id: "ÇİK", x: 530, y: 50, r: 20, color: "#1e90ff", label: "ÇİK", anim: "float1", desc: "Çıkış ve Tepe Vektörü", connection: "GÖK", score: "%98.5", derivatives: ["Çık-ış", "Çık-an"], details: "Yükselim hareketi." },
     { id: "GÖK", x: 560, y: 90, r: 22, color: "#00ff7f", label: "GÖK", anim: "float2", desc: "Kozmoz ve Üst Eksen", connection: "ÇİK, AL", score: "%99.2", derivatives: ["Gök-sel", "Gök-men"], details: "Göksel boyut katmanı." },
-    { id: "AL", x: 510, y: 130, r: 20, color: "#1e90ff", label: "AL", anim: "float3", desc: "Alma, Kırmızı ve Yüksek", connection: "GÖK", score: "%98.9", derivatives: ["Al-an", "Al-gı"], details: "Kırmızı ve idrak kökü." },
+    { id: "AL", x: 510, y: 130, r: 20, color: "#1e90ff", label: "AL", anim: "float3", desc: "Alma, Kırmızı ve Yüksek", connection: "GÖK, KÖK", score: "%98.9", derivatives: ["Al-an", "Al-gı"], details: "Kırmızı ve idrak kökü." },
 
-    { id: "KUR", x: 420, y: 140, r: 24, color: "#ff8c00", label: "KUR", anim: "float1", desc: "Kuruluş, Yapı ve Düzen", connection: "TUT, DA", score: "%99.1", derivatives: ["Kur-um", "Kur-al"], details: "İnşa ve mimari kök hece." },
-    { id: "DA", x: 470, y: 190, r: 22, color: "#ff8c00", label: "DA", anim: "float2", desc: "Dağ, Yükseklik ve Yer", connection: "KUR, BİR", score: "%98.8", derivatives: ["Da-ğ", "Da-im"], details: "Yeryüzü şekilleri ve kalıcılık." },
-    { id: "ÇEV", x: 330, y: 250, r: 22, color: "#1e90ff", label: "ÇEV", anim: "float3", desc: "Çevre ve Daire", connection: "DİŞ, BİR", score: "%99.4", derivatives: ["Çev-re", "Çev-rik"], details: "Dairesel kuşatma alanı." },
+    { id: "KUR", x: 420, y: 140, r: 24, color: "#ff8c00", label: "KUR", anim: "float1", desc: "Kuruluş, Yapı ve Düzen", connection: "YKOS 1000, DA", score: "%99.1", derivatives: ["Kur-um", "Kur-al"], details: "İnşa ve mimari kök hece." },
+    { id: "DA", x: 470, y: 190, r: 22, color: "#ff8c00", label: "DA", anim: "float2", desc: "Dağ, Yükseklik ve Yer", connection: "KUR", score: "%98.8", derivatives: ["Da-ğ", "Da-im"], details: "Yeryüzü şekilleri ve kalıcılık." },
+    { id: "ÇEV", x: 330, y: 250, r: 22, color: "#1e90ff", label: "ÇEV", anim: "float3", desc: "Çevre ve Daire", connection: "YKOS 100, DİŞ", score: "%99.4", derivatives: ["Çev-re", "Çev-rik"], details: "Dairesel kuşatma alanı." },
     { id: "DİŞ", x: 260, y: 220, r: 20, color: "#1e90ff", label: "DİŞ", anim: "float1", desc: "Dış, Sınır ve Yapı", connection: "ÇEV, YÜZ", score: "%98.4", derivatives: ["Dış-arı", "Diş-i"], details: "Dış sınır ve biçim." },
     { id: "YÜZ", x: 190, y: 210, r: 20, color: "#1e90ff", label: "YÜZ", anim: "float2", desc: "Yüzey, Çehre ve Taraf", connection: "DİŞ, ULUN", score: "%98.6", derivatives: ["Yüz-ey", "Yüz-le"], details: "Ön görünüm ve alan." },
     { id: "ULUN", x: 120, y: 200, r: 20, color: "#1e90ff", label: "ULUN", anim: "float3", desc: "Ulu, Yüce ve Büyük", connection: "YÜZ", score: "%98.9", derivatives: ["Ulu-luk", "Ulu-s"], details: "Büyüklük ve hiyerarşi." },
@@ -336,10 +336,13 @@ export function App() {
 
               <div style={{ width: "100%", overflow: "auto", display: "flex", justifyContent: "center", alignItems: "center" }}>
                 <svg width="100%" height="100%" viewBox="0 0 700 560" style={{ overflow: "visible", minHeight: "460px", transform: `scale(${zoomLevel})`, transformOrigin: "center center", transition: "transform 0.25s ease-out" }}>
+                  
+                  {/* ANA DÜĞÜM ÇİZGİLERİ */}
                   <line x1="350" y1="180" x2="420" y2="310" stroke="#ffd700" strokeWidth="3" className="flowing-line" />
                   <line x1="350" y1="180" x2="380" y2="410" stroke="#ffd700" strokeWidth="3" className="flowing-line" />
                   <line x1="350" y1="180" x2="260" y2="370" stroke="#ffd700" strokeWidth="3" className="flowing-line" />
 
+                  {/* KATMAN VE ATLAS BAĞLANTILARI */}
                   <line x1="420" y1="310" x2="380" y2="410" stroke="#1e90ff" strokeWidth="2.5" className="flowing-line" />
                   <line x1="380" y1="410" x2="260" y2="370" stroke="#00ff7f" strokeWidth="2.5" className="flowing-line" />
                   <line x1="420" y1="310" x2="420" y2="230" stroke="#ffd700" strokeWidth="2" className="flowing-line" />
@@ -348,14 +351,31 @@ export function App() {
                   <line x1="260" y1="370" x2="250" y2="500" stroke="#ba55d3" strokeWidth="2" className="flowing-line" />
                   <line x1="380" y1="410" x2="480" y2="430" stroke="#00ff7f" strokeWidth="2" className="flowing-line" />
                   <line x1="380" y1="410" x2="470" y2="360" stroke="#00ff7f" strokeWidth="2" className="flowing-line" />
+                  <line x1="380" y1="410" x2="360" y2="490" stroke="#ba55d3" strokeWidth="2" className="flowing-line" />
+                  <line x1="250" y1="500" x2="310" y2="510" stroke="#ba55d3" strokeWidth="2" className="flowing-line" />
                   
-                  <line x1="420" y1="310" x2="500" y2="270" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" />
-                  <line x1="500" y1="270" x2="550" y2="330" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" />
-                  <line x1="550" y1="330" x2="600" y2="260" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" />
-                  <line x1="600" y1="260" x2="650" y2="210" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" />
-                  <line x1="600" y1="260" x2="580" y2="170" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" />
-                  <line x1="580" y1="170" x2="620" y2="110" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" />
+                  {/* SAĞ KANAT KÖK HECE BAĞLANTILARI */}
+                  <line x1="420" y1="310" x2="500" y2="270" stroke="rgba(255,215,0,0.5)" strokeWidth="1.8" />
+                  <line x1="500" y1="270" x2="550" y2="330" stroke="rgba(255,215,0,0.5)" strokeWidth="1.8" />
+                  <line x1="550" y1="330" x2="600" y2="260" stroke="rgba(255,215,0,0.5)" strokeWidth="1.8" />
+                  <line x1="600" y1="260" x2="650" y2="210" stroke="rgba(255,215,0,0.5)" strokeWidth="1.8" />
+                  <line x1="600" y1="260" x2="580" y2="170" stroke="rgba(255,215,0,0.5)" strokeWidth="1.8" />
+                  <line x1="580" y1="170" x2="620" y2="110" stroke="rgba(255,215,0,0.5)" strokeWidth="1.8" />
+                  <line x1="580" y1="170" x2="510" y2="130" stroke="rgba(255,215,0,0.5)" strokeWidth="1.8" />
+                  <line x1="510" y1="130" x2="560" y2="90" stroke="rgba(255,215,0,0.5)" strokeWidth="1.8" />
+                  <line x1="560" y1="90" x2="530" y2="50" stroke="rgba(255,215,0,0.5)" strokeWidth="1.8" />
 
+                  {/* ÜST KANAT: KUR - DA BAĞLANTILARI */}
+                  <line x1="350" y1="180" x2="420" y2="140" stroke="#ff8c00" strokeWidth="2" />
+                  <line x1="420" y1="140" x2="470" y2="190" stroke="#ff8c00" strokeWidth="2" />
+
+                  {/* SOL KANAT: ULUN ➔ YÜZ ➔ DİŞ ➔ ÇEV ➔ YKOS 100 BAĞLANTI HATTI */}
+                  <line x1="420" y1="310" x2="330" y2="250" stroke="#1e90ff" strokeWidth="2" className="flowing-line" />
+                  <line x1="330" y1="250" x2="260" y2="220" stroke="#1e90ff" strokeWidth="2" className="flowing-line" />
+                  <line x1="260" y1="220" x2="190" y2="210" stroke="#1e90ff" strokeWidth="2" className="flowing-line" />
+                  <line x1="190" y1="210" x2="120" y2="200" stroke="#1e90ff" strokeWidth="2" className="flowing-line" />
+
+                  {/* DÜĞÜMLER */}
                   {matrixNodes.map((node) => (
                     <g key={node.id} className={`node-${node.anim}`} onClick={() => setSelectedNode(node)}>
                       <circle cx={node.x} cy={node.y} r={selectedNode?.id === node.id ? node.r + 6 : node.r} fill="#050811" stroke={selectedNode?.id === node.id ? "#ffffff" : node.color} strokeWidth={selectedNode?.id === node.id ? "3.5" : "2"} style={{ filter: `drop-shadow(0px 0px 8px ${node.color})` }} />
@@ -468,15 +488,78 @@ export function App() {
               type="text" 
               value={analysisInput}
               onChange={(e) => setAnalysisInput(e.target.value)}
-              style={{ width: "100%", padding: "12px", background: "#000", border: "1px solid #ffd700", color: "#fff", borderRadius: "6px", marginBottom: "15px" }}
+              style={{ width: "100%", padding: "12px", background: "#000", border: "1px solid #ffd700", color: "#fff", borderRadius: "6px", marginBottom: "15px", boxSizing: "border-box" }}
             />
             <button onClick={handleRunAnalysis} style={{ background: "#ffd700", color: "#000", padding: "10px 18px", border: "none", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}>ANALİZİ BAŞLAT ⚡</button>
-            {analysisResult && <div style={{ marginTop: "15px", color: "#00ff7f" }}>{analysisResult.synthesis}</div>}
+            {analysisResult && <div style={{ marginTop: "15px", color: "#00ff7f", background: "rgba(0,255,127,0.1)", padding: "12px", borderRadius: "6px", border: "1px solid #00ff7f" }}>{analysisResult.synthesis}</div>}
           </div>
         </div>
       )}
 
-      {/* 7. AKADEMİK OKUMA EKRANI */}
+      {/* 7. METODOLOJİ MODÜLÜ */}
+      {currentView === "methodology" && (
+        <div style={containerStyle}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px" }}>
+            <div>
+              <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>📜 AKADEMİK FELSEFE VE BİLİMSEL ÇERÇEVE</span>
+              <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem" }}>YKOS METODOLOJİSİ VE BİLİMSEL İLKELER</h2>
+            </div>
+            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+              {renderLanguageSelector()}
+              <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>{t.backHome}</button>
+            </div>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "15px" }}>
+            <div style={{ background: "rgba(255,215,0,0.03)", border: "1px solid rgba(255,215,0,0.25)", padding: "16px", borderRadius: "8px" }}>
+              <h3 style={{ color: "#ffd700", margin: "0 0 8px 0", fontSize: "0.95rem" }}>1. Anadolu Odaklı Refugium Modeli</h3>
+              <p style={{ color: "#ccc", fontSize: "0.8rem", lineHeight: "1.6" }}>
+                Buzul çağındaki mikroklima koruması sayesinde Anadolu, insanlığın ve sembollerin kök rahmidir. Erken kültür akışı Asya'dan Anadolu'ya değil; Anadolu'dan Asya ve Akdeniz hatlarına doğru gerçekleşmiştir.
+              </p>
+            </div>
+
+            <div style={{ background: "rgba(255,215,0,0.03)", border: "1px solid rgba(255,215,0,0.25)", padding: "16px", borderRadius: "8px" }}>
+              <h3 style={{ color: "#ffd700", margin: "0 0 8px 0", fontSize: "0.95rem" }}>2. 'Rulo Değil Yol' İlkesi</h3>
+              <p style={{ color: "#ccc", fontSize: "0.8rem", lineHeight: "1.6" }}>
+                Kültürel hafıza statik bir arşiv kaydı (rulo) değil; yaşayan, sürekli güncellenen ve kök heceler vasıtasıyla bugüne taşınan dinamik bir yoldur.
+              </p>
+            </div>
+
+            <div style={{ background: "rgba(255,215,0,0.03)", border: "1px solid rgba(255,215,0,0.25)", padding: "16px", borderRadius: "8px" }}>
+              <h3 style={{ color: "#ffd700", margin: "0 0 8px 0", fontSize: "0.95rem" }}>3. Form–Bağlam–Anlam Eşzamanlılığı</h3>
+              <p style={{ color: "#ccc", fontSize: "0.8rem", lineHeight: "1.6" }}>
+                Damgalar ve piktogramlar rastgele çizimler değildir; geometrik aksı, dikey varlık ve yatay bağ simetrisini kodlayan görsel algoritmik mühürlerdir.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 8. ARAŞTIRMACI VE PORTAL GİRİŞ EKRANI */}
+      {currentView === "login" && (
+        <div style={containerStyle}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px" }}>
+            <div>
+              <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>🔐 GÜVENLİ AKADEMİK ERİŞİM PORTALI</span>
+              <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.2rem" }}>
+                {userRole === "guest" && "🌐 ZİYARETÇİ VE AKADEMİK ARAŞTIRMA PORTALI"}
+                {userRole === "researcher" && "🔬 LİSANS / LİSANSÜSTÜ ARAŞTIRMACI GİRİŞİ"}
+                {userRole === "admin" && "👑 YKOS MASTER YÖNETİCİ & EDİTÖR PANELİ"}
+              </h2>
+            </div>
+            <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>{t.backHome}</button>
+          </div>
+
+          <div style={{ maxWidth: "420px", margin: "30px auto", background: "rgba(255,215,0,0.03)", border: "1px solid #ffd700", padding: "24px", borderRadius: "10px" }}>
+            <p style={{ color: "#aaa", fontSize: "0.8rem", marginBottom: "15px" }}>YKOS Bilgi Sistemi entegre canlı veri tabanına erişmek için kullanıcı bilgilerinizi giriniz.</p>
+            <input type="text" placeholder="Kullanıcı Adı / Akademisyen ID" style={{ width: "100%", padding: "10px", marginBottom: "10px", background: "#000", border: "1px solid rgba(255,215,0,0.4)", color: "#fff", borderRadius: "6px", boxSizing: "border-box" }} />
+            <input type="password" placeholder="Şifre" style={{ width: "100%", padding: "10px", marginBottom: "15px", background: "#000", border: "1px solid rgba(255,215,0,0.4)", color: "#fff", borderRadius: "6px", boxSizing: "border-box" }} />
+            <button onClick={() => setCurrentView("dashboard")} style={{ width: "100%", padding: "10px", background: "#ffd700", color: "#000", border: "none", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}>SİSTEME GİRİŞ YAP</button>
+          </div>
+        </div>
+      )}
+
+      {/* 9. AKADEMİK OKUMA EKRANI */}
       {currentView === "read" && (
         <div style={containerStyle}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px", flexWrap: "wrap", gap: "10px" }}>
