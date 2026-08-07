@@ -29,7 +29,6 @@ export const defaultArchiveArticles = [
 
 export async function loadArchiveData() {
   try {
-    // Canlı veri tabanı veya yerel dosya simülasyonu
     return {
       articles: defaultArchiveArticles
     };
