@@ -10,7 +10,9 @@ export function App() {
   const [selectedArticleId, setSelectedArticleId] = useState(1);
   const [selectedNode, setSelectedNode] = useState(null);
   const [archiveArticles, setArchiveArticles] = useState(defaultArchiveArticles);
-  const [rssArticles, setRssArticles] = useState([]);
+  
+  // RSS yerine doğrudan JSON matris haber linkleri state'i
+  const [ykosCoreData, setYkosCoreData] = useState({ nodes: [], links: [] });
 
   const [currentLang, setCurrentLang] = useState("TR");
   const [langOpen, setLangOpen] = useState(false);
@@ -62,20 +64,18 @@ export function App() {
       const data = await loadArchiveData();
       if (data && data.articles) setArchiveArticles(data.articles);
 
+      // Doğrudan ykos_core JSON yapısını çeken güvenli blok
       try {
-        const response = await fetch("https://www.ykos.com.tr/rss");
+        const response = await fetch("https://www.ykos.com.tr/api/ykos-core");
         if (response.ok) {
-          const text = await response.text();
-          const parser = new DOMParser();
-          const xml = parser.parseFromString(text, "application/xml");
-          const items = Array.from(xml.querySelectorAll("item")).map(item => ({
-            title: item.querySelector("title")?.textContent,
-            link: item.querySelector("link")?.textContent,
-            description: item.querySelector("description")?.textContent
-          }));
-          if (items.length > 0) setRssArticles(items);
+          const json = await response.json();
+          if (json && json.ykos_core) {
+            setYkosCoreData(json.ykos_core);
+          }
         }
-      } catch (e) { console.log("RSS yerel modda çalışıyor."); }
+      } catch (e) {
+        console.log("YKOS Core JSON yerel modda besleniyor.");
+      }
     }
     fetchData();
   }, []);
@@ -93,39 +93,49 @@ export function App() {
     });
   };
 
+  // Matris düğümleri (Her düğüme doğrudan ykos.com.tr haber linki eklendi)
   const matrixNodes = [
-    { id: "YKOS 1000", x: 350, y: 180, r: 42, color: "#ffd700", label: "YKOS 1000", anim: "float1", desc: "Ana Bilgi Entegrasyon Matrisi", connection: "YKOS 100, YKOS 200, YKOS 300", score: "%100", derivatives: ["Master-Veri", "Yapay-Zekâ"], details: "Sistemin tüm katmanlarını bağlayan yapay zekâ destekli üst entegrasyon matrisi." },
-    { id: "YKOS 100", x: 420, y: 310, r: 36, color: "#1e90ff", label: "YKOS 100", anim: "float1", desc: "Temel Kök Hece Matrisi Katmanı", connection: "YOL, BİR, ÇEV", score: "%99.9", derivatives: ["Kök-en", "Yol-cu", "Çev-re"], details: "Anadolu merkezli 100 birincil hece vektörünün algoritmik veritabanı." },
-    { id: "YKOS 200", x: 380, y: 410, r: 35, color: "#00ff7f", label: "YKOS 200", anim: "float2", desc: "Bölgesel ve Derin Arkeolojik Katman", connection: "Göbeklitepe, ROL, Sümer", score: "%99.6", derivatives: ["Rol-daş", "Er-en", "Süm-er"], details: "Doğu Akdeniz ve Mezopotamya petroglif katmanları." },
-    { id: "YKOS 300", x: 260, y: 370, r: 36, color: "#ff8c00", label: "YKOS 300", anim: "float3", desc: "Global Atlas Katmanı", connection: "ÖN ASYA ATLASI, AMERİKA ATLASI", score: "%99.4", derivatives: ["At-las", "Av-rasya"], details: "Avrasya ve Amerika kıtaları arası kültür ve damga aksı." },
-    { id: "ANADOLU ATLASI", x: 420, y: 230, r: 24, color: "#ffd700", label: "ANADOLU ATLASI", anim: "float1", desc: "Anadolu Kadim Kültür Havzası", connection: "YKOS 100", score: "%100", derivatives: ["An-adolu", "Çat-al"], details: "Merkez üssü Anadolu olan birincil simetri haritası." },
-    { id: "ÖN ASYA ATLASI", x: 150, y: 320, r: 22, color: "#ffd700", label: "ÖN ASYA ATLASI", anim: "float2", desc: "Ön Asya Hatları", connection: "YKOS 300", score: "%99.1", derivatives: ["As-ya", "Kaf-kas"], details: "Mezopotamya ve Kafkasya geçiş yolları." },
-    { id: "AMERİKA ATLASI", x: 140, y: 410, r: 22, color: "#ff8c00", label: "AMERİKA ATLASI", anim: "float3", desc: "Trans-Bering Bağlantıları", connection: "YKOS 300", score: "%98.5", derivatives: ["May-a", "In-ka"], details: "Amerika kıtasındaki damga paralellikleri." },
-    { id: "AVRUPA ATLASI", x: 250, y: 500, r: 22, color: "#ba55d3", label: "AVRUPA ATLASI", anim: "float1", desc: "Etrüsk ve Akdeniz Rotaları", connection: "AYLUİL", score: "%98.9", derivatives: ["Et-rüsk", "Lem-nos"], details: "Akdeniz ve Etrüsk yazıtları dil akışı." },
-    { id: "Göbeklitepe", x: 480, y: 430, r: 22, color: "#00ff7f", label: "Göbeklitepe", anim: "float2", desc: "T-Sütun Sembolizmleri", connection: "YKOS 200", score: "%99.7", derivatives: ["T-Sütun", "H-Piktogramı"], details: "İkilik ve göksel bağ sembolizminin deşifresi." },
-    { id: "Sümer", x: 470, y: 360, r: 22, color: "#00ff7f", label: "Sümer", anim: "float3", desc: "Mezopotamya Çivi Yazısı", connection: "YKOS 200", score: "%99.2", derivatives: ["Süm-er", "Kiv-i"], details: "Sümerce ve Ön-Türkçe ortak fonetik kökler." },
-    { id: "BİR", x: 500, y: 270, r: 24, color: "#ffd700", label: "BİR", anim: "float1", desc: "Teklik ve Başlangıç", connection: "YKOS 100, YOL", score: "%99.8", derivatives: ["Bir-lik"], details: "İlk varlık ve birlik aksı." },
-    { id: "YOL", x: 550, y: 330, r: 24, color: "#ffd700", label: "YOL", anim: "float2", desc: "Aks ve Akış", connection: "BİR, O", score: "%99.8", derivatives: ["Yol-cu"], details: "Rulo değil yol mantığının merkez hecesi." },
-    { id: "O", x: 600, y: 260, r: 25, color: "#ffd700", label: "O", anim: "float3", desc: "Evrensel Öz", connection: "YOL, OL, KÖK", score: "%99.5", derivatives: ["O-na"], details: "Merkez ve yön gösterici zamir kökü." },
-    { id: "OL", x: 650, y: 210, r: 22, color: "#ffd700", label: "OL", anim: "float1", desc: "Oluş ve Varlık", connection: "O", score: "%99.3", derivatives: ["Ol-gu"], details: "Varlığa geliş eylemi." },
-    { id: "KÖK", x: 580, y: 170, r: 24, color: "#ffd700", label: "KÖK", anim: "float2", desc: "Kaynak", connection: "O, VAN, ÇİK, AL", score: "%99.9", derivatives: ["Kök-en"], details: "Ana kök katmanı." },
-    { id: "VAN", x: 620, y: 110, r: 20, color: "#ffd700", label: "VAN", anim: "float3", desc: "Su ve Havza", connection: "KÖK", score: "%98.7", derivatives: ["Van-gölü"], details: "Doğu Anadolu havza kurgusu." },
-    { id: "ÇİK", x: 530, y: 50, r: 20, color: "#1e90ff", label: "ÇİK", anim: "float1", desc: "Çıkış Vektörü", connection: "GÖK", score: "%98.5", derivatives: ["Çık-ış"], details: "Yükselim hareketi." },
-    { id: "GÖK", x: 560, y: 90, r: 22, color: "#00ff7f", label: "GÖK", anim: "float2", desc: "Kozmoz", connection: "ÇİK, AL", score: "%99.2", derivatives: ["Gök-sel"], details: "Göksel boyut katmanı." },
-    { id: "AL", x: 510, y: 130, r: 20, color: "#1e90ff", label: "AL", anim: "float3", desc: "Alma ve Yüksek", connection: "GÖK, KÖK", score: "%98.9", derivatives: ["Al-an"], details: "Kırmızı ve idrak kökü." },
-    { id: "KUR", x: 420, y: 140, r: 24, color: "#ff8c00", label: "KUR", anim: "float1", desc: "Kuruluş ve Yapı", connection: "YKOS 1000, DA", score: "%99.1", derivatives: ["Kur-um"], details: "İnşa ve mimari kök hece." },
-    { id: "DA", x: 470, y: 190, r: 22, color: "#ff8c00", label: "DA", anim: "float2", desc: "Dağ ve Yükseklik", connection: "KUR", score: "%98.8", derivatives: ["Da-ğ"], details: "Yeryüzü şekilleri ve kalıcılık." },
-    { id: "ÇEV", x: 330, y: 250, r: 22, color: "#1e90ff", label: "ÇEV", anim: "float3", desc: "Çevre ve Daire", connection: "YKOS 100, DİŞ", score: "%99.4", derivatives: ["Çev-re"], details: "Dairesel kuşatma alanı." },
-    { id: "DİŞ", x: 260, y: 220, r: 20, color: "#1e90ff", label: "DİŞ", anim: "float1", desc: "Dış Sınır", connection: "ÇEV, YÜZ", score: "%98.4", derivatives: ["Dış-arı"], details: "Dış sınır ve biçim." },
-    { id: "YÜZ", x: 190, y: 210, r: 20, color: "#1e90ff", label: "YÜZ", anim: "float2", desc: "Yüzey ve Çehre", connection: "DİŞ, ULUN", score: "%98.6", derivatives: ["Yüz-ey"], details: "Ön görünüm ve alan." },
-    { id: "ULUN", x: 120, y: 200, r: 20, color: "#1e90ff", label: "ULUN", anim: "float3", desc: "Ulu ve Yüce", connection: "YÜZ", score: "%98.9", derivatives: ["Ulu-s"], details: "Büyüklük ve hiyerarşi." },
-    { id: "ROL", x: 360, y: 490, r: 22, color: "#ba55d3", label: "ROL", anim: "float1", desc: "İşlev ve Görev", connection: "YKOS 200", score: "%98.7", derivatives: ["Rol-daş"], details: "Toplumsal işlev." },
-    { id: "AYLUİL", x: 310, y: 510, r: 22, color: "#ba55d3", label: "AYLUİL", anim: "float2", desc: "Akdeniz Ekeni", connection: "AVRUPA ATLASI", score: "%98.5", derivatives: ["Ay-lu"], details: "Akdeniz ada dilleri." }
+    { id: "YKOS 1000", x: 350, y: 180, r: 42, color: "#ffd700", label: "YKOS 1000", anim: "float1", desc: "Ana Bilgi Entegrasyon Matrisi", connection: "YKOS 100, YKOS 200, YKOS 300", score: "%100", derivatives: ["Master-Veri", "Yapay-Zekâ"], details: "Sistemin tüm katmanlarını bağlayan yapay zekâ destekli üst entegrasyon matrisi.", url: "https://www.ykos.com.tr/ykos-master-ykos1000/101/" },
+    { id: "YKOS 100", x: 420, y: 310, r: 36, color: "#1e90ff", label: "YKOS 100", anim: "float1", desc: "Temel Kök Hece Matrisi Katmanı", connection: "YOL, BİR, ÇEV", score: "%99.9", derivatives: ["Kök-en", "Yol-cu", "Çev-re"], details: "Anadolu merkezli 100 birincil hece vektörünün algoritmik veritabanı.", url: "https://www.ykos.com.tr/ykos-master-ykos100/102/" },
+    { id: "YKOS 200", x: 380, y: 410, r: 35, color: "#00ff7f", label: "YKOS 200", anim: "float2", desc: "Bölgesel ve Derin Arkeolojik Katman", connection: "Göbeklitepe, ROL, Sümer", score: "%99.6", derivatives: ["Rol-daş", "Er-en", "Süm-er"], details: "Doğu Akdeniz ve Mezopotamya petroglif katmanları.", url: "https://www.ykos.com.tr/ykos-master-ykos200/103/" },
+    { id: "YKOS 300", x: 260, y: 370, r: 36, color: "#ff8c00", label: "YKOS 300", anim: "float3", desc: "Global Atlas Katmanı", connection: "ÖN ASYA ATLASI, AMERİKA ATLASI", score: "%99.4", derivatives: ["At-las", "Av-rasya"], details: "Avrasya ve Amerika kıtaları arası kültür ve damga aksı.", url: "https://www.ykos.com.tr/ykos-master-ykos300/104/" },
+    { id: "ANADOLU ATLASI", x: 420, y: 230, r: 24, color: "#ffd700", label: "ANADOLU ATLASI", anim: "float1", desc: "Anadolu Kadim Kültür Havzası", connection: "YKOS 100", score: "%100", derivatives: ["An-adolu", "Çat-al"], details: "Merkez üssü Anadolu olan birincil simetri haritası.", url: "https://www.ykos.com.tr/anadolu-atlasi/201/" },
+    { id: "ÖN ASYA ATLASI", x: 150, y: 320, r: 22, color: "#ffd700", label: "ÖN ASYA ATLASI", anim: "float2", desc: "Ön Asya Hatları", connection: "YKOS 300", score: "%99.1", derivatives: ["As-ya", "Kaf-kas"], details: "Mezopotamya ve Kafkasya geçiş yolları.", url: "https://www.ykos.com.tr/on-asya-atlasi/202/" },
+    { id: "AMERİKA ATLASI", x: 140, y: 410, r: 22, color: "#ff8c00", label: "AMERİKA ATLASI", anim: "float3", desc: "Trans-Bering Bağlantıları", connection: "YKOS 300", score: "%98.5", derivatives: ["May-a", "In-ka"], details: "Amerika kıtasındaki damga paralellikleri.", url: "https://www.ykos.com.tr/amerika-atlasi/203/" },
+    { id: "AVRUPA ATLASI", x: 250, y: 500, r: 22, color: "#ba55d3", label: "AVRUPA ATLASI", anim: "float1", desc: "Etrüsk ve Akdeniz Rotaları", connection: "AYLUİL", score: "%98.9", derivatives: ["Et-rüsk", "Lem-nos"], details: "Akdeniz ve Etrüsk yazıtları dil akışı.", url: "https://www.ykos.com.tr/avrupa-atlasi/204/" },
+    { id: "Göbeklitepe", x: 480, y: 430, r: 22, color: "#00ff7f", label: "Göbeklitepe", anim: "float2", desc: "T-Sütun Sembolizmleri", connection: "YKOS 200", score: "%99.7", derivatives: ["T-Sütun", "H-Piktogramı"], details: "İkilik ve göksel bağ sembolizminin deşifresi.", url: "https://www.ykos.com.tr/ykos-master-001-gobeklitepe/668/" },
+    { id: "Sümer", x: 470, y: 360, r: 22, color: "#00ff7f", label: "Sümer", anim: "float3", desc: "Mezopotamya Çivi Yazısı", connection: "YKOS 200", score: "%99.2", derivatives: ["Süm-er", "Kiv-i"], details: "Sümerce ve Ön-Türkçe ortak fonetik kökler.", url: "https://www.ykos.com.tr/sumer-koku/301/" },
+    { id: "BİR", x: 500, y: 270, r: 24, color: "#ffd700", label: "BİR", anim: "float1", desc: "Teklik ve Başlangıç", connection: "YKOS 100, YOL", score: "%99.8", derivatives: ["Bir-lik"], details: "İlk varlık ve birlik aksı.", url: "https://www.ykos.com.tr/kok-hece-bir/401/" },
+    { id: "YOL", x: 550, y: 330, r: 24, color: "#ffd700", label: "YOL", anim: "float2", desc: "Aks ve Akış", connection: "BİR, O", score: "%99.8", derivatives: ["Yol-cu"], details: "Rulo değil yol mantığının merkez hecesi.", url: "https://www.ykos.com.tr/kok-hece-yol/402/" },
+    { id: "O", x: 600, y: 260, r: 25, color: "#ffd700", label: "O", anim: "float3", desc: "Evrensel Öz", connection: "YOL, OL, KÖK", score: "%99.5", derivatives: ["O-na"], details: "Merkez ve yön gösterici zamir kökü.", url: "https://www.ykos.com.tr/kok-hece-o/403/" },
+    { id: "OL", x: 650, y: 210, r: 22, color: "#ffd700", label: "OL", anim: "float1", desc: "Oluş ve Varlık", connection: "O", score: "%99.3", derivatives: ["Ol-gu"], details: "Varlığa geliş eylemi.", url: "https://www.ykos.com.tr/kok-hece-ol/404/" },
+    { id: "KÖK", x: 580, y: 170, r: 24, color: "#ffd700", label: "KÖK", anim: "float2", desc: "Kaynak", connection: "O, VAN, ÇİK, AL", score: "%99.9", derivatives: ["Kök-en"], details: "Ana kök katmanı.", url: "https://www.ykos.com.tr/kok-hece-kok/405/" },
+    { id: "VAN", x: 620, y: 110, r: 20, color: "#ffd700", label: "VAN", anim: "float3", desc: "Su ve Havza", connection: "KÖK", score: "%98.7", derivatives: ["Van-gölü"], details: "Doğu Anadolu havza kurgusu.", url: "https://www.ykos.com.tr/kok-hece-van/406/" },
+    { id: "ÇİK", x: 530, y: 50, r: 20, color: "#1e90ff", label: "ÇİK", anim: "float1", desc: "Çıkış Vektörü", connection: "GÖK", score: "%98.5", derivatives: ["Çık-ış"], details: "Yükselim hareketi.", url: "https://www.ykos.com.tr/kok-hece-cik/407/" },
+    { id: "GÖK", x: 560, y: 90, r: 22, color: "#00ff7f", label: "GÖK", anim: "float2", desc: "Kozmoz", connection: "ÇİK, AL", score: "%99.2", derivatives: ["Gök-sel"], details: "Göksel boyut katmanı.", url: "https://www.ykos.com.tr/kok-hece-gok/408/" },
+    { id: "AL", x: 510, y: 130, r: 20, color: "#1e90ff", label: "AL", anim: "float3", desc: "Alma ve Yüksek", connection: "GÖK, KÖK", score: "%98.9", derivatives: ["Al-an"], details: "Kırmızı ve idrak kökü.", url: "https://www.ykos.com.tr/kok-hece-al/409/" },
+    { id: "KUR", x: 420, y: 140, r: 24, color: "#ff8c00", label: "KUR", anim: "float1", desc: "Kuruluş ve Yapı", connection: "YKOS 1000, DA", score: "%99.1", derivatives: ["Kur-um"], details: "İnşa ve mimari kök hece.", url: "https://www.ykos.com.tr/kok-hece-kur/410/" },
+    { id: "DA", x: 470, y: 190, r: 22, color: "#ff8c00", label: "DA", anim: "float2", desc: "Dağ ve Yükseklik", connection: "KUR", score: "%98.8", derivatives: ["Da-ğ"], details: "Yeryüzü şekilleri ve kalıcılık.", url: "https://www.ykos.com.tr/kok-hece-da/411/" },
+    { id: "ÇEV", x: 330, y: 250, r: 22, color: "#1e90ff", label: "ÇEV", anim: "float3", desc: "Çevre ve Daire", connection: "YKOS 100, DİŞ", score: "%99.4", derivatives: ["Çev-re"], details: "Dairesel kuşatma alanı.", url: "https://www.ykos.com.tr/kok-hece-cev/412/" },
+    { id: "DİŞ", x: 260, y: 220, r: 20, color: "#1e90ff", label: "DİŞ", anim: "float1", desc: "Dış Sınır", connection: "ÇEV, YÜZ", score: "%98.4", derivatives: ["Dış-arı"], details: "Dış sınır ve biçim.", url: "https://www.ykos.com.tr/kok-hece-dis/413/" },
+    { id: "YÜZ", x: 190, y: 210, r: 20, color: "#1e90ff", label: "YÜZ", anim: "float2", desc: "Yüzey ve Çehre", connection: "DİŞ, ULUN", score: "%98.6", derivatives: ["Yüz-ey"], details: "Ön görünüm ve alan.", url: "https://www.ykos.com.tr/kok-hece-yuz/414/" },
+    { id: "ULUN", x: 120, y: 200, r: 20, color: "#1e90ff", label: "ULUN", anim: "float3", desc: "Ulu ve Yüce", connection: "YÜZ", score: "%98.9", derivatives: ["Ulu-s"], details: "Büyüklük ve hiyerarşi.", url: "https://www.ykos.com.tr/kok-hece-ulun/415/" },
+    { id: "ROL", x: 360, y: 490, r: 22, color: "#ba55d3", label: "ROL", anim: "float1", desc: "İşlev ve Görev", connection: "YKOS 200", score: "%98.7", derivatives: ["Rol-daş"], details: "Toplumsal işlev.", url: "https://www.ykos.com.tr/kok-hece-rol/416/" },
+    { id: "AYLUİL", x: 310, y: 510, r: 22, color: "#ba55d3", label: "AYLUİL", anim: "float2", desc: "Akdeniz Ekeni", connection: "AVRUPA ATLASI", score: "%98.5", derivatives: ["Ay-lu"], details: "Akdeniz ada dilleri.", url: "https://www.ykos.com.tr/kok-hece-ayluil/417/" }
   ];
 
   const handleNavigateLogin = (role) => { setUserRole(role); setCurrentView("login"); };
   const handleNavigateRead = (id) => { setSelectedArticleId(id); setCurrentView("read"); };
   const selectedArticle = activeArticles.find(a => a.id === selectedArticleId) || activeArticles[0];
+
+  // Düğüm tıklama fonksiyonu: Eğer URL varsa direkt haber linkine gider
+  const handleNodeClick = (node) => {
+    if (node.url) {
+      window.open(node.url, "_blank");
+    } else {
+      setSelectedNode(node);
+    }
+  };
 
   const containerStyle = { maxWidth: "1220px", margin: "10px auto", padding: "15px", backgroundColor: "#050811", border: "1px solid #ffd700", borderRadius: "12px", boxShadow: "0 8px 32px rgba(0,0,0,0.8)", color: "#fff", boxSizing: "border-box" };
   const backBtnStyle = { padding: "8px 14px", background: "transparent", border: "1px solid #ffd700", color: "#ffd700", fontWeight: "bold", borderRadius: "6px", cursor: "pointer", fontSize: "0.78rem" };
@@ -157,7 +167,7 @@ export function App() {
       guideTitle: { TR: "📌 MATRİS VE GLOBAL ATLAS REHBERİ", EN: "📌 MATRIX & GLOBAL ATLAS GUIDE" },
       motiveTitle: { TR: "ÖNCE VERİ, SONRA ANALİZ, SONRA YORUM", EN: "FIRST DATA, THEN ANALYSIS, THEN INTERPRETATION" },
       motiveSub: { TR: "40 Kök Sistem, Karşılaştırmalı Arkeolojik Katmanlar", EN: "40 Root Systems, Comparative Archaeological Layers" },
-      guideDesc: { TR: "YKOS Canlı Küresel Ağ: Genişletilmiş baloncuklar ve bağlantı çizgileri algoritmik akışı net olarak göstermektedir.", EN: "YKOS Live Global Network: Expanded bubbles and connecting lines clearly display the algorithmic flow." }
+      guideDesc: { TR: "YKOS Canlı Küresel Ağ: Baloncuklara tıklayarak doğrudan ykos.com.tr haber linklerine gidebilirsiniz.", EN: "YKOS Live Global Network: Click bubbles to go directly to ykos.com.tr news links." }
     };
     return labels[key]?.[currentLang] || labels[key]?.TR;
   };
@@ -273,7 +283,7 @@ export function App() {
                   <line x1="260" y1="220" x2="190" y2="210" stroke="#1e90ff" strokeWidth="2" className="flowing-line" />
                   <line x1="190" y1="210" x2="120" y2="200" stroke="#1e90ff" strokeWidth="2" className="flowing-line" />
                   {matrixNodes.map((node) => (
-                    <g key={node.id} className={`node-${node.anim}`} onClick={() => setSelectedNode(node)}>
+                    <g key={node.id} className={`node-${node.anim}`} onClick={() => handleNodeClick(node)} title="Habere Gitmek İçin Tıkla">
                       <circle cx={node.x} cy={node.y} r={selectedNode?.id === node.id ? node.r + 6 : node.r} fill="#050811" stroke={selectedNode?.id === node.id ? "#ffffff" : node.color} strokeWidth={selectedNode?.id === node.id ? "3.5" : "2"} style={{ filter: `drop-shadow(0px 0px 8px ${node.color})` }} />
                       <text x={node.x} y={node.y + 4} textAnchor="middle" fill={node.color} fontSize={node.r > 28 ? "11" : "9"} fontWeight="bold">{node.label}</text>
                     </g>
@@ -283,29 +293,11 @@ export function App() {
             </div>
             <div className="matrix-guide-panel" style={{ background: "rgba(255,215,0,0.04)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "16px" }}>
               <h3 style={{ color: "#ffd700", fontSize: "0.88rem", margin: "0 0 10px 0", borderBottom: "1px solid rgba(255,215,0,0.2)", paddingBottom: "6px" }}>
-                {selectedNode ? `${getPanelLabel("selectedLayer")}: [${selectedNode.label}]` : getPanelLabel("guideTitle")}
+                {getPanelLabel("guideTitle")}
               </h3>
-              {selectedNode ? (
-                <div>
-                  <p style={{ color: "#fff", fontSize: "0.85rem", fontWeight: "bold", marginBottom: "8px" }}>{selectedNode.desc}</p>
-                  <div style={{ margin: "10px 0", padding: "10px", background: "rgba(0,0,0,0.6)", border: "1px solid rgba(255,215,0,0.2)", borderRadius: "6px", fontSize: "0.75rem", color: "#ccc" }}>
-                    <div><strong>{getPanelLabel("connections")}</strong> {selectedNode.connection}</div>
-                    <div style={{ marginTop: "4px" }}><strong>{getPanelLabel("coherence")}</strong> <span style={{ color: "#ffd700", fontWeight: "bold" }}>{selectedNode.score}</span></div>
-                  </div>
-                  <div style={{ margin: "10px 0" }}>
-                    <span style={{ color: "#ffd700", fontSize: "0.72rem", fontWeight: "bold", display: "block", marginBottom: "4px" }}>🌱 {getPanelLabel("derivatives")}</span>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
-                      {selectedNode.derivatives.map((der, i) => (
-                        <span key={i} style={{ background: "rgba(255,215,0,0.1)", border: "1px solid rgba(255,215,0,0.3)", color: "#fff", padding: "2px 6px", borderRadius: "4px", fontSize: "0.7rem" }}>{der}</span>
-                      ))}
-                    </div>
-                  </div>
-                  <p style={{ color: "#aaa", fontSize: "0.76rem", lineHeight: "1.5", background: "rgba(255,255,255,0.02)", padding: "10px", borderRadius: "6px", borderLeft: "2px solid #ffd700", marginTop: "10px" }}>{selectedNode.details}</p>
-                  <button onClick={() => setSelectedNode(null)} style={{ ...backBtnStyle, width: "100%", fontSize: "0.75rem", marginTop: "10px" }}>{getPanelLabel("clearSelection")}</button>
-                </div>
-              ) : (
-                <div style={{ color: "#ccc", fontSize: "0.78rem", lineHeight: "1.5" }}><p>{getPanelLabel("guideDesc")}</p></div>
-              )}
+              <div style={{ color: "#ccc", fontSize: "0.78rem", lineHeight: "1.5" }}>
+                <p>{getPanelLabel("guideDesc")}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -368,22 +360,25 @@ export function App() {
             {analysisResult && (
               <div style={{ marginTop: "15px", color: "#00ff7f", background: "rgba(0,255,127,0.08)", padding: "12px", borderRadius: "6px", border: "1px solid #00ff7f" }}>{analysisResult.synthesis}</div>
             )}
+            
+            {/* Canlı Matris Haber Bağlantıları Listesi */}
             <div style={{ marginTop: "30px", borderTop: "1px solid rgba(255,215,0,0.2)", paddingTop: "20px" }}>
-              <h3 style={{ color: "#ffd700", fontSize: "1rem", marginBottom: "15px" }}>📡 CANLI AKADEMİK AKIŞ (YKOS.COM.TR)</h3>
-              {rssArticles && rssArticles.length > 0 ? (
-                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                  {rssArticles.map((article, index) => (
-                    <div key={index} style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,215,0,0.2)", padding: "14px", borderRadius: "8px" }}>
-                      <h4 style={{ color: "#fff", margin: "0 0 6px 0", fontSize: "0.95rem" }}>{article.title}</h4>
-                      <p style={{ color: "#aaa", fontSize: "0.78rem", margin: "0 0 10px 0", lineHeight: "1.4" }}>{article.description}</p>
-                      <a href={article.link} target="_blank" rel="noopener noreferrer" style={{ color: "#ffd700", fontSize: "0.75rem", textDecoration: "none", fontWeight: "bold" }}>Tam Metni Oku ve İncele →</a>
+              <h3 style={{ color: "#ffd700", fontSize: "1rem", marginBottom: "15px" }}>📡 CANLI HABER VE MATRİS BAĞLANTILARI (YKOS.COM.TR)</h3>
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                {matrixNodes.map((node) => (
+                  <div key={node.id} style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,215,0,0.2)", padding: "12px", borderRadius: "8px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
+                    <div>
+                      <h4 style={{ color: "#ffd700", margin: "0 0 4px 0", fontSize: "0.92rem" }}>{node.label} - {node.desc}</h4>
+                      <span style={{ color: "#aaa", fontSize: "0.75rem" }}>{node.url}</span>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div style={{ color: "#888", fontSize: "0.82rem", fontStyle: "italic", padding: "10px 0" }}>Canlı RSS veri akışı bekleniyor veya yerel modda çalışılıyor...</div>
-              )}
+                    <a href={node.url} target="_blank" rel="noopener noreferrer" style={{ background: "#ffd700", color: "#000", padding: "6px 12px", borderRadius: "4px", fontSize: "0.75rem", fontWeight: "bold", textDecoration: "none" }}>
+                      Habere Git →
+                    </a>
+                  </div>
+                ))}
+              </div>
             </div>
+
           </div>
         </div>
       )}
@@ -440,7 +435,7 @@ export function App() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px", flexWrap: "wrap", gap: "10px" }}>
             <div>
               <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>📜 AKADEMİK ÇÖZÜMLEME KATMANI</span>
-              <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem" }}>{selectedArticle.title}</h2>
+              <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem"}>{selectedArticle.title}</h2>
             </div>
             <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
               {renderLanguageSelector()}
