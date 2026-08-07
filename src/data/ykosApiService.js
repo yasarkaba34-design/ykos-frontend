@@ -25,3 +25,43 @@ export async function searchYkosApi(query) {
     return null;
   }
 }
+import { getArchiveSynthesis } from "./ykosArchiveSynthesis";
+
+// Canlı JSON verilerini çeken ana fonksiyon
+export async function fetchYkosCoreMatrix() {
+  try {
+    const response = await fetch("https://www.ykos.com.tr/api/ykos-core", {
+      method: "GET",
+      headers: { "Content-Type": "application/json" }
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      // ykos_core altındaki nodes ve links yapılarını döndürür
+      return data.ykos_core || data;
+    }
+  } catch (error) {
+    console.log("Canlı JSON matrisi yüklenemedi, yerel dinamik katman kullanılıyor.");
+  }
+  return null;
+}
+
+// Arama motoru servisi
+export async function searchYkosApi(query) {
+  if (!query || query.trim().length < 2) return null;
+
+  try {
+    const response = await fetch(`https://www.ykos.com.tr/api/search?q=${encodeURIComponent(query)}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" }
+    });
+
+    if (response.ok) {
+      return await response.json();
+    }
+  } catch (error) {
+    console.log("Dış API yanıt vermedi, YKOS 1000 Yerel Külliyat Katmanı devreye girdi.");
+  }
+
+  return getArchiveSynthesis(query);
+}
