@@ -1,43 +1,67 @@
-// YKOS AKADEMİK ARŞİV VERİ SERVİSİ
+import { getArchiveSynthesis } from "./ykosArchiveSynthesis";
 
-export const defaultArchiveArticles = [
-  {
-    id: 1,
-    title: "Çatalhöyük Kök Hece ve Damga Sembolizmi",
-    summary: "Çatalhöyük duvar resimlerindeki YKOS 100 eşleşmeleri ve Neolitik mühür deşifresi.",
-    content: "Çatalhöyük katmanlarında çıkarılan dairesel pişmiş toprak mühürler, yerleşik yaşamın mülkiyet kodlarını ve kozmik döngüyü ifade etmektedir. YKOS M5 algoritmasına göre 'ÇEV' ve 'BA' kök heceleri %99.8 tutarlılıkla eşleşmektedir."
-  },
-  {
-    id: 2,
-    title: "Göbeklitepe T-Sütunu YKOS Okuması",
-    summary: "Şanlıurfa Göbeklitepe T-Sütunları üzerindeki semboller ve 'H' piktogramı deşifresi.",
-    content: "Göbeklitepe T-sütunlarındaki 'H' motifi dikey varlık aksı ile yatay bağın birlikteliğini, 'C' simgesi ise aydönümü ve döngüsel hafızayı kodlar. Bu yapı dikey-yatay simetri analiziyle çözümlenmiştir."
-  },
-  {
-    id: 3,
-    title: "Etrüsk Lemnos Kitabesi & Ön-Türkçe Eşleşmesi",
-    summary: "Lemnos mezar taşındaki alfabetik dizilimin YKOS kök hece yöntemiyle okuması.",
-    content: "Lemnos steli üzerindeki alfabetik metin, Ön-Türkçe kök ekleri vasıtasıyla çözümlenmiş; Anadolu'dan Etruria hattına uzanan Akdeniz dilsel sürekliliğini doğrulamıştır."
-  },
-  {
-    id: 4,
-    title: "YOL Kök Hecesi ve Akış Teorisi",
-    summary: "'Rulo değil yol' mantığının dilbilimsel matrisi ve Avrasya yayılımı.",
-    content: "YKOS sisteminin temelini oluşturan 'Rulo değil yol' mantığı, dil ve kültür akışının statik arşivler yerine canlı vektörel hatlar üzerinden okunması gerektiğini kanıtlar."
-  }
-];
-
-export async function loadArchiveData() {
+// 1. Canlı JSON Matris Verisini Çeken Servis (ykos_core)
+export async function fetchYkosCoreMatrix() {
   try {
-    // İleride dış servisten veri çekmek gerekirse burası kullanılır
-    return { articles: defaultArchiveArticles };
+    const response = await fetch("https://www.ykos.com.tr/api/ykos-core", {
+      method: "GET",
+      headers: { "Content-Type": "application/json" }
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      return data.ykos_core || data;
+    }
   } catch (error) {
-    console.log("Yerel arşiv verisi yüklendi.");
-    return { articles: defaultArchiveArticles };
+    console.log("Canlı JSON matrisi yüklenemedi, yerel dinamik katman kullanılıyor.");
+  }
+  return null;
+}
+
+// 2. Canlı ykos.com.tr RSS Akış Servisi
+export async function fetchRssData() {
+  try {
+    const response = await fetch("https://www.ykos.com.tr/rss");
+    if (!response.ok) return [];
+    const text = await response.text();
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(text, "application/xml");
+    const items = Array.from(xml.querySelectorAll("item")).map(item => ({
+      title: item.querySelector("title")?.textContent,
+      link: item.querySelector("link")?.textContent,
+      pubDate: item.querySelector("pubDate")?.textContent,
+      description: item.querySelector("description")?.textContent
+    }));
+    return items;
+  } catch (error) {
+    console.log("RSS akışı şu an ulaşılamaz, yerel verilerle devam ediliyor.");
+    return [];
   }
 }
 
+// 3. Arama Motoru ve Canlı API Servisi
+export async function searchYkosApi(query) {
+  if (!query || query.trim().length < 2) return null;
+
+  try {
+    const response = await fetch(`https://www.ykos.com.tr/api/search?q=${encodeURIComponent(query)}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" }
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    }
+  } catch (error) {
+    console.log("Dış API yanıt vermedi, YKOS 1000 Yerel Külliyat Katmanı devreye girdi.");
+  }
+
+  return getArchiveSynthesis(query);
+}
+
 export default {
-  defaultArchiveArticles,
-  loadArchiveData
+  fetchYkosCoreMatrix,
+  fetchRssData,
+  searchYkosApi
 };
