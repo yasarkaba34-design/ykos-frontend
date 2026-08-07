@@ -125,3 +125,90 @@ const styles = {
     borderRadius: '6px'
   }
 };
+// FILE: src/matrices/Matrix.jsx
+
+import React, { useEffect, useState } from "react";
+import metaLayer from "./meta/MetaLayer.json";
+
+export default function Matrix() {
+  const [meta, setMeta] = useState(null);
+
+  useEffect(() => {
+    // MetaLayer verisini yükle
+    setMeta(metaLayer);
+  }, []);
+
+  return (
+    <div className="matrix-container" style={{ background: "#111", color: "gold", padding: "20px" }}>
+      <h2>YKOS MetaKatman</h2>
+      <pre style={{ fontFamily: "Courier New, monospace", fontSize: "14px" }}>
+        {JSON.stringify(meta, null, 2)}
+      </pre>
+    </div>
+  );
+}
+// FILE: src/matrices/Matrix.jsx
+
+import React, { useEffect, useState } from "react";
+
+// MetaKatman JSON'u
+import metaLayer from "./meta/MetaLayer.json";
+
+// Matris dosyaları
+import M8 from "./m8.jsx";
+import M11 from "./m11.jsx";
+import M12 from "./m12.jsx";
+
+export default function Matrix() {
+  const [meta, setMeta] = useState(null);
+  const [matrices, setMatrices] = useState([]);
+
+  useEffect(() => {
+    // MetaLayer yükleniyor
+    setMeta(metaLayer);
+
+    // Tüm matris modülleri yükleniyor
+    setMatrices([
+      { id: "m8", component: <M8 meta={metaLayer} /> },
+      { id: "m11", component: <M11 meta={metaLayer} /> },
+      { id: "m12", component: <M12 meta={metaLayer} /> }
+    ]);
+  }, []);
+
+  return (
+    <div style={{ background: "#111", color: "gold", padding: "20px" }}>
+      <h2>YKOS Matrix Engine</h2>
+
+      <h3>MetaLayer</h3>
+      <pre style={{ fontFamily: "Courier New", fontSize: "14px" }}>
+        {JSON.stringify(meta, null, 2)}
+      </pre>
+
+      <h3>Matris Modülleri</h3>
+      {matrices.map((m) => (
+        <div key={m.id} style={{ marginBottom: "20px" }}>
+          <h4>{m.id.toUpperCase()}</h4>
+          {m.component}
+        </div>
+      ))}
+    </div>
+  );
+}
+// FILE: src/matrices/Matrix.jsx
+
+import HecePanel from "./components/HecePanel";
+
+...
+
+<div>
+  <HecePanel />
+</div>
+// FILE: src/matrices/Matrix.jsx
+
+import FluxPanel from "../flux/FluxPanel";
+
+...
+
+<div>
+  <FluxPanel />
+</div>

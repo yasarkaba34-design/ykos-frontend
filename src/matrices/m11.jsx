@@ -16,3 +16,25 @@ const styles = {
   title: { fontSize: "24px", fontWeight: "bold", marginBottom: "10px" },
   text: { fontSize: "16px", opacity: 0.8 },
 };
+// FILE: src/matrices/m11.jsx
+
+export default function M11({ meta }) {
+  return (
+    <div style={{ padding: "10px", border: "1px solid gold", marginTop: "10px" }}>
+      <h4>M11 Matrisi</h4>
+
+      <p><strong>Origin:</strong> {meta.metaSchema.origin}</p>
+      <p><strong>Semantic Field:</strong> {meta.metaSchema.semantic_field}</p>
+      <p><strong>Frequency:</strong> {meta.metaSchema.frequency}</p>
+
+      <p><strong>Atlas Coord:</strong> {meta.metaSchema.atlas_coord}</p>
+      <p><strong>Bubble Profile:</strong> {meta.metaSchema.bubble_profile}</p>
+      <p><strong>Flux Vector:</strong> {meta.metaSchema.flux_vector}</p>
+
+      <p><strong>RMV Weight:</strong> {meta.metaSchema.rmv_weight}</p>
+      <p><strong>Evaluator Hint:</strong> {meta.metaSchema.evaluator_hint}</p>
+
+      <p><strong>Diller:</strong> {meta.languages.join(", ")}</p>
+    </div>
+  );
+}
