@@ -58,25 +58,27 @@ export function App() {
   ];
 
   useEffect(() => {
+  useEffect(() => {
     async function fetchData() {
+      // 1. Arşiv verilerini yükle
       const data = await loadArchiveData();
       if (data && data.articles) setArchiveArticles(data.articles);
 
+      // 2. Kendi sitenizin içinden toplanan verileri çek (localStorage üzerinden)
       try {
-        const response = await fetch("https://www.ykos.com.tr/api/ykos-core");
-        if (response.ok) {
-          const json = await response.json();
-          if (json && json.ykos_core) {
-            setYkosCoreData(json.ykos_core);
-          }
+        const savedArticles = localStorage.getItem('ykos_scraped_articles');
+        if (savedArticles) {
+          const parsedArticles = JSON.parse(savedArticles);
+          // Toplanan verileri RSS state'ine aktararak listede görünmesini sağla
+          setRssArticles(parsedArticles);
+          console.log("YKOS Otomatik Arşiv Verisi Yüklendi:", parsedArticles.length);
         }
-      } catch (e) {
-        console.log("YKOS Core JSON yerel modda besleniyor.");
+      } catch (err) {
+        console.log("Veri çekme hatası:", err);
       }
     }
     fetchData();
   }, []);
-
   const handleZoomIn = () => setZoomLevel(prev => Math.min(prev + 0.2, 2.2));
   const handleZoomOut = () => setZoomLevel(prev => Math.max(prev - 0.2, 0.6));
   const handleZoomReset = () => setZoomLevel(1);
