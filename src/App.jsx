@@ -10,7 +10,7 @@ export function App() {
   const [selectedArticleId, setSelectedArticleId] = useState(1);
   const [selectedNode, setSelectedNode] = useState(null);
   const [archiveArticles, setArchiveArticles] = useState(defaultArchiveArticles);
-  const [ykosCoreData, setYkosCoreData] = useState({ nodes: [], links: [] });
+  const [rssArticles, setRssArticles] = useState([]);
 
   const [currentLang, setCurrentLang] = useState("TR");
   const [langOpen, setLangOpen] = useState(false);
@@ -57,28 +57,27 @@ export function App() {
     { code: "PT", label: "Português" }, { code: "ES", label: "Español" }, { code: "AR", label: "العربية" }, { code: "DE", label: "Deutsch" }
   ];
 
-  useEffect(() => {
-  useEffect(() => {
+   useEffect(() => {
     async function fetchData() {
-      // 1. Arşiv verilerini yükle
-      const data = await loadArchiveData();
-      if (data && data.articles) setArchiveArticles(data.articles);
-
-      // 2. Kendi sitenizin içinden toplanan verileri çek (localStorage üzerinden)
       try {
-        const savedArticles = localStorage.getItem('ykos_scraped_articles');
-        if (savedArticles) {
-          const parsedArticles = JSON.parse(savedArticles);
-          // Toplanan verileri RSS state'ine aktararak listede görünmesini sağla
-          setRssArticles(parsedArticles);
-          console.log("YKOS Otomatik Arşiv Verisi Yüklendi:", parsedArticles.length);
+        const data = await loadArchiveData();
+        
+        if (data) {
+          // Gelen veriyi localStorage'a güvenli bir şekilde kaydedelim
+          localStorage.setItem('ykos_archive_data', JSON.stringify(data));
+          
+          // Eğer bir state kullanıyorsanız buraya ekleyebilirsiniz:
+          // setArchiveData(data);
         }
-      } catch (err) {
-        console.log("Veri çekme hatası:", err);
+      } catch (error) {
+        console.error("Arşiv verisi yüklenirken hata oluştu:", error);
       }
     }
+    
     fetchData();
   }, []);
+
+
   const handleZoomIn = () => setZoomLevel(prev => Math.min(prev + 0.2, 2.2));
   const handleZoomOut = () => setZoomLevel(prev => Math.max(prev - 0.2, 0.6));
   const handleZoomReset = () => setZoomLevel(1);
@@ -354,20 +353,24 @@ export function App() {
             )}
             
             <div style={{ marginTop: "30px", borderTop: "1px solid rgba(255,215,0,0.2)", paddingTop: "20px" }}>
-              <h3 style={{ color: "#ffd700", fontSize: "1rem", marginBottom: "15px" }}>📡 CANLI HABER VE MATRİS BAĞLANTILARI (YKOS.COM.TR)</h3>
-              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                {matrixNodes.map((node) => (
-                  <div key={node.id} style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,215,0,0.2)", padding: "12px", borderRadius: "8px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
-                    <div>
-                      <h4 style={{ color: "#ffd700", margin: "0 0 4px 0", fontSize: "0.92rem" }}>{node.label} - {node.desc}</h4>
-                      <span style={{ color: "#aaa", fontSize: "0.75rem" }}>{node.url}</span>
+              <h3 style={{ color: "#ffd700", fontSize: "1rem", marginBottom: "15px" }}>📡 OTOMATİK TOPLANAN ARŞİV AKIŞI</h3>
+              {rssArticles && rssArticles.length > 0 ? (
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                  {rssArticles.map((art, index) => (
+                    <div key={index} style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,215,0,0.2)", padding: "12px", borderRadius: "8px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
+                      <div>
+                        <h4 style={{ color: "#ffd700", margin: "0 0 4px 0", fontSize: "0.92rem" }}>{art.title}</h4>
+                        <span style={{ color: "#aaa", fontSize: "0.75rem" }}>{art.url}</span>
+                      </div>
+                      <a href={art.url} target="_blank" rel="noopener noreferrer" style={{ background: "#ffd700", color: "#000", padding: "6px 12px", borderRadius: "4px", fontSize: "0.75rem", fontWeight: "bold", textDecoration: "none" }}>
+                        Habere Git →
+                      </a>
                     </div>
-                    <a href={node.url} target="_blank" rel="noopener noreferrer" style={{ background: "#ffd700", color: "#000", padding: "6px 12px", borderRadius: "4px", fontSize: "0.75rem", fontWeight: "bold", textDecoration: "none" }}>
-                      Habere Git →
-                    </a>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div style={{ color: "#888", fontSize: "0.82rem", fontStyle: "italic", padding: "10px 0" }}>Henüz tarayıcı hafızasında toplanmış arşiv verisi bulunmuyor. ykos.com.tr üzerinde gezindikçe veriler buraya dolacaktır.</div>
+              )}
             </div>
 
           </div>
