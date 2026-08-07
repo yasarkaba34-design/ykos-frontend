@@ -1,0 +1,50 @@
+// FILE: src/evaluator/EvaluatorPanel.jsx
+
+import React from "react";
+import metaLayer from "../matrices/meta/MetaLayer.json";
+
+export default function EvaluatorPanel() {
+  const entries = metaLayer.entries;
+
+  return (
+    <div style={{ background: "#111", color: "gold", padding: "20px", border: "1px solid gold" }}>
+      <h3>Evaluator — Derin Semantik Okuma Paneli</h3>
+
+      {entries.map((entry) => {
+        // Derin okuma puanı (ilk sürüm)
+        const depthScore = (entry.reading_depth * entry.rmv_weight * entry.flux_energy).toFixed(3);
+
+        return (
+          <div
+            key={entry.root}
+            style={{
+              marginBottom: "25px",
+              padding: "15px",
+              border: "1px solid gold",
+              background: "#222",
+            }}
+          >
+            <h4>{entry.root}</h4>
+
+            <p><strong>Reading Depth:</strong> {entry.reading_depth}</p>
+            <p><strong>Evaluator Hint:</strong> {entry.evaluator_hint}</p>
+
+            <p><strong>Flux Energy:</strong> {entry.flux_energy}</p>
+            <p><strong>RMV Weight:</strong> {entry.rmv_weight}</p>
+
+            <p><strong>Derin Okuma Skoru:</strong> {depthScore}</p>
+
+            <div style={{ marginTop: "10px" }}>
+              <strong>Derin Semantik Yorum:</strong>
+              <p>
+                {entry.root === "TUT"
+                  ? "TUT hecesi bağlama, sabitleme ve kavrama semantiğini derin düzeyde taşır."
+                  : "KUR hecesi yapı kurma, düzenleme ve form oluşturma semantiğini derin düzeyde taşır."}
+              </p>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}

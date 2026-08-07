@@ -212,3 +212,82 @@ import FluxPanel from "../flux/FluxPanel";
 <div>
   <FluxPanel />
 </div>
+// FILE: src/matrices/Matrix.jsx
+
+import EvaluatorPanel from "../evaluator/EvaluatorPanel";
+
+...
+
+<div>
+  <EvaluatorPanel />
+</div>
+// FILE: src/matrices/Matrix.jsx
+
+import UnifiedPanel from "../yunified/UnifiedPanel";
+
+...
+
+<div>
+  <UnifiedPanel />
+</div>
+// FILE: src/matrices/Matrix.jsx
+
+import AtlasMap from "../atlas/AtlasMap";
+
+...
+
+<div>
+  <AtlasMap />
+</div>
+// FILE: src/matrices/Matrix.jsx
+
+import CoreDashboard from "../dashboard/CoreDashboard";
+
+...
+
+<div>
+  <CoreDashboard />
+</div>
+// FILE: src/matrices/Matrix.jsx
+
+import DFlow from "../dflow/DFlow";
+
+...
+
+<div>
+  <DFlow />
+</div>
+// FILE: src/matrices/Matrix.jsx
+
+import Kernel from "../kernel/Kernel";
+
+...
+
+<div>
+  <Kernel />
+</div>
+// FILE: src/matrices/Matrix.jsx
+
+import RTE from "../runtime/RTE";
+
+...
+
+<div>
+  <RTE />
+</div>
+// FILE: src/matrices/Matrix.jsx
+
+import RTE from "../runtime/RTE";
+
+...
+
+<div>
+  <RTE />
+</div>
+// FILE: src/matrices/Matrix.jsx
+
+import RTE from "../runtime/RTE";
+
+...
+
+
