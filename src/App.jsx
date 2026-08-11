@@ -12,11 +12,6 @@ export function App() {
   const [archiveArticles, setArchiveArticles] = useState(defaultArchiveArticles);
   const [rssArticles, setRssArticles] = useState([]);
 
-  // Arama İşlevleri İçin Yeni State'ler
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState({ nodes: [], articles: [] });
-  const [isSearchDropdownOpen, setIsSearchDropdownOpen] = useState(false);
-
   const [currentLang, setCurrentLang] = useState("TR");
   const [langOpen, setLangOpen] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
@@ -113,56 +108,6 @@ export function App() {
     { id: "AYLUİL", x: 310, y: 510, r: 22, color: "#ba55d3", label: "AYLUİL", anim: "float2", desc: "Akdeniz Ekeni", connection: "AVRUPA ATLASI", score: "%98.5", derivatives: ["Ay-lu"], details: "Akdeniz ada dilleri." }
   ];
 
-  // --- ARAMA SİSTEMİ (AKILLI FİLTRELEME) ---
-  const handleSearch = (e) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-
-    if (query.length >= 2) {
-      const lowerQuery = query.toLowerCase();
-
-      // 1. Matris Düğümlerini Ara
-      const matchedNodes = matrixNodes.filter(node => 
-        node.label.toLowerCase().includes(lowerQuery) || 
-        node.desc.toLowerCase().includes(lowerQuery) || 
-        node.derivatives.some(d => d.toLowerCase().includes(lowerQuery))
-      );
-
-      // 2. Makale ve Haberleri Ara
-      const allArticles = [...activeArticles, ...rssArticles];
-      const matchedArticles = allArticles.filter(art => 
-        art.title?.toLowerCase().includes(lowerQuery) || 
-        art.summary?.toLowerCase().includes(lowerQuery)
-      );
-
-      // Tekrar edenleri temizle (isteğe bağlı)
-      const uniqueArticles = Array.from(new Map(matchedArticles.map(item => [item.title, item])).values());
-
-      setSearchResults({ nodes: matchedNodes, articles: uniqueArticles });
-      setIsSearchDropdownOpen(true);
-    } else {
-      setSearchResults({ nodes: [], articles: [] });
-      setIsSearchDropdownOpen(false);
-    }
-  };
-
-  const handleSearchResultClick = (type, item) => {
-    setIsSearchDropdownOpen(false);
-    setSearchQuery("");
-    
-    if (type === "node") {
-      setSelectedNode(item);
-      setCurrentView("visualize");
-    } else if (type === "article") {
-      if (item.id) {
-        setSelectedArticleId(item.id);
-        setCurrentView("read");
-      } else if (item.url) {
-        window.open(item.url, "_blank"); // Dışarıdan toplanan haberleri yeni sekmede açar
-      }
-    }
-  };
-
   const handleZoomIn = () => setZoomLevel(prev => Math.min(prev + 0.2, 2.2));
   const handleZoomOut = () => setZoomLevel(prev => Math.max(prev - 0.2, 0.6));
   const handleZoomReset = () => setZoomLevel(1);
@@ -226,62 +171,11 @@ export function App() {
         }
       `}</style>
 
-      {/* GLOBAL ARAMA VE NAVİGASYON ÇUBUĞU (YENİ) */}
-      <div style={{ maxWidth: "1220px", margin: "0 auto", padding: "15px 15px 0", display: "flex", gap: "10px", alignItems: "center", position: "relative", zIndex: 100 }}>
-        <input 
-          type="text" 
-          placeholder="🔍 YKOS'ta Ara (Kök hece, makale, kuram...)" 
-          value={searchQuery}
-          onChange={handleSearch}
-          style={{ flex: 1, padding: "12px 15px", background: "#02040a", border: "1px solid #ffd700", color: "#fff", borderRadius: "8px", boxSizing: "border-box", fontSize: "0.9rem" }}
-        />
+      {/* Sadece Dil ve Menü Seçenekleri (Arama çubuğu kaldırıldı) */}
+      <div style={{ maxWidth: "1220px", margin: "0 auto", padding: "15px 15px 0", display: "flex", justifyContent: "flex-end", gap: "10px", alignItems: "center" }}>
         {renderLanguageSelector()}
         {currentView !== "dashboard" && (
           <button onClick={() => setCurrentView("dashboard")} style={{...backBtnStyle, padding: "10px 15px", whiteSpace: "nowrap"}}>🏠 Ana Sayfa</button>
-        )}
-
-        {/* ARAMA SONUÇLARI DROPDOWN */}
-        {isSearchDropdownOpen && (
-          <div style={{ position: "absolute", top: "100%", left: "15px", right: "15px", background: "#050811", border: "1px solid #ffd700", borderRadius: "8px", marginTop: "5px", padding: "15px", maxHeight: "400px", overflowY: "auto", boxShadow: "0 10px 30px rgba(0,0,0,0.9)", zIndex: 200 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px", marginBottom: "10px" }}>
-              <span style={{ color: "#ffd700", fontSize: "0.85rem", fontWeight: "bold" }}>Arama Sonuçları</span>
-              <span onClick={() => setIsSearchDropdownOpen(false)} style={{ color: "#aaa", cursor: "pointer", fontSize: "0.8rem" }}>Kapat ✕</span>
-            </div>
-
-            {searchResults.nodes.length === 0 && searchResults.articles.length === 0 ? (
-              <div style={{ color: "#888", fontSize: "0.85rem", padding: "10px 0" }}>Sonuç bulunamadı.</div>
-            ) : (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "20px" }}>
-                
-                {/* Matris Düğümleri Sonuçları */}
-                {searchResults.nodes.length > 0 && (
-                  <div>
-                    <h4 style={{ color: "#00ff7f", margin: "0 0 10px 0", fontSize: "0.8rem" }}>🔣 MATRİS VE KÖK HECELER</h4>
-                    {searchResults.nodes.map(node => (
-                      <div key={node.id} onClick={() => handleSearchResultClick("node", node)} style={{ background: "rgba(255,215,0,0.05)", border: `1px solid ${node.color}`, padding: "10px", borderRadius: "6px", marginBottom: "8px", cursor: "pointer" }}>
-                        <strong style={{ color: node.color }}>{node.label}</strong>
-                        <p style={{ margin: "4px 0 0", fontSize: "0.75rem", color: "#ccc" }}>{node.desc}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Makale ve Haber Sonuçları */}
-                {searchResults.articles.length > 0 && (
-                  <div>
-                    <h4 style={{ color: "#1e90ff", margin: "0 0 10px 0", fontSize: "0.8rem" }}>📜 MAKALELER VE HABERLER</h4>
-                    {searchResults.articles.map((art, idx) => (
-                      <div key={idx} onClick={() => handleSearchResultClick("article", art)} style={{ background: "rgba(30,144,255,0.05)", border: "1px solid rgba(30,144,255,0.5)", padding: "10px", borderRadius: "6px", marginBottom: "8px", cursor: "pointer" }}>
-                        <strong style={{ color: "#fff", fontSize: "0.85rem" }}>{art.title}</strong>
-                        {art.summary && <p style={{ margin: "4px 0 0", fontSize: "0.75rem", color: "#aaa" }}>{art.summary.substring(0, 60)}...</p>}
-                      </div>
-                    ))}
-                  </div>
-                )}
-                
-              </div>
-            )}
-          </div>
         )}
       </div>
 

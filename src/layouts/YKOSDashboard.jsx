@@ -130,7 +130,11 @@ export default function YKOSDashboard({
         </div>
 
         {/* LOGO VE ANASAYFA LİNKİ */}
-        <div onClick={onGoHome} style={{ textAlign: "center", cursor: "pointer", marginTop: "-18px", userSelect: "none" }}>
+        <div 
+          onClick={onGoHome} 
+          title={t.home || "Ana Sayfa"}
+          style={{ textAlign: "center", cursor: "pointer", marginTop: "-18px", userSelect: "none" }}
+        >
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "4px" }}>
             <img 
               src="/ykos-logo.png" 
