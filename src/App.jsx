@@ -10,6 +10,8 @@ export function App() {
   const [selectedArticleId, setSelectedArticleId] = useState(1);
   const [selectedNode, setSelectedNode] = useState(null);
   const [archiveArticles, setArchiveArticles] = useState(defaultArchiveArticles);
+  
+  // Otomatik toplanan verilerin tutulacağı state
   const [rssArticles, setRssArticles] = useState([]);
 
   const [currentLang, setCurrentLang] = useState("TR");
@@ -57,26 +59,44 @@ export function App() {
     { code: "PT", label: "Português" }, { code: "ES", label: "Español" }, { code: "AR", label: "العربية" }, { code: "DE", label: "Deutsch" }
   ];
 
-   useEffect(() => {
+  // 1. Arşiv Verisi Çekme (Mevcut kodunuz)
+  useEffect(() => {
     async function fetchData() {
       try {
         const data = await loadArchiveData();
-        
         if (data) {
-          // Gelen veriyi localStorage'a güvenli bir şekilde kaydedelim
           localStorage.setItem('ykos_archive_data', JSON.stringify(data));
-          
-          // Eğer bir state kullanıyorsanız buraya ekleyebilirsiniz:
-          // setArchiveData(data);
         }
       } catch (error) {
         console.error("Arşiv verisi yüklenirken hata oluştu:", error);
       }
     }
-    
     fetchData();
   }, []);
 
+  // 2. Sisteme eklediğiniz rte.start() entegrasyonu (Güvenli şekilde sarmalandı)
+  useEffect(() => {
+    try {
+      if (typeof rte !== 'undefined') {
+        rte.start();
+      }
+    } catch (e) {
+      console.log("rte hook başlatılamadı:", e);
+    }
+  }, []);
+
+  // 3. YENİ: Otomatik toplanan haberleri localStorage'dan çekip state'e aktarma işlemi
+  useEffect(() => {
+    const scrapedData = localStorage.getItem('ykos_scraped_articles');
+    if (scrapedData) {
+      try {
+        const parsedData = JSON.parse(scrapedData);
+        setRssArticles(parsedData);
+      } catch (error) {
+        console.error("Toplanan veriler okunurken hata:", error);
+      }
+    }
+  }, []);
 
   const handleZoomIn = () => setZoomLevel(prev => Math.min(prev + 0.2, 2.2));
   const handleZoomOut = () => setZoomLevel(prev => Math.max(prev - 0.2, 0.6));
@@ -125,12 +145,10 @@ export function App() {
   const handleNavigateRead = (id) => { setSelectedArticleId(id); setCurrentView("read"); };
   const selectedArticle = activeArticles.find(a => a.id === selectedArticleId) || activeArticles[0];
 
+  // 4. GÜNCEL: Baloncukların ykos.com.tr'ye yönlendirmesi iptal edildi. 
+  // Artık tıkladığınızda sadece düğüm (node) detaylarını açacak.
   const handleNodeClick = (node) => {
-    if (node.url) {
-      window.open(node.url, "_blank");
-    } else {
-      setSelectedNode(node);
-    }
+    setSelectedNode(node);
   };
 
   const containerStyle = { maxWidth: "1220px", margin: "10px auto", padding: "15px", backgroundColor: "#050811", border: "1px solid #ffd700", borderRadius: "12px", boxShadow: "0 8px 32px rgba(0,0,0,0.8)", color: "#fff", boxSizing: "border-box" };
@@ -158,7 +176,8 @@ export function App() {
       guideTitle: { TR: "📌 MATRİS VE GLOBAL ATLAS REHBERİ", EN: "📌 MATRIX & GLOBAL ATLAS GUIDE" },
       motiveTitle: { TR: "ÖNCE VERİ, SONRA ANALİZ, SONRA YORUM", EN: "FIRST DATA, THEN ANALYSIS, THEN INTERPRETATION" },
       motiveSub: { TR: "40 Kök Sistem, Karşılaştırmalı Arkeolojik Katmanlar", EN: "40 Root Systems, Comparative Archaeological Layers" },
-      guideDesc: { TR: "YKOS Canlı Küresel Ağ: Baloncuklara tıklayarak doğrudan ykos.com.tr haber linklerine gidebilirsiniz.", EN: "YKOS Live Global Network: Click bubbles to go directly to ykos.com.tr news links." }
+      // 5. GÜNCEL: Dış yönlendirme kalktığı için panel açıklama yazısı sadeleştirildi
+      guideDesc: { TR: "YKOS Canlı Küresel Ağ: Baloncuklara tıklayarak bilgi düğümlerinin detaylarını inceleyebilirsiniz.", EN: "YKOS Live Global Network: Click bubbles to view the details of knowledge nodes." }
     };
     return labels[key]?.[currentLang] || labels[key]?.TR;
   };
