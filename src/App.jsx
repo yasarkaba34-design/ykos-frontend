@@ -70,12 +70,35 @@ export function App() {
     try { if (typeof rte !== 'undefined') rte.start(); } catch (e) { console.log("rte hook başlatılamadı:", e); }
   }, []);
 
+  // YENİ ENTEGRASYON: Gerçek API Bağlantısı ve Fallback (Yedek) Sistemi
   useEffect(() => {
-    const scrapedData = localStorage.getItem('ykos_scraped_articles');
-    if (scrapedData) {
-      try { setRssArticles(JSON.parse(scrapedData)); } 
-      catch (error) { console.error("Toplanan veriler okunurken hata:", error); }
+    async function fetchLiveNews() {
+      try {
+        // ykos.com.tr üzerinden canlı verileri çekeceğimiz uç nokta
+        const response = await fetch("https://www.ykos.com.tr/api/haberler");
+        
+        if (response.ok) {
+          const apiData = await response.json();
+          setRssArticles(apiData);
+        } else {
+          throw new Error("API henüz hazır değil veya yanıt vermedi.");
+        }
+      } catch (error) {
+        console.warn("API Bağlantısı sağlanamadı, yerel hafızaya (localStorage) geçiliyor:", error.message);
+        
+        // Sunucu API'si hazır olana kadar veya hata durumunda yerel veriyi kullan (Yedek Sistem)
+        const scrapedData = localStorage.getItem('ykos_scraped_articles');
+        if (scrapedData) {
+          try { 
+            setRssArticles(JSON.parse(scrapedData)); 
+          } catch (e) { 
+            console.error("Yerel veri okunurken hata:", e); 
+          }
+        }
+      }
     }
+
+    fetchLiveNews();
   }, []);
 
   const matrixNodes = [
