@@ -10,14 +10,16 @@ export function App() {
   const [selectedArticleId, setSelectedArticleId] = useState(1);
   const [selectedNode, setSelectedNode] = useState(null);
   const [archiveArticles, setArchiveArticles] = useState(defaultArchiveArticles);
-  
-  // Otomatik toplanan verilerin tutulacağı state
   const [rssArticles, setRssArticles] = useState([]);
+
+  // Arama İşlevleri İçin Yeni State'ler
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState({ nodes: [], articles: [] });
+  const [isSearchDropdownOpen, setIsSearchDropdownOpen] = useState(false);
 
   const [currentLang, setCurrentLang] = useState("TR");
   const [langOpen, setLangOpen] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
-
   const [analysisInput, setAnalysisInput] = useState("YOL - ER - ÇEV - BA - KÖK");
   const [analysisResult, setAnalysisResult] = useState(null);
   const [selectedMasterLayer, setSelectedMasterLayer] = useState(null);
@@ -59,104 +61,128 @@ export function App() {
     { code: "PT", label: "Português" }, { code: "ES", label: "Español" }, { code: "AR", label: "العربية" }, { code: "DE", label: "Deutsch" }
   ];
 
-  // 1. Arşiv Verisi Çekme (Mevcut kodunuz)
   useEffect(() => {
     async function fetchData() {
       try {
         const data = await loadArchiveData();
-        if (data) {
-          localStorage.setItem('ykos_archive_data', JSON.stringify(data));
-        }
-      } catch (error) {
-        console.error("Arşiv verisi yüklenirken hata oluştu:", error);
-      }
+        if (data) localStorage.setItem('ykos_archive_data', JSON.stringify(data));
+      } catch (error) { console.error("Arşiv verisi yüklenirken hata oluştu:", error); }
     }
     fetchData();
   }, []);
 
-  // 2. Sisteme eklediğiniz rte.start() entegrasyonu (Güvenli şekilde sarmalandı)
   useEffect(() => {
-    try {
-      if (typeof rte !== 'undefined') {
-        rte.start();
-      }
-    } catch (e) {
-      console.log("rte hook başlatılamadı:", e);
-    }
+    try { if (typeof rte !== 'undefined') rte.start(); } catch (e) { console.log("rte hook başlatılamadı:", e); }
   }, []);
 
-  // 3. YENİ: Otomatik toplanan haberleri localStorage'dan çekip state'e aktarma işlemi
   useEffect(() => {
     const scrapedData = localStorage.getItem('ykos_scraped_articles');
     if (scrapedData) {
-      try {
-        const parsedData = JSON.parse(scrapedData);
-        setRssArticles(parsedData);
-      } catch (error) {
-        console.error("Toplanan veriler okunurken hata:", error);
-      }
+      try { setRssArticles(JSON.parse(scrapedData)); } 
+      catch (error) { console.error("Toplanan veriler okunurken hata:", error); }
     }
   }, []);
+
+  const matrixNodes = [
+    { id: "YKOS 1000", x: 350, y: 180, r: 42, color: "#ffd700", label: "YKOS 1000", anim: "float1", desc: "Ana Bilgi Entegrasyon Matrisi", connection: "YKOS 100, YKOS 200, YKOS 300", score: "%100", derivatives: ["Master-Veri", "Yapay-Zekâ"], details: "Sistemin tüm katmanlarını bağlayan yapay zekâ destekli üst entegrasyon matrisi." },
+    { id: "YKOS 100", x: 420, y: 310, r: 36, color: "#1e90ff", label: "YKOS 100", anim: "float1", desc: "Temel Kök Hece Matrisi Katmanı", connection: "YOL, BİR, ÇEV", score: "%99.9", derivatives: ["Kök-en", "Yol-cu", "Çev-re"], details: "Anadolu merkezli 100 birincil hece vektörünün algoritmik veritabanı." },
+    { id: "YKOS 200", x: 380, y: 410, r: 35, color: "#00ff7f", label: "YKOS 200", anim: "float2", desc: "Bölgesel ve Derin Arkeolojik Katman", connection: "Göbeklitepe, ROL, Sümer", score: "%99.6", derivatives: ["Rol-daş", "Er-en", "Süm-er"], details: "Doğu Akdeniz ve Mezopotamya petroglif katmanları." },
+    { id: "YKOS 300", x: 260, y: 370, r: 36, color: "#ff8c00", label: "YKOS 300", anim: "float3", desc: "Global Atlas Katmanı", connection: "ÖN ASYA ATLASI, AMERİKA ATLASI", score: "%99.4", derivatives: ["At-las", "Av-rasya"], details: "Avrasya ve Amerika kıtaları arası kültür ve damga aksı." },
+    { id: "ANADOLU ATLASI", x: 420, y: 230, r: 24, color: "#ffd700", label: "ANADOLU ATLASI", anim: "float1", desc: "Anadolu Kadim Kültür Havzası", connection: "YKOS 100", score: "%100", derivatives: ["An-adolu", "Çat-al"], details: "Merkez üssü Anadolu olan birincil simetri haritası." },
+    { id: "ÖN ASYA ATLASI", x: 150, y: 320, r: 22, color: "#ffd700", label: "ÖN ASYA ATLASI", anim: "float2", desc: "Ön Asya Hatları", connection: "YKOS 300", score: "%99.1", derivatives: ["As-ya", "Kaf-kas"], details: "Mezopotamya ve Kafkasya geçiş yolları." },
+    { id: "AMERİKA ATLASI", x: 140, y: 410, r: 22, color: "#ff8c00", label: "AMERİKA ATLASI", anim: "float3", desc: "Trans-Bering Bağlantıları", connection: "YKOS 300", score: "%98.5", derivatives: ["May-a", "In-ka"], details: "Amerika kıtasındaki damga paralellikleri." },
+    { id: "AVRUPA ATLASI", x: 250, y: 500, r: 22, color: "#ba55d3", label: "AVRUPA ATLASI", anim: "float1", desc: "Etrüsk ve Akdeniz Rotaları", connection: "AYLUİL", score: "%98.9", derivatives: ["Et-rüsk", "Lem-nos"], details: "Akdeniz ve Etrüsk yazıtları dil akışı." },
+    { id: "Göbeklitepe", x: 480, y: 430, r: 22, color: "#00ff7f", label: "Göbeklitepe", anim: "float2", desc: "T-Sütun Sembolizmleri", connection: "YKOS 200", score: "%99.7", derivatives: ["T-Sütun", "H-Piktogramı"], details: "İkilik ve göksel bağ sembolizminin deşifresi." },
+    { id: "Sümer", x: 470, y: 360, r: 22, color: "#00ff7f", label: "Sümer", anim: "float3", desc: "Mezopotamya Çivi Yazısı", connection: "YKOS 200", score: "%99.2", derivatives: ["Süm-er", "Kiv-i"], details: "Sümerce ve Ön-Türkçe ortak fonetik kökler." },
+    { id: "BİR", x: 500, y: 270, r: 24, color: "#ffd700", label: "BİR", anim: "float1", desc: "Teklik ve Başlangıç", connection: "YKOS 100, YOL", score: "%99.8", derivatives: ["Bir-lik"], details: "İlk varlık ve birlik aksı." },
+    { id: "YOL", x: 550, y: 330, r: 24, color: "#ffd700", label: "YOL", anim: "float2", desc: "Aks ve Akış", connection: "BİR, O", score: "%99.8", derivatives: ["Yol-cu"], details: "Rulo değil yol mantığının merkez hecesi." },
+    { id: "O", x: 600, y: 260, r: 25, color: "#ffd700", label: "O", anim: "float3", desc: "Evrensel Öz", connection: "YOL, OL, KÖK", score: "%99.5", derivatives: ["O-na"], details: "Merkez ve yön gösterici zamir kökü." },
+    { id: "OL", x: 650, y: 210, r: 22, color: "#ffd700", label: "OL", anim: "float1", desc: "Oluş ve Varlık", connection: "O", score: "%99.3", derivatives: ["Ol-gu"], details: "Varlığa geliş eylemi." },
+    { id: "KÖK", x: 580, y: 170, r: 24, color: "#ffd700", label: "KÖK", anim: "float2", desc: "Kaynak", connection: "O, VAN, ÇİK, AL", score: "%99.9", derivatives: ["Kök-en"], details: "Ana kök katmanı." },
+    { id: "VAN", x: 620, y: 110, r: 20, color: "#ffd700", label: "VAN", anim: "float3", desc: "Su ve Havza", connection: "KÖK", score: "%98.7", derivatives: ["Van-gölü"], details: "Doğu Anadolu havza kurgusu." },
+    { id: "ÇİK", x: 530, y: 50, r: 20, color: "#1e90ff", label: "ÇİK", anim: "float1", desc: "Çıkış Vektörü", connection: "GÖK", score: "%98.5", derivatives: ["Çık-ış"], details: "Yükselim hareketi." },
+    { id: "GÖK", x: 560, y: 90, r: 22, color: "#00ff7f", label: "GÖK", anim: "float2", desc: "Kozmoz", connection: "ÇİK, AL", score: "%99.2", derivatives: ["Gök-sel"], details: "Göksel boyut katmanı." },
+    { id: "AL", x: 510, y: 130, r: 20, color: "#1e90ff", label: "AL", anim: "float3", desc: "Alma ve Yüksek", connection: "GÖK, KÖK", score: "%98.9", derivatives: ["Al-an"], details: "Kırmızı ve idrak kökü." },
+    { id: "KUR", x: 420, y: 140, r: 24, color: "#ff8c00", label: "KUR", anim: "float1", desc: "Kuruluş ve Yapı", connection: "YKOS 1000, DA", score: "%99.1", derivatives: ["Kur-um"], details: "İnşa ve mimari kök hece." },
+    { id: "DA", x: 470, y: 190, r: 22, color: "#ff8c00", label: "DA", anim: "float2", desc: "Dağ ve Yükseklik", connection: "KUR", score: "%98.8", derivatives: ["Da-ğ"], details: "Yeryüzü şekilleri ve kalıcılık." },
+    { id: "ÇEV", x: 330, y: 250, r: 22, color: "#1e90ff", label: "ÇEV", anim: "float3", desc: "Çevre ve Daire", connection: "YKOS 100, DİŞ", score: "%99.4", derivatives: ["Çev-re"], details: "Dairesel kuşatma alanı." },
+    { id: "DİŞ", x: 260, y: 220, r: 20, color: "#1e90ff", label: "DİŞ", anim: "float1", desc: "Dış Sınır", connection: "ÇEV, YÜZ", score: "%98.4", derivatives: ["Dış-arı"], details: "Dış sınır ve biçim." },
+    { id: "YÜZ", x: 190, y: 210, r: 20, color: "#1e90ff", label: "YÜZ", anim: "float2", desc: "Yüzey ve Çehre", connection: "DİŞ, ULUN", score: "%98.6", derivatives: ["Yüz-ey"], details: "Ön görünüm ve alan." },
+    { id: "ULUN", x: 120, y: 200, r: 20, color: "#1e90ff", label: "ULUN", anim: "float3", desc: "Ulu ve Yüce", connection: "YÜZ", score: "%98.9", derivatives: ["Ulu-s"], details: "Büyüklük ve hiyerarşi." },
+    { id: "ROL", x: 360, y: 490, r: 22, color: "#ba55d3", label: "ROL", anim: "float1", desc: "İşlev ve Görev", connection: "YKOS 200", score: "%98.7", derivatives: ["Rol-daş"], details: "Toplumsal işlev." },
+    { id: "AYLUİL", x: 310, y: 510, r: 22, color: "#ba55d3", label: "AYLUİL", anim: "float2", desc: "Akdeniz Ekeni", connection: "AVRUPA ATLASI", score: "%98.5", derivatives: ["Ay-lu"], details: "Akdeniz ada dilleri." }
+  ];
+
+  // --- ARAMA SİSTEMİ (AKILLI FİLTRELEME) ---
+  const handleSearch = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    if (query.length >= 2) {
+      const lowerQuery = query.toLowerCase();
+
+      // 1. Matris Düğümlerini Ara
+      const matchedNodes = matrixNodes.filter(node => 
+        node.label.toLowerCase().includes(lowerQuery) || 
+        node.desc.toLowerCase().includes(lowerQuery) || 
+        node.derivatives.some(d => d.toLowerCase().includes(lowerQuery))
+      );
+
+      // 2. Makale ve Haberleri Ara
+      const allArticles = [...activeArticles, ...rssArticles];
+      const matchedArticles = allArticles.filter(art => 
+        art.title?.toLowerCase().includes(lowerQuery) || 
+        art.summary?.toLowerCase().includes(lowerQuery)
+      );
+
+      // Tekrar edenleri temizle (isteğe bağlı)
+      const uniqueArticles = Array.from(new Map(matchedArticles.map(item => [item.title, item])).values());
+
+      setSearchResults({ nodes: matchedNodes, articles: uniqueArticles });
+      setIsSearchDropdownOpen(true);
+    } else {
+      setSearchResults({ nodes: [], articles: [] });
+      setIsSearchDropdownOpen(false);
+    }
+  };
+
+  const handleSearchResultClick = (type, item) => {
+    setIsSearchDropdownOpen(false);
+    setSearchQuery("");
+    
+    if (type === "node") {
+      setSelectedNode(item);
+      setCurrentView("visualize");
+    } else if (type === "article") {
+      if (item.id) {
+        setSelectedArticleId(item.id);
+        setCurrentView("read");
+      } else if (item.url) {
+        window.open(item.url, "_blank"); // Dışarıdan toplanan haberleri yeni sekmede açar
+      }
+    }
+  };
 
   const handleZoomIn = () => setZoomLevel(prev => Math.min(prev + 0.2, 2.2));
   const handleZoomOut = () => setZoomLevel(prev => Math.max(prev - 0.2, 0.6));
   const handleZoomReset = () => setZoomLevel(1);
 
   const handleRunAnalysis = () => {
-    setAnalysisResult({
-      status: "SUCCESS",
-      coherenceScore: "%99.6",
-      vectorPath: "Dikey / Yatay Aks",
-      synthesis: "Girdiğiniz kök hece zinciri, YKOS M5 algoritmasına göre yapısal bütünlüğünü korumaktadır."
-    });
+    setAnalysisResult({ status: "SUCCESS", coherenceScore: "%99.6", vectorPath: "Dikey / Yatay Aks", synthesis: "Girdiğiniz kök hece zinciri, YKOS M5 algoritmasına göre yapısal bütünlüğünü korumaktadır." });
   };
-
-  const matrixNodes = [
-    { id: "YKOS 1000", x: 350, y: 180, r: 42, color: "#ffd700", label: "YKOS 1000", anim: "float1", desc: "Ana Bilgi Entegrasyon Matrisi", connection: "YKOS 100, YKOS 200, YKOS 300", score: "%100", derivatives: ["Master-Veri", "Yapay-Zekâ"], details: "Sistemin tüm katmanlarını bağlayan yapay zekâ destekli üst entegrasyon matrisi.", url: "https://www.ykos.com.tr/ykos-master-ykos1000/101/" },
-    { id: "YKOS 100", x: 420, y: 310, r: 36, color: "#1e90ff", label: "YKOS 100", anim: "float1", desc: "Temel Kök Hece Matrisi Katmanı", connection: "YOL, BİR, ÇEV", score: "%99.9", derivatives: ["Kök-en", "Yol-cu", "Çev-re"], details: "Anadolu merkezli 100 birincil hece vektörünün algoritmik veritabanı.", url: "https://www.ykos.com.tr/ykos-master-ykos100/102/" },
-    { id: "YKOS 200", x: 380, y: 410, r: 35, color: "#00ff7f", label: "YKOS 200", anim: "float2", desc: "Bölgesel ve Derin Arkeolojik Katman", connection: "Göbeklitepe, ROL, Sümer", score: "%99.6", derivatives: ["Rol-daş", "Er-en", "Süm-er"], details: "Doğu Akdeniz ve Mezopotamya petroglif katmanları.", url: "https://www.ykos.com.tr/ykos-master-ykos200/103/" },
-    { id: "YKOS 300", x: 260, y: 370, r: 36, color: "#ff8c00", label: "YKOS 300", anim: "float3", desc: "Global Atlas Katmanı", connection: "ÖN ASYA ATLASI, AMERİKA ATLASI", score: "%99.4", derivatives: ["At-las", "Av-rasya"], details: "Avrasya ve Amerika kıtaları arası kültür ve damga aksı.", url: "https://www.ykos.com.tr/ykos-master-ykos300/104/" },
-    { id: "ANADOLU ATLASI", x: 420, y: 230, r: 24, color: "#ffd700", label: "ANADOLU ATLASI", anim: "float1", desc: "Anadolu Kadim Kültür Havzası", connection: "YKOS 100", score: "%100", derivatives: ["An-adolu", "Çat-al"], details: "Merkez üssü Anadolu olan birincil simetri haritası.", url: "https://www.ykos.com.tr/anadolu-atlasi/201/" },
-    { id: "ÖN ASYA ATLASI", x: 150, y: 320, r: 22, color: "#ffd700", label: "ÖN ASYA ATLASI", anim: "float2", desc: "Ön Asya Hatları", connection: "YKOS 300", score: "%99.1", derivatives: ["As-ya", "Kaf-kas"], details: "Mezopotamya ve Kafkasya geçiş yolları.", url: "https://www.ykos.com.tr/on-asya-atlasi/202/" },
-    { id: "AMERİKA ATLASI", x: 140, y: 410, r: 22, color: "#ff8c00", label: "AMERİKA ATLASI", anim: "float3", desc: "Trans-Bering Bağlantıları", connection: "YKOS 300", score: "%98.5", derivatives: ["May-a", "In-ka"], details: "Amerika kıtasındaki damga paralellikleri.", url: "https://www.ykos.com.tr/amerika-atlasi/203/" },
-    { id: "AVRUPA ATLASI", x: 250, y: 500, r: 22, color: "#ba55d3", label: "AVRUPA ATLASI", anim: "float1", desc: "Etrüsk ve Akdeniz Rotaları", connection: "AYLUİL", score: "%98.9", derivatives: ["Et-rüsk", "Lem-nos"], details: "Akdeniz ve Etrüsk yazıtları dil akışı.", url: "https://www.ykos.com.tr/avrupa-atlasi/204/" },
-    { id: "Göbeklitepe", x: 480, y: 430, r: 22, color: "#00ff7f", label: "Göbeklitepe", anim: "float2", desc: "T-Sütun Sembolizmleri", connection: "YKOS 200", score: "%99.7", derivatives: ["T-Sütun", "H-Piktogramı"], details: "İkilik ve göksel bağ sembolizminin deşifresi.", url: "https://www.ykos.com.tr/ykos-master-001-gobeklitepe/668/" },
-    { id: "Sümer", x: 470, y: 360, r: 22, color: "#00ff7f", label: "Sümer", anim: "float3", desc: "Mezopotamya Çivi Yazısı", connection: "YKOS 200", score: "%99.2", derivatives: ["Süm-er", "Kiv-i"], details: "Sümerce ve Ön-Türkçe ortak fonetik kökler.", url: "https://www.ykos.com.tr/sumer-koku/301/" },
-    { id: "BİR", x: 500, y: 270, r: 24, color: "#ffd700", label: "BİR", anim: "float1", desc: "Teklik ve Başlangıç", connection: "YKOS 100, YOL", score: "%99.8", derivatives: ["Bir-lik"], details: "İlk varlık ve birlik aksı.", url: "https://www.ykos.com.tr/kok-hece-bir/401/" },
-    { id: "YOL", x: 550, y: 330, r: 24, color: "#ffd700", label: "YOL", anim: "float2", desc: "Aks ve Akış", connection: "BİR, O", score: "%99.8", derivatives: ["Yol-cu"], details: "Rulo değil yol mantığının merkez hecesi.", url: "https://www.ykos.com.tr/kok-hece-yol/402/" },
-    { id: "O", x: 600, y: 260, r: 25, color: "#ffd700", label: "O", anim: "float3", desc: "Evrensel Öz", connection: "YOL, OL, KÖK", score: "%99.5", derivatives: ["O-na"], details: "Merkez ve yön gösterici zamir kökü.", url: "https://www.ykos.com.tr/kok-hece-o/403/" },
-    { id: "OL", x: 650, y: 210, r: 22, color: "#ffd700", label: "OL", anim: "float1", desc: "Oluş ve Varlık", connection: "O", score: "%99.3", derivatives: ["Ol-gu"], details: "Varlığa geliş eylemi.", url: "https://www.ykos.com.tr/kok-hece-ol/404/" },
-    { id: "KÖK", x: 580, y: 170, r: 24, color: "#ffd700", label: "KÖK", anim: "float2", desc: "Kaynak", connection: "O, VAN, ÇİK, AL", score: "%99.9", derivatives: ["Kök-en"], details: "Ana kök katmanı.", url: "https://www.ykos.com.tr/kok-hece-kok/405/" },
-    { id: "VAN", x: 620, y: 110, r: 20, color: "#ffd700", label: "VAN", anim: "float3", desc: "Su ve Havza", connection: "KÖK", score: "%98.7", derivatives: ["Van-gölü"], details: "Doğu Anadolu havza kurgusu.", url: "https://www.ykos.com.tr/kok-hece-van/406/" },
-    { id: "ÇİK", x: 530, y: 50, r: 20, color: "#1e90ff", label: "ÇİK", anim: "float1", desc: "Çıkış Vektörü", connection: "GÖK", score: "%98.5", derivatives: ["Çık-ış"], details: "Yükselim hareketi.", url: "https://www.ykos.com.tr/kok-hece-cik/407/" },
-    { id: "GÖK", x: 560, y: 90, r: 22, color: "#00ff7f", label: "GÖK", anim: "float2", desc: "Kozmoz", connection: "ÇİK, AL", score: "%99.2", derivatives: ["Gök-sel"], details: "Göksel boyut katmanı.", url: "https://www.ykos.com.tr/kok-hece-gok/408/" },
-    { id: "AL", x: 510, y: 130, r: 20, color: "#1e90ff", label: "AL", anim: "float3", desc: "Alma ve Yüksek", connection: "GÖK, KÖK", score: "%98.9", derivatives: ["Al-an"], details: "Kırmızı ve idrak kökü.", url: "https://www.ykos.com.tr/kok-hece-al/409/" },
-    { id: "KUR", x: 420, y: 140, r: 24, color: "#ff8c00", label: "KUR", anim: "float1", desc: "Kuruluş ve Yapı", connection: "YKOS 1000, DA", score: "%99.1", derivatives: ["Kur-um"], details: "İnşa ve mimari kök hece.", url: "https://www.ykos.com.tr/kok-hece-kur/410/" },
-    { id: "DA", x: 470, y: 190, r: 22, color: "#ff8c00", label: "DA", anim: "float2", desc: "Dağ ve Yükseklik", connection: "KUR", score: "%98.8", derivatives: ["Da-ğ"], details: "Yeryüzü şekilleri ve kalıcılık.", url: "https://www.ykos.com.tr/kok-hece-da/411/" },
-    { id: "ÇEV", x: 330, y: 250, r: 22, color: "#1e90ff", label: "ÇEV", anim: "float3", desc: "Çevre ve Daire", connection: "YKOS 100, DİŞ", score: "%99.4", derivatives: ["Çev-re"], details: "Dairesel kuşatma alanı.", url: "https://www.ykos.com.tr/kok-hece-cev/412/" },
-    { id: "DİŞ", x: 260, y: 220, r: 20, color: "#1e90ff", label: "DİŞ", anim: "float1", desc: "Dış Sınır", connection: "ÇEV, YÜZ", score: "%98.4", derivatives: ["Dış-arı"], details: "Dış sınır ve biçim.", url: "https://www.ykos.com.tr/kok-hece-dis/413/" },
-    { id: "YÜZ", x: 190, y: 210, r: 20, color: "#1e90ff", label: "YÜZ", anim: "float2", desc: "Yüzey ve Çehre", connection: "DİŞ, ULUN", score: "%98.6", derivatives: ["Yüz-ey"], details: "Ön görünüm ve alan.", url: "https://www.ykos.com.tr/kok-hece-yuz/414/" },
-    { id: "ULUN", x: 120, y: 200, r: 20, color: "#1e90ff", label: "ULUN", anim: "float3", desc: "Ulu ve Yüce", connection: "YÜZ", score: "%98.9", derivatives: ["Ulu-s"], details: "Büyüklük ve hiyerarşi.", url: "https://www.ykos.com.tr/kok-hece-ulun/415/" },
-    { id: "ROL", x: 360, y: 490, r: 22, color: "#ba55d3", label: "ROL", anim: "float1", desc: "İşlev ve Görev", connection: "YKOS 200", score: "%98.7", derivatives: ["Rol-daş"], details: "Toplumsal işlev.", url: "https://www.ykos.com.tr/kok-hece-rol/416/" },
-    { id: "AYLUİL", x: 310, y: 510, r: 22, color: "#ba55d3", label: "AYLUİL", anim: "float2", desc: "Akdeniz Ekeni", connection: "AVRUPA ATLASI", score: "%98.5", derivatives: ["Ay-lu"], details: "Akdeniz ada dilleri.", url: "https://www.ykos.com.tr/kok-hece-ayluil/417/" }
-  ];
 
   const handleNavigateLogin = (role) => { setUserRole(role); setCurrentView("login"); };
   const handleNavigateRead = (id) => { setSelectedArticleId(id); setCurrentView("read"); };
   const selectedArticle = activeArticles.find(a => a.id === selectedArticleId) || activeArticles[0];
 
-  // 4. GÜNCEL: Baloncukların ykos.com.tr'ye yönlendirmesi iptal edildi. 
-  // Artık tıkladığınızda sadece düğüm (node) detaylarını açacak.
-  const handleNodeClick = (node) => {
-    setSelectedNode(node);
-  };
+  const handleNodeClick = (node) => { setSelectedNode(node); };
 
   const containerStyle = { maxWidth: "1220px", margin: "10px auto", padding: "15px", backgroundColor: "#050811", border: "1px solid #ffd700", borderRadius: "12px", boxShadow: "0 8px 32px rgba(0,0,0,0.8)", color: "#fff", boxSizing: "border-box" };
   const backBtnStyle = { padding: "8px 14px", background: "transparent", border: "1px solid #ffd700", color: "#ffd700", fontWeight: "bold", borderRadius: "6px", cursor: "pointer", fontSize: "0.78rem" };
 
   const renderLanguageSelector = () => (
     <div style={{ position: "relative", display: "inline-block" }}>
-      <button onClick={() => setLangOpen(!langOpen)} style={{ background: "rgba(255, 215, 0, 0.1)", border: "1px solid #ffd700", color: "#ffd700", padding: "6px 12px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer", fontSize: "0.78rem" }}>
+      <button onClick={() => setLangOpen(!langOpen)} style={{ background: "rgba(255, 215, 0, 0.1)", border: "1px solid #ffd700", color: "#ffd700", padding: "6px 12px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer", fontSize: "0.78rem", whiteSpace: "nowrap" }}>
         🌐 {currentLang} ▾
       </button>
       {langOpen && (
@@ -176,14 +202,13 @@ export function App() {
       guideTitle: { TR: "📌 MATRİS VE GLOBAL ATLAS REHBERİ", EN: "📌 MATRIX & GLOBAL ATLAS GUIDE" },
       motiveTitle: { TR: "ÖNCE VERİ, SONRA ANALİZ, SONRA YORUM", EN: "FIRST DATA, THEN ANALYSIS, THEN INTERPRETATION" },
       motiveSub: { TR: "40 Kök Sistem, Karşılaştırmalı Arkeolojik Katmanlar", EN: "40 Root Systems, Comparative Archaeological Layers" },
-      // 5. GÜNCEL: Dış yönlendirme kalktığı için panel açıklama yazısı sadeleştirildi
       guideDesc: { TR: "YKOS Canlı Küresel Ağ: Baloncuklara tıklayarak bilgi düğümlerinin detaylarını inceleyebilirsiniz.", EN: "YKOS Live Global Network: Click bubbles to view the details of knowledge nodes." }
     };
     return labels[key]?.[currentLang] || labels[key]?.TR;
   };
 
   return (
-    <div className="app-main-wrapper" style={{ backgroundColor: "#050811", minHeight: "100vh", color: "#ffffff" }}>
+    <div className="app-main-wrapper" style={{ backgroundColor: "#050811", minHeight: "100vh", color: "#ffffff", paddingBottom: "30px" }}>
       <style>{`
         @keyframes safeFloat1 { 0% { transform: translate(0px, 0px); } 50% { transform: translate(3px, -4px); } 100% { transform: translate(0px, 0px); } }
         @keyframes safeFloat2 { 0% { transform: translate(0px, 0px); } 50% { transform: translate(-3px, 3px); } 100% { transform: translate(0px, 0px); } }
@@ -201,6 +226,65 @@ export function App() {
         }
       `}</style>
 
+      {/* GLOBAL ARAMA VE NAVİGASYON ÇUBUĞU (YENİ) */}
+      <div style={{ maxWidth: "1220px", margin: "0 auto", padding: "15px 15px 0", display: "flex", gap: "10px", alignItems: "center", position: "relative", zIndex: 100 }}>
+        <input 
+          type="text" 
+          placeholder="🔍 YKOS'ta Ara (Kök hece, makale, kuram...)" 
+          value={searchQuery}
+          onChange={handleSearch}
+          style={{ flex: 1, padding: "12px 15px", background: "#02040a", border: "1px solid #ffd700", color: "#fff", borderRadius: "8px", boxSizing: "border-box", fontSize: "0.9rem" }}
+        />
+        {renderLanguageSelector()}
+        {currentView !== "dashboard" && (
+          <button onClick={() => setCurrentView("dashboard")} style={{...backBtnStyle, padding: "10px 15px", whiteSpace: "nowrap"}}>🏠 Ana Sayfa</button>
+        )}
+
+        {/* ARAMA SONUÇLARI DROPDOWN */}
+        {isSearchDropdownOpen && (
+          <div style={{ position: "absolute", top: "100%", left: "15px", right: "15px", background: "#050811", border: "1px solid #ffd700", borderRadius: "8px", marginTop: "5px", padding: "15px", maxHeight: "400px", overflowY: "auto", boxShadow: "0 10px 30px rgba(0,0,0,0.9)", zIndex: 200 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px", marginBottom: "10px" }}>
+              <span style={{ color: "#ffd700", fontSize: "0.85rem", fontWeight: "bold" }}>Arama Sonuçları</span>
+              <span onClick={() => setIsSearchDropdownOpen(false)} style={{ color: "#aaa", cursor: "pointer", fontSize: "0.8rem" }}>Kapat ✕</span>
+            </div>
+
+            {searchResults.nodes.length === 0 && searchResults.articles.length === 0 ? (
+              <div style={{ color: "#888", fontSize: "0.85rem", padding: "10px 0" }}>Sonuç bulunamadı.</div>
+            ) : (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "20px" }}>
+                
+                {/* Matris Düğümleri Sonuçları */}
+                {searchResults.nodes.length > 0 && (
+                  <div>
+                    <h4 style={{ color: "#00ff7f", margin: "0 0 10px 0", fontSize: "0.8rem" }}>🔣 MATRİS VE KÖK HECELER</h4>
+                    {searchResults.nodes.map(node => (
+                      <div key={node.id} onClick={() => handleSearchResultClick("node", node)} style={{ background: "rgba(255,215,0,0.05)", border: `1px solid ${node.color}`, padding: "10px", borderRadius: "6px", marginBottom: "8px", cursor: "pointer" }}>
+                        <strong style={{ color: node.color }}>{node.label}</strong>
+                        <p style={{ margin: "4px 0 0", fontSize: "0.75rem", color: "#ccc" }}>{node.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Makale ve Haber Sonuçları */}
+                {searchResults.articles.length > 0 && (
+                  <div>
+                    <h4 style={{ color: "#1e90ff", margin: "0 0 10px 0", fontSize: "0.8rem" }}>📜 MAKALELER VE HABERLER</h4>
+                    {searchResults.articles.map((art, idx) => (
+                      <div key={idx} onClick={() => handleSearchResultClick("article", art)} style={{ background: "rgba(30,144,255,0.05)", border: "1px solid rgba(30,144,255,0.5)", padding: "10px", borderRadius: "6px", marginBottom: "8px", cursor: "pointer" }}>
+                        <strong style={{ color: "#fff", fontSize: "0.85rem" }}>{art.title}</strong>
+                        {art.summary && <p style={{ margin: "4px 0 0", fontSize: "0.75rem", color: "#aaa" }}>{art.summary.substring(0, 60)}...</p>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
       {currentView === "dashboard" && (
         <YKOSDashboard 
           archiveArticles={archiveArticles} currentLang={currentLang} setCurrentLang={setCurrentLang}
@@ -214,14 +298,10 @@ export function App() {
 
       {currentView === "ykos1000" && (
         <div style={containerStyle}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "12px", flexWrap: "wrap", gap: "10px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "12px" }}>
             <div>
               <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>👑 YKOS 1000 MASTER BİLGİ ENTEGRASYON MATRİSİ</span>
               <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem" }}>10 Dikey Veri Katmanı ve Yapay Zekâ Şemsiyesi</h2>
-            </div>
-            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-              {renderLanguageSelector()}
-              <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>{t.backHome}</button>
             </div>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "12px" }}>
@@ -241,18 +321,27 @@ export function App() {
 
       {currentView === "visualize" && (
         <div style={containerStyle}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px", flexWrap: "wrap", gap: "10px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px" }}>
             <div>
               <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>🌐 {t.matrix}</span>
               <h2 style={{ color: "#ffd700", margin: "2px 0 0 0", fontSize: "1.15rem" }}>YKOS MATRİSLERİ (100 - 200 - 300 - 1000 CANLI AĞ)</h2>
             </div>
-            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-              {renderLanguageSelector()}
-              <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>{t.backHome}</button>
-            </div>
           </div>
           <div className="responsive-matrix-grid">
             <div className="matrix-canvas-wrapper" style={{ background: "#02040a", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "10px", overflow: "hidden", position: "relative", width: "100%", boxSizing: "border-box" }}>
+              
+              {/* Seçili Düğüm Paneli */}
+              {selectedNode && (
+                <div style={{ position: "absolute", bottom: "10px", left: "10px", right: "10px", background: "rgba(5,8,17,0.95)", border: `1px solid ${selectedNode.color}`, padding: "12px", borderRadius: "8px", zIndex: 30, boxShadow: "0 4px 15px rgba(0,0,0,0.8)" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "6px" }}>
+                    <h3 style={{ color: selectedNode.color, margin: 0, fontSize: "1.1rem" }}>{selectedNode.label}</h3>
+                    <button onClick={() => setSelectedNode(null)} style={{ background: "transparent", border: "none", color: "#aaa", cursor: "pointer", fontSize: "1.2rem" }}>✕</button>
+                  </div>
+                  <p style={{ color: "#fff", fontSize: "0.85rem", margin: "0 0 8px" }}>{selectedNode.desc}</p>
+                  <p style={{ color: "#aaa", fontSize: "0.75rem", margin: 0 }}><strong>Bağlantılar:</strong> {selectedNode.connection}</p>
+                </div>
+              )}
+
               <div style={{ position: "absolute", top: "10px", left: "10px", background: "rgba(5,8,17,0.88)", border: "1px solid rgba(255,215,0,0.4)", padding: "6px 10px", borderRadius: "6px", fontSize: "0.68rem", zIndex: 10, maxWidth: "60%" }}>
                 <strong style={{ color: "#ffd700", display: "block" }}>{getPanelLabel("motiveTitle")}</strong>
                 <span style={{ color: "#aaa" }}>{getPanelLabel("motiveSub")}</span>
@@ -294,6 +383,8 @@ export function App() {
                   <line x1="190" y1="210" x2="120" y2="200" stroke="#1e90ff" strokeWidth="2" className="flowing-line" />
                   {matrixNodes.map((node) => (
                     <g key={node.id} className={`node-${node.anim}`} onClick={() => handleNodeClick(node)} style={{ cursor: "pointer" }}>
+                      {/* Seçili düğüme parlama efekti */}
+                      {selectedNode?.id === node.id && <circle cx={node.x} cy={node.y} r={node.r + 5} fill="rgba(255,255,255,0.2)" />}
                       <circle cx={node.x} cy={node.y} r={node.r} fill="#050811" stroke={node.color} strokeWidth="2" style={{ filter: `drop-shadow(0px 0px 8px ${node.color})` }} />
                       <text x={node.x} y={node.y + 4} textAnchor="middle" fill={node.color} fontSize={node.r > 28 ? "11" : "9"} fontWeight="bold">{node.label}</text>
                     </g>
@@ -315,14 +406,10 @@ export function App() {
 
       {currentView === "atlas" && (
         <div style={containerStyle}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px", flexWrap: "wrap", gap: "10px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px" }}>
             <div>
               <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>🗺️ ANADOLU & KÜRESEL COĞRAFİ KATMAN HARİTASI</span>
               <h2 style={{ color: "#ffd700", margin: "2px 0 0 0", fontSize: "1.15rem" }}>{t.atlas}</h2>
-            </div>
-            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-              {renderLanguageSelector()}
-              <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>{t.backHome}</button>
             </div>
           </div>
           <AtlasMap locations={atlasLocations} />
@@ -331,14 +418,10 @@ export function App() {
 
       {currentView === "flow" && (
         <div style={containerStyle}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "12px", flexWrap: "wrap", gap: "10px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "12px" }}>
             <div>
               <span style={{ color: "#00ff7f", fontSize: "0.75rem", fontWeight: "bold" }}>🟢 ANADOLU MERKEZLİ DİL VE KÜLTÜR AKIŞ SİMÜLASYONU</span>
               <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem" }}>{t.flow}</h2>
-            </div>
-            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-              {renderLanguageSelector()}
-              <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>{t.backHome}</button>
             </div>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "15px" }}>
@@ -354,14 +437,10 @@ export function App() {
 
       {currentView === "engine" && (
         <div style={containerStyle}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "12px", flexWrap: "wrap", gap: "10px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "12px" }}>
             <div>
               <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>🔬 YAPAY ZEKÂ DESTEKLİ OKUMA MOTORU</span>
               <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem" }}>{t.engine}</h2>
-            </div>
-            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-              {renderLanguageSelector()}
-              <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>{t.backHome}</button>
             </div>
           </div>
           <div style={{ background: "rgba(255,215,0,0.03)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "20px", boxSizing: "border-box" }}>
@@ -391,7 +470,6 @@ export function App() {
                 <div style={{ color: "#888", fontSize: "0.82rem", fontStyle: "italic", padding: "10px 0" }}>Henüz tarayıcı hafızasında toplanmış arşiv verisi bulunmuyor. ykos.com.tr üzerinde gezindikçe veriler buraya dolacaktır.</div>
               )}
             </div>
-
           </div>
         </div>
       )}
@@ -402,10 +480,6 @@ export function App() {
             <div>
               <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>📜 AKADEMİK FELSEFE VE BİLİMSEL ÇERÇEVE</span>
               <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem" }}>YKOS METODOLOJİSİ VE BİLİMSEL İLKELER</h2>
-            </div>
-            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-              {renderLanguageSelector()}
-              <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>{t.backHome}</button>
             </div>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "15px" }}>
@@ -432,7 +506,6 @@ export function App() {
               <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>🔐 GÜVENLİ AKADEMİK ERİŞİM PORTALI</span>
               <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.2rem" }}>AKADEMİK ARAŞTIRMA PORTALI</h2>
             </div>
-            <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>{t.backHome}</button>
           </div>
           <div style={{ maxWidth: "420px", margin: "30px auto", background: "rgba(255,215,0,0.03)", border: "1px solid #ffd700", padding: "24px", borderRadius: "10px" }}>
             <p style={{ color: "#aaa", fontSize: "0.8rem", marginBottom: "15px" }}>YKOS Bilgi Sistemi entegre canlı veri tabanına erişmek için bilgilerinizi giriniz.</p>
@@ -445,14 +518,10 @@ export function App() {
 
       {currentView === "read" && (
         <div style={containerStyle}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px", flexWrap: "wrap", gap: "10px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px" }}>
             <div>
               <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>📜 AKADEMİK ÇÖZÜMLEME KATMANI</span>
               <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem" }}>{selectedArticle.title}</h2>
-            </div>
-            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-              {renderLanguageSelector()}
-              <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>{t.backHome}</button>
             </div>
           </div>
           <div style={{ padding: "15px 0", color: "#ccc", lineHeight: "1.8", fontSize: "0.92rem" }}>
@@ -464,7 +533,6 @@ export function App() {
               ⚡ YKOS Algoritmik Tutarlılık Skoru (Coherence): %99.4 Tam Metin Eşleşmesi
             </div>
           </div>
-          <button onClick={() => setCurrentView("dashboard")} style={backBtnStyle}>{t.backHome}</button>
         </div>
       )}
 
