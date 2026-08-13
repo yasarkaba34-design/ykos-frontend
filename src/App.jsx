@@ -70,18 +70,37 @@ export function App() {
     try { if (typeof rte !== 'undefined') rte.start(); } catch (e) { console.log("rte hook başlatılamadı:", e); }
   }, []);
 
+  // YENİ VE NİHAİ ENTEGRASYON: RSS Üzerinden Çapraz Alan Adı (CORS-Free) Veri Çekimi
   useEffect(() => {
     async function fetchLiveNews() {
       try {
-        const response = await fetch("https://www.ykos.com.tr/api/haberler");
+        // BURAYA ÇALIŞAN RSS LİNKİNİZİ YAZIN (Örn: /rss veya /feed)
+        const rssUrl = "https://www.ykos.com.tr/rss"; 
+        
+        // rss2json servisi ile CORS hatasını aşıyoruz
+        const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}`);
+        
         if (response.ok) {
-          const apiData = await response.json();
-          setRssArticles(apiData);
+          const data = await response.json();
+          if (data.items && data.items.length > 0) {
+            // RSS'den gelen içerikleri formatlıyoruz
+            const formattedArticles = data.items.map(item => ({
+              title: item.title,
+              url: item.link,
+              // Varsa özetinden HTML etiketlerini söküp alıyoruz
+              summary: item.description ? item.description.replace(/(<([^>]+)>)/ig, "").substring(0, 110) + "..." : ""
+            }));
+            setRssArticles(formattedArticles);
+          } else {
+            throw new Error("RSS içeriği boş.");
+          }
         } else {
-          throw new Error("API henüz hazır değil veya yanıt vermedi.");
+          throw new Error("RSS servisine ulaşılamadı.");
         }
       } catch (error) {
-        console.warn("API Bağlantısı sağlanamadı, yerel hafızaya (localStorage) geçiliyor:", error.message);
+        console.warn("RSS Bağlantısı sağlanamadı, yerel hafızaya (localStorage) geçiliyor:", error.message);
+        
+        // Hata olursa veya aynı sitedeyken (fallback olarak) tarayıcı hafızasını kullan
         const scrapedData = localStorage.getItem('ykos_scraped_articles');
         if (scrapedData) {
           try { 
@@ -92,6 +111,7 @@ export function App() {
         }
       }
     }
+
     fetchLiveNews();
   }, []);
 
@@ -367,18 +387,18 @@ export function App() {
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                   {rssArticles.map((art, index) => (
                     <div key={index} style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,215,0,0.2)", padding: "12px", borderRadius: "8px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
-                      <div>
+                      <div style={{ flex: 1, paddingRight: "10px" }}>
                         <h4 style={{ color: "#ffd700", margin: "0 0 4px 0", fontSize: "0.92rem" }}>{art.title}</h4>
-                        <span style={{ color: "#aaa", fontSize: "0.75rem" }}>{art.url}</span>
+                        {art.summary && <div style={{ color: "#aaa", fontSize: "0.75rem", lineHeight: "1.4" }}>{art.summary}</div>}
                       </div>
-                      <a href={art.url} target="_blank" rel="noopener noreferrer" style={{ background: "#ffd700", color: "#000", padding: "6px 12px", borderRadius: "4px", fontSize: "0.75rem", fontWeight: "bold", textDecoration: "none" }}>
+                      <a href={art.url} target="_blank" rel="noopener noreferrer" style={{ background: "#ffd700", color: "#000", padding: "6px 12px", borderRadius: "4px", fontSize: "0.75rem", fontWeight: "bold", textDecoration: "none", whiteSpace: "nowrap" }}>
                         Habere Git →
                       </a>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div style={{ color: "#888", fontSize: "0.82rem", fontStyle: "italic", padding: "10px 0" }}>Henüz tarayıcı hafızasında toplanmış arşiv verisi bulunmuyor. ykos.com.tr üzerinde gezindikçe veriler buraya dolacaktır.</div>
+                <div style={{ color: "#888", fontSize: "0.82rem", fontStyle: "italic", padding: "10px 0" }}>Henüz RSS akışından veri alınamadı. Sitede gezindikçe veya akış yenilendikçe veriler buraya dolacaktır.</div>
               )}
             </div>
           </div>
