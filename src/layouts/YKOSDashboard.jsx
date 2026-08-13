@@ -5,7 +5,7 @@ import { getArchiveSynthesis } from "../data/ykosArchiveSynthesis";
 import { searchYkosApi } from "../data/ykosApiService";
 
 export default function YKOSDashboard({ 
-  archiveArticles, currentLang, setCurrentLang,
+  archiveArticles, rssArticles = [], currentLang, setCurrentLang, 
   onVisualize, onNavigateRead, onGoHome, onNavigateLogin, 
   onNavigateAtlas, onNavigateEngine, onNavigateFlow, onNavigateMethod 
 }) {
@@ -81,7 +81,14 @@ export default function YKOSDashboard({
     handleSearchApi();
   }, [searchQuery]);
 
-  const filteredArticles = activeArticles.filter(item => {
+  // CANLI HABERLER (RSS) İLE SABİT ARŞİVİ BİRLEŞTİRİYORUZ
+  const allArticles = [...rssArticles, ...activeArticles];
+  
+  // Aynı başlıklı olanları tekilleştir
+  const uniqueArticles = Array.from(new Map(allArticles.map(item => [item.title, item])).values());
+
+  // Arama filtresi
+  const filteredArticles = uniqueArticles.filter(item => {
     const q = searchQuery.toLowerCase().trim();
     if (!q) return true;
     return (
@@ -131,8 +138,8 @@ export default function YKOSDashboard({
 
         {/* LOGO VE ANASAYFA LİNKİ */}
         <div 
-          onClick={onGoHome} 
-          title={t.home || "Ana Sayfa"}
+          onClick={() => window.location.reload()} 
+          title="Sayfayı Yenile / Ana Sayfa"
           style={{ textAlign: "center", cursor: "pointer", marginTop: "-18px", userSelect: "none" }}
         >
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "4px" }}>
@@ -154,7 +161,7 @@ export default function YKOSDashboard({
         {menuOpen && (
           <div style={{ marginTop: "12px", borderTop: "1px solid rgba(255, 215, 0, 0.3)", paddingTop: "12px" }}>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "6px", marginBottom: "12px" }}>
-              <button onClick={() => { setMenuOpen(false); onGoHome(); }} style={{ background: "rgba(255, 215, 0, 0.3)", border: "1px solid #ffd700", color: "#ffd700", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.home}</button>
+              <button onClick={() => window.location.reload()} style={{ background: "rgba(255, 215, 0, 0.3)", border: "1px solid #ffd700", color: "#ffd700", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.home}</button>
               <button onClick={() => { setMenuOpen(false); onNavigateMethod(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.corporate}</button>
               <button onClick={() => { setMenuOpen(false); onNavigateMethod(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.methodology}</button>
               <button onClick={() => { setMenuOpen(false); onVisualize(); }} style={{ background: "rgba(255, 215, 0, 0.15)", border: "1px solid #ffd700", color: "#ffd700", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.matrix}</button>
@@ -252,21 +259,46 @@ export default function YKOSDashboard({
           </div>
         </div>
 
-        {/* SAĞ PANEL */}
+        {/* SAĞ PANEL - GÜNCELLENMİŞ CANLI LİSTE VE ÇEVİRİ KÖPRÜSÜ */}
         <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
           <h3 style={{ color: "#ffd700", fontSize: "0.95rem", marginTop: 0 }}>
             {t.solutionsTitle} {searchQuery && <span style={{ fontSize: "0.75rem", color: "#fff", fontWeight: "normal" }}>({filteredArticles.length} Kayıt)</span>}
           </h3>
           
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "15px", maxHeight: "400px", overflowY: "auto" }}>
-            {filteredArticles.map((item) => (
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "15px", maxHeight: "400px", overflowY: "auto", paddingRight: "5px" }}>
+            {filteredArticles.map((item, idx) => (
               <div 
-                key={item.id}
-                onClick={() => onNavigateRead(item.id)}
-                style={{ background: "rgba(255, 215, 0, 0.05)", border: "1px solid rgba(255, 215, 0, 0.4)", borderRadius: "6px", padding: "10px", fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold", cursor: "pointer" }}
+                key={item.id || `rss-${idx}`}
+                onClick={() => {
+                  if (item.url) {
+                    // DOĞRU YER: ÇEVİRİ KÖPRÜSÜ BURADA!
+                    if (currentLang === "TR") {
+                      window.open(item.url, "_blank");
+                    } else {
+                      const targetLang = currentLang.toLowerCase();
+                      const translateUrl = `https://translate.google.com/translate?sl=tr&tl=${targetLang}&u=${encodeURIComponent(item.url)}`;
+                      window.open(translateUrl, "_blank");
+                    }
+                  } else {
+                    onNavigateRead(item.id); 
+                  }
+                }}
+                style={{ 
+                  background: item.url ? "rgba(0, 255, 127, 0.04)" : "rgba(255, 215, 0, 0.05)", 
+                  border: item.url ? "1px solid rgba(0, 255, 127, 0.3)" : "1px solid rgba(255, 215, 0, 0.4)", 
+                  borderRadius: "6px", 
+                  padding: "10px", 
+                  color: item.url ? "#00ff7f" : "#ffd700", 
+                  cursor: "pointer" 
+                }}
               >
-                📜 {item.title} →
-                <div style={{ fontSize: "0.72rem", color: "#ccc", fontWeight: "normal", marginTop: "4px" }}>{item.summary}</div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", fontWeight: "bold", fontSize: "0.82rem" }}>
+                  <span>{item.url ? "📡" : "📜"} {item.title}</span>
+                  {item.url && <span style={{ fontSize: "0.6rem", background: "rgba(0, 255, 127, 0.15)", padding: "2px 6px", borderRadius: "4px", color: "#00ff7f", marginLeft: "8px" }}>YENİ</span>}
+                </div>
+                <div style={{ fontSize: "0.72rem", color: "#ccc", fontWeight: "normal", marginTop: "6px", lineHeight: "1.4" }}>
+                  {item.summary}
+                </div>
               </div>
             ))}
           </div>

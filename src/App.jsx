@@ -70,24 +70,18 @@ export function App() {
     try { if (typeof rte !== 'undefined') rte.start(); } catch (e) { console.log("rte hook başlatılamadı:", e); }
   }, []);
 
-  // YENİ VE NİHAİ ENTEGRASYON: RSS Üzerinden Çapraz Alan Adı (CORS-Free) Veri Çekimi
   useEffect(() => {
     async function fetchLiveNews() {
       try {
-        // BURAYA ÇALIŞAN RSS LİNKİNİZİ YAZIN (Örn: /rss veya /feed)
         const rssUrl = "https://www.ykos.com.tr/rss"; 
-        
-        // rss2json servisi ile CORS hatasını aşıyoruz
         const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}`);
         
         if (response.ok) {
           const data = await response.json();
           if (data.items && data.items.length > 0) {
-            // RSS'den gelen içerikleri formatlıyoruz
             const formattedArticles = data.items.map(item => ({
               title: item.title,
               url: item.link,
-              // Varsa özetinden HTML etiketlerini söküp alıyoruz
               summary: item.description ? item.description.replace(/(<([^>]+)>)/ig, "").substring(0, 110) + "..." : ""
             }));
             setRssArticles(formattedArticles);
@@ -98,9 +92,7 @@ export function App() {
           throw new Error("RSS servisine ulaşılamadı.");
         }
       } catch (error) {
-        console.warn("RSS Bağlantısı sağlanamadı, yerel hafızaya (localStorage) geçiliyor:", error.message);
-        
-        // Hata olursa veya aynı sitedeyken (fallback olarak) tarayıcı hafızasını kullan
+        console.warn("RSS Bağlantısı sağlanamadı, yerel hafızaya geçiliyor:", error.message);
         const scrapedData = localStorage.getItem('ykos_scraped_articles');
         if (scrapedData) {
           try { 
@@ -111,7 +103,6 @@ export function App() {
         }
       }
     }
-
     fetchLiveNews();
   }, []);
 
@@ -208,7 +199,6 @@ export function App() {
         }
       `}</style>
 
-      {/* Üstteki Dil ve Menü Seçeneği SADECE Dashboard (Ana Sayfa) DIŞINDA görünecek */}
       {currentView !== "dashboard" && (
         <div style={{ maxWidth: "1220px", margin: "0 auto", padding: "15px 15px 0", display: "flex", justifyContent: "flex-end", gap: "10px", alignItems: "center" }}>
           {renderLanguageSelector()}
@@ -218,7 +208,7 @@ export function App() {
 
       {currentView === "dashboard" && (
         <YKOSDashboard 
-          archiveArticles={archiveArticles} currentLang={currentLang} setCurrentLang={setCurrentLang}
+          archiveArticles={archiveArticles} rssArticles={rssArticles} currentLang={currentLang} setCurrentLang={setCurrentLang}
           onVisualize={() => setCurrentView("visualize")} onNavigateRead={handleNavigateRead}
           onNavigateLogin={handleNavigateLogin} onNavigateAtlas={() => setCurrentView("atlas")}
           onNavigateEngine={() => setCurrentView("engine")} onNavigateFlow={() => setCurrentView("flow")}
@@ -261,7 +251,6 @@ export function App() {
           <div className="responsive-matrix-grid">
             <div className="matrix-canvas-wrapper" style={{ background: "#02040a", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "10px", overflow: "hidden", position: "relative", width: "100%", boxSizing: "border-box" }}>
               
-              {/* Seçili Düğüm Paneli */}
               {selectedNode && (
                 <div style={{ position: "absolute", bottom: "10px", left: "10px", right: "10px", background: "rgba(5,8,17,0.95)", border: `1px solid ${selectedNode.color}`, padding: "12px", borderRadius: "8px", zIndex: 30, boxShadow: "0 4px 15px rgba(0,0,0,0.8)" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "6px" }}>
@@ -314,7 +303,6 @@ export function App() {
                   <line x1="190" y1="210" x2="120" y2="200" stroke="#1e90ff" strokeWidth="2" className="flowing-line" />
                   {matrixNodes.map((node) => (
                     <g key={node.id} className={`node-${node.anim}`} onClick={() => handleNodeClick(node)} style={{ cursor: "pointer" }}>
-                      {/* Seçili düğüme parlama efekti */}
                       {selectedNode?.id === node.id && <circle cx={node.x} cy={node.y} r={node.r + 5} fill="rgba(255,255,255,0.2)" />}
                       <circle cx={node.x} cy={node.y} r={node.r} fill="#050811" stroke={node.color} strokeWidth="2" style={{ filter: `drop-shadow(0px 0px 8px ${node.color})` }} />
                       <text x={node.x} y={node.y + 4} textAnchor="middle" fill={node.color} fontSize={node.r > 28 ? "11" : "9"} fontWeight="bold">{node.label}</text>

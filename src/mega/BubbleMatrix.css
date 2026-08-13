@@ -65,3 +65,36 @@
   animation-duration: 1.5s;
   box-shadow: 0 0 25px rgba(255,215,0,1);
 }
+.bubble-matrix {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background-color: #000;
+  overflow: hidden;
+}
+
+.bubble-node {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: rgba(255, 215, 0, 0.25);
+  color: #ffd700;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.25s ease, background-color 0.25s ease;
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
+}
+
+.bubble-node:hover {
+  transform: scale(1.15);
+  background-color: rgba(255, 215, 0, 0.45);
+}
+
+.bubble-label {
+  font-size: 1.1rem;
+  text-shadow: 0 0 6px #000;
+}

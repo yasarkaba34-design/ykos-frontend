@@ -1,84 +1,155 @@
 import React, { useState } from "react";
 
-const staticLocations = [
-  {
-    id: "ANADOLU-01",
-    name: "Çatalhöyük & Konya Havzası",
-    region: "Anadolu Refugium Katmanı",
-    details: "M.Ö. 7400 Neolitik dairesel mühürler, 'ÇEV' ve 'BA' kök hece mülkiyet matrisinin merkez üssüdür."
-  },
-  {
-    id: "ANADOLU-02",
-    name: "Göbeklitepe & Şanlıurfa",
-    region: "Epipaleolitik Grafik Algoritma",
-    details: "M.Ö. 9600 T-sütunları üzerindeki 'H' piktogramı dikey varlık ve yatay bağ aksını kodlar."
-  },
-  {
-    id: "ANADOLU-03",
-    name: "Hattuşa & Çorum Havzası",
-    region: "Hatti - Hitit Ön-Türkçe Kök Katmanı",
-    details: "Hatti yazıtları ve mühürleri, YKOS KUR, DA ve ÇEV hece türetimleri ile %99.4 simetri gösterir."
-  },
-  {
-    id: "AVRASYA-01",
-    name: "Saymalıtaş & Altay Rotaları",
-    region: "Kaya Resimleri ve Petroglif Hatları",
-    details: "Anadolu çıkışlı göç dalgalarının Avrasya bozkırlarındaki 'GÖK' ve 'ÇİK' yükselim grafik izleri."
-  },
-  {
-    id: "AKDENIZ-01",
-    name: "Lemnos & Etruria (İtalya)",
-    region: "Akdeniz & Etrüsk Alfabetik Aksı",
-    details: "Lemnos mezar steli ve Etrüsk yazıtlarındaki 'YOL' kökü vasıtasıyla kanıtlanan Akdeniz dil akışı."
-  }
-];
+export default function AtlasMap({ locations }) {
+  // Varsayılan olarak ilk lokasyon seçili gelsin
+  const [activeLoc, setActiveLoc] = useState(locations[0]);
 
-export function AtlasMap({ locations, onSelectLocation }) {
-  // Eğer dısaridan prop gelmezse veya bos gelirse dogrudan staticLocations kullan
-  const activeData = (locations && Array.isArray(locations) && locations.length > 0) ? locations : staticLocations;
-  const [selectedLoc, setSelectedLoc] = useState(activeData[0]);
-
-  const handleSelect = (loc) => {
-    setSelectedLoc(loc);
-    if (onSelectLocation) {
-      onSelectLocation(loc);
-    }
+  // Entegrasyon: Lokasyona göre Kök Hece Matrisi bağlantılarını dinamik getirme
+  const getIntegratedNodes = (locId) => {
+    if (locId.includes("ANADOLU-01")) return ["ÇEV", "BA", "YKOS 100 Katmanı"];
+    if (locId.includes("ANADOLU-02")) return ["H-Piktogramı", "Dikey Aks", "YKOS 200"];
+    if (locId.includes("ANADOLU-03")) return ["KUR", "DA", "ÇEV"];
+    if (locId.includes("AVRASYA-01")) return ["GÖK", "ÇİK", "Yükselim Vektörü"];
+    if (locId.includes("AKDENIZ-01")) return ["YOL", "AYLUİL", "Avrupa Atlası"];
+    return ["KÖK", "YOL", "BİR"];
   };
 
   return (
-    <div style={{ width: "100%", backgroundColor: "#02040a", border: "1px solid rgba(255, 215, 0, 0.3)", borderRadius: "10px", padding: "15px", boxSizing: "border-box" }}>
-      <h3 style={{ color: "#ffd700", margin: "0 0 12px 0", fontSize: "1rem" }}>
-        🗺️ YKOS ANADOLU & DÜNYA COĞRAFİ ATLAS HARİTASI
-      </h3>
+    <div style={{ display: "flex", flexDirection: "column", gap: "25px", animation: "fadeIn 0.5s ease" }}>
+      
+      <style>{`
+        @keyframes pulseRadar {
+          0% { transform: scale(0.5); opacity: 0.8; }
+          100% { transform: scale(2.5); opacity: 0; }
+        }
+        .radar-ring {
+          position: absolute;
+          border: 1px solid rgba(255, 215, 0, 0.6);
+          border-radius: 50%;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          box-shadow: 0 0 15px rgba(255,215,0,0.2);
+        }
+        .radar-ring-1 { width: 80px; height: 80px; animation: pulseRadar 3s infinite; }
+        .radar-ring-2 { width: 80px; height: 80px; animation: pulseRadar 3s infinite 1s; }
+        .radar-ring-3 { width: 80px; height: 80px; animation: pulseRadar 3s infinite 2s; }
+        
+        .loc-card {
+          transition: all 0.3s ease;
+        }
+        .loc-card:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 6px 20px rgba(255, 215, 0, 0.3);
+        }
+      `}</style>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "10px", marginBottom: "15px" }}>
-        {activeData.map((loc, i) => (
-          <div
-            key={loc.id || i}
-            onClick={() => handleSelect(loc)}
-            style={{
-              background: selectedLoc?.id === loc.id ? "rgba(255,215,0,0.2)" : "rgba(255,215,0,0.04)",
-              border: selectedLoc?.id === loc.id ? "1.5px solid #ffd700" : "1px solid rgba(255,215,0,0.2)",
-              borderRadius: "8px",
-              padding: "12px",
+      {/* 1. YATAY LOKASYON SEÇİCİ (Genişletilmiş Hali) */}
+      <div style={{ display: "flex", gap: "15px", overflowX: "auto", paddingBottom: "15px", scrollbarWidth: "thin", scrollbarColor: "#ffd700 #050811" }}>
+        {locations.map((loc) => (
+          <div 
+            key={loc.id} 
+            className="loc-card"
+            onClick={() => setActiveLoc(loc)}
+            style={{ 
+              minWidth: "220px", 
+              background: activeLoc?.id === loc.id ? "rgba(255, 215, 0, 0.15)" : "rgba(255, 215, 0, 0.03)", 
+              border: activeLoc?.id === loc.id ? "1.5px solid #ffd700" : "1px solid rgba(255, 215, 0, 0.3)", 
+              borderRadius: "10px", 
+              padding: "15px", 
               cursor: "pointer",
-              color: "#fff"
+              display: "flex",
+              flexDirection: "column",
+              gap: "8px"
             }}
           >
-            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem" }}>📍 {loc.name || loc.id}</div>
-            <div style={{ color: "#aaa", fontSize: "0.75rem", marginTop: "4px" }}>{loc.region || "Anadolu Katmanı"}</div>
+            <span style={{ color: activeLoc?.id === loc.id ? "#ffd700" : "#aaa", fontWeight: "bold", fontSize: "0.85rem" }}>📍 {loc.name}</span>
+            <span style={{ color: "#888", fontSize: "0.75rem" }}>{loc.region}</span>
           </div>
         ))}
       </div>
 
-      {selectedLoc && (
-        <div style={{ background: "rgba(0,0,0,0.7)", padding: "14px", borderRadius: "8px", borderLeft: "3.5px solid #ffd700", color: "#ddd", fontSize: "0.82rem", lineHeight: "1.6" }}>
-          <strong style={{ color: "#ffd700", display: "block", marginBottom: "4px", fontSize: "0.9rem" }}>📜 {selectedLoc.name} Akademik Konum Raporu:</strong>
-          {selectedLoc.details || "Anadolu merkezli kök hece ve damga yayılım hattı."}
+      {/* 2. ENTEGRE DETAY VE GÖRSELLEŞTİRME PANELİ */}
+      {activeLoc && (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: "20px" }}>
+          
+          {/* SOL: Dijital Radar / Harita Simülasyonu */}
+          <div style={{ 
+            background: "#02040a", 
+            border: "1px solid rgba(255, 215, 0, 0.3)", 
+            borderRadius: "12px", 
+            minHeight: "350px", 
+            display: "flex", 
+            flexDirection: "column",
+            alignItems: "center", 
+            justifyContent: "center", 
+            position: "relative", 
+            overflow: "hidden",
+            boxShadow: "inset 0 0 50px rgba(0,0,0,0.8)"
+          }}>
+            {/* Animasyonlu Radar Halkaları */}
+            <div className="radar-ring radar-ring-1"></div>
+            <div className="radar-ring radar-ring-2"></div>
+            <div className="radar-ring radar-ring-3"></div>
+            
+            {/* Radar Arka Plan Izgarası */}
+            <div style={{ position: "absolute", width: "100%", height: "100%", backgroundImage: "linear-gradient(rgba(255,215,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,215,0,0.05) 1px, transparent 1px)", backgroundSize: "30px 30px" }}></div>
+
+            <div style={{ zIndex: 10, textAlign: "center", background: "rgba(5,8,17,0.7)", padding: "20px", borderRadius: "15px", border: "1px solid rgba(255,215,0,0.2)", backdropFilter: "blur(4px)" }}>
+              <span style={{ fontSize: "3.5rem", display: "block", marginBottom: "10px", filter: "drop-shadow(0 0 10px #ffd700)" }}>🗺️</span>
+              <h3 style={{ color: "#ffd700", margin: "0 0 5px 0", fontSize: "1.2rem", letterSpacing: "1px" }}>{activeLoc.name}</h3>
+              <div style={{ color: "#00ff7f", fontSize: "0.75rem", fontFamily: "monospace", letterSpacing: "2px" }}>KOORDİNAT EŞİTLENDİ [SİMETRİ: %99.4]</div>
+            </div>
+          </div>
+
+          {/* SAĞ: Akademik Rapor ve Matris Entegrasyonu */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+            
+            {/* Akademik Bilgi Kutusu */}
+            <div style={{ background: "rgba(255,215,0,0.04)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "12px", padding: "20px", flex: 1 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", borderBottom: "1px solid rgba(255,215,0,0.2)", paddingBottom: "10px", marginBottom: "15px" }}>
+                <span style={{ fontSize: "1.2rem" }}>📜</span>
+                <h4 style={{ color: "#ffd700", margin: 0, fontSize: "1rem" }}>Akademik Konum Raporu</h4>
+              </div>
+              <p style={{ color: "#ccc", lineHeight: "1.7", fontSize: "0.9rem", margin: 0 }}>
+                {activeLoc.details}
+              </p>
+            </div>
+
+            {/* Matris Entegrasyon Kutusu (CAN ALICI NOKTA) */}
+            <div style={{ background: "rgba(30,144,255,0.05)", border: "1px solid rgba(30,144,255,0.4)", borderRadius: "12px", padding: "20px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", borderBottom: "1px solid rgba(30,144,255,0.2)", paddingBottom: "10px", marginBottom: "15px" }}>
+                <span style={{ fontSize: "1.2rem" }}>🔗</span>
+                <h4 style={{ color: "#1e90ff", margin: 0, fontSize: "1rem" }}>YKOS Matris Entegrasyonu</h4>
+              </div>
+              <p style={{ color: "#aaa", fontSize: "0.8rem", marginBottom: "15px" }}>
+                Bu coğrafi havza, YKOS algoritmasında aşağıdaki matris düğümleriyle doğrudan eşleşmektedir:
+              </p>
+              
+              <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                {getIntegratedNodes(activeLoc.id).map((node, index) => (
+                  <span 
+                    key={index} 
+                    style={{ 
+                      background: "rgba(30,144,255,0.1)", 
+                      border: "1px solid #1e90ff", 
+                      color: "#1e90ff", 
+                      padding: "6px 12px", 
+                      borderRadius: "20px", 
+                      fontSize: "0.75rem",
+                      fontWeight: "bold",
+                      boxShadow: "0 0 10px rgba(30,144,255,0.2)"
+                    }}
+                  >
+                    {node}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+          </div>
         </div>
       )}
     </div>
   );
 }
-
-export default AtlasMap;
