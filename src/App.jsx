@@ -70,13 +70,10 @@ export function App() {
     try { if (typeof rte !== 'undefined') rte.start(); } catch (e) { console.log("rte hook başlatılamadı:", e); }
   }, []);
 
-  // YENİ ENTEGRASYON: Gerçek API Bağlantısı ve Fallback (Yedek) Sistemi
   useEffect(() => {
     async function fetchLiveNews() {
       try {
-        // ykos.com.tr üzerinden canlı verileri çekeceğimiz uç nokta
         const response = await fetch("https://www.ykos.com.tr/api/haberler");
-        
         if (response.ok) {
           const apiData = await response.json();
           setRssArticles(apiData);
@@ -85,8 +82,6 @@ export function App() {
         }
       } catch (error) {
         console.warn("API Bağlantısı sağlanamadı, yerel hafızaya (localStorage) geçiliyor:", error.message);
-        
-        // Sunucu API'si hazır olana kadar veya hata durumunda yerel veriyi kullan (Yedek Sistem)
         const scrapedData = localStorage.getItem('ykos_scraped_articles');
         if (scrapedData) {
           try { 
@@ -97,7 +92,6 @@ export function App() {
         }
       }
     }
-
     fetchLiveNews();
   }, []);
 
@@ -194,13 +188,13 @@ export function App() {
         }
       `}</style>
 
-      {/* Sadece Dil ve Menü Seçenekleri (Arama çubuğu kaldırıldı) */}
-      <div style={{ maxWidth: "1220px", margin: "0 auto", padding: "15px 15px 0", display: "flex", justifyContent: "flex-end", gap: "10px", alignItems: "center" }}>
-        {renderLanguageSelector()}
-        {currentView !== "dashboard" && (
+      {/* Üstteki Dil ve Menü Seçeneği SADECE Dashboard (Ana Sayfa) DIŞINDA görünecek */}
+      {currentView !== "dashboard" && (
+        <div style={{ maxWidth: "1220px", margin: "0 auto", padding: "15px 15px 0", display: "flex", justifyContent: "flex-end", gap: "10px", alignItems: "center" }}>
+          {renderLanguageSelector()}
           <button onClick={() => setCurrentView("dashboard")} style={{...backBtnStyle, padding: "10px 15px", whiteSpace: "nowrap"}}>🏠 Ana Sayfa</button>
-        )}
-      </div>
+        </div>
+      )}
 
       {currentView === "dashboard" && (
         <YKOSDashboard 
