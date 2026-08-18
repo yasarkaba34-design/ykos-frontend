@@ -4,8 +4,13 @@ import { defaultArchiveArticles, loadArchiveData } from "./data/ykosDataService"
 import { translations } from "./data/i18n";
 import AtlasMap from "./mega/AtlasMap";
 import AuthMenu from './components/AuthMenu';
+import AdminPanel from "./layouts/AdminPanel";
+
 export function App() {
   const [currentView, setCurrentView] = useState("dashboard"); 
+  const [loginId, setLoginId] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
   const [userRole, setUserRole] = useState("guest");
   const [selectedArticleId, setSelectedArticleId] = useState(1);
   const [selectedNode, setSelectedNode] = useState(null);
@@ -150,6 +155,23 @@ export function App() {
 
   const handleNodeClick = (node) => { setSelectedNode(node); };
 
+  // YÖNETİCİ GİRİŞİ KONTROL FONKSİYONU
+  const handleLoginSubmit = () => {
+    if (userRole === "admin") {
+      if (loginId === "admin" && loginPassword === "ykos2026") {
+        setLoginError("");
+        setLoginId("");
+        setLoginPassword("");
+        setCurrentView("admin-panel"); // Şifre doğruysa Admin Panele yönlendir
+      } else {
+        setLoginError("Hatalı Yönetici ID veya Şifre!"); // Yanlışsa hata mesajı ver
+      }
+    } else {
+      // Araştırmacı veya Konuk girişi için doğrudan ana sayfaya yönlendir
+      setCurrentView("dashboard");
+    }
+  };
+
   const containerStyle = { maxWidth: "1220px", margin: "10px auto", padding: "15px", backgroundColor: "#050811", border: "1px solid #ffd700", borderRadius: "12px", boxShadow: "0 8px 32px rgba(0,0,0,0.8)", color: "#fff", boxSizing: "border-box" };
   const backBtnStyle = { padding: "8px 14px", background: "transparent", border: "1px solid #ffd700", color: "#ffd700", fontWeight: "bold", borderRadius: "6px", cursor: "pointer", fontSize: "0.78rem" };
 
@@ -199,7 +221,7 @@ export function App() {
         }
       `}</style>
 
-      {currentView !== "dashboard" && (
+      {currentView !== "dashboard" && currentView !== "admin-panel" && (
         <div style={{ maxWidth: "1220px", margin: "0 auto", padding: "15px 15px 0", display: "flex", justifyContent: "flex-end", gap: "10px", alignItems: "center" }}>
           {renderLanguageSelector()}
           <button onClick={() => setCurrentView("dashboard")} style={{...backBtnStyle, padding: "10px 15px", whiteSpace: "nowrap"}}>🏠 Ana Sayfa</button>
@@ -377,7 +399,7 @@ export function App() {
                     <div key={index} style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,215,0,0.2)", padding: "12px", borderRadius: "8px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
                       <div style={{ flex: 1, paddingRight: "10px" }}>
                         <h4 style={{ color: "#ffd700", margin: "0 0 4px 0", fontSize: "0.92rem" }}>{art.title}</h4>
-                        {art.summary && <div style={{ color: "#aaa", fontSize: "0.75rem", lineHeight: "1.4" }}>{art.summary}</div>}
+                        <p style={{ color: "#aaa", fontSize: "0.75rem", margin: 0, lineHeight: "1.4" }}>{art.summary}</p>
                       </div>
                       <a href={art.url} target="_blank" rel="noopener noreferrer" style={{ background: "#ffd700", color: "#000", padding: "6px 12px", borderRadius: "4px", fontSize: "0.75rem", fontWeight: "bold", textDecoration: "none", whiteSpace: "nowrap" }}>
                         Habere Git →
@@ -422,15 +444,45 @@ export function App() {
         <div style={containerStyle}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px" }}>
             <div>
-              <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>🔐 GÜVENLİ AKADEMİK ERİŞİM PORTALI</span>
-              <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.2rem" }}>AKADEMİK ARAŞTIRMA PORTALI</h2>
+              <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>
+                {userRole === "admin" ? "🔐 SİSTEM YÖNETİM PORTALI" : "🔐 GÜVENLİ AKADEMİK ERİŞİM PORTALI"}
+              </span>
+              <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.2rem" }}>
+                {userRole === "admin" ? "YÖNETİCİ GİRİŞİ" : "AKADEMİK ARAŞTIRMA PORTALI"}
+              </h2>
             </div>
           </div>
           <div style={{ maxWidth: "420px", margin: "30px auto", background: "rgba(255,215,0,0.03)", border: "1px solid #ffd700", padding: "24px", borderRadius: "10px" }}>
-            <p style={{ color: "#aaa", fontSize: "0.8rem", marginBottom: "15px" }}>YKOS Bilgi Sistemi entegre canlı veri tabanına erişmek için bilgilerinizi giriniz.</p>
-            <input type="text" placeholder="Kullanıcı Adı / Akademisyen ID" style={{ width: "100%", padding: "10px", marginBottom: "10px", background: "#000", border: "1px solid rgba(255,215,0,0.4)", color: "#fff", borderRadius: "6px", boxSizing: "border-box" }} />
-            <input type="password" placeholder="Şifre" style={{ width: "100%", padding: "10px", marginBottom: "15px", background: "#000", border: "1px solid rgba(255,215,0,0.4)", color: "#fff", borderRadius: "6px", boxSizing: "border-box" }} />
-            <button onClick={() => setCurrentView("dashboard")} style={{ width: "100%", padding: "10px", background: "#ffd700", color: "#000", border: "none", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}>SİSTEME GİRİŞ YAP</button>
+            <p style={{ color: "#aaa", fontSize: "0.8rem", marginBottom: "15px" }}>
+              YKOS Bilgi Sistemi entegre canlı veri tabanına erişmek için bilgilerinizi giriniz.
+            </p>
+            
+            {loginError && (
+              <div style={{ color: "#ff4d4d", fontSize: "0.85rem", marginBottom: "15px", background: "rgba(255,0,0,0.1)", padding: "10px", borderRadius: "6px", border: "1px solid rgba(255,0,0,0.3)" }}>
+                ⚠️ {loginError}
+              </div>
+            )}
+
+            <input 
+              type="text" 
+              placeholder={userRole === "admin" ? "Yönetici ID" : "Kullanıcı Adı / Akademisyen ID"} 
+              value={loginId}
+              onChange={(e) => setLoginId(e.target.value)}
+              style={{ width: "100%", padding: "10px", marginBottom: "10px", background: "#000", border: "1px solid rgba(255,215,0,0.4)", color: "#fff", borderRadius: "6px", boxSizing: "border-box" }} 
+            />
+            <input 
+              type="password" 
+              placeholder="Şifre" 
+              value={loginPassword}
+              onChange={(e) => setLoginPassword(e.target.value)}
+              style={{ width: "100%", padding: "10px", marginBottom: "15px", background: "#000", border: "1px solid rgba(255,215,0,0.4)", color: "#fff", borderRadius: "6px", boxSizing: "border-box" }} 
+            />
+            <button 
+              onClick={handleLoginSubmit} 
+              style={{ width: "100%", padding: "12px", background: "#ffd700", color: "#000", border: "none", borderRadius: "6px", fontWeight: "900", cursor: "pointer", fontSize: "0.95rem" }}
+            >
+              SİSTEME GİRİŞ YAP
+            </button>
           </div>
         </div>
       )}
@@ -452,6 +504,12 @@ export function App() {
               ⚡ YKOS Algoritmik Tutarlılık Skoru (Coherence): %99.4 Tam Metin Eşleşmesi
             </div>
           </div>
+        </div>
+      )}
+
+      {currentView === "admin-panel" && (
+        <div style={containerStyle}>
+           <AdminPanel onLogout={() => setCurrentView("dashboard")} />
         </div>
       )}
 

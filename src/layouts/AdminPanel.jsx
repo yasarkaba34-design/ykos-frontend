@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-export default function AdminPanel({ onBack }) {
+export default function AdminPanel({ onLogout }) {
   const [formData, setFormData] = useState({
     id: null,
     title: "",
@@ -16,22 +16,35 @@ export default function AdminPanel({ onBack }) {
     status: "draft"
   });
 
-  const [records, setRecords] = useState([
-    {
-      id: 101,
-      title: "Çatalhöyük Dairesel Damga Motifleri",
-      category: "Damga",
-      country: "Türkiye",
-      region: "Anadolu",
-      period: "M.Ö. 7400",
-      rootSyllable: "ÇEV / BA",
-      summary: "Çatalhöyük duvar resimlerindeki dairesel damgaların YKOS 100 okuması.",
-      analysis: "Çatalhöyük M.Ö. 7400 katmanlarında tespit edilen motifler ÇEV kök hecesiyle tam uyum gösterir.",
-      tags: "çatalhöyük, damga, çev",
-      imagePreview: null,
-      status: "draft"
+  // 1. ADIM: SAYFA AÇILDIĞINDA HAFIZAYI KONTROL ET
+  const [records, setRecords] = useState(() => {
+    const savedRecords = localStorage.getItem("ykos_admin_records");
+    if (savedRecords) {
+      return JSON.parse(savedRecords); // Hafızada veri varsa onu yükle
     }
-  ]);
+    // Hafıza boşsa varsayılan ilk veriyi yükle
+    return [
+      {
+        id: 101,
+        title: "Çatalhöyük Dairesel Damga Motifleri",
+        category: "Damga",
+        country: "Türkiye",
+        region: "Anadolu",
+        period: "M.Ö. 7400",
+        rootSyllable: "ÇEV / BA",
+        summary: "Çatalhöyük duvar resimlerindeki dairesel damgaların YKOS 100 okuması.",
+        analysis: "Çatalhöyük M.Ö. 7400 katmanlarında tespit edilen motifler ÇEV kök hecesiyle tam uyum gösterir.",
+        tags: "çatalhöyük, damga, çev",
+        imagePreview: null,
+        status: "draft"
+      }
+    ];
+  });
+
+  // 2. ADIM: HER DEĞİŞİKLİKTE HAFIZAYI GÜNCELLE
+  useEffect(() => {
+    localStorage.setItem("ykos_admin_records", JSON.stringify(records));
+  }, [records]); // records listesi her değiştiğinde bu kod çalışır
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -138,7 +151,7 @@ export default function AdminPanel({ onBack }) {
       {/* ÜST GEÇİŞ BARI */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
         <button
-          onClick={onBack}
+          onClick={onLogout}
           style={{ background: "rgba(255, 215, 0, 0.15)", border: "1px solid #ffd700", color: "#ffd700", padding: "8px 18px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer" }}
         >
           ⬅ Ana Panele Dön
