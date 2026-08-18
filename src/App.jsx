@@ -3,7 +3,7 @@ import YKOSDashboard from "./layouts/YKOSDashboard";
 import { defaultArchiveArticles, loadArchiveData } from "./data/ykosDataService";
 import { translations } from "./data/i18n";
 import AtlasMap from "./mega/AtlasMap";
-
+import AuthMenu from './components/AuthMenu';
 export function App() {
   const [currentView, setCurrentView] = useState("dashboard"); 
   const [userRole, setUserRole] = useState("guest");
