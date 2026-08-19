@@ -5,6 +5,7 @@ import { translations } from "./data/i18n";
 import AtlasMap from "./mega/AtlasMap";
 import AuthMenu from './components/AuthMenu';
 import AdminPanel from "./layouts/AdminPanel";
+import AcikVeriPortali from "./pages/AcikVeriPortali";
 
 export function App() {
   const [currentView, setCurrentView] = useState("dashboard"); 
@@ -219,12 +220,11 @@ export function App() {
         }
       `}</style>
 
-      {currentView === "dashboard" && (
-        <YKOSDashboard 
-          // ... (mevcut diğer satırlar kalacak)
-          onGoHome={() => setCurrentView("dashboard")}
-          onNavigateAcikVeri={() => setCurrentView("acikveri")} 
-        />
+      {currentView !== "dashboard" && (
+        <div style={{ maxWidth: "1220px", margin: "0 auto", padding: "15px 15px 0", display: "flex", justifyContent: "flex-end", gap: "10px", alignItems: "center" }}>
+          {renderLanguageSelector()}
+          <button onClick={() => setCurrentView("dashboard")} style={{...backBtnStyle, padding: "10px 15px", whiteSpace: "nowrap"}}>🏠 Ana Sayfa</button>
+        </div>
       )}
 
       {currentView === "dashboard" && (
@@ -235,7 +235,14 @@ export function App() {
           onNavigateEngine={() => setCurrentView("engine")} onNavigateFlow={() => setCurrentView("flow")}
           onNavigateYkos1000={() => setCurrentView("ykos1000")} onNavigateMethod={() => setCurrentView("methodology")}
           onGoHome={() => setCurrentView("dashboard")}
+          onNavigateAcikVeri={() => setCurrentView("acikveri")} 
         />
+      )}
+
+      {currentView === "acikveri" && (
+        <div style={containerStyle}>
+          <AcikVeriPortali />
+        </div>
       )}
 
       {currentView === "ykos1000" && (
