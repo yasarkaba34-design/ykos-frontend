@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { uploadImageToImgBB } from "../api/imageService";
+import AcikVeriPortali from "./pages/AcikVeriPortali";
 
 export default function AdminPanel({ onLogout, userRole = "admin" }) {
   const [formData, setFormData] = useState({

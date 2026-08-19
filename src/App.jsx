@@ -219,11 +219,12 @@ export function App() {
         }
       `}</style>
 
-      {currentView !== "dashboard" && currentView !== "admin-panel" && (
-        <div style={{ maxWidth: "1220px", margin: "0 auto", padding: "15px 15px 0", display: "flex", justifyContent: "flex-end", gap: "10px", alignItems: "center" }}>
-          {renderLanguageSelector()}
-          <button onClick={() => setCurrentView("dashboard")} style={{...backBtnStyle, padding: "10px 15px", whiteSpace: "nowrap"}}>🏠 Ana Sayfa</button>
-        </div>
+      {currentView === "dashboard" && (
+        <YKOSDashboard 
+          // ... (mevcut diğer satırlar kalacak)
+          onGoHome={() => setCurrentView("dashboard")}
+          onNavigateAcikVeri={() => setCurrentView("acikveri")} 
+        />
       )}
 
       {currentView === "dashboard" && (

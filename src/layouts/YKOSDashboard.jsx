@@ -7,7 +7,8 @@ import { searchYkosApi } from "../data/ykosApiService";
 export default function YKOSDashboard({ 
   archiveArticles, rssArticles = [], currentLang, setCurrentLang, 
   onVisualize, onNavigateRead, onGoHome, onNavigateLogin, 
-  onNavigateAtlas, onNavigateEngine, onNavigateFlow, onNavigateMethod 
+  onNavigateAtlas, onNavigateEngine, onNavigateFlow, onNavigateMethod,
+  onNavigateAcikVeri
 }) {
   const [langOpen, setLangOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -188,6 +189,7 @@ export default function YKOSDashboard({
               <button onClick={() => { setMenuOpen(false); onNavigateAtlas(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.atlas}</button>
               <button onClick={() => { setMenuOpen(false); onNavigateEngine(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.engine}</button>
               <button onClick={() => { setMenuOpen(false); onNavigateFlow(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.flow}</button>
+              <button onClick={() => { setMenuOpen(false); onNavigateAcikVeri(); }} style={{ background: "rgba(0, 255, 127, 0.15)", border: "1px solid #00ff7f", color: "#00ff7f", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>🌐 VERİ GÖNDER</button>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "8px", paddingTop: "10px", borderTop: "1px dashed rgba(255, 215, 0, 0.25)" }}>
@@ -344,12 +346,21 @@ export default function YKOSDashboard({
           ))}
         </div>
 
-        <button 
-          onClick={onVisualize}
-          style={{ background: "linear-gradient(135deg, #ffd700, #b8860b)", color: "#000000", border: "none", padding: "14px", borderRadius: "8px", fontWeight: "900", fontSize: "0.95rem", cursor: "pointer", width: "100%", maxWidth: "400px", margin: "0 auto", display: "block" }}
-        >
-          {t.visualizeBtn}
-        </button>
+        <div style={{ display: "flex", gap: "15px", justifyContent: "center", width: "100%", maxWidth: "800px", margin: "0 auto" }}>
+          <button 
+            onClick={onVisualize}
+            style={{ flex: 1, background: "linear-gradient(135deg, #ffd700, #b8860b)", color: "#000000", border: "none", padding: "14px", borderRadius: "8px", fontWeight: "900", fontSize: "0.95rem", cursor: "pointer", display: "block" }}
+          >
+            {t.visualizeBtn}
+          </button>
+          
+          <button 
+            onClick={onNavigateAcikVeri}
+            style={{ flex: 1, background: "linear-gradient(135deg, #00ff7f, #008000)", color: "#000000", border: "none", padding: "14px", borderRadius: "8px", fontWeight: "900", fontSize: "0.95rem", cursor: "pointer", display: "block" }}
+          >
+            🌐 AÇIK VERİ PORTALINA GİT
+          </button>
+        </div>
       </div>
 
       {/* GÜNCELLENDİ: YAZILI BÜYÜTÜLMÜŞ GÖRSEL (MODAL) KATMANI */}
