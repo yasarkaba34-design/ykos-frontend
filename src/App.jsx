@@ -12,7 +12,10 @@ export function App() {
   const [loginPassword, setLoginPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [userRole, setUserRole] = useState("guest");
+  
   const [selectedArticleId, setSelectedArticleId] = useState(1);
+  const [selectedArticleData, setSelectedArticleData] = useState(null);
+  
   const [selectedNode, setSelectedNode] = useState(null);
   const [archiveArticles, setArchiveArticles] = useState(defaultArchiveArticles);
   const [rssArticles, setRssArticles] = useState([]);
@@ -61,56 +64,6 @@ export function App() {
     { code: "PT", label: "Português" }, { code: "ES", label: "Español" }, { code: "AR", label: "العربية" }, { code: "DE", label: "Deutsch" }
   ];
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const data = await loadArchiveData();
-        if (data) localStorage.setItem('ykos_archive_data', JSON.stringify(data));
-      } catch (error) { console.error("Arşiv verisi yüklenirken hata oluştu:", error); }
-    }
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    try { if (typeof rte !== 'undefined') rte.start(); } catch (e) { console.log("rte hook başlatılamadı:", e); }
-  }, []);
-
-  useEffect(() => {
-    async function fetchLiveNews() {
-      try {
-        const rssUrl = "https://www.ykos.com.tr/rss"; 
-        const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}`);
-        
-        if (response.ok) {
-          const data = await response.json();
-          if (data.items && data.items.length > 0) {
-            const formattedArticles = data.items.map(item => ({
-              title: item.title,
-              url: item.link,
-              summary: item.description ? item.description.replace(/(<([^>]+)>)/ig, "").substring(0, 110) + "..." : ""
-            }));
-            setRssArticles(formattedArticles);
-          } else {
-            throw new Error("RSS içeriği boş.");
-          }
-        } else {
-          throw new Error("RSS servisine ulaşılamadı.");
-        }
-      } catch (error) {
-        console.warn("RSS Bağlantısı sağlanamadı, yerel hafızaya geçiliyor:", error.message);
-        const scrapedData = localStorage.getItem('ykos_scraped_articles');
-        if (scrapedData) {
-          try { 
-            setRssArticles(JSON.parse(scrapedData)); 
-          } catch (e) { 
-            console.error("Yerel veri okunurken hata:", e); 
-          }
-        }
-      }
-    }
-    fetchLiveNews();
-  }, []);
-
   const matrixNodes = [
     { id: "YKOS 1000", x: 350, y: 180, r: 42, color: "#ffd700", label: "YKOS 1000", anim: "float1", desc: "Ana Bilgi Entegrasyon Matrisi", connection: "YKOS 100, YKOS 200, YKOS 300", score: "%100", derivatives: ["Master-Veri", "Yapay-Zekâ"], details: "Sistemin tüm katmanlarını bağlayan yapay zekâ destekli üst entegrasyon matrisi." },
     { id: "YKOS 100", x: 420, y: 310, r: 36, color: "#1e90ff", label: "YKOS 100", anim: "float1", desc: "Temel Kök Hece Matrisi Katmanı", connection: "YOL, BİR, ÇEV", score: "%99.9", derivatives: ["Kök-en", "Yol-cu", "Çev-re"], details: "Anadolu merkezli 100 birincil hece vektörünün algoritmik veritabanı." },
@@ -141,6 +94,43 @@ export function App() {
     { id: "AYLUİL", x: 310, y: 510, r: 22, color: "#ba55d3", label: "AYLUİL", anim: "float2", desc: "Akdeniz Ekeni", connection: "AVRUPA ATLASI", score: "%98.5", derivatives: ["Ay-lu"], details: "Akdeniz ada dilleri." }
   ];
 
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const data = await loadArchiveData();
+        if (data) localStorage.setItem('ykos_archive_data', JSON.stringify(data));
+      } catch (error) { console.error("Arşiv verisi yüklenirken hata:", error); }
+    }
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    try { if (typeof rte !== 'undefined') rte.start(); } catch (e) { }
+  }, []);
+
+  useEffect(() => {
+    async function fetchLiveNews() {
+      try {
+        const rssUrl = "https://www.ykos.com.tr/rss"; 
+        const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.items && data.items.length > 0) {
+            const formattedArticles = data.items.map(item => ({
+              title: item.title, url: item.link,
+              summary: item.description ? item.description.replace(/(<([^>]+)>)/ig, "").substring(0, 110) + "..." : ""
+            }));
+            setRssArticles(formattedArticles);
+          }
+        }
+      } catch (error) {
+        const scrapedData = localStorage.getItem('ykos_scraped_articles');
+        if (scrapedData) setRssArticles(JSON.parse(scrapedData)); 
+      }
+    }
+    fetchLiveNews();
+  }, []);
+
   const handleZoomIn = () => setZoomLevel(prev => Math.min(prev + 0.2, 2.2));
   const handleZoomOut = () => setZoomLevel(prev => Math.max(prev - 0.2, 0.6));
   const handleZoomReset = () => setZoomLevel(1);
@@ -149,26 +139,34 @@ export function App() {
     setAnalysisResult({ status: "SUCCESS", coherenceScore: "%99.6", vectorPath: "Dikey / Yatay Aks", synthesis: "Girdiğiniz kök hece zinciri, YKOS M5 algoritmasına göre yapısal bütünlüğünü korumaktadır." });
   };
 
-  const handleNavigateLogin = (role) => { setUserRole(role); setCurrentView("login"); };
-  const handleNavigateRead = (id) => { setSelectedArticleId(id); setCurrentView("read"); };
-  const selectedArticle = activeArticles.find(a => a.id === selectedArticleId) || activeArticles[0];
+  const handleNavigateLogin = (role) => { 
+    setUserRole(role); 
+    if (role === "guest") setCurrentView("admin-panel"); 
+    else setCurrentView("login"); 
+  };
+  
+  const handleNavigateRead = (id) => { 
+    setSelectedArticleId(id); 
+    let found = activeArticles.find(a => a.id === id);
+    if (!found) {
+      const savedRecords = localStorage.getItem("ykos_admin_records");
+      if (savedRecords) {
+        try { found = JSON.parse(savedRecords).find(a => a.id === id); } catch(e) {}
+      }
+    }
+    setSelectedArticleData(found || activeArticles[0]);
+    setCurrentView("read"); 
+  };
 
   const handleNodeClick = (node) => { setSelectedNode(node); };
 
-  // YÖNETİCİ GİRİŞİ KONTROL FONKSİYONU
   const handleLoginSubmit = () => {
-    if (userRole === "admin") {
-      if (loginId === "admin" && loginPassword === "ykos2026") {
-        setLoginError("");
-        setLoginId("");
-        setLoginPassword("");
-        setCurrentView("admin-panel"); // Şifre doğruysa Admin Panele yönlendir
-      } else {
-        setLoginError("Hatalı Yönetici ID veya Şifre!"); // Yanlışsa hata mesajı ver
-      }
+    if (userRole === "admin" && loginId === "admin" && loginPassword === "ykos2026") {
+      setLoginError(""); setLoginId(""); setLoginPassword(""); setCurrentView("admin-panel"); 
+    } else if (userRole === "researcher" && loginId === "arastirmaci" && loginPassword === "ykos2026") {
+      setLoginError(""); setLoginId(""); setLoginPassword(""); setCurrentView("admin-panel"); 
     } else {
-      // Araştırmacı veya Konuk girişi için doğrudan ana sayfaya yönlendir
-      setCurrentView("dashboard");
+      setLoginError("Hatalı ID veya Şifre!"); 
     }
   };
 
@@ -487,20 +485,55 @@ export function App() {
         </div>
       )}
 
-      {currentView === "read" && (
+      {currentView === "read" && selectedArticleData && (
         <div style={containerStyle}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px" }}>
             <div>
-              <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>📜 AKADEMİK ÇÖZÜMLEME KATMANI</span>
-              <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem" }}>{selectedArticle.title}</h2>
+              <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>
+                📜 {selectedArticleData.category ? selectedArticleData.category.toUpperCase() : "AKADEMİK ÇÖZÜMLEME"} KATMANI
+              </span>
+              <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem" }}>{selectedArticleData.title}</h2>
+              {selectedArticleData.country && (
+                <div style={{ color: "#aaa", fontSize: "0.75rem", marginTop: "4px" }}>
+                  📍 {selectedArticleData.country}, {selectedArticleData.region} | ⏳ {selectedArticleData.period}
+                </div>
+              )}
             </div>
           </div>
-          <div style={{ padding: "15px 0", color: "#ccc", lineHeight: "1.8", fontSize: "0.92rem" }}>
-            <p style={{ background: "rgba(255,215,0,0.03)", padding: "12px", borderRadius: "6px", borderLeft: "3px solid #ffd700", marginBottom: "15px" }}>
-              <strong>Özet:</strong> {selectedArticle.summary}
+          
+          <div style={{ padding: "15px 0", color: "#ccc", lineHeight: "1.8", fontSize: "0.92rem", display: "flex", flexDirection: "column", gap: "20px" }}>
+            <p style={{ background: "rgba(255,215,0,0.03)", padding: "12px", borderRadius: "6px", borderLeft: "3px solid #ffd700", margin: 0 }}>
+              <strong>Özet:</strong> {selectedArticleData.summary}
             </p>
-            <p style={{ marginBottom: "15px" }}>{selectedArticle.content}</p>
-            <div style={{ background: "rgba(255,215,0,0.06)", padding: "14px", border: "1px solid rgba(255,215,0,0.3)", color: "#ffd700", fontWeight: "bold", margin: "20px 0", borderRadius: "6px" }}>
+
+            <p style={{ margin: 0, whiteSpace: "pre-line" }}>
+              {selectedArticleData.analysis || selectedArticleData.content}
+            </p>
+
+            {selectedArticleData.imagePreview && (
+              <div style={{ textAlign: "center", marginTop: "10px" }}>
+                <img 
+                  src={selectedArticleData.imagePreview} 
+                  alt={selectedArticleData.title} 
+                  style={{ maxWidth: "100%", maxHeight: "500px", borderRadius: "8px", border: "1px solid #ffd700" }} 
+                />
+              </div>
+            )}
+
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "10px" }}>
+              {selectedArticleData.rootSyllable && (
+                <span style={{ background: "rgba(0, 255, 127, 0.1)", color: "#00ff7f", padding: "6px 12px", borderRadius: "6px", border: "1px solid #00ff7f", fontSize: "0.8rem", fontWeight: "bold" }}>
+                  🔤 Kök: {selectedArticleData.rootSyllable}
+                </span>
+              )}
+              {selectedArticleData.tags && (
+                <span style={{ background: "rgba(255, 215, 0, 0.1)", color: "#ffd700", padding: "6px 12px", borderRadius: "6px", border: "1px solid #ffd700", fontSize: "0.8rem", fontWeight: "bold" }}>
+                  🏷️ Etiketler: {selectedArticleData.tags}
+                </span>
+              )}
+            </div>
+
+            <div style={{ background: "rgba(255,215,0,0.06)", padding: "14px", border: "1px solid rgba(255,215,0,0.3)", color: "#ffd700", fontWeight: "bold", borderRadius: "6px", marginTop: "10px" }}>
               ⚡ YKOS Algoritmik Tutarlılık Skoru (Coherence): %99.4 Tam Metin Eşleşmesi
             </div>
           </div>
@@ -509,7 +542,7 @@ export function App() {
 
       {currentView === "admin-panel" && (
         <div style={containerStyle}>
-           <AdminPanel onLogout={() => setCurrentView("dashboard")} />
+           <AdminPanel onLogout={() => setCurrentView("dashboard")} userRole={userRole} />
         </div>
       )}
 

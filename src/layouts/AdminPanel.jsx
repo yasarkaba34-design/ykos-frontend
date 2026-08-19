@@ -1,339 +1,200 @@
 import React, { useState, useEffect } from "react";
+import { uploadImageToImgBB } from "../api/imageService";
 
-export default function AdminPanel({ onLogout }) {
+export default function AdminPanel({ onLogout, userRole = "admin" }) {
   const [formData, setFormData] = useState({
-    id: null,
-    title: "",
-    category: "Damga",
-    country: "Türkiye",
-    region: "Anadolu",
-    period: "M.Ö. 7400",
-    rootSyllable: "",
-    summary: "",
-    analysis: "",
-    tags: "",
-    imagePreview: null,
-    status: "draft"
+    id: null, title: "", category: "Damga", country: "Türkiye", region: "Anadolu",
+    period: "Bilinmiyor", rootSyllable: "", summary: "", analysis: "", tags: "",
+    imagePreview: null, status: "draft", contributor: "", email: "", source: "admin"
   });
 
-  // 1. ADIM: SAYFA AÇILDIĞINDA HAFIZAYI KONTROL ET
+  const [isUploading, setIsUploading] = useState(false);
+
   const [records, setRecords] = useState(() => {
     const savedRecords = localStorage.getItem("ykos_admin_records");
-    if (savedRecords) {
-      return JSON.parse(savedRecords); // Hafızada veri varsa onu yükle
-    }
-    // Hafıza boşsa varsayılan ilk veriyi yükle
-    return [
-      {
-        id: 101,
-        title: "Çatalhöyük Dairesel Damga Motifleri",
-        category: "Damga",
-        country: "Türkiye",
-        region: "Anadolu",
-        period: "M.Ö. 7400",
-        rootSyllable: "ÇEV / BA",
-        summary: "Çatalhöyük duvar resimlerindeki dairesel damgaların YKOS 100 okuması.",
-        analysis: "Çatalhöyük M.Ö. 7400 katmanlarında tespit edilen motifler ÇEV kök hecesiyle tam uyum gösterir.",
-        tags: "çatalhöyük, damga, çev",
-        imagePreview: null,
-        status: "draft"
-      }
-    ];
+    return savedRecords ? JSON.parse(savedRecords) : [];
   });
 
-  // 2. ADIM: HER DEĞİŞİKLİKTE HAFIZAYI GÜNCELLE
   useEffect(() => {
     localStorage.setItem("ykos_admin_records", JSON.stringify(records));
-  }, [records]); // records listesi her değiştiğinde bu kod çalışır
+  }, [records]);
 
   const [isEditing, setIsEditing] = useState(false);
+  const categories = ["Damga", "Petroglif", "Yazıt", "Saha Gözlemi", "Diğer"];
 
-  const categories = ["Damga", "Petroglif", "Yazıt", "Makale / Külliyat", "Atlas & Bölge"];
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData({ ...formData, imagePreview: reader.result });
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+    setIsUploading(true); 
+    try {
+      const imageUrl = await uploadImageToImgBB(file); 
+      if (imageUrl) {
+        setFormData({ ...formData, imagePreview: imageUrl });
+        alert("✅ Görsel başarıyla buluta yüklendi!");
+      }
+    } catch (error) {
+      alert("❌ Yükleme sırasında hata oluştu.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.title) return alert("Lütfen eser / bulgu başlığını giriniz.");
+    
+    // GÜNCELLEME: Konuklar için İsim ve E-posta zorunluluğu
+    if (userRole === "guest") {
+      if (!formData.contributor.trim()) return alert("Lütfen Adınızı ve Soyadınızı giriniz.");
+      if (!formData.email.trim() || !formData.email.includes("@")) return alert("Lütfen geçerli bir E-posta adresi giriniz.");
+      if (!formData.title.trim()) return alert("Lütfen bulgu başlığını giriniz.");
+      if (!formData.imagePreview) return alert("Lütfen bir görsel yükleyiniz.");
+    } else {
+      if (!formData.title.trim()) return alert("Lütfen başlığı giriniz.");
+    }
 
     if (isEditing) {
       setRecords(records.map(rec => rec.id === formData.id ? { ...formData } : rec));
-      alert("✏️ Kayıt başarıyla güncellendi!");
+      alert("✏️ Kayıt güncellendi!");
       setIsEditing(false);
     } else {
-      const newRec = {
-        ...formData,
-        id: Date.now(),
-        status: "draft"
+      const newRec = { 
+        ...formData, 
+        id: Date.now(), 
+        status: "draft", 
+        source: userRole === "guest" ? "guest" : "admin" 
       };
       setRecords([newRec, ...records]);
-      alert("📝 Yeni YKOS Bulgusu kaydedildi. Onay bekliyor!");
+      
+      if (userRole === "guest") {
+        alert("🎉 Katkınız başarıyla alındı! Yönetici incelemesinin ardından adınızla sistemde yayınlanacaktır. YKOS'a desteğiniz için teşekkür ederiz.");
+        onLogout(); 
+      } else {
+        alert("📝 Yeni kayıt havuza eklendi!");
+      }
     }
-
     resetForm();
   };
 
-  const handleEdit = (item) => {
-    setFormData({ ...item });
-    setIsEditing(true);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const handleApprove = (id) => {
-    setRecords(records.map(rec => rec.id === id ? { ...rec, status: "published" } : rec));
-    alert("✅ YKOS Bulgusu onaylandı ve arama motoru canlı yayınına aktarıldı!");
-  };
-
-  const handleDelete = (id) => {
-    if (window.confirm("Bu kaydı silmek istediğinizden emin misiniz?")) {
-      setRecords(records.filter(rec => rec.id !== id));
-    }
-  };
-
   const resetForm = () => {
-    setFormData({
-      id: null,
-      title: "",
-      category: "Damga",
-      country: "Türkiye",
-      region: "Anadolu",
-      period: "M.Ö. 7400",
-      rootSyllable: "",
-      summary: "",
-      analysis: "",
-      tags: "",
-      imagePreview: null,
-      status: "draft"
-    });
+    setFormData({ id: null, title: "", category: "Damga", country: "Türkiye", region: "Anadolu", period: "Bilinmiyor", rootSyllable: "", summary: "", analysis: "", tags: "", imagePreview: null, status: "draft", contributor: "", email: "", source: "admin" });
     setIsEditing(false);
   };
 
-  const cardStyle = {
-    backgroundColor: "#050811",
-    border: "1px solid #ffd700",
-    borderRadius: "12px",
-    padding: "20px",
-    marginBottom: "20px",
-    boxShadow: "0 4px 30px rgba(0, 0, 0, 0.9)",
-    color: "#fff",
-    fontFamily: "Segoe UI, sans-serif"
-  };
+  const handleEdit = (item) => { setFormData({ ...item }); setIsEditing(true); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  const handleApprove = (id) => { setRecords(records.map(rec => rec.id === id ? { ...rec, status: "published" } : rec)); alert("✅ Veri onaylandı ve yayınlandı!"); };
+  const handleDelete = (id) => { if (window.confirm("Silmek istediğinize emin misiniz?")) setRecords(records.filter(rec => rec.id !== id)); };
 
-  const inputStyle = {
-    width: "100%",
-    backgroundColor: "rgba(255, 255, 255, 0.04)",
-    border: "1px solid rgba(255, 215, 0, 0.4)",
-    borderRadius: "6px",
-    padding: "10px",
-    color: "#fff",
-    fontSize: "0.85rem",
-    marginTop: "5px",
-    boxSizing: "border-box",
-    outline: "none"
-  };
+  const cardStyle = { backgroundColor: "#050811", border: "1px solid #ffd700", borderRadius: "12px", padding: "20px", marginBottom: "20px", boxShadow: "0 4px 30px rgba(0, 0, 0, 0.9)", color: "#fff", fontFamily: "Segoe UI, sans-serif" };
+  const inputStyle = { width: "100%", backgroundColor: "rgba(255, 255, 255, 0.04)", border: "1px solid rgba(255, 215, 0, 0.4)", borderRadius: "6px", padding: "10px", color: "#fff", fontSize: "0.85rem", marginTop: "5px", boxSizing: "border-box", outline: "none" };
 
   return (
-    <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "15px" }}>
-      
-      {/* ÜST GEÇİŞ BARI */}
+    <div style={{ maxWidth: userRole === "guest" ? "700px" : "1100px", margin: "0 auto", padding: "15px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-        <button
-          onClick={onLogout}
-          style={{ background: "rgba(255, 215, 0, 0.15)", border: "1px solid #ffd700", color: "#ffd700", padding: "8px 18px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer" }}
-        >
-          ⬅ Ana Panele Dön
-        </button>
-        <span style={{ color: "#ffd700", fontSize: "0.9rem", fontWeight: "bold" }}>🏛️ VERİ GİRİŞ PORTALI</span>
+        <button onClick={onLogout} style={{ background: "rgba(255, 215, 0, 0.15)", border: "1px solid #ffd700", color: "#ffd700", padding: "8px 18px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer" }}>⬅ Ana Sayfaya Dön</button>
+        <span style={{ color: "#ffd700", fontSize: "0.9rem", fontWeight: "bold" }}>{userRole === "admin" ? "👑 YÖNETİCİ PORTALI" : userRole === "researcher" ? "🔬 ARAŞTIRMACI PORTALI" : "🌍 AÇIK VERİ KATKI PORTALI"}</span>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", gap: "20px" }}>
-        
-        {/* SOL: VERİ GİRİŞ & DÜZENLEME FORMU */}
+      <div style={{ display: "grid", gridTemplateColumns: userRole === "guest" ? "1fr" : "repeat(auto-fit, minmax(340px, 1fr))", gap: "20px" }}>
         <div style={cardStyle}>
           <h2 style={{ color: "#ffd700", fontSize: "1.2rem", marginTop: 0, marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px" }}>
-            {isEditing ? "✏️ YKOS Bulgusunu Düzenle" : "📝 Yeni YKOS Bulgusu Gir"}
+            {userRole === "guest" ? "🤝 YKOS Havuzuna Veri Gönder" : (isEditing ? "✏️ Bulguyu Düzenle" : "📝 Yeni Bulgu Girişi")}
           </h2>
+          
+          {userRole === "guest" && (
+            <p style={{ color: "#aaa", fontSize: "0.8rem", marginBottom: "15px" }}>
+              Bölgenizdeki kaya resimlerini veya damgaları YKOS sistemine ekleyerek araştırmalara katkıda bulunabilirsiniz. Güvenlik için e-posta adresiniz istenmektedir (Sitede yayınlanmaz).
+            </p>
+          )}
 
           <form onSubmit={handleSubmit}>
-            
+            {userRole === "guest" && (
+              <div style={{ marginBottom: "12px", background: "rgba(0,255,127,0.05)", padding: "15px", borderRadius: "8px", border: "1px solid rgba(0,255,127,0.2)" }}>
+                <div style={{ marginBottom: "10px" }}>
+                  <label style={{ fontSize: "0.8rem", color: "#00ff7f", fontWeight: "bold" }}>Adınız Soyadınız (Zorunlu)</label>
+                  <input type="text" name="contributor" value={formData.contributor} onChange={handleChange} placeholder="Adınız Soyadınız..." style={inputStyle} required />
+                </div>
+                <div>
+                  <label style={{ fontSize: "0.8rem", color: "#00ff7f", fontWeight: "bold" }}>E-posta Adresiniz (Zorunlu - Gizli Tutulur)</label>
+                  <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="ornek@email.com" style={inputStyle} required />
+                </div>
+              </div>
+            )}
+
             <div style={{ marginBottom: "12px" }}>
-              <label style={{ fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold" }}>Bulgu / Eser Başlığı</label>
-              <input type="text" name="title" value={formData.title} onChange={handleChange} placeholder="Örn: Çatalhöyük Dairesel Damga Motifleri" style={inputStyle} />
+              <label style={{ fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold" }}>Bulgu Başlığı (Zorunlu)</label>
+              <input type="text" name="title" value={formData.title} onChange={handleChange} placeholder="Örn: Antalya Karain Mağarası İşaretleri" style={inputStyle} required />
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "12px" }}>
               <div>
-                <label style={{ fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold" }}>Veri Kategorisi</label>
+                <label style={{ fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold" }}>Kategori</label>
                 <select name="category" value={formData.category} onChange={handleChange} style={{ ...inputStyle, backgroundColor: "#050811" }}>
                   {categories.map((c, i) => <option key={i} value={c}>{c}</option>)}
                 </select>
               </div>
               <div>
-                <label style={{ fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold" }}>Kök Hece / Damga Kodu</label>
-                <input type="text" name="rootSyllable" value={formData.rootSyllable} onChange={handleChange} placeholder="Örn: ÇEV / BA" style={inputStyle} />
+                <label style={{ fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold" }}>Bölge / Şehir</label>
+                <input type="text" name="region" value={formData.region} onChange={handleChange} placeholder="Örn: Antalya" style={inputStyle} />
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px", marginBottom: "12px" }}>
-              <div>
-                <label style={{ fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold" }}>Ülke</label>
-                <input type="text" name="country" value={formData.country} onChange={handleChange} placeholder="Örn: Türkiye" style={inputStyle} />
-              </div>
-              <div>
-                <label style={{ fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold" }}>Bölge</label>
-                <input type="text" name="region" value={formData.region} onChange={handleChange} placeholder="Örn: Anadolu" style={inputStyle} />
-              </div>
-              <div>
-                <label style={{ fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold" }}>Dönem</label>
-                <input type="text" name="period" value={formData.period} onChange={handleChange} placeholder="Örn: M.Ö. 7400" style={inputStyle} />
-              </div>
-            </div>
-
-            {/* 📷 GÖRSEL YÜKLEME KUTUSU */}
             <div style={{ marginBottom: "15px", background: "rgba(255,215,0,0.03)", border: "1px dashed rgba(255,215,0,0.4)", borderRadius: "8px", padding: "12px", textAlign: "center" }}>
-              <label style={{ fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold", display: "block", marginBottom: "6px" }}>
-                📷 Damga / Petroglif Görseli Yükle
+              <label style={{ fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold", display: "block", marginBottom: "6px" }}>📷 Bulguyu Yükle {userRole === "guest" && "(Zorunlu)"}</label>
+              <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: "none" }} id="file-input-edit" disabled={isUploading} />
+              <label htmlFor="file-input-edit" style={{ background: "rgba(255, 215, 0, 0.15)", border: "1px solid #ffd700", color: "#ffd700", padding: "6px 12px", borderRadius: "6px", fontWeight: "bold", cursor: isUploading ? "wait" : "pointer", fontSize: "0.78rem", display: "inline-block" }}>
+                {isUploading ? "⏳ Buluta Yükleniyor..." : "📁 Fotoğraf Seç"}
               </label>
-              <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: "none" }} id="file-input-edit" />
-              <label htmlFor="file-input-edit" style={{ background: "rgba(255, 215, 0, 0.15)", border: "1px solid #ffd700", color: "#ffd700", padding: "6px 12px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer", fontSize: "0.78rem", display: "inline-block" }}>
-                📁 Görsel Seç
-              </label>
-
-              {formData.imagePreview && (
-                <div style={{ marginTop: "10px" }}>
-                  <img src={formData.imagePreview} alt="Önizleme" style={{ maxHeight: "120px", borderRadius: "6px", border: "1px solid #ffd700" }} />
-                </div>
-              )}
+              {formData.imagePreview && <div style={{ marginTop: "10px" }}><img src={formData.imagePreview} alt="Önizleme" style={{ maxHeight: "120px", borderRadius: "6px", border: "1px solid #ffd700" }} /></div>}
             </div>
 
             <div style={{ marginBottom: "12px" }}>
-              <label style={{ fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold" }}>Kısa Özet (Arama Yanıtı İçin)</label>
-              <input type="text" name="summary" value={formData.summary} onChange={handleChange} placeholder="Arama motorunda kullanıcıya sunulacak özet..." style={inputStyle} />
+              <label style={{ fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold" }}>Kısa Açıklama</label>
+              <textarea name="summary" rows="3" value={formData.summary} onChange={handleChange} placeholder="Bulgu hakkında kısa bilgi verin..." style={{ ...inputStyle, resize: "vertical" }}></textarea>
             </div>
 
-            <div style={{ marginBottom: "12px" }}>
-              <label style={{ fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold" }}>Detaylı YKOS Çözümleme Metni</label>
-              <textarea name="analysis" rows="4" value={formData.analysis} onChange={handleChange} placeholder="Kök hece çözümü, fonetik okumalar..." style={{ ...inputStyle, resize: "vertical" }}></textarea>
-            </div>
-
-            <div style={{ marginBottom: "15px" }}>
-              <label style={{ fontSize: "0.8rem", color: "#ffd700", fontWeight: "bold" }}>Arama Anahtar Kelimeleri</label>
-              <input type="text" name="tags" value={formData.tags} onChange={handleChange} placeholder="çatalhöyük, damga, çev" style={inputStyle} />
-            </div>
-
-            <div style={{ display: "flex", gap: "10px" }}>
-              <button
-                type="submit"
-                style={{
-                  flex: 1,
-                  background: isEditing ? "linear-gradient(135deg, #38bdf8, #0284c7)" : "linear-gradient(135deg, #ffd700, #b8860b)",
-                  color: "#000",
-                  border: "none",
-                  padding: "12px",
-                  borderRadius: "8px",
-                  fontWeight: "900",
-                  fontSize: "0.9rem",
-                  cursor: "pointer"
-                }}
-              >
-                {isEditing ? "💾 GÜNCELLEMEYİ KAYDET" : "📝 KAYDET"}
-              </button>
-
-              {isEditing && (
-                <button
-                  type="button"
-                  onClick={resetForm}
-                  style={{ background: "#333", color: "#fff", border: "1px solid #666", padding: "12px", borderRadius: "8px", cursor: "pointer" }}
-                >
-                  İptal
-                </button>
-              )}
-            </div>
-
+            <button type="submit" style={{ width: "100%", background: "linear-gradient(135deg, #ffd700, #b8860b)", color: "#000", border: "none", padding: "12px", borderRadius: "8px", fontWeight: "900", cursor: "pointer", marginTop: "10px" }}>
+              🚀 SİSTEME GÖNDER
+            </button>
           </form>
         </div>
 
-        {/* SAĞ: GİRİLEN KADİM VERİLER BÖLÜMÜ */}
-        <div style={cardStyle}>
-          <h2 style={{ color: "#ffd700", fontSize: "1.2rem", marginTop: 0, marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px" }}>
-            🛡️ Veri Havuzu ve Yayın Listesi ({records.length})
-          </h2>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px", maxHeight: "650px", overflowY: "auto" }}>
-            {records.map((item) => (
-              <div 
-                key={item.id} 
-                style={{ 
-                  backgroundColor: item.status === "published" ? "rgba(34, 197, 94, 0.05)" : "rgba(234, 179, 8, 0.05)", 
-                  border: item.status === "published" ? "1px solid #22c55e" : "1px solid #eab308", 
-                  borderRadius: "8px", 
-                  padding: "12px" 
-                }}
-              >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem" }}>📜 {item.title}</span>
-                  <span style={{ 
-                    fontSize: "0.68rem", 
-                    padding: "2px 8px", 
-                    borderRadius: "12px", 
-                    fontWeight: "bold",
-                    backgroundColor: item.status === "published" ? "rgba(34, 197, 94, 0.2)" : "rgba(234, 179, 8, 0.2)",
-                    color: item.status === "published" ? "#4ade80" : "#fde047"
-                  }}>
-                    {item.status === "published" ? "🟢 Canlıda Yayınlandı" : "⏳ Onay Bekliyor"}
-                  </span>
-                </div>
-
-                <div style={{ fontSize: "0.72rem", color: "#aaa", marginTop: "4px" }}>
-                  📍 {item.country} | 🔤 Kök: {item.rootSyllable || "Yok"} | 🏷️ {item.category}
-                </div>
-
-                <p style={{ fontSize: "0.78rem", color: "#ddd", margin: "6px 0 10px 0" }}>{item.summary}</p>
-
-                <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", borderTop: "1px dashed rgba(255,255,255,0.1)", paddingTop: "8px" }}>
-                  <button 
-                    onClick={() => handleEdit(item)} 
-                    style={{ background: "rgba(56, 189, 248, 0.15)", border: "1px solid #38bdf8", color: "#38bdf8", padding: "4px 10px", borderRadius: "4px", fontSize: "0.72rem", fontWeight: "bold", cursor: "pointer" }}
-                  >
-                    ✏️ Düzenle
-                  </button>
-
-                  {item.status !== "published" && (
-                    <button 
-                      onClick={() => handleApprove(item.id)} 
-                      style={{ background: "rgba(34, 197, 94, 0.15)", border: "1px solid #22c55e", color: "#4ade80", padding: "4px 10px", borderRadius: "4px", fontSize: "0.72rem", fontWeight: "bold", cursor: "pointer" }}
-                    >
-                      ✅ Onayla ve Yayınla
-                    </button>
+        {userRole !== "guest" && (
+          <div style={cardStyle}>
+            <h2 style={{ color: "#ffd700", fontSize: "1.2rem", marginTop: 0, marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px" }}>🛡️ Veri Havuzu ({records.length})</h2>
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px", maxHeight: "650px", overflowY: "auto" }}>
+              {records.map((item) => (
+                <div key={item.id} style={{ backgroundColor: item.status === "published" ? "rgba(34, 197, 94, 0.05)" : "rgba(234, 179, 8, 0.05)", border: item.status === "published" ? "1px solid #22c55e" : "1px solid #eab308", borderRadius: "8px", padding: "12px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem" }}>📜 {item.title}</span>
+                    <span style={{ fontSize: "0.68rem", padding: "2px 8px", borderRadius: "12px", fontWeight: "bold", backgroundColor: item.status === "published" ? "rgba(34, 197, 94, 0.2)" : "rgba(234, 179, 8, 0.2)", color: item.status === "published" ? "#4ade80" : "#fde047" }}>
+                      {item.status === "published" ? "🟢 Canlıda" : "⏳ Taslak"}
+                    </span>
+                  </div>
+                  
+                  {item.source === "guest" && (
+                    <div style={{ fontSize: "0.75rem", background: "rgba(0, 255, 127, 0.1)", padding: "8px", borderRadius: "6px", marginTop: "8px", border: "1px solid rgba(0, 255, 127, 0.3)" }}>
+                      <div style={{ color: "#00ff7f", fontWeight: "bold", marginBottom: "4px" }}>🧑‍🤝‍🧑 Konuk Katkısı: {item.contributor}</div>
+                      <div style={{ color: "#aaa" }}>📧 İletişim: {item.email}</div>
+                    </div>
                   )}
-
-                  <button 
-                    onClick={() => handleDelete(item.id)} 
-                    style={{ background: "rgba(239, 68, 68, 0.15)", border: "1px solid #ef4444", color: "#f87171", padding: "4px 10px", borderRadius: "4px", fontSize: "0.72rem", fontWeight: "bold", cursor: "pointer" }}
-                  >
-                    🗑️ Sil
-                  </button>
+                  
+                  {item.imagePreview && <img src={item.imagePreview} alt="kayıt" style={{ maxHeight: "40px", borderRadius: "4px", margin: "8px 0", border: "1px solid rgba(255,215,0,0.3)" }} />}
+                  <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", borderTop: "1px dashed rgba(255,255,255,0.1)", paddingTop: "8px" }}>
+                    <button onClick={() => handleEdit(item)} style={{ background: "rgba(56, 189, 248, 0.15)", border: "1px solid #38bdf8", color: "#38bdf8", padding: "4px 10px", borderRadius: "4px", fontSize: "0.72rem", fontWeight: "bold", cursor: "pointer" }}>✏️ Düzenle</button>
+                    {userRole === "admin" && item.status !== "published" && (
+                      <button onClick={() => handleApprove(item.id)} style={{ background: "rgba(34, 197, 94, 0.15)", border: "1px solid #22c55e", color: "#4ade80", padding: "4px 10px", borderRadius: "4px", fontSize: "0.72rem", fontWeight: "bold", cursor: "pointer" }}>✅ Onayla</button>
+                    )}
+                    {userRole === "admin" && (
+                      <button onClick={() => handleDelete(item.id)} style={{ background: "rgba(239, 68, 68, 0.15)", border: "1px solid #ef4444", color: "#f87171", padding: "4px 10px", borderRadius: "4px", fontSize: "0.72rem", fontWeight: "bold", cursor: "pointer" }}>🗑️ Sil</button>
+                    )}
+                  </div>
                 </div>
-
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-
-        </div>
-
+        )}
       </div>
     </div>
   );

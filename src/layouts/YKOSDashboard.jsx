@@ -13,6 +13,9 @@ export default function YKOSDashboard({
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [apiSynthesis, setApiSynthesis] = useState(null);
+  
+  // GÜNCELLENDİ: Artık sadece görsel linkini değil, tüm kaydı tutuyoruz
+  const [selectedItemForModal, setSelectedItemForModal] = useState(null);
 
   const t = translations[currentLang] || translations.TR;
   const activeArticles = t.articles || archiveArticles;
@@ -81,22 +84,41 @@ export default function YKOSDashboard({
     handleSearchApi();
   }, [searchQuery]);
 
-  // CANLI HABERLER (RSS) İLE SABİT ARŞİVİ BİRLEŞTİRİYORUZ
-  const allArticles = [...rssArticles, ...activeArticles];
+  const [localAdminRecords, setLocalAdminRecords] = useState([]);
   
-  // Aynı başlıklı olanları tekilleştir
+  useEffect(() => {
+    const savedRecords = localStorage.getItem("ykos_admin_records");
+    if (savedRecords) {
+      try {
+        const parsed = JSON.parse(savedRecords);
+        const publishedRecords = parsed.filter(rec => rec.status === "published");
+        setLocalAdminRecords(publishedRecords);
+      } catch (e) {
+        console.error("Admin kayıtları okunamadı:", e);
+      }
+    }
+  }, []);
+
+  const allArticles = [...rssArticles, ...localAdminRecords, ...activeArticles];
   const uniqueArticles = Array.from(new Map(allArticles.map(item => [item.title, item])).values());
 
-  // Arama filtresi
   const filteredArticles = uniqueArticles.filter(item => {
     const q = searchQuery.toLowerCase().trim();
     if (!q) return true;
     return (
       item.title?.toLowerCase().includes(q) || 
       item.summary?.toLowerCase().includes(q) ||
-      item.content?.toLowerCase().includes(q)
+      item.content?.toLowerCase().includes(q) ||
+      item.tags?.toLowerCase().includes(q) ||
+      item.rootSyllable?.toLowerCase().includes(q)
     );
   });
+
+  const handleOverlayClick = (e) => {
+    if (e.target === e.currentTarget) {
+      setSelectedItemForModal(null);
+    }
+  };
 
   return (
     <div style={{ width: "100%", maxWidth: "1280px", margin: "0 auto", padding: "10px", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
@@ -136,7 +158,6 @@ export default function YKOSDashboard({
           </div>
         </div>
 
-        {/* LOGO VE ANASAYFA LİNKİ */}
         <div 
           onClick={() => window.location.reload()} 
           title="Sayfayı Yenile / Ana Sayfa"
@@ -157,7 +178,6 @@ export default function YKOSDashboard({
           <p style={{ color: "#aaaaaa", fontSize: "0.72rem", margin: "2px 0 0 0" }}>{t.subTitle}</p>
         </div>
 
-        {/* AÇILIR MENÜ */}
         {menuOpen && (
           <div style={{ marginTop: "12px", borderTop: "1px solid rgba(255, 215, 0, 0.3)", paddingTop: "12px" }}>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "6px", marginBottom: "12px" }}>
@@ -184,7 +204,6 @@ export default function YKOSDashboard({
         <SearchBar onSearch={(q) => setSearchQuery(q)} />
       </div>
 
-      {/* ARAMA RAPORU & YÖNLENDİRME BAĞLANTILARI */}
       {apiSynthesis && (
         <div style={{ ...cardStyle, background: "rgba(255, 215, 0, 0.08)", border: "1.5px solid #ffd700" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
@@ -245,33 +264,55 @@ export default function YKOSDashboard({
         </div>
       </div>
 
-      {/* SOL / SAĞ PANELİ */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "15px" }}>
+      {/* ALT PANEL - TAM GENİŞLİK CANLI LİSTE */}
+      <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
+        <h3 style={{ color: "#ffd700", fontSize: "1.1rem", marginTop: 0, borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px", marginBottom: "15px" }}>
+          {t.solutionsTitle} {searchQuery && <span style={{ fontSize: "0.85rem", color: "#fff", fontWeight: "normal" }}>({filteredArticles.length} Kayıt)</span>}
+        </h3>
         
-        {/* SOL PANEL */}
-        <div style={cardStyle}>
-          <h3 style={{ color: "#ffd700", fontSize: "0.95rem", marginTop: 0 }}>{t.matricesTitle}</h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onVisualize}>► <span style={{ color: "#fff" }}>💻 {t.matrix}</span></div>
-            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onNavigateAtlas}>► <span style={{ color: "#fff" }}>🗺️ {t.atlas}</span></div>
-            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onNavigateEngine}>► <span style={{ color: "#fff" }}>🔬 {t.engine}</span></div>
-            <div style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.85rem", cursor: "pointer" }} onClick={onNavigateFlow}>► <span style={{ color: "#fff" }}>🟢 {t.flow}</span></div>
-          </div>
-        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))", gap: "15px", marginBottom: "20px", maxHeight: "600px", overflowY: "auto", paddingRight: "5px" }}>
+          {filteredArticles.map((item, idx) => (
+            <div 
+              key={item.id || `rss-${idx}`}
+              style={{ 
+                background: item.url ? "rgba(0, 255, 127, 0.04)" : "rgba(255, 215, 0, 0.05)", 
+                border: item.url ? "1px solid rgba(0, 255, 127, 0.3)" : "1px solid rgba(255, 215, 0, 0.4)", 
+                borderRadius: "8px", 
+                padding: "15px", 
+                color: item.url ? "#00ff7f" : "#ffd700", 
+                display: "flex",
+                gap: "15px",
+                alignItems: "flex-start",
+                transition: "transform 0.2s, box-shadow 0.2s",
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 6px 15px rgba(255, 215, 0, 0.15)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
+            >
+              {/* GÖRSEL ALANI - Tıklandığında tüm objeyi aktar */}
+              {item.imagePreview && (
+                <div 
+                  onClick={(e) => { 
+                    e.stopPropagation(); 
+                    setSelectedItemForModal(item); // GÜNCELLENDİ: Tüm objeyi state'e at
+                  }}
+                  style={{ flexShrink: 0, width: "80px", height: "80px", borderRadius: "8px", overflow: "hidden", border: "1px solid rgba(255, 215, 0, 0.5)", cursor: "zoom-in" }}
+                  title="Görseli Büyüt"
+                >
+                  <img 
+                    src={item.imagePreview} 
+                    alt="Damga" 
+                    style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.3s" }} 
+                    onMouseEnter={(e) => e.target.style.transform = "scale(1.1)"}
+                    onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
+                  />
+                </div>
+              )}
 
-        {/* SAĞ PANEL - GÜNCELLENMİŞ CANLI LİSTE VE ÇEVİRİ KÖPRÜSÜ */}
-        <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
-          <h3 style={{ color: "#ffd700", fontSize: "0.95rem", marginTop: 0 }}>
-            {t.solutionsTitle} {searchQuery && <span style={{ fontSize: "0.75rem", color: "#fff", fontWeight: "normal" }}>({filteredArticles.length} Kayıt)</span>}
-          </h3>
-          
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "15px", maxHeight: "400px", overflowY: "auto", paddingRight: "5px" }}>
-            {filteredArticles.map((item, idx) => (
+              {/* METİN ALANI */}
               <div 
-                key={item.id || `rss-${idx}`}
+                style={{ flex: 1, cursor: "pointer" }}
                 onClick={() => {
                   if (item.url) {
-                    // DOĞRU YER: ÇEVİRİ KÖPRÜSÜ BURADA!
                     if (currentLang === "TR") {
                       window.open(item.url, "_blank");
                     } else {
@@ -283,35 +324,116 @@ export default function YKOSDashboard({
                     onNavigateRead(item.id); 
                   }
                 }}
-                style={{ 
-                  background: item.url ? "rgba(0, 255, 127, 0.04)" : "rgba(255, 215, 0, 0.05)", 
-                  border: item.url ? "1px solid rgba(0, 255, 127, 0.3)" : "1px solid rgba(255, 215, 0, 0.4)", 
-                  borderRadius: "6px", 
-                  padding: "10px", 
-                  color: item.url ? "#00ff7f" : "#ffd700", 
-                  cursor: "pointer" 
-                }}
               >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", fontWeight: "bold", fontSize: "0.82rem" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", fontWeight: "bold", fontSize: "0.95rem", marginBottom: "6px" }}>
                   <span>{item.url ? "📡" : "📜"} {item.title}</span>
-                  {item.url && <span style={{ fontSize: "0.6rem", background: "rgba(0, 255, 127, 0.15)", padding: "2px 6px", borderRadius: "4px", color: "#00ff7f", marginLeft: "8px" }}>YENİ</span>}
+                  {item.url && <span style={{ fontSize: "0.65rem", background: "rgba(0, 255, 127, 0.15)", padding: "3px 8px", borderRadius: "4px", color: "#00ff7f", marginLeft: "10px" }}>YENİ</span>}
                 </div>
-                <div style={{ fontSize: "0.72rem", color: "#ccc", fontWeight: "normal", marginTop: "6px", lineHeight: "1.4" }}>
+                
+                {item.rootSyllable && (
+                  <div style={{ fontSize: "0.75rem", color: "#00ff7f", marginBottom: "8px", fontWeight: "bold" }}>
+                     🔤 Kök: {item.rootSyllable} | 🏷️ {item.category}
+                  </div>
+                )}
+
+                <div style={{ fontSize: "0.82rem", color: "#ccc", fontWeight: "normal", lineHeight: "1.5" }}>
                   {item.summary}
                 </div>
               </div>
-            ))}
-          </div>
-
-          <button 
-            onClick={onVisualize}
-            style={{ background: "linear-gradient(135deg, #ffd700, #b8860b)", color: "#000000", border: "none", padding: "12px", borderRadius: "6px", fontWeight: "900", fontSize: "0.85rem", cursor: "pointer", marginTop: "auto" }}
-          >
-            {t.visualizeBtn}
-          </button>
+            </div>
+          ))}
         </div>
 
+        <button 
+          onClick={onVisualize}
+          style={{ background: "linear-gradient(135deg, #ffd700, #b8860b)", color: "#000000", border: "none", padding: "14px", borderRadius: "8px", fontWeight: "900", fontSize: "0.95rem", cursor: "pointer", width: "100%", maxWidth: "400px", margin: "0 auto", display: "block" }}
+        >
+          {t.visualizeBtn}
+        </button>
       </div>
+
+      {/* GÜNCELLENDİ: YAZILI BÜYÜTÜLMÜŞ GÖRSEL (MODAL) KATMANI */}
+      {selectedItemForModal && (
+        <div 
+          onClick={handleOverlayClick}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0, 0, 0, 0.85)",
+            backdropFilter: "blur(5px)",
+            zIndex: 9999,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            cursor: "zoom-out"
+          }}
+        >
+          <div style={{ position: "relative", maxWidth: "90%", maxHeight: "90%", display: "flex", flexDirection: "column", alignItems: "center" }}>
+            
+            {/* Çarpı Butonu */}
+            <button 
+              onClick={() => setSelectedItemForModal(null)}
+              style={{
+                position: "absolute",
+                top: "-40px",
+                right: "0px",
+                background: "transparent",
+                border: "none",
+                color: "#ffd700",
+                fontSize: "2rem",
+                cursor: "pointer",
+                fontWeight: "bold"
+              }}
+            >
+              ×
+            </button>
+            
+            {/* Büyük Resim */}
+            <img 
+              src={selectedItemForModal.imagePreview} 
+              alt={selectedItemForModal.title} 
+              style={{ 
+                maxWidth: "100%", 
+                maxHeight: "75vh", 
+                borderRadius: "8px", 
+                border: "2px solid #ffd700",
+                boxShadow: "0 10px 40px rgba(0,0,0,0.8)"
+              }} 
+            />
+
+            {/* Resim Altı Bilgi Şeridi */}
+            <div style={{
+              marginTop: "15px",
+              background: "rgba(5, 8, 17, 0.9)",
+              border: "1px solid rgba(255, 215, 0, 0.4)",
+              borderRadius: "8px",
+              padding: "15px 20px",
+              textAlign: "center",
+              width: "100%",
+              maxWidth: "600px"
+            }}>
+              <h3 style={{ color: "#ffd700", margin: "0 0 5px 0", fontSize: "1.1rem" }}>
+                {selectedItemForModal.title}
+              </h3>
+              
+              <div style={{ color: "#00ff7f", fontSize: "0.85rem", fontWeight: "bold", marginBottom: "8px" }}>
+                {selectedItemForModal.rootSyllable ? `🔤 Kök: ${selectedItemForModal.rootSyllable}` : ""} 
+                {selectedItemForModal.category ? ` | 🏷️ Kategori: ${selectedItemForModal.category}` : ""}
+              </div>
+              
+              {selectedItemForModal.country && selectedItemForModal.period && (
+                <div style={{ color: "#aaa", fontSize: "0.75rem" }}>
+                  📍 {selectedItemForModal.country}, {selectedItemForModal.region} — ⏳ {selectedItemForModal.period}
+                </div>
+              )}
+            </div>
+
+          </div>
+        </div>
+      )}
 
     </div>
   );
