@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { db } from '../data/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { uploadImageToImgBB } from '../api/imageService'; // Projedeki görsel servisimiz
 
 const AcikVeriPortali = () => {
   const [formData, setFormData] = useState({
@@ -12,10 +13,33 @@ const AcikVeriPortali = () => {
   });
   
   const [yukleniyor, setYukleniyor] = useState(false);
+  const [resimYukleniyor, setResimYukleniyor] = useState(false);
 
   // Form alanları değiştikçe state'i günceller
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Bilgisayardan seçilen görseli ImgBB'ye yükleme
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setResimYukleniyor(true);
+    try {
+      const url = await uploadImageToImgBB(file);
+      if (url) {
+        setFormData(prev => ({ ...prev, gorselUrl: url }));
+        alert("Görsel başarıyla yüklendi!");
+      } else {
+        alert("Görsel yüklenirken bir hata oluştu.");
+      }
+    } catch (error) {
+      console.error("Görsel yükleme hatası:", error);
+      alert("Görsel yüklenemedi.");
+    } finally {
+      setResimYukleniyor(false);
+    }
   };
 
   // Gönder butonuna basıldığında Firebase'e yazar
@@ -24,18 +48,18 @@ const AcikVeriPortali = () => {
     setYukleniyor(true);
 
     try {
-      // Firebase 'bulgular' koleksiyonuna veri ekleme
       await addDoc(collection(db, "bulgular"), {
         baslik: formData.baslik,
         kategori: formData.kategori,
         bolge: formData.bolge,
         aciklama: formData.aciklama,
+        imagePreview: formData.gorselUrl || "", // Ana sayfada gösterim için
         gorselUrl: formData.gorselUrl || "Görsel eklenmedi", 
         eklenmeTarihi: serverTimestamp(),
-        durum: "beklemede" // Bu sayede sadece Yönetici onaylarsa yayına girer
+        durum: "beklemede" // Yönetici onayından sonra yayınlanır
       });
 
-      alert("Harika! Bulgunuz YKOS sistemine başarıyla gönderildi. Yönetici onayından sonra veri havuzunda yerini alacaktır.");
+      alert("Harika! Bulgunuz ve görseliniz YKOS sistemine başarıyla gönderildi. Yönetici onayından sonra veri havuzunda yerini alacaktır.");
       
       // Formu temizle
       setFormData({
@@ -56,13 +80,13 @@ const AcikVeriPortali = () => {
 
   return (
     <div style={{ backgroundColor: '#111', color: '#fff', minHeight: '100vh', padding: '40px 20px', fontFamily: 'sans-serif' }}>
-      <div style={{ maxWidth: '600px', margin: '0 auto', backgroundColor: '#1a1a1a', border: '1px solid #FFD700', borderRadius: '8px', padding: '30px' }}>
+      <div style={{ maxWidth: '650px', margin: '0 auto', backgroundColor: '#1a1a1a', border: '1px solid #FFD700', borderRadius: '8px', padding: '30px' }}>
         
         <h2 style={{ color: '#FFD700', textAlign: 'center', marginBottom: '10px', borderBottom: '1px solid #333', paddingBottom: '15px' }}>
           YKOS AÇIK VERİ PORTALI
         </h2>
         <p style={{ textAlign: 'center', color: '#ccc', fontSize: '14px', marginBottom: '30px' }}>
-          Anadolu ve dünya genelindeki antik tamga, petroglif ve kök-hece bulgularını sisteme ekleyerek YKOS veritabanına katkıda bulunun.
+          Anadolu ve dünya genelindeki antik tamga, petroglif ve kök-hece bulgularını görseliyle birlikte ekleyerek YKOS veritabanına katkıda bulunun.
         </p>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -77,19 +101,19 @@ const AcikVeriPortali = () => {
               onChange={handleChange}
               required
               placeholder="Örn: Antalya Karain Mağarası İşaretleri"
-              style={{ width: '100%', padding: '10px', backgroundColor: '#222', color: '#fff', border: '1px solid #444', borderRadius: '4px' }}
+              style={{ width: '100%', padding: '10px', backgroundColor: '#222', color: '#fff', border: '1px solid #444', borderRadius: '4px', boxSizing: 'border-box' }}
             />
           </div>
 
-          <div style={{ display: 'flex', gap: '15px' }}>
+          <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
             {/* Kategori */}
-            <div style={{ flex: 1 }}>
+            <div style={{ flex: 1, minWidth: '200px' }}>
               <label style={{ display: 'block', color: '#FFD700', marginBottom: '5px', fontSize: '14px' }}>Kategori</label>
               <select 
                 name="kategori" 
                 value={formData.kategori} 
                 onChange={handleChange}
-                style={{ width: '100%', padding: '10px', backgroundColor: '#222', color: '#fff', border: '1px solid #444', borderRadius: '4px' }}
+                style={{ width: '100%', padding: '10px', backgroundColor: '#222', color: '#fff', border: '1px solid #444', borderRadius: '4px', boxSizing: 'border-box' }}
               >
                 <option value="Damga">Damga</option>
                 <option value="Petroglif">Petroglif</option>
@@ -100,13 +124,13 @@ const AcikVeriPortali = () => {
             </div>
 
             {/* Bölge */}
-            <div style={{ flex: 1 }}>
+            <div style={{ flex: 1, minWidth: '200px' }}>
               <label style={{ display: 'block', color: '#FFD700', marginBottom: '5px', fontSize: '14px' }}>Bölge</label>
               <select 
                 name="bolge" 
                 value={formData.bolge} 
                 onChange={handleChange}
-                style={{ width: '100%', padding: '10px', backgroundColor: '#222', color: '#fff', border: '1px solid #444', borderRadius: '4px' }}
+                style={{ width: '100%', padding: '10px', backgroundColor: '#222', color: '#fff', border: '1px solid #444', borderRadius: '4px', boxSizing: 'border-box' }}
               >
                 <option value="Anadolu">Anadolu</option>
                 <option value="Orta Asya">Orta Asya</option>
@@ -118,6 +142,26 @@ const AcikVeriPortali = () => {
             </div>
           </div>
 
+          {/* Görsel Yükleme Alanı */}
+          <div>
+            <label style={{ display: 'block', color: '#FFD700', marginBottom: '5px', fontSize: '14px' }}>Bulgu Görseli (Fotoğraf / Çizim)</label>
+            <input 
+              type="file" 
+              accept="image/*"
+              onChange={handleImageUpload}
+              style={{ width: '100%', padding: '8px', backgroundColor: '#222', color: '#fff', border: '1px solid #444', borderRadius: '4px', boxSizing: 'border-box' }}
+            />
+            {resimYukleniyor && <p style={{ color: '#00ff7f', fontSize: '12px', marginTop: '5px' }}>Görsel buluta yükleniyor, lütfen bekleyin...</p>}
+            
+            {/* Görsel Önizleme */}
+            {formData.gorselUrl && (
+              <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <img src={formData.gorselUrl} alt="Önizleme" style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '4px', border: '1px solid #FFD700' }} />
+                <span style={{ color: '#00ff7f', fontSize: '12px' }}>Görsel başarıyla eklendi!</span>
+              </div>
+            )}
+          </div>
+
           {/* Açıklama */}
           <div>
             <label style={{ display: 'block', color: '#FFD700', marginBottom: '5px', fontSize: '14px' }}>Bulgu Açıklaması</label>
@@ -127,23 +171,23 @@ const AcikVeriPortali = () => {
               onChange={handleChange}
               rows="4"
               placeholder="Bulgunun tarihi, fiziksel özellikleri ve YKOS metodolojisine göre analizi..."
-              style={{ width: '100%', padding: '10px', backgroundColor: '#222', color: '#fff', border: '1px solid #444', borderRadius: '4px', resize: 'vertical' }}
+              style={{ width: '100%', padding: '10px', backgroundColor: '#222', color: '#fff', border: '1px solid #444', borderRadius: '4px', resize: 'vertical', boxSizing: 'border-box' }}
             ></textarea>
           </div>
 
           {/* Gönder Butonu */}
           <button 
             type="submit" 
-            disabled={yukleniyor}
+            disabled={yukleniyor || resimYukleniyor}
             style={{ 
               marginTop: '10px', 
               padding: '12px', 
-              backgroundColor: yukleniyor ? '#666' : '#FFD700', 
+              backgroundColor: (yukleniyor || resimYukleniyor) ? '#666' : '#FFD700', 
               color: '#000', 
               border: 'none', 
               borderRadius: '4px', 
               fontWeight: 'bold', 
-              cursor: yukleniyor ? 'wait' : 'pointer',
+              cursor: (yukleniyor || resimYukleniyor) ? 'wait' : 'pointer',
               fontSize: '16px'
             }}
           >
