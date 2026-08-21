@@ -1,0 +1,16 @@
+.flux-panel {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  background: #0b0b0b;
+  border: 1px solid #f1c40f;
+  padding: 16px;
+  border-radius: 8px;
+  color: #fff;
+  width: 320px;
+  font-family: 'Inter', sans-serif;
+}
+.flux-panel h3 {
+  color: #f1c40f;
+  margin-bottom: 8px;
+}
