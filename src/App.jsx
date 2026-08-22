@@ -6,6 +6,8 @@ import AtlasMap from "./mega/AtlasMap";
 import AuthMenu from './components/AuthMenu';
 import AdminPanel from "./layouts/AdminPanel";
 import AcikVeriPortali from "./pages/AcikVeriPortali";
+import BubbleMatrix from "./mega/BubbleMatrix.jsx";
+import OpsCenter from "./layouts/OpsCenter";
 
 export function App() {
   const [currentView, setCurrentView] = useState("dashboard"); 
@@ -59,14 +61,8 @@ export function App() {
     { id: "AKDENIZ-01", name: "Lemnos & Etruria (İtalya)", region: "Akdeniz & Etrüsk Alfabetik Aksı", details: "Lemnos mezar steli ve Etrüsk yazıtlarındaki YOL kökü vasıtasıyla kanıtlanan Akdeniz dil akışı." }
   ];
 
-  const languages = [
-    { code: "TR", label: "Türkçe" }, { code: "EN", label: "English" }, { code: "FR", label: "Français" }, 
-    { code: "RU", label: "Русский" }, { code: "ZH", label: "中文" }, { code: "JA", label: "日本語" }, 
-    { code: "PT", label: "Português" }, { code: "ES", label: "Español" }, { code: "AR", label: "العربية" }, { code: "DE", label: "Deutsch" }
-  ];
-
   const matrixNodes = [
-    { id: "YKOS 1000", x: 350, y: 180, r: 42, color: "#ffd700", label: "YKOS 1000", anim: "float1", desc: "Ana Bilgi Entegrasyon Matrisi", connection: "YKOS 100, YKOS 200, YKOS 300", score: "%100", derivatives: ["Master-Veri", "Yapay-Zekâ"], details: "Sistemin tüm katmanlarını bağlayan yapay zekâ destekli üst entegrasyon matrisi." },
+    { id: "YKOS 1000", x: 350, y: 180, r: 42, color: "#ffd700", label: "YKOS 1000", anim: "float1", desc: "Ana Bilgi Entegrasyon Matrisi", connection: "YKOS 100, YKOS 200, YKOS 300", score: "%100", derivatives: ["Master-Veri", "Yapay-Zekâ"], details: "Sistemin tüm katmanlarını bağlayan yapay zekâ destekli üst entegrasjon matrisi." },
     { id: "YKOS 100", x: 420, y: 310, r: 36, color: "#1e90ff", label: "YKOS 100", anim: "float1", desc: "Temel Kök Hece Matrisi Katmanı", connection: "YOL, BİR, ÇEV", score: "%99.9", derivatives: ["Kök-en", "Yol-cu", "Çev-re"], details: "Anadolu merkezli 100 birincil hece vektörünün algoritmik veritabanı." },
     { id: "YKOS 200", x: 380, y: 410, r: 35, color: "#00ff7f", label: "YKOS 200", anim: "float2", desc: "Bölgesel ve Derin Arkeolojik Katman", connection: "Göbeklitepe, ROL, Sümer", score: "%99.6", derivatives: ["Rol-daş", "Er-en", "Süm-er"], details: "Doğu Akdeniz ve Mezopotamya petroglif katmanları." },
     { id: "YKOS 300", x: 260, y: 370, r: 36, color: "#ff8c00", label: "YKOS 300", anim: "float3", desc: "Global Atlas Katmanı", connection: "ÖN ASYA ATLASI, AMERİKA ATLASI", score: "%99.4", derivatives: ["At-las", "Av-rasya"], details: "Avrasya ve Amerika kıtaları arası kültür ve damga aksı." },
@@ -106,10 +102,6 @@ export function App() {
   }, []);
 
   useEffect(() => {
-    try { if (typeof rte !== 'undefined') rte.start(); } catch (e) { }
-  }, []);
-
-  useEffect(() => {
     async function fetchLiveNews() {
       try {
         const rssUrl = "https://www.ykos.com.tr/rss"; 
@@ -132,14 +124,6 @@ export function App() {
     fetchLiveNews();
   }, []);
 
-  const handleZoomIn = () => setZoomLevel(prev => Math.min(prev + 0.2, 2.2));
-  const handleZoomOut = () => setZoomLevel(prev => Math.max(prev - 0.2, 0.6));
-  const handleZoomReset = () => setZoomLevel(1);
-
-  const handleRunAnalysis = () => {
-    setAnalysisResult({ status: "SUCCESS", coherenceScore: "%99.6", vectorPath: "Dikey / Yatay Aks", synthesis: "Girdiğiniz kök hece zinciri, YKOS M5 algoritmasına göre yapısal bütünlüğünü korumaktadır." });
-  };
-
   const handleNavigateLogin = (role) => { 
     setUserRole(role); 
     if (role === "guest") setCurrentView("admin-panel"); 
@@ -159,74 +143,23 @@ export function App() {
     setCurrentView("read"); 
   };
 
-  const handleNodeClick = (node) => { setSelectedNode(node); };
-
-  const handleLoginSubmit = () => {
-    if (userRole === "admin" && loginId === "admin" && loginPassword === "ykos2026") {
-      setLoginError(""); setLoginId(""); setLoginPassword(""); setCurrentView("admin-panel"); 
-    } else if (userRole === "researcher" && loginId === "arastirmaci" && loginPassword === "ykos2026") {
-      setLoginError(""); setLoginId(""); setLoginPassword(""); setCurrentView("admin-panel"); 
-    } else {
-      setLoginError("Hatalı ID veya Şifre!"); 
-    }
+  const handleNodeClick = (node) => { 
+    setSelectedNode(node); 
   };
 
   const containerStyle = { maxWidth: "1220px", margin: "10px auto", padding: "15px", backgroundColor: "#050811", border: "1px solid #ffd700", borderRadius: "12px", boxShadow: "0 8px 32px rgba(0,0,0,0.8)", color: "#fff", boxSizing: "border-box" };
-  const backBtnStyle = { padding: "8px 14px", background: "transparent", border: "1px solid #ffd700", color: "#ffd700", fontWeight: "bold", borderRadius: "6px", cursor: "pointer", fontSize: "0.78rem" };
-
-  const renderLanguageSelector = () => (
-    <div style={{ position: "relative", display: "inline-block" }}>
-      <button onClick={() => setLangOpen(!langOpen)} style={{ background: "rgba(255, 215, 0, 0.1)", border: "1px solid #ffd700", color: "#ffd700", padding: "6px 12px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer", fontSize: "0.78rem", whiteSpace: "nowrap" }}>
-        🌐 {currentLang} ▾
-      </button>
-      {langOpen && (
-        <div style={{ position: "absolute", right: 0, top: "110%", backgroundColor: "#050811", border: "1px solid #ffd700", borderRadius: "8px", display: "flex", flexDirection: "column", minWidth: "140px", maxHeight: "220px", overflowY: "auto", zIndex: 1000, boxShadow: "0 6px 20px rgba(0,0,0,0.9)", padding: "4px" }}>
-          {languages.map((l) => (
-            <button key={l.code} onClick={() => { setCurrentLang(l.code); setLangOpen(false); }} style={{ background: currentLang === l.code ? "rgba(255,215,0,0.2)" : "transparent", border: "none", color: currentLang === l.code ? "#ffd700" : "#fff", padding: "6px 10px", textAlign: "left", fontSize: "0.75rem", cursor: "pointer" }}>
-              {l.label} ({l.code})
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-
-  const getPanelLabel = (key) => {
-    const labels = {
-      guideTitle: { TR: "📌 MATRİS VE GLOBAL ATLAS REHBERİ", EN: "📌 MATRIX & GLOBAL ATLAS GUIDE" },
-      motiveTitle: { TR: "ÖNCE VERİ, SONRA ANALİZ, SONRA YORUM", EN: "FIRST DATA, THEN ANALYSIS, THEN INTERPRETATION" },
-      motiveSub: { TR: "40 Kök Sistem, Karşılaştırmalı Arkeolojik Katmanlar", EN: "40 Root Systems, Comparative Archaeological Layers" },
-      guideDesc: { TR: "YKOS Canlı Küresel Ağ: Baloncuklara tıklayarak bilgi düğümlerinin detaylarını inceleyebilirsiniz.", EN: "YKOS Live Global Network: Click bubbles to view the details of knowledge nodes." }
-    };
-    return labels[key]?.[currentLang] || labels[key]?.TR;
-  };
 
   return (
     <div className="app-main-wrapper" style={{ backgroundColor: "#050811", minHeight: "100vh", color: "#ffffff", paddingBottom: "30px" }}>
-      <style>{`
-        @keyframes safeFloat1 { 0% { transform: translate(0px, 0px); } 50% { transform: translate(3px, -4px); } 100% { transform: translate(0px, 0px); } }
-        @keyframes safeFloat2 { 0% { transform: translate(0px, 0px); } 50% { transform: translate(-3px, 3px); } 100% { transform: translate(0px, 0px); } }
-        @keyframes safeFloat3 { 0% { transform: translate(0px, 0px); } 50% { transform: translate(-2px, -3px); } 100% { transform: translate(0px, 0px); } }
-        @keyframes linePulse { 0% { stroke-dashoffset: 0; opacity: 0.5; } 50% { stroke-dashoffset: 20; opacity: 0.9; } 100% { stroke-dashoffset: 40; opacity: 0.5; } }
-        .node-float1 { animation: safeFloat1 4.5s ease-in-out infinite; will-change: transform; cursor: pointer; }
-        .node-float2 { animation: safeFloat2 5.5s ease-in-out infinite; will-change: transform; cursor: pointer; }
-        .node-float3 { animation: safeFloat3 5.0s ease-in-out infinite; will-change: transform; cursor: pointer; }
-        .flowing-line { stroke-dasharray: 6; animation: linePulse 3.5s linear infinite; }
-        .responsive-matrix-grid { display: grid; grid-template-columns: 1fr 340px; gap: 15px; align-items: start; }
-        @media (max-width: 900px) {
-          .responsive-matrix-grid { grid-template-columns: 1fr !important; }
-          .matrix-canvas-wrapper { order: 1 !important; min-height: 460px !important; }
-          .matrix-guide-panel { order: 2 !important; }
-        }
-      `}</style>
 
+      {/* SADECE ANA SAYFA DIŞINDA GÖRÜNEN GERİ DÖNÜŞ BUTONU */}
       {currentView !== "dashboard" && (
-        <div style={{ maxWidth: "1220px", margin: "0 auto", padding: "15px 15px 0", display: "flex", justifyContent: "flex-end", gap: "10px", alignItems: "center" }}>
-          {renderLanguageSelector()}
-          <button onClick={() => setCurrentView("dashboard")} style={{...backBtnStyle, padding: "10px 15px", whiteSpace: "nowrap"}}>🏠 Ana Sayfa</button>
+        <div style={{ maxWidth: "1220px", margin: "0 auto", padding: "15px 15px 0", textAlign: "right" }}>
+          <button onClick={() => setCurrentView("dashboard")} style={{ padding: "8px 14px", background: "transparent", border: "1px solid #ffd700", color: "#ffd700", fontWeight: "bold", borderRadius: "6px", cursor: "pointer", fontSize: "0.78rem" }}>🏠 Ana Sayfa</button>
         </div>
       )}
 
+      {/* ANA SAYFA (DASHBOARD) */}
       {currentView === "dashboard" && (
         <YKOSDashboard 
           archiveArticles={archiveArticles} rssArticles={rssArticles} currentLang={currentLang} setCurrentLang={setCurrentLang}
@@ -236,324 +169,66 @@ export function App() {
           onNavigateYkos1000={() => setCurrentView("ykos1000")} onNavigateMethod={() => setCurrentView("methodology")}
           onGoHome={() => setCurrentView("dashboard")}
           onNavigateAcikVeri={() => setCurrentView("acikveri")} 
+          onNavigateOpsCenter={() => setCurrentView("ops-center")}
+          onNavigateVideo={() => setCurrentView("video")}
+          onNavigateLiterature={() => setCurrentView("literature")}
         />
       )}
 
-      {currentView === "acikveri" && (
+      {/* OPERASYON MERKEZİ */}
+      {currentView === "ops-center" && (
         <div style={containerStyle}>
-          <AcikVeriPortali />
+          <OpsCenter onGoHome={() => setCurrentView("dashboard")} />
         </div>
       )}
 
-      {currentView === "ykos1000" && (
-        <div style={containerStyle}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "12px" }}>
-            <div>
-              <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>👑 YKOS 1000 MASTER BİLGİ ENTEGRASYON MATRİSİ</span>
-              <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem" }}>10 Dikey Veri Katmanı ve Yapay Zekâ Şemsiyesi</h2>
-            </div>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "12px" }}>
-            {ykos1000Layers.map((layer) => (
-              <div key={layer.no} onClick={() => setSelectedMasterLayer(layer)} style={{ background: selectedMasterLayer?.no === layer.no ? "rgba(255, 215, 0, 0.15)" : "rgba(255, 215, 0, 0.03)", border: selectedMasterLayer?.no === layer.no ? "1.5px solid #ffd700" : "1px solid rgba(255, 215, 0, 0.25)", borderRadius: "8px", padding: "14px", cursor: "pointer" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                  <span style={{ color: "#ffd700", fontWeight: "bold", fontSize: "0.75rem" }}>KATMAN {layer.no}</span>
-                  <span style={{ color: "#00ff7f", fontSize: "0.68rem", border: "1px solid #00ff7f", padding: "1px 5px", borderRadius: "3px" }}>{layer.status}</span>
-                </div>
-                <h4 style={{ color: "#fff", margin: "0 0 6px 0", fontSize: "0.92rem" }}>{layer.title}</h4>
-                <p style={{ color: "#aaa", fontSize: "0.75rem", margin: 0, lineHeight: "1.4" }}>{layer.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
+      {/* 3. MATRİS GÖRSELLEŞTİRME (BALONCUK AĞI) */}
       {currentView === "visualize" && (
         <div style={containerStyle}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px" }}>
-            <div>
-              <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>🌐 {t.matrix}</span>
-              <h2 style={{ color: "#ffd700", margin: "2px 0 0 0", fontSize: "1.15rem" }}>YKOS MATRİSLERİ (100 - 200 - 300 - 1000 CANLI AĞ)</h2>
-            </div>
-          </div>
-          <div className="responsive-matrix-grid">
-            <div className="matrix-canvas-wrapper" style={{ background: "#02040a", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "10px", overflow: "hidden", position: "relative", width: "100%", boxSizing: "border-box" }}>
-              
-              {selectedNode && (
-                <div style={{ position: "absolute", bottom: "10px", left: "10px", right: "10px", background: "rgba(5,8,17,0.95)", border: `1px solid ${selectedNode.color}`, padding: "12px", borderRadius: "8px", zIndex: 30, boxShadow: "0 4px 15px rgba(0,0,0,0.8)" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "6px" }}>
-                    <h3 style={{ color: selectedNode.color, margin: 0, fontSize: "1.1rem" }}>{selectedNode.label}</h3>
-                    <button onClick={() => setSelectedNode(null)} style={{ background: "transparent", border: "none", color: "#aaa", cursor: "pointer", fontSize: "1.2rem" }}>✕</button>
-                  </div>
-                  <p style={{ color: "#fff", fontSize: "0.85rem", margin: "0 0 8px" }}>{selectedNode.desc}</p>
-                  <p style={{ color: "#aaa", fontSize: "0.75rem", margin: 0 }}><strong>Bağlantılar:</strong> {selectedNode.connection}</p>
-                </div>
-              )}
-
-              <div style={{ position: "absolute", top: "10px", left: "10px", background: "rgba(5,8,17,0.88)", border: "1px solid rgba(255,215,0,0.4)", padding: "6px 10px", borderRadius: "6px", fontSize: "0.68rem", zIndex: 10, maxWidth: "60%" }}>
-                <strong style={{ color: "#ffd700", display: "block" }}>{getPanelLabel("motiveTitle")}</strong>
-                <span style={{ color: "#aaa" }}>{getPanelLabel("motiveSub")}</span>
-              </div>
-              <div style={{ position: "absolute", top: "10px", right: "10px", display: "flex", gap: "4px", zIndex: 20, background: "rgba(5,8,17,0.9)", padding: "4px", borderRadius: "6px", border: "1px solid rgba(255,215,0,0.4)" }}>
-                <button onClick={handleZoomIn} style={{ background: "#000", border: "1px solid #ffd700", color: "#ffd700", width: "30px", height: "30px", borderRadius: "4px", fontWeight: "bold", fontSize: "1.1rem", cursor: "pointer" }}>+</button>
-                <button onClick={handleZoomOut} style={{ background: "#000", border: "1px solid #ffd700", color: "#ffd700", width: "30px", height: "30px", borderRadius: "4px", fontWeight: "bold", fontSize: "1.1rem", cursor: "pointer" }}>-</button>
-                <button onClick={handleZoomReset} style={{ background: "#000", border: "1px solid #ffd700", color: "#ffd700", height: "30px", padding: "0 8px", borderRadius: "4px", fontWeight: "bold", fontSize: "0.7rem", cursor: "pointer" }}>🔍 %{Math.round(zoomLevel * 100)}</button>
-              </div>
-              <div style={{ width: "100%", overflow: "auto", display: "flex", justifyContent: "center", alignItems: "center" }}>
-                <svg width="100%" height="100%" viewBox="0 0 700 560" style={{ overflow: "visible", minHeight: "460px", transform: `scale(${zoomLevel})`, transformOrigin: "center center", transition: "transform 0.25s ease-out" }}>
-                  <line x1="350" y1="180" x2="420" y2="310" stroke="#ffd700" strokeWidth="3" className="flowing-line" />
-                  <line x1="350" y1="180" x2="380" y2="410" stroke="#ffd700" strokeWidth="3" className="flowing-line" />
-                  <line x1="350" y1="180" x2="260" y2="370" stroke="#ffd700" strokeWidth="3" className="flowing-line" />
-                  <line x1="420" y1="310" x2="380" y2="410" stroke="#1e90ff" strokeWidth="2.5" className="flowing-line" />
-                  <line x1="380" y1="410" x2="260" y2="370" stroke="#00ff7f" strokeWidth="2.5" className="flowing-line" />
-                  <line x1="420" y1="310" x2="420" y2="230" stroke="#ffd700" strokeWidth="2" className="flowing-line" />
-                  <line x1="260" y1="370" x2="150" y2="320" stroke="#ff8c00" strokeWidth="2" className="flowing-line" />
-                  <line x1="260" y1="370" x2="140" y2="410" stroke="#ff8c00" strokeWidth="2" className="flowing-line" />
-                  <line x1="260" y1="370" x2="250" y2="500" stroke="#ba55d3" strokeWidth="2" className="flowing-line" />
-                  <line x1="380" y1="410" x2="480" y2="430" stroke="#00ff7f" strokeWidth="2" className="flowing-line" />
-                  <line x1="380" y1="410" x2="470" y2="360" stroke="#00ff7f" strokeWidth="2" className="flowing-line" />
-                  <line x1="380" y1="410" x2="360" y2="490" stroke="#ba55d3" strokeWidth="2" className="flowing-line" />
-                  <line x1="250" y1="500" x2="310" y2="510" stroke="#ba55d3" strokeWidth="2" className="flowing-line" />
-                  <line x1="420" y1="310" x2="500" y2="270" stroke="rgba(255,215,0,0.5)" strokeWidth="1.8" />
-                  <line x1="500" y1="270" x2="550" y2="330" stroke="rgba(255,215,0,0.5)" strokeWidth="1.8" />
-                  <line x1="550" y1="330" x2="600" y2="260" stroke="rgba(255,215,0,0.5)" strokeWidth="1.8" />
-                  <line x1="600" y1="260" x2="650" y2="210" stroke="rgba(255,215,0,0.5)" strokeWidth="1.8" />
-                  <line x1="600" y1="260" x2="580" y2="170" stroke="rgba(255,215,0,0.5)" strokeWidth="1.8" />
-                  <line x1="580" y1="170" x2="620" y2="110" stroke="rgba(255,215,0,0.5)" strokeWidth="1.8" />
-                  <line x1="580" y1="170" x2="510" y2="130" stroke="rgba(255,215,0,0.5)" strokeWidth="1.8" />
-                  <line x1="510" y1="130" x2="560" y2="90" stroke="rgba(255,215,0,0.5)" strokeWidth="1.8" />
-                  <line x1="560" y1="90" x2="530" y2="50" stroke="rgba(255,215,0,0.5)" strokeWidth="1.8" />
-                  <line x1="350" y1="180" x2="420" y2="140" stroke="#ff8c00" strokeWidth="2" />
-                  <line x1="420" y1="140" x2="470" y2="190" stroke="#ff8c00" strokeWidth="2" />
-                  <line x1="420" y1="310" x2="330" y2="250" stroke="#1e90ff" strokeWidth="2" className="flowing-line" />
-                  <line x1="330" y1="250" x2="260" y2="220" stroke="#1e90ff" strokeWidth="2" className="flowing-line" />
-                  <line x1="260" y1="220" x2="190" y2="210" stroke="#1e90ff" strokeWidth="2" className="flowing-line" />
-                  <line x1="190" y1="210" x2="120" y2="200" stroke="#1e90ff" strokeWidth="2" className="flowing-line" />
-                  {matrixNodes.map((node) => (
-                    <g key={node.id} className={`node-${node.anim}`} onClick={() => handleNodeClick(node)} style={{ cursor: "pointer" }}>
-                      {selectedNode?.id === node.id && <circle cx={node.x} cy={node.y} r={node.r + 5} fill="rgba(255,255,255,0.2)" />}
-                      <circle cx={node.x} cy={node.y} r={node.r} fill="#050811" stroke={node.color} strokeWidth="2" style={{ filter: `drop-shadow(0px 0px 8px ${node.color})` }} />
-                      <text x={node.x} y={node.y + 4} textAnchor="middle" fill={node.color} fontSize={node.r > 28 ? "11" : "9"} fontWeight="bold">{node.label}</text>
-                    </g>
-                  ))}
-                </svg>
-              </div>
-            </div>
-            <div className="matrix-guide-panel" style={{ background: "rgba(255,215,0,0.04)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "16px" }}>
-              <h3 style={{ color: "#ffd700", fontSize: "0.88rem", margin: "0 0 10px 0", borderBottom: "1px solid rgba(255,215,0,0.2)", paddingBottom: "6px" }}>
-                {getPanelLabel("guideTitle")}
-              </h3>
-              <div style={{ color: "#ccc", fontSize: "0.78rem", lineHeight: "1.5" }}>
-                <p>{getPanelLabel("guideDesc")}</p>
-              </div>
-            </div>
-          </div>
+          <BubbleMatrix nodes={matrixNodes} onNodeClick={handleNodeClick} />
         </div>
       )}
 
-      {currentView === "atlas" && (
+      {/* VİDEO GÖRÜNÜMÜ */}
+      {currentView === "video" && (
         <div style={containerStyle}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px" }}>
-            <div>
-              <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>🗺️ ANADOLU & KÜRESEL COĞRAFİ KATMAN HARİTASI</span>
-              <h2 style={{ color: "#ffd700", margin: "2px 0 0 0", fontSize: "1.15rem" }}>{t.atlas}</h2>
-            </div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+            <h2 style={{ color: "#ffd700", margin: 0 }}>🎥 YKOS Video Arşivi</h2>
+            <button onClick={() => setCurrentView("dashboard")} style={{ padding: "6px 12px", background: "#1f2028", color: "#ffd700", border: "1px solid #ffd700", borderRadius: "6px", cursor: "pointer" }}>Geri Dön</button>
           </div>
-          <AtlasMap locations={atlasLocations} />
+          <p style={{ color: "#9ca3af" }}>Anadolu petroglifleri, kök-hece analizleri ve YKOS metodolojisi video anlatımları yakında burada yer alacaktır.</p>
         </div>
       )}
 
-      {currentView === "flow" && (
+      {/* EDEBİYAT GÖRÜNÜMÜ */}
+      {currentView === "literature" && (
         <div style={containerStyle}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "12px" }}>
-            <div>
-              <span style={{ color: "#00ff7f", fontSize: "0.75rem", fontWeight: "bold" }}>🟢 ANADOLU MERKEZLİ DİL VE KÜLTÜR AKIŞ SİMÜLASYONU</span>
-              <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem" }}>{t.flow}</h2>
-            </div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+            <h2 style={{ color: "#ffd700", margin: 0 }}>📚 Edebiyat ve Şiir Arşivi</h2>
+            <button onClick={() => setCurrentView("dashboard")} style={{ padding: "6px 12px", background: "#1f2028", color: "#ffd700", border: "1px solid #ffd700", borderRadius: "6px", cursor: "pointer" }}>Geri Dön</button>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "15px" }}>
-            {migrationRoutes.map((route) => (
-              <div key={route.id} style={{ background: "rgba(255,215,0,0.03)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "16px" }}>
-                <h4 style={{ color: "#ffd700", margin: "0 0 8px 0" }}>{route.title}</h4>
-                <p style={{ color: "#ddd", fontSize: "0.78rem" }}>{route.description}</p>
-              </div>
-            ))}
-          </div>
+          <p style={{ color: "#9ca3af" }}>Anadolu mirası, doğa, sevgi ve insan değerlerini irdeleyen özgün şiir ve denemeler burada listelenmektedir.</p>
         </div>
       )}
 
-      {currentView === "engine" && (
-        <div style={containerStyle}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "12px" }}>
-            <div>
-              <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>🔬 YAPAY ZEKÂ DESTEKLİ OKUMA MOTORU</span>
-              <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem" }}>{t.engine}</h2>
-            </div>
-          </div>
-          <div style={{ background: "rgba(255,215,0,0.03)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "10px", padding: "20px", boxSizing: "border-box" }}>
-            <input type="text" value={analysisInput} onChange={(e) => setAnalysisInput(e.target.value)} placeholder="Kök hece veya terim girin (Örn: YOL, ÇEV, ER)..." style={{ width: "100%", padding: "12px", background: "#000", border: "1px solid #ffd700", color: "#fff", borderRadius: "6px", marginBottom: "15px", boxSizing: "border-box" }} />
-            <button onClick={handleRunAnalysis} style={{ background: "#ffd700", color: "#000", padding: "10px 18px", border: "none", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}>ANALİZİ BAŞLAT ⚡</button>
-            {analysisResult && (
-              <div style={{ marginTop: "15px", color: "#00ff7f", background: "rgba(0,255,127,0.08)", padding: "12px", borderRadius: "6px", border: "1px solid #00ff7f" }}>{analysisResult.synthesis}</div>
-            )}
-            
-            <div style={{ marginTop: "30px", borderTop: "1px solid rgba(255,215,0,0.2)", paddingTop: "20px" }}>
-              <h3 style={{ color: "#ffd700", fontSize: "1rem", marginBottom: "15px" }}>📡 OTOMATİK TOPLANAN ARŞİV AKIŞI</h3>
-              {rssArticles && rssArticles.length > 0 ? (
-                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                  {rssArticles.map((art, index) => (
-                    <div key={index} style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,215,0,0.2)", padding: "12px", borderRadius: "8px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
-                      <div style={{ flex: 1, paddingRight: "10px" }}>
-                        <h4 style={{ color: "#ffd700", margin: "0 0 4px 0", fontSize: "0.92rem" }}>{art.title}</h4>
-                        <p style={{ color: "#aaa", fontSize: "0.75rem", margin: 0, lineHeight: "1.4" }}>{art.summary}</p>
-                      </div>
-                      <a href={art.url} target="_blank" rel="noopener noreferrer" style={{ background: "#ffd700", color: "#000", padding: "6px 12px", borderRadius: "4px", fontSize: "0.75rem", fontWeight: "bold", textDecoration: "none", whiteSpace: "nowrap" }}>
-                        Habere Git →
-                      </a>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div style={{ color: "#888", fontSize: "0.82rem", fontStyle: "italic", padding: "10px 0" }}>Henüz RSS akışından veri alınamadı. Sitede gezindikçe veya akış yenilendikçe veriler buraya dolacaktır.</div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {currentView === "methodology" && (
-        <div style={containerStyle}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px" }}>
-            <div>
-              <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>📜 AKADEMİK FELSEFE VE BİLİMSEL ÇERÇEVE</span>
-              <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem" }}>YKOS METODOLOJİSİ VE BİLİMSEL İLKELER</h2>
-            </div>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "15px" }}>
-            <div style={{ background: "rgba(255,215,0,0.03)", border: "1px solid rgba(255,215,0,0.25)", padding: "16px", borderRadius: "8px" }}>
-              <h3 style={{ color: "#ffd700", margin: "0 0 8px 0", fontSize: "0.95rem" }}>1. Anadolu Odaklı Refugium Modeli</h3>
-              <p style={{ color: "#ccc", fontSize: "0.8rem", lineHeight: "1.6" }}>Buzul çağındaki mikroklima koruması sayesinde Anadolu, insanlığın ve sembollerin kök rahmidir.</p>
-            </div>
-            <div style={{ background: "rgba(255,215,0,0.03)", border: "1px solid rgba(255,215,0,0.25)", padding: "16px", borderRadius: "8px" }}>
-              <h3 style={{ color: "#ffd700", margin: "0 0 8px 0", fontSize: "0.95rem" }}>2. 'Rulo Değil Yol' İlkesi</h3>
-              <p style={{ color: "#ccc", fontSize: "0.8rem", lineHeight: "1.6" }}>Kültürel hafıza statik bir arşiv kaydı değil; yaşayan, kök heceler vasıtasıyla bugüne taşınan dinamik bir yoldur.</p>
-            </div>
-            <div style={{ background: "rgba(255,215,0,0.03)", border: "1px solid rgba(255,215,0,0.25)", padding: "16px", borderRadius: "8px" }}>
-              <h3 style={{ color: "#ffd700", margin: "0 0 8px 0", fontSize: "0.95rem" }}>3. Form–Bağlam–Anlam Eşzamanlılığı</h3>
-              <p style={{ color: "#ccc", fontSize: "0.8rem", lineHeight: "1.6" }}>Damgalar ve piktogramlar rastgele çizimler değildir; geometrik aksı kodlayan görsel mühürlerdir.</p>
-            </div>
-          </div>
-        </div>
-      )}
-
+      {/* DİĞER MODÜLLER */}
+      {currentView === "acikveri" && <div style={containerStyle}><AcikVeriPortali /></div>}
+      {currentView === "admin-panel" && <div style={containerStyle}><AdminPanel onLogout={() => setCurrentView("dashboard")} userRole={userRole} /></div>}
       {currentView === "login" && (
         <div style={containerStyle}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px" }}>
-            <div>
-              <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>
-                {userRole === "admin" ? "🔐 SİSTEM YÖNETİM PORTALI" : "🔐 GÜVENLİ AKADEMİK ERİŞİM PORTALI"}
-              </span>
-              <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.2rem" }}>
-                {userRole === "admin" ? "YÖNETİCİ GİRİŞİ" : "AKADEMİK ARAŞTIRMA PORTALI"}
-              </h2>
-            </div>
-          </div>
           <div style={{ maxWidth: "420px", margin: "30px auto", background: "rgba(255,215,0,0.03)", border: "1px solid #ffd700", padding: "24px", borderRadius: "10px" }}>
-            <p style={{ color: "#aaa", fontSize: "0.8rem", marginBottom: "15px" }}>
-              YKOS Bilgi Sistemi entegre canlı veri tabanına erişmek için bilgilerinizi giriniz.
-            </p>
-            
-            {loginError && (
-              <div style={{ color: "#ff4d4d", fontSize: "0.85rem", marginBottom: "15px", background: "rgba(255,0,0,0.1)", padding: "10px", borderRadius: "6px", border: "1px solid rgba(255,0,0,0.3)" }}>
-                ⚠️ {loginError}
-              </div>
-            )}
-
-            <input 
-              type="text" 
-              placeholder={userRole === "admin" ? "Yönetici ID" : "Kullanıcı Adı / Akademisyen ID"} 
-              value={loginId}
-              onChange={(e) => setLoginId(e.target.value)}
-              style={{ width: "100%", padding: "10px", marginBottom: "10px", background: "#000", border: "1px solid rgba(255,215,0,0.4)", color: "#fff", borderRadius: "6px", boxSizing: "border-box" }} 
-            />
-            <input 
-              type="password" 
-              placeholder="Şifre" 
-              value={loginPassword}
-              onChange={(e) => setLoginPassword(e.target.value)}
-              style={{ width: "100%", padding: "10px", marginBottom: "15px", background: "#000", border: "1px solid rgba(255,215,0,0.4)", color: "#fff", borderRadius: "6px", boxSizing: "border-box" }} 
-            />
-            <button 
-              onClick={handleLoginSubmit} 
-              style={{ width: "100%", padding: "12px", background: "#ffd700", color: "#000", border: "none", borderRadius: "6px", fontWeight: "900", cursor: "pointer", fontSize: "0.95rem" }}
-            >
-              SİSTEME GİRİŞ YAP
-            </button>
+            <h2 style={{ color: "#ffd700", textAlign: "center", fontSize: "1.1rem" }}>YÖNETİCİ GİRİŞİ</h2>
+            {loginError && <div style={{ color: "#ff4d4d", marginBottom: "10px", fontSize: "0.85rem" }}>{loginError}</div>}
+            <input type="text" placeholder="Yönetici ID" value={loginId} onChange={(e) => setLoginId(e.target.value)} style={{ width: "100%", padding: "10px", marginBottom: "10px", background: "#000", border: "1px solid #ffd700", color: "#fff", borderRadius: "6px", boxSizing: "border-box" }} />
+            <input type="password" placeholder="Şifre" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} style={{ width: "100%", padding: "10px", marginBottom: "15px", background: "#000", border: "1px solid #ffd700", color: "#fff", borderRadius: "6px", boxSizing: "border-box" }} />
+            <button onClick={() => {
+              if (loginId === "admin" && loginPassword === "ykos2026") {
+                setLoginError(""); setCurrentView("admin-panel");
+              } else { setLoginError("Hatalı ID veya Şifre!"); }
+            }} style={{ width: "100%", padding: "12px", background: "#ffd700", color: "#000", border: "none", borderRadius: "6px", fontWeight: "900", cursor: "pointer" }}>GİRİŞ YAP</button>
           </div>
         </div>
       )}
-
-      {currentView === "read" && selectedArticleData && (
-        <div style={containerStyle}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px" }}>
-            <div>
-              <span style={{ color: "#ffd700", fontSize: "0.75rem", fontWeight: "bold" }}>
-                📜 {selectedArticleData.category ? selectedArticleData.category.toUpperCase() : "AKADEMİK ÇÖZÜMLEME"} KATMANI
-              </span>
-              <h2 style={{ color: "#ffd700", margin: "4px 0 0 0", fontSize: "1.3rem" }}>{selectedArticleData.title}</h2>
-              {selectedArticleData.country && (
-                <div style={{ color: "#aaa", fontSize: "0.75rem", marginTop: "4px" }}>
-                  📍 {selectedArticleData.country}, {selectedArticleData.region} | ⏳ {selectedArticleData.period}
-                </div>
-              )}
-            </div>
-          </div>
-          
-          <div style={{ padding: "15px 0", color: "#ccc", lineHeight: "1.8", fontSize: "0.92rem", display: "flex", flexDirection: "column", gap: "20px" }}>
-            <p style={{ background: "rgba(255,215,0,0.03)", padding: "12px", borderRadius: "6px", borderLeft: "3px solid #ffd700", margin: 0 }}>
-              <strong>Özet:</strong> {selectedArticleData.summary}
-            </p>
-
-            <p style={{ margin: 0, whiteSpace: "pre-line" }}>
-              {selectedArticleData.analysis || selectedArticleData.content}
-            </p>
-
-            {selectedArticleData.imagePreview && (
-              <div style={{ textAlign: "center", marginTop: "10px" }}>
-                <img 
-                  src={selectedArticleData.imagePreview} 
-                  alt={selectedArticleData.title} 
-                  style={{ maxWidth: "100%", maxHeight: "500px", borderRadius: "8px", border: "1px solid #ffd700" }} 
-                />
-              </div>
-            )}
-
-            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "10px" }}>
-              {selectedArticleData.rootSyllable && (
-                <span style={{ background: "rgba(0, 255, 127, 0.1)", color: "#00ff7f", padding: "6px 12px", borderRadius: "6px", border: "1px solid #00ff7f", fontSize: "0.8rem", fontWeight: "bold" }}>
-                  🔤 Kök: {selectedArticleData.rootSyllable}
-                </span>
-              )}
-              {selectedArticleData.tags && (
-                <span style={{ background: "rgba(255, 215, 0, 0.1)", color: "#ffd700", padding: "6px 12px", borderRadius: "6px", border: "1px solid #ffd700", fontSize: "0.8rem", fontWeight: "bold" }}>
-                  🏷️ Etiketler: {selectedArticleData.tags}
-                </span>
-              )}
-            </div>
-
-            <div style={{ background: "rgba(255,215,0,0.06)", padding: "14px", border: "1px solid rgba(255,215,0,0.3)", color: "#ffd700", fontWeight: "bold", borderRadius: "6px", marginTop: "10px" }}>
-              ⚡ YKOS Algoritmik Tutarlılık Skoru (Coherence): %99.4 Tam Metin Eşleşmesi
-            </div>
-          </div>
-        </div>
-      )}
-
-      {currentView === "admin-panel" && (
-        <div style={containerStyle}>
-           <AdminPanel onLogout={() => setCurrentView("dashboard")} userRole={userRole} />
-        </div>
-      )}
-
     </div>
   );
 }

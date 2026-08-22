@@ -20,6 +20,10 @@ export default function YKOSDashboard({
   onNavigateFlow,
   onNavigateMethod,
   onNavigateAcikVeri,
+  onNavigateOpsCenter,
+  onOpenPoetryModal,
+  onNavigateVideo,
+  onNavigateLiterature,
   finding,
 }) {
   // 🔥 Evaluator tetikleyici
@@ -443,7 +447,96 @@ export default function YKOSDashboard({
               >
                 {t.flow}
               </button>
+
+              {/* VİDEO SEKMESİ */}
+              {onNavigateVideo && (
+                <button
+                  onClick={() => {
+                    setMenuOpen(false);
+                    onNavigateVideo();
+                  }}
+                  style={{
+                    background: "rgba(255,255,255,0.02)",
+                    border: "1.5px solid rgba(255,215,0,0.3)",
+                    color: "#ccc",
+                    padding: "6px",
+                    borderRadius: "4px",
+                    fontSize: "0.68rem",
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                  }}
+                >
+                  🎥 Video
+                </button>
+              )}
+
+              {/* EDEBİYAT SEKMESİ */}
+              {onNavigateLiterature && (
+                <button
+                  onClick={() => {
+                    setMenuOpen(false);
+                    onNavigateLiterature();
+                  }}
+                  style={{
+                    background: "rgba(255,255,255,0.02)",
+                    border: "1.5px solid rgba(255,215,0,0.3)",
+                    color: "#ccc",
+                    padding: "6px",
+                    borderRadius: "4px",
+                    fontSize: "0.68rem",
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                  }}
+                >
+                  📚 Edebiyat
+                </button>
+              )}
+
+              {/* TEKİL OPERASYON MERKEZİ BUTONU */}
+              {onNavigateOpsCenter && (
+                <button
+                  onClick={() => {
+                    setMenuOpen(false);
+                    onNavigateOpsCenter();
+                  }}
+                  style={{
+                    background: "rgba(255, 215, 0, 0.25)",
+                    border: "1.5px solid #ffd700",
+                    color: "#ffd700",
+                    padding: "6px",
+                    borderRadius: "4px",
+                    fontSize: "0.68rem",
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                  }}
+                >
+                  ⚙️ Operasyon Merkezi
+                </button>
+              )}
+
+              {/* KOZMİK ŞİİR & FELSEFE BUTONU */}
+              {onOpenPoetryModal && (
+                <button
+                  onClick={() => {
+                    setMenuOpen(false);
+                    onOpenPoetryModal();
+                  }}
+                  style={{
+                    background: "linear-gradient(135deg, rgba(255,215,0,0.15), rgba(184,134,11,0.1))",
+                    border: "1.5px solid #ffd700",
+                    color: "#ffd700",
+                    padding: "6px",
+                    borderRadius: "4px",
+                    fontSize: "0.68rem",
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                  }}
+                >
+                  🎵 Kozmik Şiir & Felsefe
+                </button>
+              )}
             </div>
+
             <div
               style={{
                 display: "grid",
@@ -477,6 +570,8 @@ export default function YKOSDashboard({
           </div>
         )}
       </div>
+
+      {/* ANA SAYFADAKİ ÜSTÜNDE YER ALAN MÜKERRER OPERASYON / KOZMİK ERİŞİM BANDI KALDIRILDI */}
 
       {/* DİNAMİK ARAMA BARI */}
       <div style={{ marginBottom: "12px" }}>

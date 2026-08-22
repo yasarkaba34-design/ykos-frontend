@@ -39,3 +39,18 @@ export default function FluxPanel() {
     </div>
   );
 }
+function FluxTimeline({ chain }) {
+  return (
+    <div className="flux-timeline">
+      {chain.map((item, i) => (
+        <div key={i} className="timeline-item">
+          <div className="timeline-circle">{item}</div>
+
+          {i < chain.length - 1 && <div className="timeline-line"></div>}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+<FluxTimeline chain={flux.chain} />
