@@ -1,4 +1,4 @@
-// src/layouts/OpsCenter.jsx (Dış Wrapper ve Panel Düzenlemesi)
+// src/layouts/OpsCenter.jsx (Esnek Mobil Uyumlu Düzen)
 export default function OpsCenter({ onGoHome, onNavigateDataEntry, onNavigateDataPool }) {
   const panelStyle = { 
     backgroundColor: "#050811", 
@@ -10,10 +10,10 @@ export default function OpsCenter({ onGoHome, onNavigateDataEntry, onNavigateDat
   };
 
   return (
-    <div style={{ display: "flex", width: "100%", background: "#02040a", color: "#fff", fontFamily: "Segoe UI, sans-serif", boxSizing: "border-box", overflowX: "hidden" }}>
+    <div style={{ display: "flex", flexWrap: "wrap", width: "100%", background: "#02040a", color: "#fff", fontFamily: "Segoe UI, sans-serif", boxSizing: "border-box" }}>
       
-      {/* SOL DİKEY MENÜ */}
-      <div style={{ width: "250px", background: "#050811", borderRight: "1px solid rgba(255,215,0,0.2)", padding: "15px", display: "flex", flexDirection: "column", justifyContent: "space-between", flexShrink: "0" }}>
+      {/* SOL DİKEY MENÜ (Mobilde gizlenir veya esner) */}
+      <div className="ops-sidebar" style={{ width: "250px", minWidth: "220px", background: "#050811", borderRight: "1px solid rgba(255,215,0,0.2)", padding: "15px", display: "flex", flexDirection: "column", justifyContent: "space-between", flexShrink: "0" }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "20px", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "10px" }}>
             <span style={{ fontSize: "1.3rem" }}>👑</span>
@@ -57,11 +57,11 @@ export default function OpsCenter({ onGoHome, onNavigateDataEntry, onNavigateDat
         </div>
       </div>
 
-      {/* SAĞ ANA İÇERİK ALANI (Aşırı boşlukları alan dikey esneme optimize edildi) */}
-      <div style={{ flex: 1, maxWidth: "1350px", margin: "0 auto", padding: "15px", display: "flex", flexDirection: "column", gap: "15px", boxSizing: "border-box" }}>
+      {/* SAĞ ANA İÇERİK ALANI */}
+      <div style={{ flex: 1, minWidth: "300px", maxWidth: "1350px", margin: "0 auto", padding: "15px", display: "flex", flexDirection: "column", gap: "15px", boxSizing: "border-box" }}>
         
         {/* ÜST BİLGİ VE KONTROL BARI */}
-        <div style={{ ...panelStyle, display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px" }}>
+        <div style={{ ...panelStyle, display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", gap: "10px" }}>
           <div>
             <h1 style={{ color: "#ffd700", fontSize: "1.1rem", margin: "0 0 2px 0", fontWeight: "900" }}>YKOS OPERASYON MERKEZİ</h1>
             <div style={{ fontSize: "0.75rem", color: "#aaa" }}>Bilgiyi Katmanlandır, Doğrula, Çaprazla ve Geleceğe Aktar.</div>
@@ -75,7 +75,7 @@ export default function OpsCenter({ onGoHome, onNavigateDataEntry, onNavigateDat
         </div>
 
         {/* 6'LI METRİK KARTLARI */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: "10px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "10px" }}>
           {[
             { t: "TOPLAM VERİ", v: "12.486", desc: "+142 bugün" }, 
             { t: "ONAY BEKLEYEN", v: "37", desc: "3 kritik" }, 
@@ -93,7 +93,7 @@ export default function OpsCenter({ onGoHome, onNavigateDataEntry, onNavigateDat
         </div>
 
         {/* 4'LÜ KONTROL MODÜLLERİ */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "12px" }}>
           {[
             { id: "01", t: "DİNAMİK KATMAN KONTROL MERKEZİ", sub: "10 Katmanlı Matris Yönetimi", b: "Katmanları Yönet" },
             { id: "02", t: "ALGORİTMİK DOĞRULAMA COHERENCE", sub: "Tutarlılık ve Analiz Motoru", b: "Doğrulama Motoru" },
@@ -113,7 +113,7 @@ export default function OpsCenter({ onGoHome, onNavigateDataEntry, onNavigateDat
         </div>
 
         {/* ALT ALAN: 3 SÜTUN */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "12px" }}>
           
           {/* 1. Katman Dağılımı */}
           <div style={panelStyle}>

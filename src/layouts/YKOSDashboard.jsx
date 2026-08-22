@@ -31,6 +31,20 @@ export default function YKOSDashboard({
     if (!finding) return;
     listenForApprovals(finding.id);
   }, [finding]);
+// Dashboard stilinize bunu ekleyebilirsiniz
+const mobileMenuStyle = {
+  position: "fixed",
+  bottom: 0,
+  left: 0,
+  width: "100%",
+  background: "#050811",
+  display: "flex",
+  justifyContent: "space-around",
+  padding: "10px 0",
+  borderTop: "1px solid #ffd700",
+  zIndex: 1000,
+  overflowX: "auto" // Taşarsa sağa doğru kaydırılabilir
+};
 
   const [langOpen, setLangOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
