@@ -1,5 +1,5 @@
 // src/layouts/YKOSDashboard.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SearchBar from "../components/SearchBar";
 import { translations } from "../data/i18n";
 
@@ -22,8 +22,22 @@ export default function YKOSDashboard({
   const [langOpen, setLangOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [adminRecords, setAdminRecords] = useState([]);
 
   const t = translations[currentLang] || translations.TR;
+
+  // Yönetici tarafından girilen ve onaylanan içerikleri dinamik olarak yükleme
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("ykos_admin_records") || "[]");
+      const approved = saved.filter(
+        (r) => r.status === "approved" || r.durum === "onaylandi" || r.status === "published"
+      );
+      setAdminRecords(approved);
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
 
   const languages = [
     { code: "TR", label: "Türkçe" }, { code: "EN", label: "English" },
@@ -34,26 +48,43 @@ export default function YKOSDashboard({
   ];
 
   const initialStats = [
-    { icon: "🌐", count: "214", label: t.countries },
-    { icon: "🏛️", count: "248", label: t.researches },
-    { icon: "🔷", count: "9.870", label: t.stamps },
-    { icon: "🗿", count: "18.420", label: t.petroglyphs },
-    { icon: "📜", count: "4.132", label: t.inscriptions },
-    { icon: "📚", count: "12.580", label: t.sources },
-    { icon: "📷", count: "46.900", label: t.images },
-    { icon: "🗺️", count: "58", label: t.atlases },
+    { icon: "🌐", count: "214", label: "Ülkeler" },
+    { icon: "🏛️", count: "248", label: "Araştırmalar" },
+    { icon: "🔷", count: "9.870", label: "Damgalar" },
+    { icon: "🗿", count: "18.420", label: "Petroglifler" },
+    { icon: "📜", count: "4.132", label: "Yazıtlar" },
+    { icon: "📚", count: "12.580", label: "Kaynaklar" },
+    { icon: "📷", count: "46.900", label: "Görseller" },
+    { icon: "🗺️", count: "58", label: "Atlaslar" },
   ];
 
   const cardStyle = {
     backgroundColor: "#050811",
-    border: "1px solid #ffd700",
-    borderRadius: "12px",
-    padding: "14px 18px",
+    border: "1.5px solid #ffd700",
+    borderRadius: "14px",
+    padding: "16px 14px",
     marginBottom: "12px",
     boxShadow: "0 4px 20px rgba(0, 0, 0, 0.7)",
   };
 
-  // SOL VE ORTA: Orijinal Yeşil Başlıklı Arşiv Kartları (2 Sütunlu Izgara)
+  const btnBaseStyle = {
+    background: "#050811",
+    border: "1px solid rgba(255, 215, 0, 0.4)",
+    color: "#ffffff",
+    padding: "10px 4px",
+    borderRadius: "8px",
+    fontSize: "0.78rem",
+    fontWeight: "bold",
+    letterSpacing: "0.5px",
+    cursor: "pointer",
+    textAlign: "center",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "6px",
+    transition: "all 0.2s ease",
+  };
+
   const gridCards = [
     {
       id: "C-1",
@@ -155,37 +186,50 @@ export default function YKOSDashboard({
     },
   ];
 
-  // SAĞ SÜTUN: YKOS.ORG GİRİŞ VE PORTAL AKIŞI
-  const ykosOrgEntries = [
-    {
-      title: "YKOS.ORG PORTAL ANA GİRİŞİ",
-      desc: "ykos.org uluslararası araştırma arşivi, külliyat veritabanı ve dijital merkez portalı.",
-      url: "https://ykos.org",
-      tag: "ANA GİRİŞ",
-      icon: "🏛️"
-    },
-    {
-      title: "Külliyat & Makale Havuzu",
-      desc: "Anadolu kök-hece, tamga ve epigrafik analiz dosyaları tam metin yayını.",
-      url: "https://ykos.org",
-      tag: "KÜLLİYAT",
-      icon: "📚"
-    },
-    {
-      title: "Açık Veri & Araştırma Dökümleri",
-      desc: "Kaya resimleri, Göbeklitepe ve Avrasya petroglif veri setleri.",
-      url: "https://ykos.org",
-      tag: "AÇIK VERİ",
-      icon: "🌐"
-    },
-    {
-      title: "Akademik İndeks ve Bildiriler",
-      desc: "Disiplinler arası dilbilim ve tarih araştırmaları resmi yayın bülteni.",
-      url: "https://ykos.org",
-      tag: "BİLDİRİ",
-      icon: "📜"
-    }
-  ];
+  // SAĞ SÜTUN: Sistem içi gerçek içerikleri ve yöneticinin girdiği kayıtları açan liste
+  const rightColumnItems = adminRecords.length > 0
+    ? adminRecords.slice(0, 4).map((rec) => ({
+        id: rec.id,
+        title: rec.title || rec.baslik || "Yönetici Giriş İçeriği",
+        desc: rec.summary || rec.ozet || "Yönetici paneli üzerinden onaylanmış araştırma verisi.",
+        tag: rec.category || rec.kategori || "YÖNETİCİ",
+        icon: "📑",
+        onClick: () => onNavigateRead(rec.id)
+      }))
+    : [
+        {
+          id: "M-2",
+          title: "Anadolu'nun 12.000 Yıllık Kültür Katmanları",
+          desc: "YKOS dil ve sembol matrisi tam metin araştırma dosyası.",
+          tag: "KÜLLİYAT",
+          icon: "📚",
+          onClick: () => onNavigateRead("M-2")
+        },
+        {
+          id: "M-1",
+          title: "Sembolik Sahiplenme ve Adaptasyon",
+          desc: "İkonografik formlar ve epigrafik katmanların tarihsel analizi.",
+          tag: "MAKALE",
+          icon: "🏛️",
+          onClick: () => onNavigateRead("M-1")
+        },
+        {
+          id: "ACIK-VERI",
+          title: "Açık Veri & Araştırma Dökümleri",
+          desc: "Kaya resimleri, petroglifler ve yalın bulgu kayıt havuzu.",
+          tag: "AÇIK VERİ",
+          icon: "🌐",
+          onClick: () => onNavigateAcikVeri()
+        },
+        {
+          id: "C-1",
+          title: "Hilal-Yıldız Damgası ve Kozmik Denge",
+          desc: "Anadolu kaya resimlerindeki kök safha inceleme belgesi.",
+          tag: "BİLDİRİ",
+          icon: "📜",
+          onClick: () => onNavigateRead("C-1")
+        }
+      ];
 
   const filteredGridCards = gridCards.filter((card) => {
     if (!searchQuery) return true;
@@ -195,7 +239,7 @@ export default function YKOSDashboard({
 
   const handleCardClick = (card) => {
     if (card.isMatrixCard) {
-      window.open("https://ykos-kure.vercel.app/", "_blank");
+      onVisualize();
     } else {
       onNavigateRead(card.id);
     }
@@ -204,27 +248,36 @@ export default function YKOSDashboard({
   return (
     <div style={{ width: "100%", maxWidth: "1280px", margin: "0 auto", padding: "10px", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
       
-      {/* HEADER */}
-      <div style={{ ...cardStyle, padding: "6px 24px 8px 24px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2px" }}>
+      {/* 1. HEADER */}
+      <div style={cardStyle}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
           <button
             onClick={() => { setMenuOpen(!menuOpen); setLangOpen(false); }}
-            style={{ background: menuOpen ? "rgba(255, 215, 0, 0.25)" : "rgba(255, 215, 0, 0.1)", border: "2px solid #ffd700", color: "#ffd700", padding: "8px 22px", borderRadius: "8px", fontWeight: "900", cursor: "pointer", fontSize: "1rem", textTransform: "uppercase" }}
+            style={{ 
+              background: menuOpen ? "rgba(255, 215, 0, 0.25)" : "rgba(255, 215, 0, 0.1)", 
+              border: "2px solid #ffd700", 
+              color: "#ffd700", 
+              padding: "7px 20px", 
+              borderRadius: "8px", 
+              fontWeight: "900", 
+              cursor: "pointer", 
+              fontSize: "0.95rem"
+            }}
           >
-            {t.menu}
+            ≡ {t.menu || "MENÜ"}
           </button>
 
           <div style={{ position: "relative" }}>
             <button
               onClick={() => { setLangOpen(!langOpen); setMenuOpen(false); }}
-              style={{ background: "rgba(255,215,0,0.05)", border: "2px solid #ffd700", color: "#ffd700", padding: "8px 18px", borderRadius: "8px", fontWeight: "900", cursor: "pointer", fontSize: "1rem" }}
+              style={{ background: "rgba(255,215,0,0.05)", border: "2px solid #ffd700", color: "#ffd700", padding: "7px 16px", borderRadius: "8px", fontWeight: "900", cursor: "pointer", fontSize: "0.95rem" }}
             >
               🌐 {currentLang} ▾
             </button>
             {langOpen && (
-              <div style={{ position: "absolute", right: 0, top: "120%", backgroundColor: "#050811", border: "2px solid #ffd700", borderRadius: "10px", display: "flex", flexDirection: "column", minWidth: "180px", zIndex: 1000, padding: "8px" }}>
+              <div style={{ position: "absolute", right: 0, top: "120%", backgroundColor: "#050811", border: "2px solid #ffd700", borderRadius: "10px", display: "flex", flexDirection: "column", minWidth: "160px", zIndex: 1000, padding: "6px" }}>
                 {languages.map((l) => (
-                  <button key={l.code} onClick={() => { setCurrentLang(l.code); setLangOpen(false); }} style={{ background: currentLang === l.code ? "rgba(255,215,0,0.2)" : "transparent", border: "none", color: currentLang === l.code ? "#ffd700" : "#fff", padding: "10px 14px", textAlign: "left", fontSize: "0.9rem", cursor: "pointer" }}>
+                  <button key={l.code} onClick={() => { setCurrentLang(l.code); setLangOpen(false); }} style={{ background: currentLang === l.code ? "rgba(255,215,0,0.2)" : "transparent", border: "none", color: currentLang === l.code ? "#ffd700" : "#fff", padding: "8px 12px", textAlign: "left", fontSize: "0.85rem", cursor: "pointer" }}>
                     {l.label} ({l.code})
                   </button>
                 ))}
@@ -233,59 +286,85 @@ export default function YKOSDashboard({
           </div>
         </div>
 
-        {/* Logo ve Başlık */}
-        <div onClick={() => window.location.reload()} title="Sayfayı Yenile" style={{ textAlign: "center", cursor: "pointer", marginTop: "-6px" }}>
-          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "2px" }}>
-            <img src="/ykos-logo.png" alt="YKOS Kartal Amblemi" style={{ maxHeight: "110px", maxWidth: "100%", objectFit: "contain", filter: "drop-shadow(0px 0px 12px rgba(255, 215, 0, 0.6))" }} onError={(e) => { e.target.style.display = "none"; }} />
+        <div onClick={() => window.location.reload()} title="Sayfayı Yenile" style={{ textAlign: "center", cursor: "pointer", marginTop: "-6px", marginBottom: "8px" }}>
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "4px" }}>
+            <img src="/ykos-logo.png" alt="YKOS Kartal Amblemi" style={{ maxHeight: "115px", maxWidth: "100%", objectFit: "contain", filter: "drop-shadow(0px 0px 12px rgba(255, 215, 0, 0.6))" }} onError={(e) => { e.target.style.display = "none"; }} />
           </div>
-          <h1 style={{ color: "#ffd700", fontSize: "1.65rem", fontWeight: "900", margin: "0", letterSpacing: "1.2px" }}>{t.systemTitle}</h1>
-          <p style={{ color: "#aaaaaa", fontSize: "0.8rem", margin: "1px 0 0 0" }}>{t.subTitle}</p>
+          <h1 style={{ color: "#ffd700", fontSize: "1.7rem", fontWeight: "900", margin: "0 0 4px 0", letterSpacing: "1.2px" }}>YKOS BİLGİ SİSTEMİ</h1>
+          <p style={{ color: "#aaaaaa", fontSize: "0.82rem", margin: 0 }}>Disiplinler Arası Algoritmik Kültür ve Dil Veri Tabanı</p>
         </div>
 
         {menuOpen && (
-          <div style={{ marginTop: "10px", borderTop: "1px solid rgba(255, 215, 0, 0.3)", paddingTop: "10px" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "6px", marginBottom: "8px" }}>
-              <button onClick={() => window.location.reload()} style={{ background: "rgba(255, 215, 0, 0.3)", border: "1.5px solid #ffd700", color: "#ffd700", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.home}</button>
-              <button onClick={() => { setMenuOpen(false); onNavigateMethod(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1.5px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.corporate}</button>
-              <button onClick={() => { setMenuOpen(false); onNavigateMethod(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1.5px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.methodology}</button>
-              <button onClick={() => { setMenuOpen(false); onVisualize(); }} style={{ background: "rgba(255, 215, 0, 0.15)", border: "1.5px solid #ffd700", color: "#ffd700", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.matrix}</button>
-              <button onClick={() => { setMenuOpen(false); onNavigateAtlas(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1.5px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.atlas}</button>
-              <button onClick={() => { setMenuOpen(false); onNavigateEngine(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1.5px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.engine}</button>
-              <button onClick={() => { setMenuOpen(false); onNavigateFlow(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1.5px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.flow}</button>
-              {onNavigateVideo && <button onClick={() => { setMenuOpen(false); onNavigateVideo(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1.5px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>🎥 Video</button>}
-              {onNavigateLiterature && <button onClick={() => { setMenuOpen(false); onNavigateLiterature(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1.5px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>📚 Edebiyat</button>}
-              {onNavigateOpsCenter && <button onClick={() => { setMenuOpen(false); onNavigateOpsCenter(); }} style={{ background: "rgba(255, 215, 0, 0.25)", border: "1px solid #ffd700", color: "#ffd700", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>⚙️ Operasyon Merkezi</button>}
-              {onOpenPoetryModal && <button onClick={() => { setMenuOpen(false); onOpenPoetryModal(); }} style={{ background: "linear-gradient(135deg, rgba(255,215,0,0.15), rgba(184,134,11,0.1))", border: "1px solid #ffd700", color: "#ffd700", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>🎵 Kozmik Şiir & Felsefe</button>}
+          <div style={{ marginTop: "10px", borderTop: "1px dashed rgba(255, 215, 0, 0.3)", paddingTop: "12px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "12px" }}>
+              <button onClick={() => { setMenuOpen(false); window.location.reload(); }} style={{ ...btnBaseStyle, border: "1.5px solid #ffd700", background: "rgba(255, 215, 0, 0.15)", color: "#ffd700", fontWeight: "900" }}>
+                🏠 ANASAYFA
+              </button>
+              <button onClick={() => { setMenuOpen(false); onNavigateMethod(); }} style={btnBaseStyle}>
+                KURUMSAL
+              </button>
+              <button onClick={() => { setMenuOpen(false); onNavigateMethod(); }} style={btnBaseStyle}>
+                YKOS METODOLOJİSİ
+              </button>
+              <button onClick={() => { setMenuOpen(false); onVisualize(); }} style={{ ...btnBaseStyle, border: "1.5px solid #ffd700", color: "#ffd700", fontWeight: "900" }}>
+                KÖK HECE MATRİSİ
+              </button>
+              <button onClick={() => { setMenuOpen(false); onNavigateAtlas(); }} style={btnBaseStyle}>
+                DAMGA ATLASI
+              </button>
+              <button onClick={() => { setMenuOpen(false); onNavigateEngine(); }} style={btnBaseStyle}>
+                OKUMA & ANALİZ MOTORU
+              </button>
+              <button onClick={() => { setMenuOpen(false); onNavigateFlow(); }} style={{ ...btnBaseStyle, gridColumn: "span 2", padding: "10px" }}>
+                GÖÇ & AKIŞ HARİTASI
+              </button>
             </div>
 
-            <div style={{ display: "flex", justifyContent: "center", paddingTop: "8px", borderTop: "1px dashed rgba(255, 215, 0, 0.25)" }}>
-              <button onClick={() => { setMenuOpen(false); onNavigateLogin("admin"); }} style={{ background: "linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(184, 134, 11, 0.1))", border: "1px solid rgba(255, 215, 0, 0.5)", color: "#ffd700", padding: "8px 24px", borderRadius: "6px", fontSize: "0.8rem", fontWeight: "800", cursor: "pointer" }}>
-                🔒 {t.adminLogin}
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px", borderTop: "1px dashed rgba(255, 215, 0, 0.25)", paddingTop: "10px" }}>
+              <button onClick={() => { setMenuOpen(false); onNavigateLogin && onNavigateLogin("guest"); }} style={{ ...btnBaseStyle, width: "100%", padding: "10px", color: "#ffd700", fontWeight: "900", border: "1px solid rgba(255, 215, 0, 0.5)" }}>
+                👤 KONUK PANELİ GİRİŞİ
+              </button>
+              <button onClick={() => { setMenuOpen(false); onNavigateLogin && onNavigateLogin("admin"); }} style={{ ...btnBaseStyle, width: "100%", padding: "10px", color: "#ffd700", fontWeight: "900", border: "1.5px solid #ffd700", background: "rgba(255, 215, 0, 0.05)" }}>
+                ⚙️ YÖNETİCİ VERİ GİRİŞİ
               </button>
             </div>
           </div>
         )}
       </div>
 
-      {/* ARAMA BARI */}
+      {/* 2. ARAMA BARI */}
       <div style={{ marginBottom: "12px" }}>
         <SearchBar onSearch={(q) => setSearchQuery(q)} />
       </div>
 
-      {/* SAYAÇLAR */}
+      {/* 3. SAYAÇLAR */}
       <div style={cardStyle}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))", gap: "10px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "10px" }}>
           {initialStats.map((item, idx) => (
-            <div key={idx} style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 215, 0, 0.25)", borderRadius: "8px", padding: "8px 4px", textAlign: "center" }}>
-              <span style={{ fontSize: "1rem" }}>{item.icon}</span>
-              <div style={{ color: "#fff", fontWeight: "900", fontSize: "0.95rem" }}>{item.count}</div>
-              <div style={{ color: "#888", fontSize: "0.65rem", fontWeight: "bold" }}>{item.label}</div>
+            <div 
+              key={idx} 
+              style={{ 
+                background: "rgba(255, 255, 255, 0.02)", 
+                border: "1px solid rgba(255, 215, 0, 0.35)", 
+                borderRadius: "10px", 
+                padding: "12px 6px", 
+                textAlign: "center",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: "inset 0 0 10px rgba(0,0,0,0.5)"
+              }}
+            >
+              <div style={{ fontSize: "1.5rem", marginBottom: "4px" }}>{item.icon}</div>
+              <div style={{ color: "#ffffff", fontWeight: "900", fontSize: "1.15rem", letterSpacing: "0.5px" }}>{item.count}</div>
+              <div style={{ color: "#aaaaaa", fontSize: "0.75rem", fontWeight: "bold", marginTop: "2px" }}>{item.label}</div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* ANA GÖVDE: SOLDA 2 SÜTUNLU ORİJİNAL ARŞİV + SAĞDA YKOS.ORG GİRİŞİ */}
+      {/* 4. ANA GÖVDE: SOLDA ARŞİV + SAĞDA DOĞRUDAN OKUMA VE İÇERİK AÇAN KARTLAR */}
       <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
         <h3 style={{ color: "#ffd700", fontSize: "1.05rem", marginTop: 0, borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "8px", marginBottom: "12px" }}>
           ⚡ {t.solutionsTitle}
@@ -293,7 +372,7 @@ export default function YKOSDashboard({
 
         <div style={{ display: "grid", gridTemplateColumns: "2.3fr 1fr", gap: "14px", minHeight: "440px", maxHeight: "560px" }}>
           
-          {/* SOL-ORTA BÖLÜM: ORİJİNAL 2 SÜTUNLU YEŞİL BAŞLIKLI KART IZGARASI */}
+          {/* SOL-ORTA BÖLÜM */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", overflowY: "auto", paddingRight: "6px" }}>
             {filteredGridCards.map((card, idx) => {
               if (card.isMatrixCard) {
@@ -378,23 +457,20 @@ export default function YKOSDashboard({
             })}
           </div>
 
-          {/* SAĞ SÜTUN: SADECE YKOS.ORG GİRİŞİ VE PORTAL AKIŞI */}
+          {/* SAĞ SÜTUN: ARTIK DIŞ LİNKE GİTMEZ; SİSTEM İÇİNDEKİ İÇERİĞİ AÇAR */}
           <div style={{ display: "flex", flexDirection: "column", gap: "10px", background: "rgba(255, 215, 0, 0.02)", padding: "12px", borderRadius: "8px", border: "1.5px solid rgba(255, 215, 0, 0.3)", overflowY: "auto" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1.5px solid #ffd700", paddingBottom: "6px" }}>
               <span style={{ color: "#ffd700", fontSize: "0.85rem", fontWeight: "bold", display: "flex", alignItems: "center", gap: "6px" }}>
-                🌐 YKOS.ORG GİRİŞİ
+                📑 ONAYLI İÇERİK & VERİ
               </span>
-              <span style={{ background: "#ffd700", color: "#000", fontSize: "8.5px", fontWeight: "900", padding: "2px 6px", borderRadius: "3px" }}>PORTAL</span>
+              <span style={{ background: "#ffd700", color: "#000", fontSize: "8.5px", fontWeight: "900", padding: "2px 6px", borderRadius: "3px" }}>YAYIN</span>
             </div>
 
-            {ykosOrgEntries.map((item, idx) => (
-              <a
-                key={`org-${idx}`}
-                href={item.url}
-                target="_blank"
-                rel="noopener noreferrer"
+            {rightColumnItems.map((item, idx) => (
+              <div
+                key={`right-item-${idx}`}
+                onClick={item.onClick}
                 style={{
-                  textDecoration: "none",
                   display: "flex",
                   gap: "10px",
                   alignItems: "center",
@@ -424,13 +500,13 @@ export default function YKOSDashboard({
                     <h4 style={{ margin: 0, fontSize: "0.78rem", color: "#ffd700", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                       {item.title}
                     </h4>
-                    <span style={{ fontSize: "0.62rem", color: "#22c55e", fontWeight: "bold" }}>↗</span>
+                    <span style={{ fontSize: "0.62rem", color: "#22c55e", fontWeight: "bold" }}>İÇERİK ➔</span>
                   </div>
                   <p style={{ margin: 0, fontSize: "0.66rem", color: "#ccc", lineHeight: "1.3", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                     {item.desc}
                   </p>
                 </div>
-              </a>
+              </div>
             ))}
           </div>
 
