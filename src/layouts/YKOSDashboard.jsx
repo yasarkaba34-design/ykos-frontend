@@ -1,19 +1,13 @@
 // src/layouts/YKOSDashboard.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import SearchBar from "../components/SearchBar";
 import { translations } from "../data/i18n";
-import { getArchiveSynthesis } from "../data/ykosArchiveSynthesis";
-import { searchYkosApi } from "../data/ykosApiService";
-import { listenForApprovals } from "../services/triggerService";
 
 export default function YKOSDashboard({
-  archiveArticles,
-  rssArticles = [],
   currentLang,
   setCurrentLang,
   onVisualize,
   onNavigateRead,
-  onGoHome,
   onNavigateLogin,
   onNavigateAtlas,
   onNavigateEngine,
@@ -24,49 +18,19 @@ export default function YKOSDashboard({
   onOpenPoetryModal,
   onNavigateVideo,
   onNavigateLiterature,
-  finding,
 }) {
-  // 🔥 Evaluator tetikleyici
-  useEffect(() => {
-    if (!finding) return;
-    listenForApprovals(finding.id);
-  }, [finding]);
-// Dashboard stilinize bunu ekleyebilirsiniz
-const mobileMenuStyle = {
-  position: "fixed",
-  bottom: 0,
-  left: 0,
-  width: "100%",
-  background: "#050811",
-  display: "flex",
-  justifyContent: "space-around",
-  padding: "10px 0",
-  borderTop: "1px solid #ffd700",
-  zIndex: 1000,
-  overflowX: "auto" // Taşarsa sağa doğru kaydırılabilir
-};
-
   const [langOpen, setLangOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [apiSynthesis, setApiSynthesis] = useState(null);
-  const [selectedItemForModal, setSelectedItemForModal] = useState(null);
-  const [localAdminRecords, setLocalAdminRecords] = useState([]);
 
   const t = translations[currentLang] || translations.TR;
-  const activeArticles = t.articles || archiveArticles;
 
   const languages = [
-    { code: "TR", label: "Türkçe" },
-    { code: "EN", label: "English" },
-    { code: "FR", label: "Français" },
-    { code: "RU", label: "Русский" },
-    { code: "ZH", label: "中文" },
-    { code: "JA", label: "日本語" },
-    { code: "PT", label: "Português" },
-    { code: "ES", label: "Español" },
-    { code: "AR", label: "العربية" },
-    { code: "DE", label: "Deutsch" },
+    { code: "TR", label: "Türkçe" }, { code: "EN", label: "English" },
+    { code: "FR", label: "Français" }, { code: "RU", label: "Русский" },
+    { code: "ZH", label: "中文" }, { code: "JA", label: "日本語" },
+    { code: "PT", label: "Português" }, { code: "ES", label: "Español" },
+    { code: "AR", label: "العربية" }, { code: "DE", label: "Deutsch" },
   ];
 
   const initialStats = [
@@ -89,168 +53,178 @@ const mobileMenuStyle = {
     boxShadow: "0 4px 20px rgba(0, 0, 0, 0.7)",
   };
 
-  const portalButtonStyle = {
-    background: "linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(184, 134, 11, 0.1))",
-    border: "1px solid rgba(255, 215, 0, 0.5)",
-    color: "#ffd700",
-    padding: "10px 14px",
-    borderRadius: "6px",
-    fontSize: "0.8rem",
-    fontWeight: "800",
-    cursor: "pointer",
-    textAlign: "center",
-  };
+  // SOL VE ORTA: Orijinal Yeşil Başlıklı Arşiv Kartları (2 Sütunlu Izgara)
+  const gridCards = [
+    {
+      id: "C-1",
+      title: "ANADOLU TARİHÇESİNDE HİLAL-YILDIZ DAMGASI",
+      desc: "Bu dosya, Hilal-Yıldız damgasının Anadolu kültür tarihindeki erken kök safhası, sembolik kozmik denge kavramı...",
+      isNew: true,
+    },
+    {
+      id: "C-2",
+      title: "ANADOLU DAMGALARI KAPSAMINDA DEĞERLENDİRME",
+      desc: "Anadolu damgaları kronolojisi, arkeolojik bağlamı, geometrik yapı ve kökensel ilişkileriyle YKOS veritabanında s...",
+      isNew: true,
+    },
+    {
+      id: "C-3",
+      title: "HAYAT AĞACI",
+      desc: "Hayat Ağacı damgası Urartu botanik İBDAK dikey yükseliş aksı ve tarihsel kronolojisiyle YKOS Sembol Atlası'n...",
+      isNew: true,
+    },
+    {
+      id: "C-4",
+      title: "ÇEMBER İÇİNDE EŞ KOLLU HAÇ",
+      desc: "Çember içinde eş kollu haç, dörtlü aks yapısı ve koruyucu çember sembolizmiyle tarihsel kronoloji kapsamınd...",
+      isNew: true,
+    },
+    {
+      id: "C-5",
+      title: "(Öksökö / Çift Başlı Koruyucu Kuş)",
+      desc: "Çift başlı kartal, Öksökö kökeni, koruyucu kuş sembolizmi ve Anadolu kök safhasındaki tarihsel kronolojisiyle...",
+      isNew: true,
+    },
+    {
+      id: "C-6",
+      title: "(Döner Çark / Dairesel Dört Kollu Form)",
+      desc: "Çarkıfelek, döner çark yapısı, dairesel dört kollu formu ve erken Kök Safhası MÖ 6000-2000 kronolojisiyle YKO...",
+      isNew: true,
+    },
+    {
+      id: "M-1",
+      title: "SEMBOLİK SAHİPLENME VE ADAPTASYON KAFA KARIŞTIRIYOR",
+      desc: "Son katmanın kökeni temsil ettiği yanılgısı, Anadolu buluntularında ikonografik formlar ile geç epigrafik müd...",
+      isNew: true,
+    },
+    {
+      id: "M-2",
+      title: "ANADOLU'NUN 12.000 YILLIK DİL VE KÜLTÜR KATMANLARI VE BATI",
+      desc: "Anadolu'nun 12.000 yıllık dil ve kültür katmanları ile geç dönem Batı merkezli riyad yazıları nedir? YKOS ra...",
+      isNew: true,
+    },
+    {
+      id: "M-3",
+      title: "Endonezya Petroglifleri",
+      desc: "Endonezya kaya sanatı, Sulawesi ve Kalimantan'daki 40.000 yıllık figüratif örnekleriyle insanlığın en eski g5...",
+      isNew: false,
+    },
+    {
+      id: "M-4",
+      title: "YOROS KALESİ VE DÖRT KOL İZLERİ",
+      desc: "Yoros Kalesi'ndeki dört kollu motifli taş, fotoğraflar ve arkeolojik verilerle YKOS karşılaştırma yöntemi bul...",
+      isNew: true,
+    },
+    {
+      id: "MATRIX-LINK",
+      title: "Matrisler",
+      desc: "https://ykos-kure.vercel.app/",
+      isMatrixCard: true,
+    },
+    {
+      id: "C-11",
+      title: "Çatalhöyük Dairesel Damga Motifleri",
+      desc: "Çatalhöyük duvar resimlerindeki dairesel damgaların YKOS 100 okuması.",
+      badge: "Kök: ÇEV / BA",
+      subBadge: "Damga",
+      isNew: false,
+    },
+    {
+      id: "M-7",
+      title: "Çatalhöyük Kök Hece ve Damga Sembolizmi",
+      desc: "Çatalhöyük duvar resimlerindeki YKOS 100 eşleşmeleri.",
+      isNew: false,
+    },
+    {
+      id: "M-8",
+      title: "Göbeklitepe T-Sütunu YKOS Okuması",
+      desc: "Şanlıurfa Göbeklitepe T-Sütunları üzerindeki semboller.",
+      isNew: false,
+    },
+    {
+      id: "M-5",
+      title: "Etrüsk Lemnos Kitabesi & Ön Türkçe Eşleşmesi",
+      desc: "Lemnos mezar taşındaki alfabetik dizilimin okunması.",
+      isNew: false,
+    },
+    {
+      id: "M-6",
+      title: "YOL Kök Hecesi ve Akış Teorisi",
+      desc: "Dile dahil ontolojik mantığın dilbilimsel matrisi.",
+      isNew: false,
+    },
+  ];
 
-  // API + lokal arşiv arama
-  useEffect(() => {
-    async function handleSearchApi() {
-      if (!searchQuery || searchQuery.trim().length < 2) {
-        setApiSynthesis(null);
-        return;
-      }
-      const apiResult = await searchYkosApi(searchQuery);
-      if (apiResult && apiResult.synthesis) {
-        setApiSynthesis(apiResult);
-      } else {
-        const localResult = getArchiveSynthesis(searchQuery);
-        setApiSynthesis(localResult);
-      }
+  // SAĞ SÜTUN: YKOS.ORG GİRİŞ VE PORTAL AKIŞI
+  const ykosOrgEntries = [
+    {
+      title: "YKOS.ORG PORTAL ANA GİRİŞİ",
+      desc: "ykos.org uluslararası araştırma arşivi, külliyat veritabanı ve dijital merkez portalı.",
+      url: "https://ykos.org",
+      tag: "ANA GİRİŞ",
+      icon: "🏛️"
+    },
+    {
+      title: "Külliyat & Makale Havuzu",
+      desc: "Anadolu kök-hece, tamga ve epigrafik analiz dosyaları tam metin yayını.",
+      url: "https://ykos.org",
+      tag: "KÜLLİYAT",
+      icon: "📚"
+    },
+    {
+      title: "Açık Veri & Araştırma Dökümleri",
+      desc: "Kaya resimleri, Göbeklitepe ve Avrasya petroglif veri setleri.",
+      url: "https://ykos.org",
+      tag: "AÇIK VERİ",
+      icon: "🌐"
+    },
+    {
+      title: "Akademik İndeks ve Bildiriler",
+      desc: "Disiplinler arası dilbilim ve tarih araştırmaları resmi yayın bülteni.",
+      url: "https://ykos.org",
+      tag: "BİLDİRİ",
+      icon: "📜"
     }
-    handleSearchApi();
-  }, [searchQuery]);
+  ];
 
-  // Lokal admin kayıtları
-  useEffect(() => {
-    const savedRecords = localStorage.getItem("ykos_admin_records");
-    if (savedRecords) {
-      try {
-        const parsed = JSON.parse(savedRecords);
-        const publishedRecords = parsed.filter((rec) => rec.status === "published");
-        setLocalAdminRecords(publishedRecords);
-      } catch (e) {
-        console.error("Admin kayıtları okunamadı:", e);
-      }
-    }
-  }, []);
-
-  const allArticles = [...rssArticles, ...localAdminRecords, ...activeArticles];
-  const uniqueArticles = Array.from(new Map(allArticles.map((item) => [item.title, item])).values());
-
-  const filteredArticles = uniqueArticles.filter((item) => {
-    const q = searchQuery.toLowerCase().trim();
-    if (!q) return true;
-    return (
-      item.title?.toLowerCase().includes(q) ||
-      item.summary?.toLowerCase().includes(q) ||
-      item.content?.toLowerCase().includes(q) ||
-      item.tags?.toLowerCase().includes(q) ||
-      item.rootSyllable?.toLowerCase().includes(q)
-    );
+  const filteredGridCards = gridCards.filter((card) => {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    return card.title.toLowerCase().includes(q) || (card.desc && card.desc.toLowerCase().includes(q));
   });
 
-  const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) {
-      setSelectedItemForModal(null);
+  const handleCardClick = (card) => {
+    if (card.isMatrixCard) {
+      window.open("https://ykos-kure.vercel.app/", "_blank");
+    } else {
+      onNavigateRead(card.id);
     }
   };
 
   return (
-    <div
-      style={{
-        width: "100%",
-        maxWidth: "1280px",
-        margin: "0 auto",
-        padding: "10px",
-        color: "#ffffff",
-        fontFamily: "Segoe UI, sans-serif",
-      }}
-    >
+    <div style={{ width: "100%", maxWidth: "1280px", margin: "0 auto", padding: "10px", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
+      
       {/* HEADER */}
       <div style={{ ...cardStyle, padding: "6px 24px 8px 24px" }}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "2px",
-          }}
-        >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2px" }}>
           <button
-            onClick={() => {
-              setMenuOpen(!menuOpen);
-              setLangOpen(false);
-            }}
-            style={{
-              background: menuOpen ? "rgba(255, 215, 0, 0.25)" : "rgba(255, 215, 0, 0.1)",
-              border: "2px solid #ffd700",
-              color: "#ffd700",
-              padding: "8px 22px",
-              borderRadius: "8px",
-              fontWeight: "900",
-              cursor: "pointer",
-              fontSize: "1rem",
-              textTransform: "uppercase",
-              boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
-            }}
+            onClick={() => { setMenuOpen(!menuOpen); setLangOpen(false); }}
+            style={{ background: menuOpen ? "rgba(255, 215, 0, 0.25)" : "rgba(255, 215, 0, 0.1)", border: "2px solid #ffd700", color: "#ffd700", padding: "8px 22px", borderRadius: "8px", fontWeight: "900", cursor: "pointer", fontSize: "1rem", textTransform: "uppercase" }}
           >
             {t.menu}
           </button>
 
           <div style={{ position: "relative" }}>
             <button
-              onClick={() => {
-                setLangOpen(!langOpen);
-                setMenuOpen(false);
-              }}
-              style={{
-                background: "rgba(255,215,0,0.05)",
-                border: "2px solid #ffd700",
-                color: "#ffd700",
-                padding: "8px 18px",
-                borderRadius: "8px",
-                fontWeight: "900",
-                cursor: "pointer",
-                fontSize: "1rem",
-                boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
-              }}
+              onClick={() => { setLangOpen(!langOpen); setMenuOpen(false); }}
+              style={{ background: "rgba(255,215,0,0.05)", border: "2px solid #ffd700", color: "#ffd700", padding: "8px 18px", borderRadius: "8px", fontWeight: "900", cursor: "pointer", fontSize: "1rem" }}
             >
               🌐 {currentLang} ▾
             </button>
             {langOpen && (
-              <div
-                style={{
-                  position: "absolute",
-                  right: 0,
-                  top: "120%",
-                  backgroundColor: "#050811",
-                  border: "2px solid #ffd700",
-                  borderRadius: "10px",
-                  display: "flex",
-                  flexDirection: "column",
-                  minWidth: "180px",
-                  zIndex: 1000,
-                  boxShadow: "0 10px 30px rgba(0,0,0,0.9)",
-                  padding: "8px",
-                }}
-              >
+              <div style={{ position: "absolute", right: 0, top: "120%", backgroundColor: "#050811", border: "2px solid #ffd700", borderRadius: "10px", display: "flex", flexDirection: "column", minWidth: "180px", zIndex: 1000, padding: "8px" }}>
                 {languages.map((l) => (
-                  <button
-                    key={l.code}
-                    onClick={() => {
-                      setCurrentLang(l.code);
-                      setLangOpen(false);
-                    }}
-                    style={{
-                      background:
-                        currentLang === l.code ? "rgba(255,215,0,0.2)" : "transparent",
-                      border: "none",
-                      color: currentLang === l.code ? "#ffd700" : "#fff",
-                      padding: "10px 14px",
-                      textAlign: "left",
-                      fontSize: "0.9rem",
-                      cursor: "pointer",
-                    }}
-                  >
+                  <button key={l.code} onClick={() => { setCurrentLang(l.code); setLangOpen(false); }} style={{ background: currentLang === l.code ? "rgba(255,215,0,0.2)" : "transparent", border: "none", color: currentLang === l.code ? "#ffd700" : "#fff", padding: "10px 14px", textAlign: "left", fontSize: "0.9rem", cursor: "pointer" }}>
                     {l.label} ({l.code})
                   </button>
                 ))}
@@ -260,875 +234,219 @@ const mobileMenuStyle = {
         </div>
 
         {/* Logo ve Başlık */}
-        <div
-          onClick={() => window.location.reload()}
-          title="Sayfayı Yenile"
-          style={{
-            textAlign: "center",
-            cursor: "pointer",
-            userSelect: "none",
-            marginTop: "-6px",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: "2px",
-            }}
-          >
-            <img
-              src="/ykos-logo.png"
-              alt="YKOS Kartal Amblemi"
-              style={{
-                maxHeight: "110px",
-                maxWidth: "100%",
-                objectFit: "contain",
-                filter:
-                  "drop-shadow(0px 0px 12px rgba(255, 215, 0, 0.6))",
-              }}
-              onError={(e) => {
-                e.target.style.display = "none";
-              }}
-            />
+        <div onClick={() => window.location.reload()} title="Sayfayı Yenile" style={{ textAlign: "center", cursor: "pointer", marginTop: "-6px" }}>
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "2px" }}>
+            <img src="/ykos-logo.png" alt="YKOS Kartal Amblemi" style={{ maxHeight: "110px", maxWidth: "100%", objectFit: "contain", filter: "drop-shadow(0px 0px 12px rgba(255, 215, 0, 0.6))" }} onError={(e) => { e.target.style.display = "none"; }} />
           </div>
-          <h1
-            style={{
-              color: "#ffd700",
-              fontSize: "1.65rem",
-              fontWeight: "900",
-              margin: "0",
-              letterSpacing: "1.2px",
-            }}
-          >
-            {t.systemTitle}
-          </h1>
-          <p
-            style={{
-              color: "#aaaaaa",
-              fontSize: "0.8rem",
-              margin: "1px 0 0 0",
-              letterSpacing: "0.5px",
-            }}
-          >
-            {t.subTitle}
-          </p>
+          <h1 style={{ color: "#ffd700", fontSize: "1.65rem", fontWeight: "900", margin: "0", letterSpacing: "1.2px" }}>{t.systemTitle}</h1>
+          <p style={{ color: "#aaaaaa", fontSize: "0.8rem", margin: "1px 0 0 0" }}>{t.subTitle}</p>
         </div>
 
         {menuOpen && (
-          <div
-            style={{
-              marginTop: "10px",
-              borderTop: "1px solid rgba(255, 215, 0, 0.3)",
-              paddingTop: "10px",
-            }}
-          >
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns:
-                  "repeat(auto-fit, minmax(130px, 1fr))",
-                gap: "6px",
-                marginBottom: "8px",
-              }}
-            >
-              <button
-                onClick={() => window.location.reload()}
-                style={{
-                  background: "rgba(255, 215, 0, 0.3)",
-                  border: "1.5px solid #ffd700",
-                  color: "#ffd700",
-                  padding: "6px",
-                  borderRadius: "4px",
-                  fontSize: "0.68rem",
-                  fontWeight: "bold",
-                  cursor: "pointer",
-                }}
-              >
-                {t.home}
-              </button>
-              <button
-                onClick={() => {
-                  setMenuOpen(false);
-                  onNavigateMethod();
-                }}
-                style={{
-                  background: "rgba(255,255,255,0.02)",
-                  border:
-                    "1.5px solid rgba(255,215,0,0.3)",
-                  color: "#ccc",
-                  padding: "6px",
-                  borderRadius: "4px",
-                  fontSize: "0.68rem",
-                  fontWeight: "bold",
-                  cursor: "pointer",
-                }}
-              >
-                {t.corporate}
-              </button>
-              <button
-                onClick={() => {
-                  setMenuOpen(false);
-                  onNavigateMethod();
-                }}
-                style={{
-                  background: "rgba(255,255,255,0.02)",
-                  border:
-                    "1.5px solid rgba(255,215,0,0.3)",
-                  color: "#ccc",
-                  padding: "6px",
-                  borderRadius: "4px",
-                  fontSize: "0.68rem",
-                  fontWeight: "bold",
-                  cursor: "pointer",
-                }}
-              >
-                {t.methodology}
-              </button>
-              <button
-                onClick={() => {
-                  setMenuOpen(false);
-                  onVisualize();
-                }}
-                style={{
-                  background: "rgba(255, 215, 0, 0.15)",
-                  border: "1.5px solid #ffd700",
-                  color: "#ffd700",
-                  padding: "6px",
-                  borderRadius: "4px",
-                  fontSize: "0.68rem",
-                  fontWeight: "bold",
-                  cursor: "pointer",
-                }}
-              >
-                {t.matrix}
-              </button>
-              <button
-                onClick={() => {
-                  setMenuOpen(false);
-                  onNavigateAtlas();
-                }}
-                style={{
-                  background: "rgba(255,255,255,0.02)",
-                  border:
-                    "1.5px solid rgba(255,215,0,0.3)",
-                  color: "#ccc",
-                  padding: "6px",
-                  borderRadius: "4px",
-                  fontSize: "0.68rem",
-                  fontWeight: "bold",
-                  cursor: "pointer",
-                }}
-              >
-                {t.atlas}
-              </button>
-              <button
-                onClick={() => {
-                  setMenuOpen(false);
-                  onNavigateEngine();
-                }}
-                style={{
-                  background: "rgba(255,255,255,0.02)",
-                  border:
-                    "1.5px solid rgba(255,215,0,0.3)",
-                  color: "#ccc",
-                  padding: "6px",
-                  borderRadius: "4px",
-                  fontSize: "0.68rem",
-                  fontWeight: "bold",
-                  cursor: "pointer",
-                }}
-              >
-                {t.engine}
-              </button>
-              <button
-                onClick={() => {
-                  setMenuOpen(false);
-                  onNavigateFlow();
-                }}
-                style={{
-                  background: "rgba(255,255,255,0.02)",
-                  border:
-                    "1.5px solid rgba(255,215,0,0.3)",
-                  color: "#ccc",
-                  padding: "6px",
-                  borderRadius: "4px",
-                  fontSize: "0.68rem",
-                  fontWeight: "bold",
-                  cursor: "pointer",
-                }}
-              >
-                {t.flow}
-              </button>
-
-              {/* VİDEO SEKMESİ */}
-              {onNavigateVideo && (
-                <button
-                  onClick={() => {
-                    setMenuOpen(false);
-                    onNavigateVideo();
-                  }}
-                  style={{
-                    background: "rgba(255,255,255,0.02)",
-                    border: "1.5px solid rgba(255,215,0,0.3)",
-                    color: "#ccc",
-                    padding: "6px",
-                    borderRadius: "4px",
-                    fontSize: "0.68rem",
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                  }}
-                >
-                  🎥 Video
-                </button>
-              )}
-
-              {/* EDEBİYAT SEKMESİ */}
-              {onNavigateLiterature && (
-                <button
-                  onClick={() => {
-                    setMenuOpen(false);
-                    onNavigateLiterature();
-                  }}
-                  style={{
-                    background: "rgba(255,255,255,0.02)",
-                    border: "1.5px solid rgba(255,215,0,0.3)",
-                    color: "#ccc",
-                    padding: "6px",
-                    borderRadius: "4px",
-                    fontSize: "0.68rem",
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                  }}
-                >
-                  📚 Edebiyat
-                </button>
-              )}
-
-              {/* TEKİL OPERASYON MERKEZİ BUTONU */}
-              {onNavigateOpsCenter && (
-                <button
-                  onClick={() => {
-                    setMenuOpen(false);
-                    onNavigateOpsCenter();
-                  }}
-                  style={{
-                    background: "rgba(255, 215, 0, 0.25)",
-                    border: "1.5px solid #ffd700",
-                    color: "#ffd700",
-                    padding: "6px",
-                    borderRadius: "4px",
-                    fontSize: "0.68rem",
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                  }}
-                >
-                  ⚙️ Operasyon Merkezi
-                </button>
-              )}
-
-              {/* KOZMİK ŞİİR & FELSEFE BUTONU */}
-              {onOpenPoetryModal && (
-                <button
-                  onClick={() => {
-                    setMenuOpen(false);
-                    onOpenPoetryModal();
-                  }}
-                  style={{
-                    background: "linear-gradient(135deg, rgba(255,215,0,0.15), rgba(184,134,11,0.1))",
-                    border: "1.5px solid #ffd700",
-                    color: "#ffd700",
-                    padding: "6px",
-                    borderRadius: "4px",
-                    fontSize: "0.68rem",
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                  }}
-                >
-                  🎵 Kozmik Şiir & Felsefe
-                </button>
-              )}
+          <div style={{ marginTop: "10px", borderTop: "1px solid rgba(255, 215, 0, 0.3)", paddingTop: "10px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "6px", marginBottom: "8px" }}>
+              <button onClick={() => window.location.reload()} style={{ background: "rgba(255, 215, 0, 0.3)", border: "1.5px solid #ffd700", color: "#ffd700", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.home}</button>
+              <button onClick={() => { setMenuOpen(false); onNavigateMethod(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1.5px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.corporate}</button>
+              <button onClick={() => { setMenuOpen(false); onNavigateMethod(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1.5px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.methodology}</button>
+              <button onClick={() => { setMenuOpen(false); onVisualize(); }} style={{ background: "rgba(255, 215, 0, 0.15)", border: "1.5px solid #ffd700", color: "#ffd700", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.matrix}</button>
+              <button onClick={() => { setMenuOpen(false); onNavigateAtlas(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1.5px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.atlas}</button>
+              <button onClick={() => { setMenuOpen(false); onNavigateEngine(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1.5px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.engine}</button>
+              <button onClick={() => { setMenuOpen(false); onNavigateFlow(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1.5px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>{t.flow}</button>
+              {onNavigateVideo && <button onClick={() => { setMenuOpen(false); onNavigateVideo(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1.5px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>🎥 Video</button>}
+              {onNavigateLiterature && <button onClick={() => { setMenuOpen(false); onNavigateLiterature(); }} style={{ background: "rgba(255,255,255,0.02)", border: "1.5px solid rgba(255,215,0,0.3)", color: "#ccc", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>📚 Edebiyat</button>}
+              {onNavigateOpsCenter && <button onClick={() => { setMenuOpen(false); onNavigateOpsCenter(); }} style={{ background: "rgba(255, 215, 0, 0.25)", border: "1px solid #ffd700", color: "#ffd700", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>⚙️ Operasyon Merkezi</button>}
+              {onOpenPoetryModal && <button onClick={() => { setMenuOpen(false); onOpenPoetryModal(); }} style={{ background: "linear-gradient(135deg, rgba(255,215,0,0.15), rgba(184,134,11,0.1))", border: "1px solid #ffd700", color: "#ffd700", padding: "6px", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "bold", cursor: "pointer" }}>🎵 Kozmik Şiir & Felsefe</button>}
             </div>
 
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns:
-                  "repeat(auto-fit, minmax(170px, 1fr))",
-                gap: "8px",
-                paddingTop: "8px",
-                borderTop:
-                  "1px dashed rgba(255, 215, 0, 0.25)",
-              }}
-            >
-              <button
-                onClick={() => {
-                  setMenuOpen(false);
-                  onNavigateLogin("guest");
-                }}
-                style={portalButtonStyle}
-              >
-                {t.guestLogin}
-              </button>
-              <button
-                onClick={() => {
-                  setMenuOpen(false);
-                  onNavigateLogin("admin");
-                }}
-                style={portalButtonStyle}
-              >
-                {t.adminLogin}
+            <div style={{ display: "flex", justifyContent: "center", paddingTop: "8px", borderTop: "1px dashed rgba(255, 215, 0, 0.25)" }}>
+              <button onClick={() => { setMenuOpen(false); onNavigateLogin("admin"); }} style={{ background: "linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(184, 134, 11, 0.1))", border: "1px solid rgba(255, 215, 0, 0.5)", color: "#ffd700", padding: "8px 24px", borderRadius: "6px", fontSize: "0.8rem", fontWeight: "800", cursor: "pointer" }}>
+                🔒 {t.adminLogin}
               </button>
             </div>
           </div>
         )}
       </div>
 
-      {/* ANA SAYFADAKİ ÜSTÜNDE YER ALAN MÜKERRER OPERASYON / KOZMİK ERİŞİM BANDI KALDIRILDI */}
-
-      {/* DİNAMİK ARAMA BARI */}
+      {/* ARAMA BARI */}
       <div style={{ marginBottom: "12px" }}>
         <SearchBar onSearch={(q) => setSearchQuery(q)} />
       </div>
 
-      {apiSynthesis && (
-        <div
-          style={{
-            ...cardStyle,
-            background: "rgba(255, 215, 0, 0.08)",
-            border: "1.5px solid #ffd700",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              marginBottom: "6px",
-            }}
-          >
-            <span style={{ fontSize: "1.2rem" }}>🌐</span>
-            <h4
-              style={{
-                color: "#ffd700",
-                margin: 0,
-                fontSize: "0.95rem",
-              }}
-            >
-              YKOS AKADEMİK ARŞİV & API DERLEME RAPORU
-            </h4>
-          </div>
-          <h5
-            style={{
-              color: "#fff",
-              margin: "4px 0 8px 0",
-              fontSize: "0.88rem",
-            }}
-          >
-            {apiSynthesis.title}
-          </h5>
-          <p
-            style={{
-              color: "#ddd",
-              fontSize: "0.82rem",
-              lineHeight: "1.6",
-              margin: "0 0 10px 0",
-            }}
-          >
-            {apiSynthesis.synthesis}
-          </p>
-          <div
-            style={{
-              fontSize: "0.72rem",
-              color: "#aaa",
-              fontStyle: "italic",
-              marginBottom: "12px",
-            }}
-          >
-            📚 Kaynak:{" "}
-            {apiSynthesis.sourceVolume ||
-              "YKOS Genel Veri Tabanı & Külliyat İndeksi"}{" "}
-            —{" "}
-            <a
-              href="https://ykos.com.tr"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                color: "#ffd700",
-                textDecoration: "underline",
-                fontWeight: "bold",
-              }}
-            >
-              ykos.com.tr
-            </a>
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              gap: "10px",
-              flexWrap: "wrap",
-              borderTop: "1px dashed rgba(255,215,0,0.3)",
-              paddingTop: "10px",
-            }}
-          >
-            <a
-              href="https://ykos.com.tr"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                background: "#ffd700",
-                color: "#000",
-                border: "none",
-                padding: "6px 12px",
-                borderRadius: "4px",
-                fontWeight: "bold",
-                fontSize: "0.75rem",
-                textDecoration: "none",
-                display: "inline-block",
-              }}
-            >
-              📖 ykos.com.tr 'de İncele →
-            </a>
-            <button
-              onClick={onVisualize}
-              style={{
-                background: "rgba(255,215,0,0.15)",
-                color: "#ffd700",
-                border: "1px solid #ffd700",
-                padding: "6px 12px",
-                borderRadius: "4px",
-                fontWeight: "bold",
-                fontSize: "0.75rem",
-                cursor: "pointer",
-              }}
-            >
-              💻 Kök Hece Matrisinde Göster
-            </button>
-            <button
-              onClick={onNavigateAtlas}
-              style={{
-                background: "transparent",
-                color: "#ccc",
-                border: "1px solid rgba(255,255,255,0.3)",
-                padding: "6px 12px",
-                borderRadius: "4px",
-                fontSize: "0.75rem",
-                cursor: "pointer",
-              }}
-            >
-              🗺️ Damga Atlasında İncele
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* İSTATİSTİK SAYAÇLARI */}
+      {/* SAYAÇLAR */}
       <div style={cardStyle}>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fit, minmax(110px, 1fr))",
-            gap: "10px",
-          }}
-        >
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))", gap: "10px" }}>
           {initialStats.map((item, idx) => (
-            <div
-              key={idx}
-              style={{
-                background: "rgba(255, 255, 255, 0.02)",
-                border:
-                  "1px solid rgba(255, 215, 0, 0.25)",
-                borderRadius: "8px",
-                padding: "8px 4px",
-                textAlign: "center",
-              }}
-            >
+            <div key={idx} style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 215, 0, 0.25)", borderRadius: "8px", padding: "8px 4px", textAlign: "center" }}>
               <span style={{ fontSize: "1rem" }}>{item.icon}</span>
-              <div
-                style={{
-                  color: "#fff",
-                  fontWeight: "900",
-                  fontSize: "0.95rem",
-                }}
-              >
-                {item.count}
-              </div>
-              <div
-                style={{
-                  color: "#888",
-                  fontSize: "0.65rem",
-                  fontWeight: "bold",
-                }}
-              >
-                {item.label}
-              </div>
+              <div style={{ color: "#fff", fontWeight: "900", fontSize: "0.95rem" }}>{item.count}</div>
+              <div style={{ color: "#888", fontSize: "0.65rem", fontWeight: "bold" }}>{item.label}</div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* ALT PANEL - CANLI LİSTE */}
-      <div
-        style={{
-          ...cardStyle,
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <h3
-          style={{
-            color: "#ffd700",
-            fontSize: "1.05rem",
-            marginTop: 0,
-            borderBottom:
-              "1px solid rgba(255,215,0,0.3)",
-            paddingBottom: "8px",
-            marginBottom: "12px",
-          }}
-        >
-          {t.solutionsTitle}{" "}
-          {searchQuery && (
-            <span
-              style={{
-                fontSize: "0.85rem",
-                color: "#fff",
-                fontWeight: "normal",
-              }}
-            >
-              ({filteredArticles.length} Kayıt)
-            </span>
-          )}
+      {/* ANA GÖVDE: SOLDA 2 SÜTUNLU ORİJİNAL ARŞİV + SAĞDA YKOS.ORG GİRİŞİ */}
+      <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
+        <h3 style={{ color: "#ffd700", fontSize: "1.05rem", marginTop: 0, borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "8px", marginBottom: "12px" }}>
+          ⚡ {t.solutionsTitle}
         </h3>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fit, minmax(360px, 1fr))",
-            gap: "12px",
-            marginBottom: "20px",
-            maxHeight: "600px",
-            overflowY: "auto",
-            paddingRight: "5px",
-          }}
-        >
-          {filteredArticles.map((item, idx) => (
-            <div
-              key={item.id || `rss-${idx}`}
-              style={{
-                background: item.url
-                  ? "rgba(0, 255, 127, 0.04)"
-                  : "rgba(255, 215, 0, 0.05)",
-                border: item.url
-                  ? "1px solid rgba(0, 255, 127, 0.3)"
-                  : "1px solid rgba(255, 215, 0, 0.4)",
-                borderRadius: "8px",
-                padding: "14px",
-                color: item.url ? "#00ff7f" : "#ffd700",
-                display: "flex",
-                gap: "12px",
-                alignItems: "flex-start",
-                transition:
-                  "transform 0.2s, box-shadow 0.2s",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform =
-                  "translateY(-3px)";
-                e.currentTarget.style.boxShadow =
-                  "0 6px 15px rgba(255, 215, 0, 0.15)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform =
-                  "translateY(0)";
-                e.currentTarget.style.boxShadow = "none";
-              }}
-            >
-              {item.imagePreview && (
-                <div
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedItemForModal(item);
-                  }}
-                  style={{
-                    flexShrink: 0,
-                    width: "75px",
-                    height: "75px",
-                    borderRadius: "8px",
-                    overflow: "hidden",
-                    border:
-                      "1px solid rgba(255, 215, 0, 0.5)",
-                    cursor: "zoom-in",
-                  }}
-                  title="Görseli Büyüt"
-                >
-                  <img
-                    src={item.imagePreview}
-                    alt="Damga"
+        <div style={{ display: "grid", gridTemplateColumns: "2.3fr 1fr", gap: "14px", minHeight: "440px", maxHeight: "560px" }}>
+          
+          {/* SOL-ORTA BÖLÜM: ORİJİNAL 2 SÜTUNLU YEŞİL BAŞLIKLI KART IZGARASI */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", overflowY: "auto", paddingRight: "6px" }}>
+            {filteredGridCards.map((card, idx) => {
+              if (card.isMatrixCard) {
+                return (
+                  <div
+                    key={`matrix-${idx}`}
+                    onClick={() => handleCardClick(card)}
                     style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      transition: "transform 0.3s",
+                      background: "rgba(6, 182, 212, 0.05)",
+                      border: "1.5px solid #06b6d4",
+                      borderRadius: "6px",
+                      padding: "10px 12px",
+                      cursor: "pointer",
+                      display: "flex",
+                      gap: "10px",
+                      alignItems: "center",
+                      transition: "all 0.2s"
                     }}
-                    onMouseEnter={(e) =>
-                      (e.target.style.transform =
-                        "scale(1.1)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.target.style.transform =
-                        "scale(1)")
-                    }
-                  />
-                </div>
-              )}
+                    onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#ffd700")}
+                    onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#06b6d4")}
+                  >
+                    <div style={{ width: "38px", height: "38px", background: "#081b26", border: "1px solid #06b6d4", borderRadius: "4px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>
+                      🌌
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: "0.82rem", fontWeight: "bold", color: "#ffd700" }}>{card.title}</div>
+                      <div style={{ fontSize: "0.65rem", color: "#38bdf8", wordBreak: "break-all" }}>{card.desc}</div>
+                    </div>
+                  </div>
+                );
+              }
 
-              <div
-                style={{ flex: 1, cursor: "pointer" }}
-                onClick={() => {
-                  if (item.url) {
-                    if (currentLang === "TR") {
-                      window.open(item.url, "_blank");
-                    } else {
-                      const targetLang =
-                        currentLang.toLowerCase();
-                      const translateUrl =
-                        "https://translate.google.com/translate?sl=tr&tl=" +
-                        targetLang +
-                        "&u=" +
-                        encodeURIComponent(item.url);
-                      window.open(translateUrl, "_blank");
-                    }
-                  } else {
-                    onNavigateRead(item.id);
-                  }
+              return (
+                <div
+                  key={card.id || `card-${idx}`}
+                  onClick={() => handleCardClick(card)}
+                  style={{
+                    background: "rgba(0, 255, 127, 0.02)",
+                    border: "1px solid rgba(0, 255, 127, 0.3)",
+                    borderRadius: "6px",
+                    padding: "9px 11px",
+                    cursor: "pointer",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    transition: "all 0.2s"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = "#00ff7f";
+                    e.currentTarget.style.background = "rgba(0, 255, 127, 0.08)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(0, 255, 127, 0.3)";
+                    e.currentTarget.style.background = "rgba(0, 255, 127, 0.02)";
+                  }}
+                >
+                  <div>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "6px", marginBottom: "4px" }}>
+                      <div style={{ fontSize: "0.75rem", fontWeight: "bold", color: "#00ff7f", lineHeight: "1.3" }}>
+                        ► {card.title}
+                      </div>
+                      {card.isNew && (
+                        <span style={{ background: "#22c55e", color: "#000", fontSize: "8px", fontWeight: "900", padding: "1px 4px", borderRadius: "2px", flexShrink: 0 }}>
+                          YENİ
+                        </span>
+                      )}
+                    </div>
+                    
+                    {card.badge && (
+                      <div style={{ display: "flex", gap: "4px", marginBottom: "4px" }}>
+                        <span style={{ background: "rgba(6,182,212,0.2)", color: "#38bdf8", fontSize: "8px", padding: "1px 4px", borderRadius: "2px" }}>{card.badge}</span>
+                        {card.subBadge && <span style={{ background: "rgba(245,158,11,0.2)", color: "#f59e0b", fontSize: "8px", padding: "1px 4px", borderRadius: "2px" }}>{card.subBadge}</span>}
+                      </div>
+                    )}
+
+                    <p style={{ margin: 0, fontSize: "0.68rem", color: "#aaa", lineHeight: "1.35", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                      {card.desc}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* SAĞ SÜTUN: SADECE YKOS.ORG GİRİŞİ VE PORTAL AKIŞI */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", background: "rgba(255, 215, 0, 0.02)", padding: "12px", borderRadius: "8px", border: "1.5px solid rgba(255, 215, 0, 0.3)", overflowY: "auto" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1.5px solid #ffd700", paddingBottom: "6px" }}>
+              <span style={{ color: "#ffd700", fontSize: "0.85rem", fontWeight: "bold", display: "flex", alignItems: "center", gap: "6px" }}>
+                🌐 YKOS.ORG GİRİŞİ
+              </span>
+              <span style={{ background: "#ffd700", color: "#000", fontSize: "8.5px", fontWeight: "900", padding: "2px 6px", borderRadius: "3px" }}>PORTAL</span>
+            </div>
+
+            {ykosOrgEntries.map((item, idx) => (
+              <a
+                key={`org-${idx}`}
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  textDecoration: "none",
+                  display: "flex",
+                  gap: "10px",
+                  alignItems: "center",
+                  background: idx === 0 ? "rgba(255, 215, 0, 0.08)" : "#0c101d",
+                  border: idx === 0 ? "1.5px solid #ffd700" : "1px solid rgba(255, 215, 0, 0.25)",
+                  borderRadius: "6px",
+                  padding: "10px",
+                  cursor: "pointer",
+                  transition: "all 0.2s"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "#ffd700";
+                  e.currentTarget.style.background = "rgba(255, 215, 0, 0.15)";
+                  e.currentTarget.style.transform = "translateX(2px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = idx === 0 ? "#ffd700" : "rgba(255, 215, 0, 0.25)";
+                  e.currentTarget.style.background = idx === 0 ? "rgba(255, 215, 0, 0.08)" : "#0c101d";
+                  e.currentTarget.style.transform = "none";
                 }}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent:
-                      "space-between",
-                    alignItems: "flex-start",
-                    fontWeight: "bold",
-                    fontSize: "0.92rem",
-                    marginBottom: "4px",
-                  }}
-                >
-                  <span>
-                    {item.url ? "📡" : "📜"} {item.title}
-                  </span>
-                  {item.url && (
-                    <span
-                      style={{
-                        fontSize: "0.62rem",
-                        background:
-                          "rgba(0, 255, 127, 0.15)",
-                        padding: "2px 6px",
-                        borderRadius: "4px",
-                        color: "#00ff7f",
-                        marginLeft: "8px",
-                      }}
-                    >
-                      YENİ
-                    </span>
-                  )}
+                <div style={{ width: "36px", height: "36px", background: "#1a1505", border: "1px solid #ffd700", borderRadius: "4px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px", flexShrink: 0 }}>
+                  {item.icon}
                 </div>
-
-                {item.rootSyllable && (
-                  <div
-                    style={{
-                      fontSize: "0.72rem",
-                      color: "#00ff7f",
-                      marginBottom: "6px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    🔤 Kök: {item.rootSyllable} | 🏷️{" "}
-                    {item.category}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2px" }}>
+                    <h4 style={{ margin: 0, fontSize: "0.78rem", color: "#ffd700", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                      {item.title}
+                    </h4>
+                    <span style={{ fontSize: "0.62rem", color: "#22c55e", fontWeight: "bold" }}>↗</span>
                   </div>
-                )}
-
-                <div
-                  style={{
-                    fontSize: "0.78rem",
-                    color: "#ccc",
-                    fontWeight: "normal",
-                    lineHeight: "1.4",
-                  }}
-                >
-                  {item.summary}
+                  <p style={{ margin: 0, fontSize: "0.66rem", color: "#ccc", lineHeight: "1.3", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                    {item.desc}
+                  </p>
                 </div>
-              </div>
-            </div>
-          ))}
+              </a>
+            ))}
+          </div>
+
         </div>
 
-        {/* Alt Butonlar */}
-        <div
-          style={{
-            display: "flex",
-            gap: "12px",
-            justifyContent: "center",
-            width: "100%",
-            maxWidth: "800px",
-            margin: "0 auto",
-          }}
-        >
-          <button
-            onClick={onVisualize}
-            style={{
-              flex: 1,
-              background:
-                "linear-gradient(135deg, #ffd700, #b8860b)",
-              color: "#000000",
-              border: "none",
-              padding: "12px",
-              borderRadius: "8px",
-              fontWeight: "900",
-              fontSize: "0.9rem",
-              cursor: "pointer",
-              display: "block",
-            }}
-          >
+        {/* ALT BUTONLAR */}
+        <div style={{ display: "flex", gap: "12px", justifyContent: "center", width: "100%", maxWidth: "800px", margin: "14px auto 0 auto" }}>
+          <button onClick={onVisualize} style={{ flex: 1, background: "linear-gradient(135deg, #ffd700, #b8860b)", color: "#000", border: "none", padding: "12px", borderRadius: "8px", fontWeight: "900", fontSize: "0.9rem", cursor: "pointer" }}>
             {t.visualizeBtn}
           </button>
-
-          <button
-            onClick={onNavigateAcikVeri}
-            style={{
-              flex: 1,
-              background:
-                "linear-gradient(135deg, #00ff7f, #008000)",
-              color: "#000000",
-              border: "none",
-              padding: "12px",
-              borderRadius: "8px",
-              fontWeight: "900",
-              fontSize: "0.9rem",
-              cursor: "pointer",
-              display: "block",
-            }}
-          >
+          <button onClick={onNavigateAcikVeri} style={{ flex: 1, background: "linear-gradient(135deg, #00ff7f, #008000)", color: "#000", border: "none", padding: "12px", borderRadius: "8px", fontWeight: "900", fontSize: "0.9rem", cursor: "pointer" }}>
             🌐 AÇIK VERİ PORTALINA GİT
           </button>
         </div>
       </div>
 
-      {/* MODAL KATMANI */}
-      {selectedItemForModal && (
-        <div
-          onClick={handleOverlayClick}
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            backgroundColor: "rgba(0, 0, 0, 0.85)",
-            backdropFilter: "blur(5px)",
-            zIndex: 9999,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            cursor: "zoom-out",
-          }}
-        >
-          <div
-            style={{
-              position: "relative",
-              maxWidth: "90%",
-              maxHeight: "90%",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <button
-              onClick={() => setSelectedItemForModal(null)}
-              style={{
-                position: "absolute",
-                top: "-40px",
-                right: "0px",
-                background: "transparent",
-                border: "none",
-                color: "#ffd700",
-                fontSize: "2rem",
-                cursor: "pointer",
-                fontWeight: "bold",
-              }}
-            >
-              ×
-            </button>
-            <img
-              src={selectedItemForModal.imagePreview}
-              alt={selectedItemForModal.title}
-              style={{
-                maxWidth: "100%",
-                maxHeight: "75vh",
-                borderRadius: "8px",
-                border: "2px solid #ffd700",
-                boxShadow:
-                  "0 10px 40px rgba(0,0,0,0.8)",
-              }}
-            />
-            <div
-              style={{
-                marginTop: "15px",
-                background:
-                  "rgba(5, 8, 17, 0.9)",
-                border:
-                  "1px solid rgba(255, 215, 0, 0.4)",
-                borderRadius: "8px",
-                padding: "15px 20px",
-                textAlign: "center",
-                width: "100%",
-                maxWidth: "600px",
-              }}
-            >
-              <h3
-                style={{
-                  color: "#ffd700",
-                  margin: "0 0 5px 0",
-                  fontSize: "1.1rem",
-                }}
-              >
-                {selectedItemForModal.title}
-              </h3>
-              <div
-                style={{
-                  color: "#00ff7f",
-                  fontSize: "0.85rem",
-                  fontWeight: "bold",
-                  marginBottom: "8px",
-                }}
-              >
-                {selectedItemForModal.rootSyllable
-                  ? `🔤 Kök: ${selectedItemForModal.rootSyllable}`
-                  : ""}{" "}
-                {selectedItemForModal.category
-                  ? ` | 🏷️ Kategori: ${selectedItemForModal.category}`
-                  : ""}
-              </div>
-              {selectedItemForModal.country &&
-                selectedItemForModal.period && (
-                  <div
-                    style={{
-                      color: "#aaa",
-                      fontSize: "0.75rem",
-                    }}
-                  >
-                    📍 {selectedItemForModal.country},{" "}
-                    {selectedItemForModal.region} — ⏳{" "}
-                    {selectedItemForModal.period}
-                  </div>
-                )}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

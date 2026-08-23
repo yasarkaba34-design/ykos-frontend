@@ -1,10 +1,6 @@
 import React from 'react';
 
-export default function AuthMenu() {
-  const handleLoginClick = (role) => {
-    alert(`${role} girişi modülü yapım aşamasında...`);
-  };
-
+export default function AuthMenu({ onNavigateLogin }) {
   return (
     <div style={{
       marginTop: "auto", 
@@ -19,48 +15,26 @@ export default function AuthMenu() {
       </h5>
       
       <button 
-        style={buttonStyles.guest}
-        onMouseOver={(e) => e.target.style.backgroundColor = "rgba(255, 215, 0, 0.1)"}
+        style={buttonStyles.admin}
+        onMouseOver={(e) => e.target.style.backgroundColor = "rgba(255, 215, 0, 0.15)"}
         onMouseOut={(e) => e.target.style.backgroundColor = "transparent"}
-        onClick={() => handleLoginClick("Konuk")}
+        onClick={() => onNavigateLogin && onNavigateLogin("admin")}
       >
-        <span style={{ fontSize: "14px" }}>👤</span> Konuk Erişimi
-      </button>
-
-      <button 
-        style={buttonStyles.academic}
-        onMouseOver={(e) => e.target.style.backgroundColor = "rgba(0, 255, 127, 0.1)"}
-        onMouseOut={(e) => e.target.style.backgroundColor = "transparent"}
-        onClick={() => handleLoginClick("Akademisyen")}
-      >
-        <span style={{ fontSize: "14px" }}>🎓</span> Akademisyen Girişi
+        <span style={{ fontSize: "14px" }}>🔒</span> Yönetici Girişi
       </button>
     </div>
   );
 }
 
 const buttonStyles = {
-  guest: {
+  admin: {
     backgroundColor: "transparent",
     color: "#ffd700",
     border: "1px solid rgba(255, 215, 0, 0.4)",
     borderRadius: "4px",
-    padding: "6px 12px",
+    padding: "8px 12px",
     fontSize: "12px",
-    cursor: "pointer",
-    textAlign: "left",
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    transition: "background-color 0.3s"
-  },
-  academic: {
-    backgroundColor: "transparent",
-    color: "#00ff7f",
-    border: "1px solid rgba(0, 255, 127, 0.4)",
-    borderRadius: "4px",
-    padding: "6px 12px",
-    fontSize: "12px",
+    fontWeight: "bold",
     cursor: "pointer",
     textAlign: "left",
     display: "flex",
