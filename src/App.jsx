@@ -1,4 +1,6 @@
+// src/App.jsx
 import React, { useState, useEffect } from "react";
+import { nodeAnalysisData } from "./nodeAnalysisData";
 import YKOSDashboard from "./layouts/YKOSDashboard";
 import { defaultArchiveArticles } from "./data/ykosDataService";
 import AdminPanel from "./layouts/AdminPanel";
@@ -19,6 +21,7 @@ export function App() {
   const [rssArticles, setRssArticles] = useState([]);
   const [currentLang, setCurrentLang] = useState("TR");
   const [lightboxImage, setLightboxImage] = useState(null);
+  const [selectedNode, setSelectedNode] = useState(null); // Çözümleme Düğümü
 
   const loadMergedArticles = () => {
     try {
@@ -87,7 +90,7 @@ export function App() {
       {currentView !== "dashboard" && (
         <div style={{ maxWidth: "1220px", margin: "0 auto", padding: "10px 16px 6px", textAlign: "right" }}>
           <button 
-            onClick={() => setCurrentView("dashboard")} 
+            onClick={() => { setCurrentView("dashboard"); setSelectedNode(null); }} 
             style={{ padding: "6px 14px", background: "transparent", border: "1px solid #ffd700", color: "#ffd700", fontWeight: "bold", borderRadius: "6px", cursor: "pointer", fontSize: "0.8rem" }}
           >
             🏠 Ana Sayfa
@@ -107,10 +110,99 @@ export function App() {
         />
       )}
 
-      {/* 2. BALONCUK MATRİSİ (MATRİSLER GERİ GELDİ) */}
+      {/* 2. BALONCUK MATRİSİ VE SAĞ ÇÖZÜMLEME PANELİ */}
       {currentView === "visualize" && (
-        <div style={containerStyle}>
-          <BubbleMatrix onGoHome={() => setCurrentView("dashboard")} onSelectNode={(node) => console.log(node)} />
+        <div style={{ ...containerStyle, display: "flex", position: "relative", padding: 0, overflow: "hidden", minHeight: "80vh" }}>
+          
+          {/* Matris Küre Alanı */}
+          <div style={{ flex: 1, height: "80vh" }}>
+            <BubbleMatrix 
+              onGoHome={() => setCurrentView("dashboard")} 
+              onSelectNode={(node) => setSelectedNode(node)} 
+            />
+          </div>
+
+          {/* SAĞ ÇÖZÜMLEME PANELİ */}
+          {selectedNode && (
+            <div style={{
+              width: "320px",
+              background: "#060913",
+              borderLeft: "1.5px solid #ffd700",
+              padding: "16px",
+              color: "#fff",
+              overflowY: "auto",
+              maxHeight: "80vh",
+              boxSizing: "border-box",
+              zIndex: 100
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "8px", marginBottom: "12px" }}>
+                <h3 style={{ color: "#38bdf8", margin: 0, fontSize: "1rem", fontWeight: "900", letterSpacing: "1px" }}>YKOS ÇÖZÜMLEME</h3>
+                <button onClick={() => setSelectedNode(null)} style={{ background: "transparent", border: "none", color: "#ef4444", fontSize: "1.2rem", cursor: "pointer", fontWeight: "bold" }}>✕</button>
+              </div>
+
+              <div style={{ textAlign: "center", marginBottom: "14px" }}>
+                <div style={{ fontSize: "0.68rem", color: "#888", letterSpacing: "1.5px", fontWeight: "bold" }}>SEÇİLEN ELEMAN</div>
+                <div style={{ fontSize: "1.2rem", fontWeight: "900", color: "#ffd700", marginTop: "2px" }}>
+                  {selectedNode.label || selectedNode.id || selectedNode.name}
+                </div>
+              </div>
+
+              {(() => {
+                const nodeKey = selectedNode.label || selectedNode.id || selectedNode.name;
+                const data = (nodeAnalysisData && nodeAnalysisData[nodeKey]) ? nodeAnalysisData[nodeKey] : {
+                  category: "Genel Çözümleme",
+                  score: "%98.0",
+                  desc: `${nodeKey} düğümü YKOS epistemolojik ağı üzerinde doğrulanmış morfolojik birimdir.`,
+                  layers: ["Anadolu Katmanı", "Fonetik Ağ"],
+                  formula: "Kök Fonem ↔ Damga Eşleşmesi",
+                  summary: "Algoritmik dil matrisi içerisinde aktif ilişkisel ağa sahiptir."
+                };
+
+                return (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    
+                    <div style={{ display: "flex", justifyContent: "space-between", background: "rgba(255,215,0,0.05)", border: "1px solid rgba(255,215,0,0.2)", borderRadius: "6px", padding: "6px 10px" }}>
+                      <div>
+                        <div style={{ fontSize: "0.62rem", color: "#aaa" }}>KATEGORİ</div>
+                        <div style={{ fontSize: "0.78rem", color: "#00ff7f", fontWeight: "bold" }}>{data.category}</div>
+                      </div>
+                      <div style={{ textAlign: "right" }}>
+                        <div style={{ fontSize: "0.62rem", color: "#aaa" }}>REZONANS</div>
+                        <div style={{ fontSize: "0.78rem", color: "#ffd700", fontWeight: "bold" }}>{data.score}</div>
+                      </div>
+                    </div>
+
+                    <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid #1e293b", borderRadius: "6px", padding: "8px 10px" }}>
+                      <div style={{ fontSize: "0.68rem", color: "#38bdf8", fontWeight: "bold", marginBottom: "3px" }}>📋 ONTO-FONETİK TANIM</div>
+                      <p style={{ fontSize: "0.74rem", color: "#ddd", margin: 0, lineHeight: "1.4" }}>{data.desc}</p>
+                    </div>
+
+                    <div style={{ background: "rgba(56, 189, 248, 0.05)", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "6px", padding: "8px 10px" }}>
+                      <div style={{ fontSize: "0.68rem", color: "#ffd700", fontWeight: "bold", marginBottom: "3px" }}>⚙️ ALGORİTMİK FORMÜL</div>
+                      <code style={{ fontSize: "0.72rem", color: "#38bdf8" }}>{data.formula}</code>
+                    </div>
+
+                    <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid #1e293b", borderRadius: "6px", padding: "8px 10px" }}>
+                      <div style={{ fontSize: "0.68rem", color: "#00ff7f", fontWeight: "bold", marginBottom: "5px" }}>🏛️ EPİGRAFİK KATMANLAR</div>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+                        {data.layers && data.layers.map((layer, i) => (
+                          <span key={i} style={{ background: "#0c1524", border: "1px solid rgba(0,255,127,0.3)", color: "#eee", fontSize: "0.65rem", padding: "2px 6px", borderRadius: "4px" }}>
+                            {layer}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div style={{ background: "#0a0f1d", border: "1px dashed rgba(255,215,0,0.3)", borderRadius: "6px", padding: "8px 10px" }}>
+                      <div style={{ fontSize: "0.66rem", color: "#aaa", fontStyle: "italic" }}>"{data.summary}"</div>
+                    </div>
+
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
         </div>
       )}
 
