@@ -47,7 +47,29 @@ export function App() {
   };
 
   useEffect(() => {
-    loadMergedArticles();
+      const loadMergedArticles = () => {
+    try {
+      const savedAdmin = JSON.parse(localStorage.getItem('ykos_admin_records') || '[]');
+      const approvedItems = savedAdmin
+        .filter(r => r.status === 'approved' || r.durum === 'onaylandi' || r.status === 'published' || r.status === 'Aktif' || r.durum === 'Aktif')
+        .map(r => ({
+          id: r.id,
+          title: r.title || r.baslik,
+          summary: r.summary || r.ozet || "",
+          content: r.content || r.icerik || "",
+          category: r.category || r.kategori || "Damga",
+          image: r.image || r.mansetGorsel || r.imagePreview || "",
+          gallery: r.gallery || r.galeri || [],
+          isNew: true,
+          date: r.tarih || new Date().toLocaleDateString('tr-TR')
+        }));
+
+      setArchiveArticles([...approvedItems, ...defaultArchiveArticles]);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   }, [currentView]);
 
   const handleNavigateLogin = () => { 
