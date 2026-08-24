@@ -3,6 +3,21 @@ import React, { useState, useEffect } from "react";
 import SearchBar from "../components/SearchBar";
 import { translations } from "../data/i18n";
 
+// 11'Lİ YKOS AFİŞ & MANİFESTO VERİ LİSTESİ
+const YKOS_POSTERS = [
+  { id: 1, no: "01", title: "Sıfır Noktası & Pleistosen Sığınağı", desc: "Anadolu Refugium Modeli, mikroklima koruması ve derin zaman hafızası.", icon: "🌋", tag: "BUZUL ÇAĞI" },
+  { id: 2, no: "02", title: "Kozmik Mühür: Göbeklitepe", desc: "T-Sütunları, piktogramlar ve insanlığın ilk algoritmik grafik hafızası.", icon: "🗿", tag: "PROTO-DAMGA" },
+  { id: 3, no: "03", title: "Anadolu’dan Asya’ya Büyük Akış (Yol)", desc: "Saymalıtaş, Tamgalısay ve Altay petrogliflerine uzanan göç ve damga hatları.", icon: "🧭", tag: "GÖÇ VE AKIŞ" },
+  { id: 4, no: "04", title: "Avrasya Damga Ağı & Orhun Abideleri", desc: "Runik yazıtlar, boy tamgaları ve epigrafik çizgisel mühür mantığı.", icon: "📜", tag: "ORHUN EPİGRAFİ" },
+  { id: 5, no: "05", title: "Avrupa’nın Saklı Hafızası: Etrüsk & Glozel", desc: "Fransa Glozel tabletleri ve İtalya Etrüsk yazıtlarının Ön-Türkçe katmanları.", icon: "🏛️", tag: "GLOZEL & ETRÜSK" },
+  { id: 6, no: "06", title: "Mezopotamya Çekirdeği: Sümer & Çivi Yazısı", desc: "Eklemeli (Agglutinative) dil mimarisi ve çivi yazısındaki kök-hece korunumu.", icon: "📐", tag: "SÜMER MATRİSİ" },
+  { id: 7, no: "07", title: "Anadolu Mühürleri: Hitit & Luvi", desc: "Yazılıkaya anıtları ve hiyeroglif mühür sisteminin geometrik veri tabanı.", icon: "⚜️", tag: "YAZILIKAYA" },
+  { id: 8, no: "08", title: "M5 Kök-Hece Algoritması (Türkçe OS)", desc: "Türkçenin doğal bir kodlama dili ve matematiksel işletim sistemi olması.", icon: "⚡", tag: "DİL İŞLETİM SİSTEMİ" },
+  { id: 9, no: "09", title: "Küresel Petroglif Atlası (Amerika - Afrika)", desc: "Arizona Hopi petrogliflerinden Avrasya'ya küresel sembol yayılımı.", icon: "🗺️", tag: "KÜRESEL ATLAS" },
+  { id: 10, no: "10", title: "Şartlandırmadan Okumak (YKOS Manifestosu)", desc: "Önce Veri ➔ Sonra Analiz ➔ Sonra Değerlendirme ➔ Sürekli Güncelleme.", icon: "⚖️", tag: "BİLİMSEL MANİFESTO" },
+  { id: 11, no: "11", title: "YKOS 1000: Kuantum & Yapay Zekâ", desc: "Disiplinler arası canlı bilgi ağı, graf veri tabanı ve yapay zekâ entegrasyonu.", icon: "🚀", tag: "AI VE ENTEGRASYON" }
+];
+
 export default function YKOSDashboard({
   currentLang = "TR",
   setCurrentLang = () => {},
@@ -18,6 +33,8 @@ export default function YKOSDashboard({
 }) {
   const [langOpen, setLangOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [posterModalOpen, setPosterModalOpen] = useState(false);
+  const [selectedPoster, setSelectedPoster] = useState(YKOS_POSTERS[0]);
   const [searchQuery, setSearchQuery] = useState("");
   const [adminRecords, setAdminRecords] = useState([]);
 
@@ -311,6 +328,14 @@ export default function YKOSDashboard({
                 🏛️ {t.nav?.about || "HAKKIMIZDA"}
               </button>
 
+              {/* 11'Lİ AFİŞ SERİSİ BUTONU (YENİ) */}
+              <button 
+                onClick={() => { setMenuOpen(false); setPosterModalOpen(true); }} 
+                style={{ ...btnBaseStyle, border: "1.5px solid #f59e0b", background: "rgba(245, 158, 11, 0.15)", color: "#f59e0b", fontWeight: "900" }}
+              >
+                🖼️ 11'Lİ AFİŞ & MANİFESTO SERİSİ
+              </button>
+
               <button onClick={() => { setMenuOpen(false); onNavigateMethod(); }} style={btnBaseStyle}>
                 📖 {t.nav?.methodology || "YKOS METODOLOJİSİ"}
               </button>
@@ -534,6 +559,164 @@ export default function YKOSDashboard({
           </button>
         </div>
       </div>
+
+      {/* 5. 11'Lİ YKOS AFİŞ & MANİFESTO VİTRİN MODALI */}
+      {posterModalOpen && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(0, 0, 0, 0.88)",
+          backdropFilter: "blur(8px)",
+          zIndex: 9999,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: "16px"
+        }}>
+          <div style={{
+            background: "#050811",
+            border: "2px solid #ffd700",
+            borderRadius: "16px",
+            width: "100%",
+            maxWidth: "1050px",
+            maxHeight: "90vh",
+            display: "flex",
+            flexDirection: "column",
+            boxShadow: "0 0 35px rgba(255, 215, 0, 0.35)",
+            overflow: "hidden"
+          }}>
+            {/* MODAL ÜST BAR */}
+            <div style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              padding: "16px 20px",
+              borderBottom: "1.5px solid rgba(255, 215, 0, 0.3)",
+              background: "rgba(255, 215, 0, 0.05)"
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <span style={{ fontSize: "1.5rem" }}>🖼️</span>
+                <div>
+                  <h2 style={{ margin: 0, fontSize: "1.15rem", color: "#ffd700", fontWeight: "900" }}>
+                    11'Lİ YKOS SEMİYOTİK AFİŞ & MANİFESTO SERİSİ
+                  </h2>
+                  <span style={{ fontSize: "0.75rem", color: "#94a3b8" }}>
+                    12.000 Yıllık Kültürel, Epigrafik ve Dilsel Hafıza Koleksiyonu
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => setPosterModalOpen(false)}
+                style={{
+                  background: "transparent",
+                  border: "1px solid #ef4444",
+                  color: "#ef4444",
+                  width: "32px",
+                  height: "32px",
+                  borderRadius: "50%",
+                  cursor: "pointer",
+                  fontWeight: "bold",
+                  fontSize: "1rem"
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* MODAL GÖVDE: SOLDA SEÇİLEN DETAY, SAĞDA 11'Lİ LİSTE */}
+            <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: "16px", padding: "18px", overflowY: "auto", flex: 1 }}>
+              
+              {/* SOL TARAF: BÜYÜK AFİŞ / VİTRİN KARTI */}
+              <div style={{
+                background: "linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(5, 8, 17, 0.95))",
+                border: "1.5px solid #f59e0b",
+                borderRadius: "12px",
+                padding: "24px",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                boxShadow: "inset 0 0 20px rgba(0,0,0,0.8)"
+              }}>
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+                    <span style={{ background: "#f59e0b", color: "#000", fontWeight: "900", fontSize: "0.8rem", padding: "3px 8px", borderRadius: "4px" }}>
+                      PANEL {selectedPoster.no} / 11
+                    </span>
+                    <span style={{ color: "#38bdf8", fontSize: "0.75rem", fontWeight: "bold", border: "1px solid #38bdf8", padding: "2px 8px", borderRadius: "4px" }}>
+                      {selectedPoster.tag}
+                    </span>
+                  </div>
+
+                  <div style={{ fontSize: "3.2rem", margin: "14px 0", textAlign: "center" }}>
+                    {selectedPoster.icon}
+                  </div>
+
+                  <h3 style={{ color: "#ffd700", fontSize: "1.35rem", margin: "0 0 10px 0", fontWeight: "900" }}>
+                    {selectedPoster.title}
+                  </h3>
+
+                  <p style={{ color: "#e2e8f0", fontSize: "0.9rem", lineHeight: "1.6", margin: 0 }}>
+                    {selectedPoster.desc}
+                  </p>
+                </div>
+
+                <div style={{ marginTop: "20px", paddingTop: "14px", borderTop: "1px dashed rgba(255, 215, 0, 0.25)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ color: "#00ff7f", fontSize: "0.75rem", fontWeight: "bold" }}>● YKOS KÜLLİYAT ONAYLI</span>
+                  <button 
+                    onClick={() => { setPosterModalOpen(false); onNavigateMethod(); }}
+                    style={{ background: "rgba(245, 158, 11, 0.2)", border: "1px solid #f59e0b", color: "#f59e0b", padding: "6px 12px", borderRadius: "6px", fontSize: "0.75rem", fontWeight: "bold", cursor: "pointer" }}
+                  >
+                    METODOLOJİDE İNCELE ➔
+                  </button>
+                </div>
+              </div>
+
+              {/* SAĞ TARAF: 11'Lİ KAYDIRILABİLİR LİSTE */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px", overflowY: "auto", maxHeight: "420px", paddingRight: "4px" }}>
+                {YKOS_POSTERS.map((p) => {
+                  const isSelected = selectedPoster.id === p.id;
+                  return (
+                    <div
+                      key={p.id}
+                      onClick={() => setSelectedPoster(p)}
+                      style={{
+                        background: isSelected ? "rgba(245, 158, 11, 0.15)" : "#0c101d",
+                        border: isSelected ? "1.5px solid #f59e0b" : "1px solid rgba(255, 215, 0, 0.2)",
+                        borderRadius: "8px",
+                        padding: "10px 12px",
+                        cursor: "pointer",
+                        display: "flex",
+                        gap: "10px",
+                        alignItems: "center",
+                        transition: "all 0.2s"
+                      }}
+                    >
+                      <span style={{ fontSize: "1.4rem" }}>{p.icon}</span>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <span style={{ color: isSelected ? "#ffd700" : "#ffffff", fontWeight: "bold", fontSize: "0.82rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                            {p.title}
+                          </span>
+                          <span style={{ color: "#f59e0b", fontSize: "0.7rem", fontWeight: "900", flexShrink: 0 }}>
+                            #{p.no}
+                          </span>
+                        </div>
+                        <div style={{ color: "#94a3b8", fontSize: "0.68rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", marginTop: "2px" }}>
+                          {p.desc}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
