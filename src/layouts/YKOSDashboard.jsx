@@ -116,6 +116,7 @@ export default function YKOSDashboard({
           title: rec.title || rec.baslik,
           desc: rec.summary || rec.ozet,
           tag: rec.category || rec.kategori || "YAYIN",
+          image: rec.image || rec.gorsel || rec.imageUrl || rec.resim,
           icon: "📑",
           onClick: () => onNavigateRead(rec.id)
         })),
@@ -140,10 +141,11 @@ export default function YKOSDashboard({
   return (
     <div style={{ width: "100%", maxWidth: "1280px", margin: "0 auto", padding: "10px", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
       
-      {/* 1. ÜST BAR & YKOS KURUMSAL MÜHÜR */}
-      <div style={cardStyle}>
-        {/* ÜST MENÜ & DİL SEÇİCİ */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+      {/* 1. ÜST BAR & YKOS KURUMSAL MÜHÜR (DOĞRUDAN ÜST ÇİZGİYE YASLI LOGO) */}
+      <div style={{ ...cardStyle, paddingTop: "0px", position: "relative" }}>
+        
+        {/* SOL ÜST KÖŞE BUTONU: MENÜ */}
+        <div style={{ position: "absolute", left: "14px", top: "14px", zIndex: 10 }}>
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             style={{
@@ -162,8 +164,10 @@ export default function YKOSDashboard({
           >
             ☰ {t.nav?.menu || "MENÜ"}
           </button>
+        </div>
 
-          {/* DİL SEÇİMİ */}
+        {/* SAĞ ÜST KÖŞE: DİL SEÇİMİ */}
+        <div style={{ position: "absolute", right: "14px", top: "14px", zIndex: 10 }}>
           <div style={{ position: "relative" }}>
             <span
               onClick={() => setLangOpen(!langOpen)}
@@ -227,91 +231,37 @@ export default function YKOSDashboard({
           </div>
         </div>
 
-        {/* YKOS SİBER KARTAL LOGOSU VE KURUMSAL BAŞLIK */}
-        <div style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "8px" }}>
-          
-          {/* SİBER KARTAL EMBLEMİ */}
-          <div style={{ marginBottom: "10px", filter: "drop-shadow(0 0 16px rgba(245, 158, 11, 0.45))" }}>
-            <svg
-              width="150"
-              height="100"
-              viewBox="0 0 200 135"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <defs>
-                <linearGradient id="goldEagle" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#fef08a" />
-                  <stop offset="35%" stopColor="#f59e0b" />
-                  <stop offset="70%" stopColor="#b45309" />
-                  <stop offset="100%" stopColor="#ffd700" />
-                </linearGradient>
-              </defs>
-
-              {/* KARTAL BAŞI */}
-              <path
-                d="M 100 15 C 92 15 88 25 84 32 C 90 30 96 30 102 34 C 108 30 114 30 120 32 C 116 25 112 15 100 15 Z"
-                fill="url(#goldEagle)"
-              />
-              <path d="M 94 28 Q 100 35 106 28 Q 100 40 94 28 Z" fill="#ffd700" />
-
-              {/* SOL KANAT & SİBER HATLAR */}
-              <path
-                d="M 80 40 C 50 25 20 40 10 65 C 25 60 45 62 60 70 C 40 75 25 88 18 100 C 35 95 55 95 72 90 Z"
-                fill="url(#goldEagle)"
-                opacity="0.9"
-              />
-              <line x1="25" y1="60" x2="65" y2="70" stroke="#00ffff" strokeWidth="1.5" strokeDasharray="3 3" />
-              <line x1="30" y1="80" x2="70" y2="85" stroke="#00ffff" strokeWidth="1.5" strokeDasharray="3 3" />
-              <circle cx="25" cy="60" r="2.5" fill="#00ffff" />
-              <circle cx="30" cy="80" r="2.5" fill="#00ffff" />
-
-              {/* SAĞ KANAT & SİBER HATLAR */}
-              <path
-                d="M 120 40 C 150 25 180 40 190 65 C 175 60 155 62 140 70 C 160 75 175 88 182 100 C 165 95 145 95 128 90 Z"
-                fill="url(#goldEagle)"
-                opacity="0.9"
-              />
-              <line x1="175" y1="60" x2="135" y2="70" stroke="#00ffff" strokeWidth="1.5" strokeDasharray="3 3" />
-              <line x1="170" y1="80" x2="130" y2="85" stroke="#00ffff" strokeWidth="1.5" strokeDasharray="3 3" />
-              <circle cx="175" cy="60" r="2.5" fill="#00ffff" />
-              <circle cx="170" cy="80" r="2.5" fill="#00ffff" />
-
-              {/* MERKEZ DAİRESEL MÜHÜR */}
-              <circle cx="100" cy="72" r="30" fill="#030712" stroke="url(#goldEagle)" strokeWidth="3" />
-              <circle cx="100" cy="72" r="26" stroke="#f59e0b" strokeWidth="1" strokeDasharray="2 2" opacity="0.6" />
-
-              {/* MERKEZ GEOMETRİK 'K' VE DAMGA MOTİFİ */}
-              <path
-                d="M 90 54 L 90 90 M 90 72 L 108 54 M 90 72 L 108 90"
-                stroke="url(#goldEagle)"
-                strokeWidth="4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <polygon points="113,72 117,67 121,72 117,77" fill="#ffd700" />
-
-              {/* KUYRUK TÜYLERİ */}
-              <path d="M 88 100 L 100 125 L 112 100 Z" fill="url(#goldEagle)" />
-            </svg>
+        {/* LOGO ÜST KISMA SIFIRLANDI VE ORTALANDI */}
+        <div style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", marginTop: "0px", marginBottom: "8px" }}>
+          <div style={{ margin: "0 0 6px 0", filter: "drop-shadow(0 0 16px rgba(245, 158, 11, 0.45))" }}>
+            <img
+              src="/ykos-logo.png"
+              alt="YKOS Logo"
+              style={{
+                width: "260px",
+                height: "auto",
+                maxHeight: "220px",
+                objectFit: "contain",
+                display: "block",
+                margin: "0 auto"
+              }}
+            />
           </div>
 
-          {/* ANA BAŞLIK */}
           <h1
             style={{
               color: "#f59e0b",
-              fontSize: "2rem",
+              fontSize: "1.95rem",
               fontWeight: "900",
               letterSpacing: "3px",
-              margin: "0 0 6px 0",
+              margin: "0 0 4px 0",
               textShadow: "0 0 20px rgba(245, 158, 11, 0.4)"
             }}
           >
             YKOS BİLGİ SİSTEMİ
           </h1>
 
-          {/* ALT AÇIKLAMA */}
-          <p style={{ color: "#94a3b8", fontSize: "0.82rem", letterSpacing: "1.2px", margin: 0, textTransform: "uppercase", fontWeight: "600" }}>
+          <p style={{ color: "#94a3b8", fontSize: "0.8rem", letterSpacing: "1.2px", margin: 0, textTransform: "uppercase", fontWeight: "600" }}>
             DİSİPLİNLER ARASI ALGORİTMİK KÜLTÜR VE DİL VERİ TABANI
           </p>
         </div>
@@ -328,7 +278,6 @@ export default function YKOSDashboard({
                 🏛️ {t.nav?.about || "HAKKIMIZDA"}
               </button>
 
-              {/* 11'Lİ AFİŞ SERİSİ BUTONU (YENİ) */}
               <button 
                 onClick={() => { setMenuOpen(false); setPosterModalOpen(true); }} 
                 style={{ ...btnBaseStyle, border: "1.5px solid #f59e0b", background: "rgba(245, 158, 11, 0.15)", color: "#f59e0b", fontWeight: "900" }}
@@ -493,7 +442,7 @@ export default function YKOSDashboard({
             })}
           </div>
 
-          {/* SAĞ SÜTUN */}
+          {/* SAĞ SÜTUN: GÖRSEL ÖNİZLEMELİ ONAYLI İÇERİKLER */}
           <div style={{ display: "flex", flexDirection: "column", gap: "10px", background: "rgba(255, 215, 0, 0.02)", padding: "12px", borderRadius: "8px", border: "1.5px solid rgba(255, 215, 0, 0.3)", overflowY: "auto" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1.5px solid #ffd700", paddingBottom: "6px" }}>
               <span style={{ color: "#ffd700", fontSize: "0.85rem", fontWeight: "bold", display: "flex", alignItems: "center", gap: "6px" }}>
@@ -504,48 +453,73 @@ export default function YKOSDashboard({
               </span>
             </div>
 
-            {rightColumnItems.map((item, idx) => (
-              <div
-                key={`right-item-${idx}`}
-                onClick={item.onClick}
-                style={{
-                  display: "flex",
-                  gap: "10px",
-                  alignItems: "center",
-                  background: idx === 0 ? "rgba(255, 215, 0, 0.08)" : "#0c101d",
-                  border: idx === 0 ? "1.5px solid #ffd700" : "1px solid rgba(255, 215, 0, 0.25)",
-                  borderRadius: "6px",
-                  padding: "10px",
-                  cursor: "pointer",
-                  transition: "all 0.2s"
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "#ffd700";
-                  e.currentTarget.style.background = "rgba(255, 215, 0, 0.15)";
-                  e.currentTarget.style.transform = "translateX(2px)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = idx === 0 ? "#ffd700" : "rgba(255, 215, 0, 0.25)";
-                  e.currentTarget.style.background = idx === 0 ? "rgba(255, 215, 0, 0.08)" : "#0c101d";
-                  e.currentTarget.style.transform = "none";
-                }}
-              >
-                <div style={{ width: "36px", height: "36px", background: "#1a1505", border: "1px solid #ffd700", borderRadius: "4px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px", flexShrink: 0 }}>
-                  {item.icon}
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2px" }}>
-                    <h4 style={{ margin: 0, fontSize: "0.78rem", color: "#ffd700", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                      {item.title}
-                    </h4>
-                    <span style={{ fontSize: "0.62rem", color: "#22c55e", fontWeight: "bold" }}>{t.contentLink || "İÇERİK ➔"}</span>
+            {rightColumnItems.map((item, idx) => {
+              const itemImg = item.image || item.gorsel || item.imageUrl || item.resim;
+
+              return (
+                <div
+                  key={`right-item-${idx}`}
+                  onClick={item.onClick}
+                  style={{
+                    display: "flex",
+                    gap: "10px",
+                    alignItems: "center",
+                    background: idx === 0 ? "rgba(255, 215, 0, 0.08)" : "#0c101d",
+                    border: idx === 0 ? "1.5px solid #ffd700" : "1px solid rgba(255, 215, 0, 0.25)",
+                    borderRadius: "6px",
+                    padding: "10px",
+                    cursor: "pointer",
+                    transition: "all 0.2s"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = "#ffd700";
+                    e.currentTarget.style.background = "rgba(255, 215, 0, 0.15)";
+                    e.currentTarget.style.transform = "translateX(2px)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = idx === 0 ? "#ffd700" : "rgba(255, 215, 0, 0.25)";
+                    e.currentTarget.style.background = idx === 0 ? "rgba(255, 215, 0, 0.08)" : "#0c101d";
+                    e.currentTarget.style.transform = "none";
+                  }}
+                >
+                  <div style={{
+                    width: "42px",
+                    height: "42px",
+                    background: "#1a1505",
+                    border: "1px solid #ffd700",
+                    borderRadius: "4px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "16px",
+                    flexShrink: 0,
+                    overflow: "hidden"
+                  }}>
+                    {itemImg ? (
+                      <img
+                        src={itemImg}
+                        alt={item.title}
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      />
+                    ) : (
+                      item.icon || "📑"
+                    )}
                   </div>
-                  <p style={{ margin: 0, fontSize: "0.66rem", color: "#ccc", lineHeight: "1.3", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                    {item.desc}
-                  </p>
+
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2px" }}>
+                      <h4 style={{ margin: 0, fontSize: "0.78rem", color: "#ffd700", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                        {item.title}
+                      </h4>
+                      <span style={{ fontSize: "0.62rem", color: "#22c55e", fontWeight: "bold" }}>{t.contentLink || "İÇERİK ➔"}</span>
+                    </div>
+                    <p style={{ margin: 0, fontSize: "0.66rem", color: "#ccc", lineHeight: "1.3", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                      {item.desc}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
@@ -588,7 +562,6 @@ export default function YKOSDashboard({
             boxShadow: "0 0 35px rgba(255, 215, 0, 0.35)",
             overflow: "hidden"
           }}>
-            {/* MODAL ÜST BAR */}
             <div style={{
               display: "flex",
               justifyContent: "space-between",
@@ -626,10 +599,8 @@ export default function YKOSDashboard({
               </button>
             </div>
 
-            {/* MODAL GÖVDE: SOLDA SEÇİLEN DETAY, SAĞDA 11'Lİ LİSTE */}
             <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: "16px", padding: "18px", overflowY: "auto", flex: 1 }}>
               
-              {/* SOL TARAF: BÜYÜK AFİŞ / VİTRİN KARTI */}
               <div style={{
                 background: "linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(5, 8, 17, 0.95))",
                 border: "1.5px solid #f59e0b",
@@ -674,7 +645,6 @@ export default function YKOSDashboard({
                 </div>
               </div>
 
-              {/* SAĞ TARAF: 11'Lİ KAYDIRILABİLİR LİSTE */}
               <div style={{ display: "flex", flexDirection: "column", gap: "8px", overflowY: "auto", maxHeight: "420px", paddingRight: "4px" }}>
                 {YKOS_POSTERS.map((p) => {
                   const isSelected = selectedPoster.id === p.id;
