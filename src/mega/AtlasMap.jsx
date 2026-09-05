@@ -1,8 +1,30 @@
 import React, { useState } from "react";
 
-export default function AtlasMap({ locations }) {
+export default function AtlasMap({ locations = [] }) {
+  // Eğer locations dışarıdan boş veya undefined gelirse hata vermemesi için güvenli dizi:
+  const safeLocations = locations.length > 0 ? locations : [
+    {
+      id: "ANADOLU-01",
+      name: "Göbeklitepe / Karahantepe Havzası",
+      region: "Anadolu / Üst Mezopotamya",
+      details: "İnsanlık tarihinin en kadim inanç ve mimari merkezi. Kök-hece matrisinde 'ÇEV' ve 'BA' köklerinin ilk coğrafi izdüşümünü sunar."
+    },
+    {
+      id: "ANADOLU-02",
+      name: "Yazılıkaya / Boğazköy",
+      region: "İç Anadolu",
+      details: "Hitit ve öncesi kaya piktogramlarının, tanrı/dağ damgalarının dikey aks üzerinde kodlandığı ana merkez."
+    },
+    {
+      id: "AVRASYA-01",
+      name: "Tamgalı Say (Tamgaly)",
+      region: "Orta Asya / Kazakistan",
+      details: "Binlerce petroglifin yer aldığı, güneş başlıkklı insan figürlerinin ve kök damgaların boy gösterdiği kutsal vadi."
+    }
+  ];
+
   // Varsayılan olarak ilk lokasyon seçili gelsin
-  const [activeLoc, setActiveLoc] = useState(locations[0]);
+  const [activeLoc, setActiveLoc] = useState(safeLocations[0]);
 
   // Entegrasyon: Lokasyona göre Kök Hece Matrisi bağlantılarını dinamik getirme
   const getIntegratedNodes = (locId) => {
@@ -44,9 +66,9 @@ export default function AtlasMap({ locations }) {
         }
       `}</style>
 
-      {/* 1. YATAY LOKASYON SEÇİCİ (Genişletilmiş Hali) */}
+      {/* 1. YATAY LOKASYON SEÇİCİ */}
       <div style={{ display: "flex", gap: "15px", overflowX: "auto", paddingBottom: "15px", scrollbarWidth: "thin", scrollbarColor: "#ffd700 #050811" }}>
-        {locations.map((loc) => (
+        {safeLocations.map((loc) => (
           <div 
             key={loc.id} 
             className="loc-card"
@@ -87,12 +109,10 @@ export default function AtlasMap({ locations }) {
             overflow: "hidden",
             boxShadow: "inset 0 0 50px rgba(0,0,0,0.8)"
           }}>
-            {/* Animasyonlu Radar Halkaları */}
             <div className="radar-ring radar-ring-1"></div>
             <div className="radar-ring radar-ring-2"></div>
             <div className="radar-ring radar-ring-3"></div>
             
-            {/* Radar Arka Plan Izgarası */}
             <div style={{ position: "absolute", width: "100%", height: "100%", backgroundImage: "linear-gradient(rgba(255,215,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,215,0,0.05) 1px, transparent 1px)", backgroundSize: "30px 30px" }}></div>
 
             <div style={{ zIndex: 10, textAlign: "center", background: "rgba(5,8,17,0.7)", padding: "20px", borderRadius: "15px", border: "1px solid rgba(255,215,0,0.2)", backdropFilter: "blur(4px)" }}>
@@ -105,7 +125,6 @@ export default function AtlasMap({ locations }) {
           {/* SAĞ: Akademik Rapor ve Matris Entegrasyonu */}
           <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
             
-            {/* Akademik Bilgi Kutusu */}
             <div style={{ background: "rgba(255,215,0,0.04)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: "12px", padding: "20px", flex: 1 }}>
               <div style={{ display: "flex", alignItems: "center", gap: "10px", borderBottom: "1px solid rgba(255,215,0,0.2)", paddingBottom: "10px", marginBottom: "15px" }}>
                 <span style={{ fontSize: "1.2rem" }}>📜</span>
@@ -116,7 +135,6 @@ export default function AtlasMap({ locations }) {
               </p>
             </div>
 
-            {/* Matris Entegrasyon Kutusu (CAN ALICI NOKTA) */}
             <div style={{ background: "rgba(30,144,255,0.05)", border: "1px solid rgba(30,144,255,0.4)", borderRadius: "12px", padding: "20px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "10px", borderBottom: "1px solid rgba(30,144,255,0.2)", paddingBottom: "10px", marginBottom: "15px" }}>
                 <span style={{ fontSize: "1.2rem" }}>🔗</span>

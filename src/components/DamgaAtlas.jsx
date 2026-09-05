@@ -1,5 +1,29 @@
 import React, { useMemo, useState } from "react";
 import damgalar from "../data/damgalar";
+export const damgalar = [
+  {
+    id: "ykos-dmg-01",
+    kod: "YOK-01",
+    ad: "Ok Damgası (Yön ve Hareket)",
+    aciklama: "Anadolu ve Orta Asya petrogliflerinde yön, akış ve erek bildiren temel kök damga formu.",
+    kokler: ["YOK", "YÖK", "YOL"],
+    petroglifler: ["Tamgalı Say", "Yazılıkaya"],
+    yazitlar: ["Orhun Yazıtları", "Eski Anadolu Kaya Çizimleri"],
+    ulkeler: ["Türkiye", "Kazakistan", "Kırgızistan"],
+    gorsel: ""
+  },
+  {
+    id: "ykos-dmg-02",
+    kod: "TUR-02",
+    ad: "Tut/Kur Damgası (Yapı ve Bağlantı)",
+    aciklama: "Toplumsal ve yapısal bağ kurma, denge ve merkezî tutunma anlamlarını taşıyan sembol.",
+    kokler: ["TUR", "KUR", "TUT"],
+    petroglifler: ["Göbeklitepe Stelleri", "Saymalıtaş"],
+    yazitlar: ["Yenisey Yazıtları"],
+    ulkeler: ["Türkiye", "Moğolistan"],
+    gorsel: ""
+  }
+];
 
 export default function DamgaAtlas({ query = "" }) {
   const [selectedId, setSelectedId] = useState(damgalar[0]?.id ?? null);

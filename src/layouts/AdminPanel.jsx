@@ -31,7 +31,8 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
       const saved = JSON.parse(localStorage.getItem("ykos_admin_records") || "[]");
       setRecords(saved);
     } catch (e) {
-      console.error(e);
+      console.error("Kayıtlar yüklenirken hata oluştu:", e);
+      setRecords([]);
     }
   };
 
@@ -65,7 +66,10 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!title.trim()) return;
+    if (!title || !title.trim()) {
+      alert("Lütfen geçerli bir başlık giriniz.");
+      return;
+    }
 
     const existing = JSON.parse(localStorage.getItem("ykos_admin_records") || "[]");
 
@@ -74,10 +78,10 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
         r.id === editingId
           ? {
               ...r,
-              title,
+              title: title.trim(),
               category,
-              summary,
-              content,
+              summary: summary.trim(),
+              content: content.trim(),
               image: mainImage || r.image,
               gallery: galleryImages.length > 0 ? galleryImages : (r.gallery || [])
             }
@@ -88,10 +92,10 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
     } else {
       const newRecord = {
         id: "TUDITAM-" + Date.now(),
-        title,
+        title: title.trim(),
         category,
-        summary,
-        content,
+        summary: summary.trim(),
+        content: content.trim(),
         image: mainImage,
         gallery: galleryImages,
         status: "published",
@@ -102,6 +106,7 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
       localStorage.setItem("ykos_admin_records", JSON.stringify(existing));
     }
 
+    // Formu sıfırla
     setTitle("");
     setSummary("");
     setContent("");

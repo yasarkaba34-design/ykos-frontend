@@ -9,6 +9,7 @@ import OpsCenter from "./layouts/OpsCenter";
 import BubbleMatrix from "./mega/BubbleMatrix.jsx";
 import AtlasMap from "./mega/AtlasMap";
 import Hakkimizda from "./pages/Hakkimizda";
+import './index.css' // (veya App.css)
 
 export function App() {
   const [currentView, setCurrentView] = useState("dashboard"); 

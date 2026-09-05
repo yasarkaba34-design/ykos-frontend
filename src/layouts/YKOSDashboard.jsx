@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import SearchBar from "../components/SearchBar";
 import { translations } from "../data/i18n";
+import YKOSLabMatrix from '../components/YKOSLabMatrix';
 
 // 11'Lİ YKOS AFİŞ & MANİFESTO VERİ LİSTESİ
 const YKOS_POSTERS = [
@@ -141,7 +142,7 @@ export default function YKOSDashboard({
   return (
     <div style={{ width: "100%", maxWidth: "1280px", margin: "0 auto", padding: "10px", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
       
-      {/* 1. ÜST BAR & YKOS KURUMSAL MÜHÜR (DOĞRUDAN ÜST ÇİZGİYE YASLI LOGO) */}
+      {/* 1. ÜST BAR & YKOS KURUMSAL MÜHÜR */}
       <div style={{ ...cardStyle, paddingTop: "0px", position: "relative" }}>
         
         {/* SOL ÜST KÖŞE BUTONU: MENÜ */}
@@ -231,7 +232,7 @@ export default function YKOSDashboard({
           </div>
         </div>
 
-        {/* LOGO ÜST KISMA SIFIRLANDI VE ORTALANDI */}
+        {/* LOGO */}
         <div style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", marginTop: "0px", marginBottom: "8px" }}>
           <div style={{ margin: "0 0 6px 0", filter: "drop-shadow(0 0 16px rgba(245, 158, 11, 0.45))" }}>
             <img
@@ -357,10 +358,10 @@ export default function YKOSDashboard({
         </div>
       </div>
 
-      {/* 4. ANA GÖVDE: ÇÖZÜMLER & ONAYLI İÇERİKLER */}
+      {/* 4. ANA GÖVDE: YKOS ÇÖZÜMLERİ VE İNDEKSLER */}
       <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
         <h3 style={{ color: "#ffd700", fontSize: "1.05rem", marginTop: 0, borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "8px", marginBottom: "12px" }}>
-          ⚡ {t.solutionsTitle || "YKOS ÇÖZÜMLERİ VE İNDEKSLER (CANLI ARŞİV)"}
+          ⚡ YKOS ÇÖZÜMLERİ VE İNDEKSLER (CANLI ARŞİV)
         </h3>
 
         <div style={{ display: "grid", gridTemplateColumns: "2.3fr 1fr", gap: "14px", minHeight: "440px", maxHeight: "560px" }}>
@@ -691,3 +692,5 @@ export default function YKOSDashboard({
     </div>
   );
 }
+
+
