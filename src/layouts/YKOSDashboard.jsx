@@ -38,7 +38,41 @@ export default function YKOSDashboard({
   const [selectedPoster, setSelectedPoster] = useState(YKOS_POSTERS[0]);
   const [searchQuery, setSearchQuery] = useState("");
   const [adminRecords, setAdminRecords] = useState([]);
+// Yeni kayıt ekleme fonksiyonu
+  const handleDirectPublish = () => {
+    if (!title) {
+      alert("Lütfen başlık giriniz.");
+      return;
+    }
 
+    const newRecord = {
+      id: Date.now().toString(),
+      title: title,
+      summary: summary,
+      content: content,
+      category: category,
+      image: image || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe",
+      status: "published",
+      durum: "onaylandi",
+      date: "Bugün"
+    };
+
+    try {
+      const existing = JSON.parse(localStorage.getItem("ykos_admin_records") || "[]");
+      const updated = [newRecord, ...existing];
+      localStorage.setItem("ykos_admin_records", JSON.stringify(updated));
+      setAdminRecords(updated);
+      
+      // Formu sıfırla
+      setTitle("");
+      setSummary("");
+      setContent("");
+      alert("İçerik başarıyla yayınlandı!");
+      window.location.reload(); // Sayfayı yenileyerek ana ekrana yansıt
+    } catch (e) {
+      console.error(e);
+    }
+  };
   const t = (translations && translations[currentLang]) ? translations[currentLang] : (translations?.TR || {});
 
   useEffect(() => {
@@ -142,6 +176,23 @@ export default function YKOSDashboard({
   return (
     <div style={{ width: "100%", maxWidth: "1280px", margin: "0 auto", padding: "10px", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
       
+      {/* MOBİL VE MASAÜSTÜ DUYARLI KESİN CSS AYARLARI */}
+      <style>{`
+        @media (max-width: 768px) {
+          .ykos-main-content-grid {
+            display: flex !important;
+            flex-direction: column !important;
+            grid-template-columns: 1fr !important;
+            max-height: none !important;
+          }
+          .ykos-archive-grid {
+            display: flex !important;
+            flex-direction: column !important;
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
+
       {/* 1. ÜST BAR & YKOS KURUMSAL MÜHÜR */}
       <div style={{ ...cardStyle, paddingTop: "0px", position: "relative" }}>
         
@@ -358,16 +409,16 @@ export default function YKOSDashboard({
         </div>
       </div>
 
-      {/* 4. ANA GÖVDE: YKOS ÇÖZÜMLERİ VE İNDEKSLER */}
+      {/* 4. ANA GÖVDE: YKOS ÇÖZÜMLÜLERİ VE İNDEKSLER */}
       <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
         <h3 style={{ color: "#ffd700", fontSize: "1.05rem", marginTop: 0, borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "8px", marginBottom: "12px" }}>
           ⚡ YKOS ÇÖZÜMLERİ VE İNDEKSLER (CANLI ARŞİV)
         </h3>
 
-        <div style={{ display: "grid", gridTemplateColumns: "2.3fr 1fr", gap: "14px", minHeight: "440px", maxHeight: "560px" }}>
+        <div className="ykos-main-content-grid" style={{ display: "grid", gridTemplateColumns: "2.3fr 1fr", gap: "14px", minHeight: "440px", maxHeight: "560px" }}>
           
           {/* SOL-ORTA ARŞİV BÖLÜMÜ */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", overflowY: "auto", paddingRight: "6px" }}>
+          <div className="ykos-archive-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", overflowY: "auto", paddingRight: "6px" }}>
             {filteredGridCards.map((card, idx) => {
               if (card.isMatrixCard) {
                 return (
@@ -524,7 +575,7 @@ export default function YKOSDashboard({
           </div>
         </div>
 
-        {/* ALT BUTONLAR */}
+        {/* ALT BUTTONLAR */}
         <div style={{ display: "flex", gap: "12px", justifyContent: "center", width: "100%", maxWidth: "800px", margin: "14px auto 0 auto" }}>
           <button onClick={onVisualize} style={{ flex: 1, background: "linear-gradient(135deg, #ffd700, #b8860b)", color: "#000", border: "none", padding: "12px", borderRadius: "8px", fontWeight: "900", fontSize: "0.9rem", cursor: "pointer" }}>
             {t.visualizeBtn || "BALONCUK MATRİSİNİ GÖRSELLEŞTİR →"}
@@ -692,5 +743,3 @@ export default function YKOSDashboard({
     </div>
   );
 }
-
-
