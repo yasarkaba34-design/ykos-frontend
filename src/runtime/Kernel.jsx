@@ -11,9 +11,23 @@ import RMVPanel from "../rmv/RMVPanel";
 import EvaluatorPanel from "../evaluator/EvaluatorPanel";
 import AtlasMap from "../atlas/AtlasMap";
 import DFlow from "../dflow/DFlow";
+import {
+  LinguisticSpiralLayer,
+  SpiralAnchors,
+  ProtoMatrix
+} from '@/ykos-linguistic-spiral';
 
-export default function Kernel() {
-  return (
+export default Kernel;
+
+// 🔽 Export’un hemen altına ekle
+useEffect(() => {
+  FluxEngine.attachLayer(LinguisticSpiralLayer);
+  FluxEngine.bindAnchors(SpiralAnchors);
+  Evaluator.addMatrix(ProtoMatrix);
+  Evaluator.computeResonance(LinguisticSpiralLayer);
+}, []);
+
+return (
     <div style={{ background: "#000", color: "gold", padding: "50px" }}>
       <h1>YKOS Kernel</h1>
       <p>Semiyotik Motor • Görsel Motor • Flux • RMV • Evaluator • Atlas • DFlow</p>
@@ -124,3 +138,7 @@ export default function RTE() {
     </div>
   );
 }
+FluxEngine.attachLayer(LinguisticSpiralLayer);
+FluxEngine.bindAnchors(SpiralAnchors);
+Evaluator.addMatrix(ProtoMatrix);
+Evaluator.computeResonance(LinguisticSpiralLayer);

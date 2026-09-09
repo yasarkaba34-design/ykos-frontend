@@ -1,5 +1,19 @@
-// src/mega/BubbleMatrix.jsx
+// FILE: src/mega/BubbleMatrix.jsx
 import React, { useState, useEffect, useRef } from "react";
+
+/**
+ * @typedef {Object} Bubble
+ * @property {string} id
+ * @property {string} atlasRef
+ * @property {Object} position
+ * @property {number} position.x
+ * @property {number} position.y
+ * @property {string} position.layer
+ * @property {Object} resonance
+ * @property {number} resonance.intensity
+ * @property {number} resonance.frequency
+ * @property {string} resonance.color
+ */
 
 export default function BubbleMatrix({ onGoHome, onSelectNode }) {
   const [pipelineResult, setPipelineResult] = useState(null);
@@ -17,49 +31,49 @@ export default function BubbleMatrix({ onGoHome, onSelectNode }) {
     });
   };
 
-  // Tam Kapsamlı Baloncuk Kümesi (40+ Düğüm)
+  // Tam Kapsamlı Baloncuk Kümesi (40+ Düğüm) - Bubble modeline tam uyumlu
   const nodes = [
     // 1. ÇEKİRDEK VE KURAMSAL MERKEZ
-    { id: "YKOS-1000", label: "YKOS 1000 — Külliyat & Algoritmik Merkez", desc: "Anadolu Kök-Hece ve Damga sistematiğinin ana kuramsal çekirdeği.", connections: "YKOS 100, YKOS 200, YKOS 500, ANADOLU", score: "%99.9", x: 470, y: 190, r: 28, color: "#f59e0b" },
-    { id: "YKOS-100", label: "YKOS 100 — Kök Hece Matrisi", desc: "100 Temel Kök hecenin fonetik ve anlamsal tam eşleşme tablosu.", connections: "ÇEV, BA, ER, YOL, OL, KÖK, VAR, BİR", score: "%99.7", x: 530, y: 260, r: 25, color: "#06b6d4" },
-    { id: "YKOS-200", label: "YKOS 200 — Küresel Damga Ağı", desc: "Anadolu merkezli 200 temel damganın dünya petrogliflerindeki yayılımı.", connections: "ANADOLU, ASYA, AMERİKA, AVRUPA, AFRİKA", score: "%99.5", x: 440, y: 310, r: 26, color: "#10b981" },
-    { id: "YKOS-500", label: "YKOS 500 — Karşılaştırmalı Morfoloji", desc: "Sümer, Hitit, Etrüsk ve Ön-Türkçe çapraz dil morfolojisi.", connections: "SÜMER, ETRÜSK, HİTİT, URARTU", score: "%98.9", x: 330, y: 240, r: 24, color: "#f97316" },
+    { id: "YKOS-1000", label: "YKOS 1000 — Külliyat & Algoritmik Merkez", desc: "Anadolu Kök-Hece ve Damga sistematiğinin ana kuramsal çekirdeği.", connections: "YKOS 100, YKOS 200, YKOS 500, ANADOLU", score: "%99.9", x: 470, y: 190, r: 28, color: "#f59e0b", atlasRef: "ATLAS-01", position: { x: 470, y: 190, layer: "CORE" }, resonance: { intensity: 9.9, frequency: 432, color: "#f59e0b" } },
+    { id: "YKOS-100", label: "YKOS 100 — Kök Hece Matrisi", desc: "100 Temel Kök hecenin fonetik ve anlamsal tam eşleşme tablosu.", connections: "ÇEV, BA, ER, YOL, OL, KÖK, VAR, BİR", score: "%99.7", x: 530, y: 260, r: 25, color: "#06b6d4", atlasRef: "ATLAS-02", position: { x: 530, y: 260, layer: "MATRIX" }, resonance: { intensity: 9.7, frequency: 528, color: "#06b6d4" } },
+    { id: "YKOS-200", label: "YKOS 200 — Küresel Damga Ağı", desc: "Anadolu merkezli 200 temel damganın dünya petrogliflerindeki yayılımı.", connections: "ANADOLU, ASYA, AMERİKA, AVRUPA, AFRİKA", score: "%99.5", x: 440, y: 310, r: 26, color: "#10b981", atlasRef: "ATLAS-03", position: { x: 440, y: 310, layer: "GLOBAL" }, resonance: { intensity: 9.5, frequency: 639, color: "#10b981" } },
+    { id: "YKOS-500", label: "YKOS 500 — Karşılaştırmalı Morfoloji", desc: "Sümer, Hitit, Etrüsk ve Ön-Türkçe çapraz dil morfolojisi.", connections: "SÜMER, ETRÜSK, HİTİT, URARTU", score: "%98.9", x: 330, y: 240, r: 24, color: "#f97316", atlasRef: "ATLAS-04", position: { x: 330, y: 240, layer: "MORPHOLOGY" }, resonance: { intensity: 9.2, frequency: 741, color: "#f97316" } },
 
     // 2. KADİM COĞRAFYA VE ARKEOLOJİK MERKEZLER
-    { id: "ANADOLU", label: "Anadolu Atlası — Ana Merkez", desc: "12.000 yıllık kültürel, morfolojik ve epigrafik ana merkez.", connections: "GÖBEKLİTEPE, ÇATALHÖYÜK, YAZILIKAYA", score: "%99.9", x: 590, y: 190, r: 22, color: "#eab308" },
-    { id: "GÖBEKLİTEPE", label: "Göbeklitepe T-Sütunları", desc: "H sembolü, dairesel tapınak düzeni ve kozmik steller.", connections: "ANADOLU, YKOS 100, H-DAMGA", score: "%99.8", x: 670, y: 150, r: 19, color: "#10b981" },
-    { id: "ÇATALHÖYÜK", label: "Çatalhöyük Dairesel Damgalar", desc: "MÖ 7000 mühür ve duvar bezemelerinde ÇEV/BA ilkeleri.", connections: "ANADOLU, ÇEV, BA", score: "%99.3", x: 630, y: 240, r: 18, color: "#10b981" },
-    { id: "YAZILIKAYA", label: "Yazılıkaya Açıkhava Tapınağı", desc: "Hitit panteonu ve hiyeroglif damga kompozisyonları.", connections: "ANADOLU, HİTİT", score: "%98.7", x: 690, y: 210, r: 17, color: "#06b6d4" },
-    { id: "SAYMALITAŞ", label: "Saymalıtaş Petroglifleri", desc: "Tiyanşan dağlarında on binlerce piktogram ve güneş başlı figür.", connections: "ASYA, GÜNEŞ-BAŞ", score: "%99.2", x: 330, y: 350, r: 18, color: "#a855f7" },
-    { id: "TAMGALI", label: "Tamgalısay Vadisi", desc: "Kazakistan kaya resimleri ve Ön-Türk damga kronolojisi.", connections: "ASYA, SAYMALITAŞ", score: "%98.9", x: 260, y: 360, r: 16, color: "#a855f7" },
-    { id: "ORHUN", label: "Orhun Vadisi Yazıtları", desc: "Köktürk runik harflerinin tamga kökenleri.", connections: "ASYA, YKOS 100", score: "%99.4", x: 380, y: 380, r: 17, color: "#a855f7" },
+    { id: "ANADOLU", label: "Anadolu Atlası — Ana Merkez", desc: "12.000 yıllık kültürel, morfolojik ve epigrafik ana merkez.", connections: "GÖBEKLİTEPE, ÇATALHÖYÜK, YAZILIKAYA", score: "%99.9", x: 590, y: 190, r: 22, color: "#eab308", atlasRef: "ATLAS-05", position: { x: 590, y: 190, layer: "GEO" }, resonance: { intensity: 9.9, frequency: 852, color: "#eab308" } },
+    { id: "GÖBEKLİTEPE", label: "Göbeklitepe T-Sütunları", desc: "H sembolü, dairesel tapınak düzeni ve kozmik steller.", connections: "ANADOLU, YKOS 100, H-DAMGA", score: "%99.8", x: 670, y: 150, r: 19, color: "#10b981", atlasRef: "ATLAS-06", position: { x: 670, y: 150, layer: "GEO" }, resonance: { intensity: 9.8, frequency: 963, color: "#10b981" } },
+    { id: "ÇATALHÖYÜK", label: "Çatalhöyük Dairesel Damgalar", desc: "MÖ 7000 mühür ve duvar bezemelerinde ÇEV/BA ilkeleri.", connections: "ANADOLU, ÇEV, BA", score: "%99.3", x: 630, y: 240, r: 18, color: "#10b981", atlasRef: "ATLAS-07", position: { x: 630, y: 240, layer: "GEO" }, resonance: { intensity: 9.3, frequency: 432, color: "#10b981" } },
+    { id: "YAZILIKAYA", label: "Yazılıkaya Açıkhava Tapınağı", desc: "Hitit panteonu ve hiyeroglif damga kompozisyonları.", connections: "ANADOLU, HİTİT", score: "%98.7", x: 690, y: 210, r: 17, color: "#06b6d4", atlasRef: "ATLAS-08", position: { x: 690, y: 210, layer: "GEO" }, resonance: { intensity: 8.7, frequency: 528, color: "#06b6d4" } },
+    { id: "SAYMALITAŞ", label: "Saymalıtaş Petroglifleri", desc: "Tiyanşan dağlarında on binlerce piktogram ve güneş başlı figür.", connections: "ASYA, GÜNEŞ-BAŞ", score: "%99.2", x: 330, y: 350, r: 18, color: "#a855f7", atlasRef: "ATLAS-09", position: { x: 330, y: 350, layer: "GEO" }, resonance: { intensity: 9.2, frequency: 639, color: "#a855f7" } },
+    { id: "TAMGALI", label: "Tamgalısay Vadisi", desc: "Kazakistan kaya resimleri ve Ön-Türk damga kronolojisi.", connections: "ASYA, SAYMALITAŞ", score: "%98.9", x: 260, y: 360, r: 16, color: "#a855f7", atlasRef: "ATLAS-10", position: { x: 260, y: 360, layer: "GEO" }, resonance: { intensity: 8.9, frequency: 741, color: "#a855f7" } },
+    { id: "ORHUN", label: "Orhun Vadisi Yazıtları", desc: "Köktürk runik harflerinin tamga kökenleri.", connections: "ASYA, YKOS 100", score: "%99.4", x: 380, y: 380, r: 17, color: "#a855f7", atlasRef: "ATLAS-11", position: { x: 380, y: 380, layer: "GEO" }, resonance: { intensity: 9.4, frequency: 852, color: "#a855f7" } },
     
     // 3. KITALARARASI VE MEDENİYET HATTI
-    { id: "ASYA", label: "Orta Asya & Avrasya Kuşağı", desc: "Bozkır petroglifleri ve göç yolları.", connections: "YKOS 200, SAYMALITAŞ, TAMGALI", score: "%99.1", x: 360, y: 320, r: 20, color: "#a855f7" },
-    { id: "AMERİKA", label: "Amerika Kıtası — Maya & İnka", desc: "Piktogramlar ve petroglif benzerlik hatları.", connections: "YKOS 200, BERING", score: "%98.1", x: 230, y: 300, r: 18, color: "#f43f5e" },
-    { id: "AVRUPA", label: "Avrupa — Etrüsk & Glozel", desc: "Akdeniz epigrafisi ve Lemnos mezar taşı paralelleri.", connections: "YKOS 200, ETRÜSK", score: "%98.0", x: 250, y: 220, r: 18, color: "#6366f1" },
-    { id: "SÜMER", label: "Sümer — Çivi Yazısı Öncesi", desc: "Uruk ve Cemdet Nasr piktografik kil tabletleri.", connections: "YKOS 500, KÖK", score: "%98.8", x: 370, y: 170, r: 17, color: "#f97316" },
-    { id: "ETRÜSK", label: "Etrüsk Alfabesi & Lemnos", desc: "İtalya yarımadası ve Ege adalarında Ön-Türkçe okumalar.", connections: "YKOS 500, AVRUPA", score: "%98.6", x: 270, y: 170, r: 17, color: "#f97316" },
-    { id: "HİTİT", label: "Hitit Hiyeroglifleri", desc: "Anadolu Luvi ve Hitit mühür damgaları.", connections: "YKOS 500, YAZILIKAYA", score: "%98.5", x: 310, y: 120, r: 16, color: "#f97316" },
-    { id: "URARTU", label: "Urartu Çivi & Resim Yazısı", desc: "Doğu Anadolu dağ kaleleri ve hayat ağacı damgaları.", connections: "YKOS 500, ANADOLU", score: "%98.2", x: 390, y: 110, r: 16, color: "#f97316" },
+    { id: "ASYA", label: "Orta Asya & Avrasya Kuşağı", desc: "Bozkır petroglifleri ve göç yolları.", connections: "YKOS 200, SAYMALITAŞ, TAMGALI", score: "%99.1", x: 360, y: 320, r: 20, color: "#a855f7", atlasRef: "ATLAS-12", position: { x: 360, y: 320, layer: "CONTINENT" }, resonance: { intensity: 9.1, frequency: 963, color: "#a855f7" } },
+    { id: "AMERİKA", label: "Amerika Kıtası — Maya & İnka", desc: "Piktogramlar ve petroglif benzerlik hatları.", connections: "YKOS 200, BERING", score: "%98.1", x: 230, y: 300, r: 18, color: "#f43f5e", atlasRef: "ATLAS-13", position: { x: 230, y: 300, layer: "CONTINENT" }, resonance: { intensity: 8.1, frequency: 432, color: "#f43f5e" } },
+    { id: "AVRUPA", label: "Avrupa — Etrüsk & Glozel", desc: "Akdeniz epigrafisi ve Lemnos mezar taşı paralelleri.", connections: "YKOS 200, ETRÜSK", score: "%98.0", x: 250, y: 220, r: 18, color: "#6366f1", atlasRef: "ATLAS-14", position: { x: 250, y: 220, layer: "CONTINENT" }, resonance: { intensity: 8.0, frequency: 528, color: "#6366f1" } },
+    { id: "SÜMER", label: "Sümer — Çivi Yazısı Öncesi", desc: "Uruk ve Cemdet Nasr piktografik kil tabletleri.", connections: "YKOS 500, KÖK", score: "%98.8", x: 370, y: 170, r: 17, color: "#f97316", atlasRef: "ATLAS-15", position: { x: 370, y: 170, layer: "CIVILIZATION" }, resonance: { intensity: 8.8, frequency: 639, color: "#f97316" } },
+    { id: "ETRÜSK", label: "Etrüsk Alfabesi & Lemnos", desc: "İtalya yarımadası ve Ege adalarında Ön-Türkçe okumalar.", connections: "YKOS 500, AVRUPA", score: "%98.6", x: 270, y: 170, r: 17, color: "#f97316", atlasRef: "ATLAS-16", position: { x: 270, y: 170, layer: "CIVILIZATION" }, resonance: { intensity: 8.6, frequency: 741, color: "#f97316" } },
+    { id: "HİTİT", label: "Hitit Hiyeroglifleri", desc: "Anadolu Luvi ve Hitit mühür damgaları.", connections: "YKOS 500, YAZILIKAYA", score: "%98.5", x: 310, y: 120, r: 16, color: "#f97316", atlasRef: "ATLAS-17", position: { x: 310, y: 120, layer: "CIVILIZATION" }, resonance: { intensity: 8.5, frequency: 852, color: "#f97316" } },
+    { id: "URARTU", label: "Urartu Çivi & Resim Yazısı", desc: "Doğu Anadolu dağ kaleleri ve hayat ağacı damgaları.", connections: "YKOS 500, ANADOLU", score: "%98.2", x: 390, y: 110, r: 16, color: "#f97316", atlasRef: "ATLAS-18", position: { x: 390, y: 110, layer: "CIVILIZATION" }, resonance: { intensity: 8.2, frequency: 963, color: "#f97316" } },
 
     // 4. KOZMİK İLKELER VE KÖK HECELER
-    { id: "O", label: "O — Evrensel Öz & Merkez", desc: "Dairesel form, mutlak başlangıç ve kaynak.", connections: "BİR, YOL, OL, KÖK", score: "%99.9", x: 520, y: 90, r: 20, color: "#ffd700" },
-    { id: "BİR", label: "BİR — Teklik & İlk Aks", desc: "Dikey eksen, ilk kutuplanma ve irade.", connections: "O, ER, VAR", score: "%99.8", x: 590, y: 80, r: 18, color: "#ffd700" },
-    { id: "YOL", label: "YOL — Akış ve Devinim", desc: "Zaman ve mekan içindeki hareket morfolojisi.", connections: "O, OL, KÖK", score: "%99.2", x: 620, y: 310, r: 18, color: "#eab308" },
-    { id: "OL", label: "OL — Maddeleşme ve Varlık", desc: "Tohumdan forma geçiş döngüsü.", connections: "O, YOL, BİR", score: "%99.0", x: 560, y: 340, r: 17, color: "#eab308" },
-    { id: "KÖK", label: "KÖK — Temel & Kaynak", desc: "Yerin derinliğine inen ve besleyen ontolojik ilke.", connections: "O, YOL, SÜMER", score: "%99.4", x: 480, y: 370, r: 18, color: "#eab308" },
-    { id: "VAR", label: "VAR — Mevcudiyet", desc: "Algılanan ve şahit olunan evren düzlemi.", connections: "BİR, OL", score: "%98.8", x: 650, y: 90, r: 16, color: "#ffd700" },
-    { id: "ER", label: "ER — Güç ve Bilinç", desc: "İnsan idraki ve dikey yükseliş damgası.", connections: "BİR, YKOS 100", score: "%98.7", x: 450, y: 70, r: 16, color: "#10b981" },
-    { id: "BA", label: "BA — Bağlantı & Köprü", desc: "İki noktayı birleştiren temel morfem.", connections: "YKOS 100, ÇEV", score: "%98.5", x: 410, y: 60, r: 16, color: "#06b6d4" },
-    { id: "ÇEV", label: "ÇEV — Koruyucu Daire", desc: "Merkezi saran çember ve sınır morfolojisi.", connections: "YKOS 100, BA, ÇATALHÖYÜK", score: "%98.9", x: 360, y: 70, r: 17, color: "#06b6d4" },
-    { id: "AY", label: "AY — Döngüsel Zaman", desc: "Hilal formu, kozmik takvim ve kadınsal ilke.", connections: "O, ANADOLU", score: "%98.6", x: 570, y: 130, r: 15, color: "#38bdf8" },
-    { id: "KÜN", label: "KÜN — Güneş & Işık", desc: "Merkezdeki ışık kaynağı ve ısı damgası.", connections: "O, BİR", score: "%98.9", x: 480, y: 130, r: 15, color: "#ffd700" },
-    { id: "TÖRE", label: "TÖRE — Kozmik Denge & Adalet", desc: "Dört yönün ve gök kubbenin sarsılmaz nizamı.", connections: "O, YKOS 1000", score: "%99.1", x: 530, y: 40, r: 16, color: "#a855f7" },
-    { id: "ÖK", label: "ÖK — Yüce Akıl & Yaratıcı", desc: "Öksökö (Çift başlı kartal) ve kozmik zeka damgası.", connections: "O, TÖRE", score: "%99.3", x: 470, y: 30, r: 15, color: "#a855f7" },
-    { id: "EL", label: "EL — İrade & Tasarım", desc: "Göbeklitepe stellerindeki el ve kavrayış damgası.", connections: "GÖBEKLİTEPE, ER", score: "%98.8", x: 730, y: 150, r: 15, color: "#10b981" },
-    { id: "BERING", label: "Bering Boğazı Geçiş Hattı", desc: "Kuzey Asya'dan Amerika'ya damga transfer koridoru.", connections: "ASYA, AMERİKA", score: "%97.8", x: 190, y: 350, r: 14, color: "#f43f5e" },
-    { id: "H-DAMGA", label: "H-Damgası (Gök-Yer Bağı)", desc: "İki dikey aksı bağlayan yatay köprü simgesi.", connections: "GÖBEKLİTEPE, BA", score: "%99.6", x: 720, y: 100, r: 15, color: "#ffd700" }
+    { id: "O", label: "O — Evrensel Öz & Merkez", desc: "Dairesel form, mutlak başlangıç ve kaynak.", connections: "BİR, YOL, OL, KÖK", score: "%99.9", x: 520, y: 90, r: 20, color: "#ffd700", atlasRef: "ATLAS-19", position: { x: 520, y: 90, layer: "ROOT" }, resonance: { intensity: 9.9, frequency: 432, color: "#ffd700" } },
+    { id: "BİR", label: "BİR — Teklik & İlk Aks", desc: "Dikey eksen, ilk kutuplanma ve irade.", connections: "O, ER, VAR", score: "%99.8", x: 590, y: 80, r: 18, color: "#ffd700", atlasRef: "ATLAS-20", position: { x: 590, y: 80, layer: "ROOT" }, resonance: { intensity: 9.8, frequency: 528, color: "#ffd700" } },
+    { id: "YOL", label: "YOL — Akış ve Devinim", desc: "Zaman ve mekan içindeki hareket morfolojisi.", connections: "O, OL, KÖK", score: "%99.2", x: 620, y: 310, r: 18, color: "#eab308", atlasRef: "ATLAS-21", position: { x: 620, y: 310, layer: "ROOT" }, resonance: { intensity: 9.2, frequency: 639, color: "#eab308" } },
+    { id: "OL", label: "OL — Maddeleşme ve Varlık", desc: "Tohumdan forma geçiş döngüsü.", connections: "O, YOL, BİR", score: "%99.0", x: 560, y: 340, r: 17, color: "#eab308", atlasRef: "ATLAS-22", position: { x: 560, y: 340, layer: "ROOT" }, resonance: { intensity: 9.0, frequency: 741, color: "#eab308" } },
+    { id: "KÖK", label: "KÖK — Temel & Kaynak", desc: "Yerin derinliğine inen ve besleyen ontolojik ilke.", connections: "O, YOL, SÜMER", score: "%99.4", x: 480, y: 370, r: 18, color: "#eab308", atlasRef: "ATLAS-23", position: { x: 480, y: 370, layer: "ROOT" }, resonance: { intensity: 9.4, frequency: 852, color: "#eab308" } },
+    { id: "VAR", label: "VAR — Mevcudiyet", desc: "Algılanan ve şahit olunan evren düzlemi.", connections: "BİR, OL", score: "%98.8", x: 650, y: 90, r: 16, color: "#ffd700", atlasRef: "ATLAS-24", position: { x: 650, y: 90, layer: "ROOT" }, resonance: { intensity: 8.8, frequency: 963, color: "#ffd700" } },
+    { id: "ER", label: "ER — Güç ve Bilinç", desc: "İnsan idraki ve dikey yükseliş damgası.", connections: "BİR, YKOS 100", score: "%98.7", x: 450, y: 70, r: 16, color: "#10b981", atlasRef: "ATLAS-25", position: { x: 450, y: 70, layer: "ROOT" }, resonance: { intensity: 8.7, frequency: 432, color: "#10b981" } },
+    { id: "BA", label: "BA — Bağlantı & Köprü", desc: "İki noktayı birleştiren temel morfem.", connections: "YKOS 100, ÇEV", score: "%98.5", x: 410, y: 60, r: 16, color: "#06b6d4", atlasRef: "ATLAS-26", position: { x: 410, y: 60, layer: "ROOT" }, resonance: { intensity: 8.5, frequency: 528, color: "#06b6d4" } },
+    { id: "ÇEV", label: "ÇEV — Koruyucu Daire", desc: "Merkezi saran çember ve sınır morfolojisi.", connections: "YKOS 100, BA, ÇATALHÖYÜK", score: "%98.9", x: 360, y: 70, r: 17, color: "#06b6d4", atlasRef: "ATLAS-27", position: { x: 360, y: 70, layer: "ROOT" }, resonance: { intensity: 8.9, frequency: 639, color: "#06b6d4" } },
+    { id: "AY", label: "AY — Döngüsel Zaman", desc: "Hilal formu, kozmik takvim ve kadınsal ilke.", connections: "O, ANADOLU", score: "%98.6", x: 570, y: 130, r: 15, color: "#38bdf8", atlasRef: "ATLAS-28", position: { x: 570, y: 130, layer: "ROOT" }, resonance: { intensity: 8.6, frequency: 741, color: "#38bdf8" } },
+    { id: "KÜN", label: "KÜN — Güneş & Işık", desc: "Merkezdeki ışık kaynağı ve ısı damgası.", connections: "O, BİR", score: "%98.9", x: 480, y: 130, r: 15, color: "#ffd700", atlasRef: "ATLAS-29", position: { x: 480, y: 130, layer: "ROOT" }, resonance: { intensity: 8.9, frequency: 852, color: "#ffd700" } },
+    { id: "TÖRE", label: "TÖRE — Kozmik Denge & Adalet", desc: "Dört yönün ve gök kubbenin sarsılmaz nizamı.", connections: "O, YKOS 1000", score: "%99.1", x: 530, y: 40, r: 16, color: "#a855f7", atlasRef: "ATLAS-30", position: { x: 530, y: 40, layer: "ROOT" }, resonance: { intensity: 9.1, frequency: 963, color: "#a855f7" } },
+    { id: "ÖK", label: "ÖK — Yüce Akıl & Yaratıcı", desc: "Öksökö (Çift başlı kartal) ve kozmik zeka damgası.", connections: "O, TÖRE", score: "%99.3", x: 470, y: 30, r: 15, color: "#a855f7", atlasRef: "ATLAS-31", position: { x: 470, y: 30, layer: "ROOT" }, resonance: { intensity: 9.3, frequency: 432, color: "#a855f7" } },
+    { id: "EL", label: "EL — İrade & Tasarım", desc: "Göbeklitepe stellerindeki el ve kavrayış damgası.", connections: "GÖBEKLİTEPE, ER", score: "%98.8", x: 730, y: 150, r: 15, color: "#10b981", atlasRef: "ATLAS-32", position: { x: 730, y: 150, layer: "ROOT" }, resonance: { intensity: 8.8, frequency: 528, color: "#10b981" } },
+    { id: "BERING", label: "Bering Boğazı Geçiş Hattı", desc: "Kuzey Asya'dan Amerika'ya damga transfer koridoru.", connections: "ASYA, AMERİKA", score: "%97.8", x: 190, y: 350, r: 14, color: "#f43f5e", atlasRef: "ATLAS-33", position: { x: 190, y: 350, layer: "CORRIDOR" }, resonance: { intensity: 7.8, frequency: 639, color: "#f43f5e" } },
+    { id: "H-DAMGA", label: "H-Damgası (Gök-Yer Bağı)", desc: "İki dikey aksı bağlayan yatay köprü simgesi.", connections: "GÖBEKLİTEPE, BA", score: "%99.6", x: 720, y: 100, r: 15, color: "#ffd700", atlasRef: "ATLAS-34", position: { x: 720, y: 100, layer: "ROOT" }, resonance: { intensity: 9.6, frequency: 741, color: "#ffd700" } }
   ];
 
   const [selectedNode, setSelectedNode] = useState(nodes[0]);
@@ -102,8 +116,8 @@ export default function BubbleMatrix({ onGoHome, onSelectNode }) {
     triggerPipeline(node);
 
     const time = new Date().toLocaleTimeString("tr-TR");
-    const log1 = `[${time}] ⚡ [DÜĞÜM SEÇİLDİ] >> ${node.label}`;
-    const log2 = `[${time}] 📖 [AÇIKLAMA] ${node.desc}`;
+    const log1 = `[${time}] ⚡ [DÜĞÜM SEÇİLDİ] >> ${node.label} (${node.atlasRef})`;
+    const log2 = `[${time}] 📖 [AÇIKLAMA] ${node.desc} | Frekans: ${node.resonance.frequency}Hz`;
     const log3 = `[${time}] 🔗 [BAĞLANTILAR] ${node.connections} | Rezonans Skoru: ${node.score}`;
 
     setLogs((prev) => [...prev.slice(-18), log1, log2, log3]);
@@ -117,7 +131,7 @@ export default function BubbleMatrix({ onGoHome, onSelectNode }) {
         <div style={{ display: "flex", gap: "15px", fontSize: "0.8rem" }}>
           <span style={{ color: "#ffd700" }}>⚡ QuantumFlux: <strong style={{ color: "#22c55e" }}>Aktif (40+ Düğüm)</strong></span>
           <span style={{ color: "#38bdf8" }}>🔵 Core Field: <strong>Senkronize</strong></span>
-          <span style={{ color: "#aaa" }}>📍 Atlas: <strong>Göbeklitepe & Saymalıtaş Hatları Bağlı</strong></span>
+          <span style={{ color: "#aaa" }}>📍 Atlas Ref: <strong>Göbeklitepe & Saymalıtaş Hatları Bağlı</strong></span>
         </div>
       </div>
 
@@ -125,10 +139,15 @@ export default function BubbleMatrix({ onGoHome, onSelectNode }) {
       {selectedNode && (
         <div style={{ background: "rgba(255, 215, 0, 0.06)", border: "1.5px solid #ffd700", borderRadius: "8px", padding: "10px 14px", marginBottom: "10px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
-            <h4 style={{ margin: 0, color: "#ffd700", fontSize: "0.95rem" }}>{selectedNode.label}</h4>
+            <div style={{ display: "flex", gap: "10px", alignItems: "center", marginBottom: "2px" }}>
+              <h4 style={{ margin: 0, color: "#ffd700", fontSize: "0.95rem" }}>{selectedNode.label}</h4>
+              <span style={{ fontSize: "0.68rem", background: "#f59e0b", color: "#000", fontWeight: "bold", padding: "1px 6px", borderRadius: "4px" }}>
+                {selectedNode.atlasRef}
+              </span>
+            </div>
             <p style={{ margin: "3px 0 4px 0", fontSize: "0.8rem", color: "#ddd" }}>{selectedNode.desc}</p>
             <div style={{ fontSize: "0.74rem", color: "#bbb" }}>
-              Bağlantılar: <span style={{ color: "#38bdf8" }}>{selectedNode.connections}</span> | Rezonans Skoru: <span style={{ color: "#22c55e", fontWeight: "bold" }}>{selectedNode.score}</span>
+              Bağlantılar: <span style={{ color: "#38bdf8" }}>{selectedNode.connections}</span> | Rezonans: <span style={{ color: "#22c55e", fontWeight: "bold" }}>{selectedNode.score}</span> (Int: {selectedNode.resonance.intensity}, Frek: {selectedNode.resonance.frequency}Hz)
             </div>
           </div>
           <button onClick={() => setSelectedNode(null)} style={{ background: "transparent", border: "none", color: "#ffd700", fontSize: "1.4rem", cursor: "pointer", padding: "0 8px" }}>×</button>
@@ -188,18 +207,18 @@ export default function BubbleMatrix({ onGoHome, onSelectNode }) {
             return (
               <g key={node.id} onClick={() => handleBubbleClick(node)} style={{ cursor: "pointer" }}>
                 <circle
-                  cx={node.x}
-                  cy={node.y}
+                  cx={node.position.x}
+                  cy={node.position.y}
                   r={isSelected ? node.r + 3 : node.r}
                   fill="#000"
-                  stroke={isSelected ? "#fff" : node.color}
+                  stroke={isSelected ? "#fff" : node.resonance.color}
                   strokeWidth={isSelected ? "3.5" : "2"}
-                  filter={`drop-shadow(0 0 ${isSelected ? "14px" : "7px"} ${node.color})`}
+                  filter={`drop-shadow(0 0 ${isSelected ? "14px" : "7px"} ${node.resonance.color})`}
                   style={{ transition: "all 0.2s" }}
                 />
                 <text
-                  x={node.x}
-                  y={node.y + 3}
+                  x={node.position.x}
+                  y={node.position.y + 3}
                   fill="#fff"
                   fontSize={node.r > 20 ? "9px" : "7.5px"}
                   fontWeight="bold"
