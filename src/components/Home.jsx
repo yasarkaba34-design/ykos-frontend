@@ -1,13 +1,34 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import MatrixToggle from "./MatrixToggle";
 import "./Home.css";
+
 import archive from "../api/archive.json";
 import ArchiveList from "../components/ArchiveList";
 
-<ArchiveList items={archive} />
+import { runFluxEngine } from "../ykos-core/runFluxEngine";
 
 export default function Home() {
   const [search, setSearch] = useState("");
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    if (!search.trim()) return;
+
+    // YKOS Motorunu çalıştır
+    const result = runFluxEngine({
+      chain: [{ id: search }]
+    });
+
+    // Sonuç sayfasına gönder
+    navigate("/result", { state: { result } });
+  };
+
+  // Arşiv filtreleme
+  const filteredArchive = archive.filter(item =>
+    item.title.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="home-wrapper">
@@ -28,17 +49,13 @@ export default function Home() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button className="search-btn">Ara</button>
+        <button className="search-btn" onClick={handleSearch}>
+          Ara
+        </button>
       </div>
 
-      {/* --- ÇÖZÜMLER PANELİ (STABİL SÜRÜMDEN) --- */}
-      <div className="solutions-panel">
-        <h2>YKOS Çözümleri ve İndeksler</h2>
-
-        <div className="solution-item">Kök Hece Matrisi</div>
-        <div className="solution-item">Damga Atlası</div>
-        <div className="solution-item">Göç & Akış Haritası</div>
-      </div>
+      {/* --- ARŞİV LİSTESİ --- */}
+      <ArchiveList items={filteredArchive} />
 
       {/* --- MATRİSLERİ TEK TUŞLA AÇAN SİSTEM --- */}
       <MatrixToggle data={[]} />

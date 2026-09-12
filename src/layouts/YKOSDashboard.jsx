@@ -38,41 +38,29 @@ export default function YKOSDashboard({
   const [selectedPoster, setSelectedPoster] = useState(YKOS_POSTERS[0]);
   const [searchQuery, setSearchQuery] = useState("");
   const [adminRecords, setAdminRecords] = useState([]);
-// Yeni kayıt ekleme fonksiyonu
-  const handleDirectPublish = () => {
-    if (!title) {
-      alert("Lütfen başlık giriniz.");
-      return;
-    }
 
-    const newRecord = {
-      id: Date.now().toString(),
-      title: title,
-      summary: summary,
-      content: content,
-      category: category,
-      image: image || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe",
-      status: "published",
-      durum: "onaylandi",
-      date: "Bugün"
-    };
+  // 🎥 VİDEO ARŞİVİ MODALI İÇİN STATE TANIMLARI
+  const [videoModalOpen, setVideoModalOpen] = useState(false);
+  const [allVideoRecords, setAllVideoRecords] = useState([]);
+  const [activeVideo, setActiveVideo] = useState(null);
 
+  // Butona tıklandığında çalışacak fonksiyon
+  const handleOpenVideoArchive = () => {
     try {
-      const existing = JSON.parse(localStorage.getItem("ykos_admin_records") || "[]");
-      const updated = [newRecord, ...existing];
-      localStorage.setItem("ykos_admin_records", JSON.stringify(updated));
-      setAdminRecords(updated);
-      
-      // Formu sıfırla
-      setTitle("");
-      setSummary("");
-      setContent("");
-      alert("İçerik başarıyla yayınlandı!");
-      window.location.reload(); // Sayfayı yenileyerek ana ekrana yansıt
+      const saved = JSON.parse(localStorage.getItem("ykos_admin_records") || "[]");
+      const vids = saved.filter(r => r.videoUrl || r.video || r.videoBaglantisi);
+      setAllVideoRecords(vids);
+      if (vids.length > 0) {
+        setActiveVideo(vids[0]);
+        setVideoModalOpen(true);
+      } else {
+        alert("Henüz sistemde video eklenmiş bir kayıt bulunmuyor.");
+      }
     } catch (e) {
       console.error(e);
     }
   };
+
   const t = (translations && translations[currentLang]) ? translations[currentLang] : (translations?.TR || {});
 
   useEffect(() => {
@@ -168,15 +156,16 @@ export default function YKOSDashboard({
   const handleCardClick = (card) => {
     if (card.isMatrixCard) {
       onVisualize();
-    } else {
+    } else if (card.id) {
       onNavigateRead(card.id);
+    } else {
+      onNavigateRead(card.title || "detay");
     }
   };
 
   return (
     <div style={{ width: "100%", maxWidth: "1280px", margin: "0 auto", padding: "10px", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
       
-      {/* MOBİL VE MASAÜSTÜ DUYARLI KESİN CSS AYARLARI */}
       <style>{`
         @media (max-width: 768px) {
           .ykos-main-content-grid {
@@ -196,7 +185,6 @@ export default function YKOSDashboard({
       {/* 1. ÜST BAR & YKOS KURUMSAL MÜHÜR */}
       <div style={{ ...cardStyle, paddingTop: "0px", position: "relative" }}>
         
-        {/* SOL ÜST KÖŞE BUTONU: MENÜ */}
         <div style={{ position: "absolute", left: "14px", top: "14px", zIndex: 10 }}>
           <button
             onClick={() => setMenuOpen(!menuOpen)}
@@ -218,7 +206,6 @@ export default function YKOSDashboard({
           </button>
         </div>
 
-        {/* SAĞ ÜST KÖŞE: DİL SEÇİMİ */}
         <div style={{ position: "absolute", right: "14px", top: "14px", zIndex: 10 }}>
           <div style={{ position: "relative" }}>
             <span
@@ -243,18 +230,10 @@ export default function YKOSDashboard({
 
             {langOpen && (
               <div style={{
-                position: "absolute",
-                right: 0,
-                top: "110%",
-                background: "#0c101d",
-                border: "1.5px solid #f59e0b",
-                borderRadius: "6px",
-                padding: "4px",
-                zIndex: 50,
-                display: "grid",
-                gridTemplateColumns: "1fr",
-                gap: "2px",
-                minWidth: "110px"
+                position: "absolute", right: 0, top: "110%",
+                background: "#0c101d", border: "1.5px solid #f59e0b",
+                borderRadius: "6px", padding: "4px", zIndex: 50,
+                display: "grid", gridTemplateColumns: "1fr", gap: "2px", minWidth: "110px"
               }}>
                 {languages.map((l) => (
                   <button
@@ -266,13 +245,8 @@ export default function YKOSDashboard({
                     style={{
                       background: currentLang === l.code ? "#f59e0b" : "transparent",
                       color: currentLang === l.code ? "#000" : "#fff",
-                      border: "none",
-                      padding: "4px 8px",
-                      textAlign: "left",
-                      fontSize: "0.75rem",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      borderRadius: "4px"
+                      border: "none", padding: "4px 8px", textAlign: "left",
+                      fontSize: "0.75rem", fontWeight: "bold", cursor: "pointer", borderRadius: "4px"
                     }}
                   >
                     {l.label}
@@ -283,33 +257,16 @@ export default function YKOSDashboard({
           </div>
         </div>
 
-        {/* LOGO */}
         <div style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", marginTop: "0px", marginBottom: "8px" }}>
           <div style={{ margin: "0 0 6px 0", filter: "drop-shadow(0 0 16px rgba(245, 158, 11, 0.45))" }}>
             <img
               src="/ykos-logo.png"
               alt="YKOS Logo"
-              style={{
-                width: "260px",
-                height: "auto",
-                maxHeight: "220px",
-                objectFit: "contain",
-                display: "block",
-                margin: "0 auto"
-              }}
+              style={{ width: "260px", height: "auto", maxHeight: "220px", objectFit: "contain", display: "block", margin: "0 auto" }}
             />
           </div>
 
-          <h1
-            style={{
-              color: "#f59e0b",
-              fontSize: "1.95rem",
-              fontWeight: "900",
-              letterSpacing: "3px",
-              margin: "0 0 4px 0",
-              textShadow: "0 0 20px rgba(245, 158, 11, 0.4)"
-            }}
-          >
+          <h1 style={{ color: "#f59e0b", fontSize: "1.95rem", fontWeight: "900", letterSpacing: "3px", margin: "0 0 4px 0", textShadow: "0 0 20px rgba(245, 158, 11, 0.4)" }}>
             YKOS BİLGİ SİSTEMİ
           </h1>
 
@@ -318,7 +275,6 @@ export default function YKOSDashboard({
           </p>
         </div>
 
-        {/* MENÜ AÇILIR ALANI */}
         {menuOpen && (
           <div style={{ marginTop: "14px", borderTop: "1px dashed rgba(255, 215, 0, 0.3)", paddingTop: "12px" }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "12px" }}>
@@ -330,10 +286,7 @@ export default function YKOSDashboard({
                 🏛️ {t.nav?.about || "HAKKIMIZDA"}
               </button>
 
-              <button 
-                onClick={() => { setMenuOpen(false); setPosterModalOpen(true); }} 
-                style={{ ...btnBaseStyle, border: "1.5px solid #f59e0b", background: "rgba(245, 158, 11, 0.15)", color: "#f59e0b", fontWeight: "900" }}
-              >
+              <button onClick={() => { setMenuOpen(false); setPosterModalOpen(true); }} style={{ ...btnBaseStyle, border: "1.5px solid #f59e0b", background: "rgba(245, 158, 11, 0.15)", color: "#f59e0b", fontWeight: "900" }}>
                 🖼️ 11'Lİ AFİŞ & MANİFESTO SERİSİ
               </button>
 
@@ -371,36 +324,20 @@ export default function YKOSDashboard({
               </button>
             </div>
           </div>
+
         )}
       </div>
 
       {/* 2. DİNAMİK ARAMA BARI */}
       <div style={{ marginBottom: "12px" }}>
-        <SearchBar 
-          placeholder={t?.searchPlaceholder || "Arşivde veya Matriste Ara..."} 
-          onSearch={(q) => setSearchQuery(q)} 
-        />
+        <SearchBar placeholder={t?.searchPlaceholder || "Arşivde veya Matriste Ara..."} onSearch={(q) => setSearchQuery(q)} />
       </div>
 
       {/* 3. DİNAMİK SAYAÇLAR */}
       <div style={cardStyle}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "10px" }}>
           {initialStats.map((item, idx) => (
-            <div 
-              key={idx} 
-              style={{ 
-                background: "rgba(255, 255, 255, 0.02)", 
-                border: "1px solid rgba(255, 215, 0, 0.35)", 
-                borderRadius: "10px", 
-                padding: "12px 6px", 
-                textAlign: "center", 
-                display: "flex", 
-                flexDirection: "column", 
-                alignItems: "center", 
-                justifyContent: "center", 
-                boxShadow: "inset 0 0 10px rgba(0,0,0,0.5)" 
-              }}
-            >
+            <div key={idx} style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 215, 0, 0.35)", borderRadius: "10px", padding: "12px 6px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", boxShadow: "inset 0 0 10px rgba(0,0,0,0.5)" }}>
               <div style={{ fontSize: "1.5rem", marginBottom: "4px" }}>{item.icon}</div>
               <div style={{ color: "#ffffff", fontWeight: "900", fontSize: "1.15rem", letterSpacing: "0.5px" }}>{item.count}</div>
               <div style={{ color: "#aaaaaa", fontSize: "0.75rem", fontWeight: "bold", marginTop: "2px" }}>{item.label}</div>
@@ -408,6 +345,27 @@ export default function YKOSDashboard({
           ))}
         </div>
       </div>
+<div style={{ display: "flex", gap: "10px", marginTop: "12px", flexWrap: "wrap" }}>
+  <button 
+    onClick={() => {
+      setVideoModalOpen(false);
+      onNavigateRead(activeVideo.id);
+    }}
+    style={{ flex: 1, background: "rgba(255, 215, 0, 0.2)", border: "1.5px solid #ffd700", color: "#ffd700", padding: "8px 16px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}
+  >
+    📖 Bu İçeriğin Detay Sayfasına Git ➔
+  </button>
+
+  <button
+    onClick={() => {
+      navigator.clipboard.writeText(window.location.href);
+      alert("Bağlantı panoya kopyalandı! Dilediğiniz yerde paylaşabilirsiniz.");
+    }}
+    style={{ background: "rgba(56, 189, 248, 0.15)", border: "1.5px solid #38bdf8", color: "#38bdf8", padding: "8px 16px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}
+  >
+    📤 Paylaş
+  </button>
+</div>
 
       {/* 4. ANA GÖVDE: YKOS ÇÖZÜMLÜLERİ VE İNDEKSLER */}
       <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
@@ -417,7 +375,6 @@ export default function YKOSDashboard({
 
         <div className="ykos-main-content-grid" style={{ display: "grid", gridTemplateColumns: "2.3fr 1fr", gap: "14px", minHeight: "440px", maxHeight: "560px" }}>
           
-          {/* SOL-ORTA ARŞİV BÖLÜMÜ */}
           <div className="ykos-archive-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", overflowY: "auto", paddingRight: "6px" }}>
             {filteredGridCards.map((card, idx) => {
               if (card.isMatrixCard) {
@@ -425,23 +382,11 @@ export default function YKOSDashboard({
                   <div
                     key={`matrix-${idx}`}
                     onClick={() => handleCardClick(card)}
-                    style={{
-                      background: "rgba(6, 182, 212, 0.05)",
-                      border: "1.5px solid #06b6d4",
-                      borderRadius: "6px",
-                      padding: "10px 12px",
-                      cursor: "pointer",
-                      display: "flex",
-                      gap: "10px",
-                      alignItems: "center",
-                      transition: "all 0.2s"
-                    }}
+                    style={{ background: "rgba(6, 182, 212, 0.05)", border: "1.5px solid #06b6d4", borderRadius: "6px", padding: "10px 12px", cursor: "pointer", display: "flex", gap: "10px", alignItems: "center", transition: "all 0.2s" }}
                     onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#ffd700")}
                     onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#06b6d4")}
                   >
-                    <div style={{ width: "38px", height: "38px", background: "#081b26", border: "1px solid #06b6d4", borderRadius: "4px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>
-                      🌌
-                    </div>
+                    <div style={{ width: "38px", height: "38px", background: "#081b26", border: "1px solid #06b6d4", borderRadius: "4px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>🌌</div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: "0.82rem", fontWeight: "bold", color: "#ffd700" }}>{card.title}</div>
                       <div style={{ fontSize: "0.65rem", color: "#38bdf8", wordBreak: "break-all" }}>{card.desc}</div>
@@ -454,120 +399,49 @@ export default function YKOSDashboard({
                 <div
                   key={card.id || `card-${idx}`}
                   onClick={() => handleCardClick(card)}
-                  style={{
-                    background: "rgba(0, 255, 127, 0.02)",
-                    border: "1px solid rgba(0, 255, 127, 0.3)",
-                    borderRadius: "6px",
-                    padding: "9px 11px",
-                    cursor: "pointer",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                    transition: "all 0.2s"
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = "#00ff7f";
-                    e.currentTarget.style.background = "rgba(0, 255, 127, 0.08)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = "rgba(0, 255, 127, 0.3)";
-                    e.currentTarget.style.background = "rgba(0, 255, 127, 0.02)";
-                  }}
+                  style={{ background: "rgba(0, 255, 127, 0.02)", border: "1px solid rgba(0, 255, 127, 0.3)", borderRadius: "6px", padding: "9px 11px", cursor: "pointer", display: "flex", flexDirection: "column", justifyContent: "space-between", transition: "all 0.2s" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#00ff7f"; e.currentTarget.style.background = "rgba(0, 255, 127, 0.08)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(0, 255, 127, 0.3)"; e.currentTarget.style.background = "rgba(0, 255, 127, 0.02)"; }}
                 >
                   <div>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "6px", marginBottom: "4px" }}>
-                      <div style={{ fontSize: "0.75rem", fontWeight: "bold", color: "#00ff7f", lineHeight: "1.3" }}>
-                        ► {card.title}
-                      </div>
+                      <div style={{ fontSize: "0.75rem", fontWeight: "bold", color: "#00ff7f", lineHeight: "1.3" }}>► {card.title}</div>
                       {card.isNew && (
-                        <span style={{ background: "#22c55e", color: "#000", fontSize: "8px", fontWeight: "900", padding: "1px 4px", borderRadius: "2px", flexShrink: 0 }}>
-                          {t.newBadge || "YENİ"}
-                        </span>
+                        <span style={{ background: "#22c55e", color: "#000", fontSize: "8px", fontWeight: "900", padding: "1px 4px", borderRadius: "2px", flexShrink: 0 }}>{t.newBadge || "YENİ"}</span>
                       )}
                     </div>
-                    <p style={{ margin: 0, fontSize: "0.68rem", color: "#aaa", lineHeight: "1.35", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                      {card.desc}
-                    </p>
+                    <p style={{ margin: 0, fontSize: "0.68rem", color: "#aaa", lineHeight: "1.35", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{card.desc}</p>
                   </div>
                 </div>
               );
             })}
           </div>
 
-          {/* SAĞ SÜTUN: GÖRSEL ÖNİZLEMELİ ONAYLI İÇERİKLER */}
           <div style={{ display: "flex", flexDirection: "column", gap: "10px", background: "rgba(255, 215, 0, 0.02)", padding: "12px", borderRadius: "8px", border: "1.5px solid rgba(255, 215, 0, 0.3)", overflowY: "auto" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1.5px solid #ffd700", paddingBottom: "6px" }}>
-              <span style={{ color: "#ffd700", fontSize: "0.85rem", fontWeight: "bold", display: "flex", alignItems: "center", gap: "6px" }}>
-                📑 {t.approvedTitle || "ONAYLI İÇERİK & VERİ"}
-              </span>
-              <span style={{ background: "#ffd700", color: "#000", fontSize: "8.5px", fontWeight: "900", padding: "2px 6px", borderRadius: "3px" }}>
-                {t.publishBadge || "YAYIN"}
-              </span>
+              <span style={{ color: "#ffd700", fontSize: "0.85rem", fontWeight: "bold", display: "flex", alignItems: "center", gap: "6px" }}>📑 {t.approvedTitle || "ONAYLI İÇERİK & VERİ"}</span>
+              <span style={{ background: "#ffd700", color: "#000", fontSize: "8.5px", fontWeight: "900", padding: "2px 6px", borderRadius: "3px" }}>{t.publishBadge || "YAYIN"}</span>
             </div>
 
             {rightColumnItems.map((item, idx) => {
               const itemImg = item.image || item.gorsel || item.imageUrl || item.resim;
-
               return (
                 <div
                   key={`right-item-${idx}`}
                   onClick={item.onClick}
-                  style={{
-                    display: "flex",
-                    gap: "10px",
-                    alignItems: "center",
-                    background: idx === 0 ? "rgba(255, 215, 0, 0.08)" : "#0c101d",
-                    border: idx === 0 ? "1.5px solid #ffd700" : "1px solid rgba(255, 215, 0, 0.25)",
-                    borderRadius: "6px",
-                    padding: "10px",
-                    cursor: "pointer",
-                    transition: "all 0.2s"
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = "#ffd700";
-                    e.currentTarget.style.background = "rgba(255, 215, 0, 0.15)";
-                    e.currentTarget.style.transform = "translateX(2px)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = idx === 0 ? "#ffd700" : "rgba(255, 215, 0, 0.25)";
-                    e.currentTarget.style.background = idx === 0 ? "rgba(255, 215, 0, 0.08)" : "#0c101d";
-                    e.currentTarget.style.transform = "none";
-                  }}
+                  style={{ display: "flex", gap: "10px", alignItems: "center", background: idx === 0 ? "rgba(255, 215, 0, 0.08)" : "#0c101d", border: idx === 0 ? "1.5px solid #ffd700" : "1px solid rgba(255, 215, 0, 0.25)", borderRadius: "6px", padding: "10px", cursor: "pointer", transition: "all 0.2s" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#ffd700"; e.currentTarget.style.background = "rgba(255, 215, 0, 0.15)"; e.currentTarget.style.transform = "translateX(2px)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = idx === 0 ? "#ffd700" : "rgba(255, 215, 0, 0.25)"; e.currentTarget.style.background = idx === 0 ? "rgba(255, 215, 0, 0.08)" : "#0c101d"; e.currentTarget.style.transform = "none"; }}
                 >
-                  <div style={{
-                    width: "42px",
-                    height: "42px",
-                    background: "#1a1505",
-                    border: "1px solid #ffd700",
-                    borderRadius: "4px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "16px",
-                    flexShrink: 0,
-                    overflow: "hidden"
-                  }}>
-                    {itemImg ? (
-                      <img
-                        src={itemImg}
-                        alt={item.title}
-                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                      />
-                    ) : (
-                      item.icon || "📑"
-                    )}
+                  <div style={{ width: "42px", height: "42px", background: "#1a1505", border: "1px solid #ffd700", borderRadius: "4px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px", flexShrink: 0, overflow: "hidden" }}>
+                    {itemImg ? <img src={itemImg} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : (item.icon || "📑")}
                   </div>
-
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2px" }}>
-                      <h4 style={{ margin: 0, fontSize: "0.78rem", color: "#ffd700", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                        {item.title}
-                      </h4>
+                      <h4 style={{ margin: 0, fontSize: "0.78rem", color: "#ffd700", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.title}</h4>
                       <span style={{ fontSize: "0.62rem", color: "#22c55e", fontWeight: "bold" }}>{t.contentLink || "İÇERİK ➔"}</span>
                     </div>
-                    <p style={{ margin: 0, fontSize: "0.66rem", color: "#ccc", lineHeight: "1.3", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                      {item.desc}
-                    </p>
+                    <p style={{ margin: 0, fontSize: "0.66rem", color: "#ccc", lineHeight: "1.3", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{item.desc}</p>
                   </div>
                 </div>
               );
@@ -576,52 +450,124 @@ export default function YKOSDashboard({
         </div>
 
         {/* ALT BUTTONLAR */}
-        <div style={{ display: "flex", gap: "12px", justifyContent: "center", width: "100%", maxWidth: "800px", margin: "14px auto 0 auto" }}>
-          <button onClick={onVisualize} style={{ flex: 1, background: "linear-gradient(135deg, #ffd700, #b8860b)", color: "#000", border: "none", padding: "12px", borderRadius: "8px", fontWeight: "900", fontSize: "0.9rem", cursor: "pointer" }}>
+        <div style={{ display: "flex", gap: "10px", justifyContent: "center", width: "100%", maxWidth: "950px", margin: "14px auto 0 auto", flexWrap: "wrap" }}>
+          <button onClick={onVisualize} style={{ flex: 1, minWidth: "220px", background: "linear-gradient(135deg, #ffd700, #b8860b)", color: "#000", border: "none", padding: "12px", borderRadius: "8px", fontWeight: "900", fontSize: "0.85rem", cursor: "pointer" }}>
             {t.visualizeBtn || "BALONCUK MATRİSİNİ GÖRSELLEŞTİR →"}
           </button>
-          <button onClick={onNavigateAcikVeri} style={{ flex: 1, background: "linear-gradient(135deg, #00ff7f, #008000)", color: "#000", border: "none", padding: "12px", borderRadius: "8px", fontWeight: "900", fontSize: "0.9rem", cursor: "pointer" }}>
+          
+          <button onClick={onNavigateAcikVeri} style={{ flex: 1, minWidth: "220px", background: "linear-gradient(135deg, #00ff7f, #008000)", color: "#000", border: "none", padding: "12px", borderRadius: "8px", fontWeight: "900", fontSize: "0.85rem", cursor: "pointer" }}>
             🌐 {t.openDataBtn || "AÇIK VERİ PORTALINA GİT"}
+          </button>
+
+          <button onClick={handleOpenVideoArchive} style={{ flex: 1, minWidth: "220px", background: "linear-gradient(135deg, #ef4444, #991b1b)", color: "#fff", border: "none", padding: "12px", borderRadius: "8px", fontWeight: "900", fontSize: "0.85rem", cursor: "pointer" }}>
+            🎥 VİDEO ARŞİVİ & SUNUMLAR
           </button>
         </div>
       </div>
 
+      {/* 🎥 VİDEO ARŞİVİ SEÇİM MODALI */}
+      {videoModalOpen && (
+        <div style={{
+          position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: "rgba(0, 0, 0, 0.88)", backdropFilter: "blur(8px)",
+          zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: "16px"
+        }}>
+          <div style={{
+            background: "#050811", border: "2px solid #ffd700", borderRadius: "16px",
+            width: "100%", maxWidth: "1050px", maxHeight: "90vh", display: "flex", flexDirection: "column",
+            boxShadow: "0 0 35px rgba(255, 215, 0, 0.35)", overflow: "hidden"
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 20px", borderBottom: "1.5px solid rgba(255, 215, 0, 0.3)", background: "rgba(255, 215, 0, 0.05)" }}>
+              <h2 style={{ margin: 0, fontSize: "1.15rem", color: "#ffd700", fontWeight: "900" }}>
+                🎥 YKOS VİDEO ARŞİVİ VE SUNUM LİSTESİ
+              </h2>
+              <button onClick={() => setVideoModalOpen(false)} style={{ background: "transparent", border: "1px solid #ef4444", color: "#ef4444", width: "32px", height: "32px", borderRadius: "50%", cursor: "pointer", fontWeight: "bold" }}>✕</button>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: "16px", padding: "18px", overflowY: "auto", flex: 1 }}>
+              <div>
+                {activeVideo ? (
+                  <div>
+                    <h3 style={{ color: "#ffd700", fontSize: "1.1rem", marginBottom: "10px" }}>
+                      {activeVideo.title || activeVideo.baslik}
+                    </h3>
+                    <div style={{ position: "relative", paddingBottom: "56.25%", height: 0, overflow: "hidden", borderRadius: "8px", border: "1.5px solid #ffd700" }}>
+                      <iframe
+                        src={(() => {
+                          const url = activeVideo.videoUrl || activeVideo.video || activeVideo.videoBaglantisi || "";
+                          if (url.includes("embed")) return url;
+                          const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+                          return match ? `https://www.youtube.com/embed/${match[1]}` : url;
+                        })()}
+                        title="Video Oynatıcı"
+                        style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: 0 }}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </div>
+                    <p style={{ color: "#ccc", fontSize: "0.85rem", marginTop: "10px", lineHeight: "1.5" }}>
+                      {activeVideo.summary || activeVideo.ozet || activeVideo.content || ""}
+                    </p>
+                    <button 
+                      onClick={() => {
+                        setVideoModalOpen(false);
+                        onNavigateRead(activeVideo.id);
+                      }}
+                      style={{ marginTop: "10px", background: "rgba(255, 215, 0, 0.2)", border: "1px solid #ffd700", color: "#ffd700", padding: "8px 16px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}
+                    >
+                      📖 Bu İçeriğin Detay Sayfasına Git ➔
+                    </button>
+                  </div>
+                ) : (
+                  <p style={{ color: "#888" }}>Lütfen listeden bir video seçin.</p>
+                )}
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px", overflowY: "auto", maxHeight: "420px", paddingRight: "4px" }}>
+                {allVideoRecords.map((vid, i) => {
+                  const isSelected = activeVideo?.id === vid.id;
+                  return (
+                    <div
+                      key={vid.id || i}
+                      onClick={() => setActiveVideo(vid)}
+                      style={{
+                        background: isSelected ? "rgba(245, 158, 11, 0.2)" : "#0c101d",
+                        border: isSelected ? "1.5px solid #f59e0b" : "1px solid rgba(255, 215, 0, 0.2)",
+                        borderRadius: "8px", padding: "10px 12px", cursor: "pointer",
+                        display: "flex", gap: "10px", alignItems: "center"
+                      }}
+                    >
+                      <span style={{ fontSize: "1.5rem" }}>▶️</span>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ color: isSelected ? "#ffd700" : "#fff", fontWeight: "bold", fontSize: "0.85rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                          {vid.title || vid.baslik}
+                        </div>
+                        <div style={{ color: "#94a3b8", fontSize: "0.7rem", marginTop: "2px" }}>
+                          {vid.category || vid.kategori || "YKOS Sunum"}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 5. 11'Lİ YKOS AFİŞ & MANİFESTO VİTRİN MODALI */}
       {posterModalOpen && (
         <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: "rgba(0, 0, 0, 0.88)",
-          backdropFilter: "blur(8px)",
-          zIndex: 9999,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "16px"
+          position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: "rgba(0, 0, 0, 0.88)", backdropFilter: "blur(8px)",
+          zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: "16px"
         }}>
           <div style={{
-            background: "#050811",
-            border: "2px solid #ffd700",
-            borderRadius: "16px",
-            width: "100%",
-            maxWidth: "1050px",
-            maxHeight: "90vh",
-            display: "flex",
-            flexDirection: "column",
-            boxShadow: "0 0 35px rgba(255, 215, 0, 0.35)",
-            overflow: "hidden"
+            background: "#050811", border: "2px solid #ffd700", borderRadius: "16px",
+            width: "100%", maxWidth: "1050px", maxHeight: "90vh", display: "flex", flexDirection: "column",
+            boxShadow: "0 0 35px rgba(255, 215, 0, 0.35)", overflow: "hidden"
           }}>
-            <div style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              padding: "16px 20px",
-              borderBottom: "1.5px solid rgba(255, 215, 0, 0.3)",
-              background: "rgba(255, 215, 0, 0.05)"
-            }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 20px", borderBottom: "1.5px solid rgba(255, 215, 0, 0.3)", background: "rgba(255, 215, 0, 0.05)" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                 <span style={{ fontSize: "1.5rem" }}>🖼️</span>
                 <div>
@@ -633,67 +579,23 @@ export default function YKOSDashboard({
                   </span>
                 </div>
               </div>
-              <button
-                onClick={() => setPosterModalOpen(false)}
-                style={{
-                  background: "transparent",
-                  border: "1px solid #ef4444",
-                  color: "#ef4444",
-                  width: "32px",
-                  height: "32px",
-                  borderRadius: "50%",
-                  cursor: "pointer",
-                  fontWeight: "bold",
-                  fontSize: "1rem"
-                }}
-              >
-                ✕
-              </button>
+              <button onClick={() => setPosterModalOpen(false)} style={{ background: "transparent", border: "1px solid #ef4444", color: "#ef4444", width: "32px", height: "32px", borderRadius: "50%", cursor: "pointer", fontWeight: "bold", fontSize: "1rem" }}>✕</button>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: "16px", padding: "18px", overflowY: "auto", flex: 1 }}>
-              
-              <div style={{
-                background: "linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(5, 8, 17, 0.95))",
-                border: "1.5px solid #f59e0b",
-                borderRadius: "12px",
-                padding: "24px",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                boxShadow: "inset 0 0 20px rgba(0,0,0,0.8)"
-              }}>
+              <div style={{ background: "linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(5, 8, 17, 0.95))", border: "1.5px solid #f59e0b", borderRadius: "12px", padding: "24px", display: "flex", flexDirection: "column", justifyContent: "space-between", boxShadow: "inset 0 0 20px rgba(0,0,0,0.8)" }}>
                 <div>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-                    <span style={{ background: "#f59e0b", color: "#000", fontWeight: "900", fontSize: "0.8rem", padding: "3px 8px", borderRadius: "4px" }}>
-                      PANEL {selectedPoster.no} / 11
-                    </span>
-                    <span style={{ color: "#38bdf8", fontSize: "0.75rem", fontWeight: "bold", border: "1px solid #38bdf8", padding: "2px 8px", borderRadius: "4px" }}>
-                      {selectedPoster.tag}
-                    </span>
+                    <span style={{ background: "#f59e0b", color: "#000", fontWeight: "900", fontSize: "0.8rem", padding: "3px 8px", borderRadius: "4px" }}>PANEL {selectedPoster.no} / 11</span>
+                    <span style={{ color: "#38bdf8", fontSize: "0.75rem", fontWeight: "bold", border: "1px solid #38bdf8", padding: "2px 8px", borderRadius: "4px" }}>{selectedPoster.tag}</span>
                   </div>
-
-                  <div style={{ fontSize: "3.2rem", margin: "14px 0", textAlign: "center" }}>
-                    {selectedPoster.icon}
-                  </div>
-
-                  <h3 style={{ color: "#ffd700", fontSize: "1.35rem", margin: "0 0 10px 0", fontWeight: "900" }}>
-                    {selectedPoster.title}
-                  </h3>
-
-                  <p style={{ color: "#e2e8f0", fontSize: "0.9rem", lineHeight: "1.6", margin: 0 }}>
-                    {selectedPoster.desc}
-                  </p>
+                  <div style={{ fontSize: "3.2rem", margin: "14px 0", textAlign: "center" }}>{selectedPoster.icon}</div>
+                  <h3 style={{ color: "#ffd700", fontSize: "1.35rem", margin: "0 0 10px 0", fontWeight: "900" }}>{selectedPoster.title}</h3>
+                  <p style={{ color: "#e2e8f0", fontSize: "0.9rem", lineHeight: "1.6", margin: 0 }}>{selectedPoster.desc}</p>
                 </div>
-
                 <div style={{ marginTop: "20px", paddingTop: "14px", borderTop: "1px dashed rgba(255, 215, 0, 0.25)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <span style={{ color: "#00ff7f", fontSize: "0.75rem", fontWeight: "bold" }}>● YKOS KÜLLİYAT ONAYLI</span>
-                  <button 
-                    onClick={() => { setPosterModalOpen(false); onNavigateMethod(); }}
-                    style={{ background: "rgba(245, 158, 11, 0.2)", border: "1px solid #f59e0b", color: "#f59e0b", padding: "6px 12px", borderRadius: "6px", fontSize: "0.75rem", fontWeight: "bold", cursor: "pointer" }}
-                  >
-                    METODOLOJİDE İNCELE ➔
-                  </button>
+                  <button onClick={() => { setPosterModalOpen(false); onNavigateMethod(); }} style={{ background: "rgba(245, 158, 11, 0.2)", border: "1px solid #f59e0b", color: "#f59e0b", padding: "6px 12px", borderRadius: "6px", fontSize: "0.75rem", fontWeight: "bold", cursor: "pointer" }}>METODOLOJİDE İNCELE ➔</button>
                 </div>
               </div>
 
@@ -704,37 +606,20 @@ export default function YKOSDashboard({
                     <div
                       key={p.id}
                       onClick={() => setSelectedPoster(p)}
-                      style={{
-                        background: isSelected ? "rgba(245, 158, 11, 0.15)" : "#0c101d",
-                        border: isSelected ? "1.5px solid #f59e0b" : "1px solid rgba(255, 215, 0, 0.2)",
-                        borderRadius: "8px",
-                        padding: "10px 12px",
-                        cursor: "pointer",
-                        display: "flex",
-                        gap: "10px",
-                        alignItems: "center",
-                        transition: "all 0.2s"
-                      }}
+                      style={{ background: isSelected ? "rgba(245, 158, 11, 0.15)" : "#0c101d", border: isSelected ? "1.5px solid #f59e0b" : "1px solid rgba(255, 215, 0, 0.2)", borderRadius: "8px", padding: "10px 12px", cursor: "pointer", display: "flex", gap: "10px", alignItems: "center", transition: "all 0.2s" }}
                     >
                       <span style={{ fontSize: "1.4rem" }}>{p.icon}</span>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <span style={{ color: isSelected ? "#ffd700" : "#ffffff", fontWeight: "bold", fontSize: "0.82rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                            {p.title}
-                          </span>
-                          <span style={{ color: "#f59e0b", fontSize: "0.7rem", fontWeight: "900", flexShrink: 0 }}>
-                            #{p.no}
-                          </span>
+                          <span style={{ color: isSelected ? "#ffd700" : "#ffffff", fontWeight: "bold", fontSize: "0.82rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.title}</span>
+                          <span style={{ color: "#f59e0b", fontSize: "0.7rem", fontWeight: "900", flexShrink: 0 }}>#{p.no}</span>
                         </div>
-                        <div style={{ color: "#94a3b8", fontSize: "0.68rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", marginTop: "2px" }}>
-                          {p.desc}
-                        </div>
+                        <div style={{ color: "#94a3b8", fontSize: "0.68rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", marginTop: "2px" }}>{p.desc}</div>
                       </div>
                     </div>
                   );
                 })}
               </div>
-
             </div>
           </div>
         </div>

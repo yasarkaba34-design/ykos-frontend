@@ -23,6 +23,7 @@ export default function YoneticiIcerikGirisi({ secilenVeri, onKayitTamamlandi })
     telifIzni: "Açık Kaynak (Serbest)",
     kapakGorseli: null,
     galeriGorselleri: [],
+    videoUrl: "", // 🎥 Yeni: Video Bağlantı Alanı
     kisaOzet: "",
     kapsamliAnaliz: "",
     durum: "onaylandi", // Yönetici doğrudan girerse onaylı
@@ -35,6 +36,7 @@ export default function YoneticiIcerikGirisi({ secilenVeri, onKayitTamamlandi })
       setFormData(prev => ({
         ...prev,
         ...secilenVeri,
+        videoUrl: secilenVeri.videoUrl || "",
         durum: "onaylandi"
       }));
     }
@@ -72,7 +74,7 @@ export default function YoneticiIcerikGirisi({ secilenVeri, onKayitTamamlandi })
     const yeniBekleme = beklemeHavuzu.filter(item => item.baslik !== formData.baslik);
     localStorage.setItem("ykos_konuk_havuzu", JSON.stringify(yeniBekleme));
 
-    alert("✓ Veri başarıyla akademik veritabanına ve canlı akışa aktarıldı!");
+    alert("✓ Veri ve video başarıyla akademik veritabanına ve canlı akışa aktarıldı!");
     if (onKayitTamamlandi) onKayitTamamlandi();
   };
 
@@ -145,7 +147,20 @@ export default function YoneticiIcerikGirisi({ secilenVeri, onKayitTamamlandi })
         />
       </div>
 
-      {/* 4. GÖRSEL VE ÇOKLU FOTOĞRAF ARŞİVİ */}
+      {/* 🎥 4. VİDEO BAĞLANTISI (YENİ) */}
+      <div style={formStyle.section}>
+        <label style={{ ...formStyle.label, color: '#38bdf8' }}>🎥 VİDEO BAĞLANTISI (YouTube / Video URL)</label>
+        <input 
+          type="text" 
+          name="videoUrl" 
+          placeholder="https://www.youtube.com/watch?v=..." 
+          value={formData.videoUrl} 
+          onChange={handleChange} 
+          style={{ ...formStyle.input, borderColor: '#38bdf8' }} 
+        />
+      </div>
+
+      {/* 5. GÖRSEL VE ÇOKLU FOTOĞRAF ARŞİVİ */}
       <div style={formStyle.section}>
         <label style={formStyle.label}>Ana Kapak Görseli</label>
         <input type="file" accept="image/*" onChange={(e) => handleGorselYukle(e, 'kapak')} style={formStyle.fileInput} />
@@ -159,7 +174,7 @@ export default function YoneticiIcerikGirisi({ secilenVeri, onKayitTamamlandi })
         <input type="file" multiple accept="image/*" onChange={(e) => handleGorselYukle(e, 'galeri')} style={formStyle.fileInput} />
       </div>
 
-      {/* 5. METİN VE ANALİZ ALANLARI */}
+      {/* 6. METİN VE ANALİZ ALANLARI */}
       <div style={formStyle.section}>
         <label style={formStyle.label}>Kısa Özet</label>
         <textarea 
@@ -186,7 +201,7 @@ export default function YoneticiIcerikGirisi({ secilenVeri, onKayitTamamlandi })
 
       {/* GÖNDER BUTONU */}
       <button type="submit" style={formStyle.submitBtn}>
-        🚀 AKADEMİK VERİYİ VERİTABANINA GÖNDER
+        🚀 AKADEMİK VERİYİ VE VİDEOYU VERİTABANINA GÖNDER
       </button>
 
     </form>

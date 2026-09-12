@@ -12,6 +12,7 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
   const [content, setContent] = useState("");
   const [mainImage, setMainImage] = useState("");
   const [galleryImages, setGalleryImages] = useState([]);
+  const [videoUrl, setVideoUrl] = useState(""); // 🎥 Yeni: Video URL alanı
 
   // Sayfalama
   const [currentPage, setCurrentPage] = useState(1);
@@ -83,7 +84,8 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
               summary: summary.trim(),
               content: content.trim(),
               image: mainImage || r.image,
-              gallery: galleryImages.length > 0 ? galleryImages : (r.gallery || [])
+              gallery: galleryImages.length > 0 ? galleryImages : (r.gallery || []),
+              videoUrl: videoUrl.trim() // Güncelleme
             }
           : r
       );
@@ -91,13 +93,14 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
       setEditingId(null);
     } else {
       const newRecord = {
-        id: "TUDITAM-" + Date.now(),
+        id: "YKOS-" + Date.now(),
         title: title.trim(),
         category,
         summary: summary.trim(),
         content: content.trim(),
         image: mainImage,
         gallery: galleryImages,
+        videoUrl: videoUrl.trim(), // Yeni kayıt video URL
         status: "published",
         durum: "onaylandi",
         date: new Date().toLocaleDateString("tr-TR")
@@ -112,6 +115,7 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
     setContent("");
     setMainImage("");
     setGalleryImages([]);
+    setVideoUrl("");
     loadRecords();
   };
 
@@ -134,6 +138,7 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
     setContent(record.content || record.icerik || "");
     setMainImage(record.image || record.mansetGorsel || "");
     setGalleryImages(record.gallery || record.galeri || []);
+    setVideoUrl(record.videoUrl || record.video || "");
   };
 
   const handleDelete = (id) => {
@@ -163,7 +168,7 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1.5px solid #ffd700", paddingBottom: "8px", marginBottom: "12px" }}>
         <div>
           <h1 style={{ color: "#ffd700", margin: "0 0 2px 0", fontSize: "1.25rem", letterSpacing: "1px", fontWeight: "900" }}>
-            ⚙️ TÜDİTAM İÇERİK, HABER & ONAY YÖNETİM MERKEZİ
+            ⚙️ YKOS İÇERİK & YÖNETİM MERKEZİ
           </h1>
           <div style={{ fontSize: "0.75rem", color: "#94a3b8" }}>
             Yetki: <b style={{ color: "#00ff7f" }}>{userRole.toUpperCase()}</b> | Toplam Arşiv: <b>{records.length}</b> | Onay Bekleyen: <b style={{ color: "#eab308" }}>{pendingRecords.length}</b>
@@ -187,14 +192,14 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
           <div style={{ background: "rgba(234, 179, 8, 0.03)", border: "1.5px solid #eab308", borderRadius: "8px", padding: "12px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(234, 179, 8, 0.3)", paddingBottom: "4px", marginBottom: "8px" }}>
               <h3 style={{ color: "#eab308", margin: 0, fontSize: "0.85rem" }}>
-                ⏳ ONAY BEKLEYEN AÇIK VERİ BULGULARI ({pendingRecords.length})
+                ⏳ ONAY BEKLEYEN VERİLER ({pendingRecords.length})
               </h3>
               <span style={{ fontSize: "0.68rem", color: "#aaa" }}>İncele & Yayına Al</span>
             </div>
 
             {pendingRecords.length === 0 ? (
               <div style={{ padding: "12px", textAlign: "center", color: "#64748b", fontSize: "0.75rem" }}>
-                Şu anda onay bekleyen yeni açık veri kaydı bulunmuyor.
+                Şu anda onay bekleyen yeni kayıt bulunmuyor.
               </div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: "8px", maxHeight: "200px", overflowY: "auto", paddingRight: "4px" }}>
@@ -205,13 +210,9 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
                       <span style={{ background: "#eab308", color: "#000", fontSize: "0.6rem", padding: "1px 4px", borderRadius: "2px", fontWeight: "900" }}>ONAY BEKLİYOR</span>
                     </div>
 
-                    <div style={{ fontSize: "0.68rem", color: "#38bdf8", marginBottom: "4px" }}>
-                      👤 {item.researcher ? `${item.researcher.name} (${item.researcher.email})` : "Konuk"} | 📍 {item.location || "Bölge Belirtilmedi"}
-                    </div>
-
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px dashed #334155", paddingTop: "5px" }}>
                       <span style={{ fontSize: "0.65rem", color: "#94a3b8" }}>
-                        {item.image ? "📸 Manşet Var" : "Görsel Yok"}
+                        {item.image ? "📸 Manşet Var" : "Görsel Yok"} {item.videoUrl ? "| 🎥 Video Var" : ""}
                       </span>
                       <div style={{ display: "flex", gap: "4px" }}>
                         <button onClick={() => handleApprove(item.id)} style={{ background: "#22c55e", color: "#000", border: "none", padding: "3px 8px", borderRadius: "3px", fontSize: "0.72rem", fontWeight: "900", cursor: "pointer" }}>
@@ -234,7 +235,7 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
           {/* 2. ALT: VERİ & HABER GİRİŞ FORMU */}
           <div style={{ background: "rgba(255, 215, 0, 0.02)", border: "1.5px solid rgba(255, 215, 0, 0.35)", borderRadius: "8px", padding: "12px" }}>
             <h3 style={{ color: "#ffd700", marginTop: 0, fontSize: "0.88rem", borderBottom: "1px solid #333", paddingBottom: "4px", marginBottom: "8px" }}>
-              {editingId ? "✏️ Kaydı Güncelle" : "➕ Yeni Kayıt & Haber Girişi"}
+              {editingId ? "✏️ Kaydı Güncelle" : "➕ Yeni İçerik & Video Girişi"}
             </h3>
 
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -260,6 +261,12 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
               <div>
                 <label style={{ display: "block", fontSize: "0.7rem", color: "#ffd700", marginBottom: "2px" }}>İçerik (Makale Metni)</label>
                 <textarea rows="4" placeholder="Detaylı açıklama..." value={content} onChange={(e) => setContent(e.target.value)} style={{ width: "100%", padding: "6px", background: "#060913", border: "1px solid #334155", color: "#fff", borderRadius: "4px", fontSize: "0.78rem", boxSizing: "border-box" }} />
+              </div>
+
+              {/* 🎥 VİDEO URL ALANI */}
+              <div>
+                <label style={{ display: "block", fontSize: "0.7rem", color: "#38bdf8", marginBottom: "2px" }}>🎥 Video Bağlantısı (YouTube / Video URL)</label>
+                <input type="text" placeholder="https://www.youtube.com/watch?v=..." value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} style={{ width: "100%", padding: "6px", background: "#060913", border: "1px solid #334155", color: "#fff", borderRadius: "4px", fontSize: "0.78rem", boxSizing: "border-box" }} />
               </div>
 
               <div style={{ background: "rgba(0,0,0,0.3)", padding: "8px", borderRadius: "5px", border: "1px solid #27272a" }}>
@@ -290,7 +297,7 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
                   {editingId ? "GÜNCELLEMEYİ KAYDET" : "⚡ DİREKT YAYINLA"}
                 </button>
                 {editingId && (
-                  <button type="button" onClick={() => { setEditingId(null); setTitle(""); setSummary(""); setContent(""); setMainImage(""); setGalleryImages([]); }} style={{ background: "#475569", color: "#fff", border: "none", padding: "9px", borderRadius: "5px", cursor: "pointer" }}>
+                  <button type="button" onClick={() => { setEditingId(null); setTitle(""); setSummary(""); setContent(""); setMainImage(""); setGalleryImages([]); setVideoUrl(""); }} style={{ background: "#475569", color: "#fff", border: "none", padding: "9px", borderRadius: "5px", cursor: "pointer" }}>
                     İptal
                   </button>
                 )}
@@ -319,7 +326,7 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
                   <th style={{ padding: "6px 4px" }}>Durum</th>
                   <th style={{ padding: "6px 4px" }}>Başlık</th>
                   <th style={{ padding: "6px 4px" }}>Kategori</th>
-                  <th style={{ padding: "6px 4px" }}>Görsel</th>
+                  <th style={{ padding: "6px 4px" }}>Medya</th>
                   <th style={{ padding: "6px 4px" }}>Tarih</th>
                   <th style={{ padding: "6px 4px", textAlign: "center" }}>İşlemler</th>
                 </tr>
@@ -341,7 +348,7 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
                         {r.category || r.kategori || "Damga"}
                       </td>
                       <td style={{ padding: "6px 4px", color: "#38bdf8", fontSize: "0.68rem" }}>
-                        {r.image ? "🖼️ Manşet" : ""} {galleryCount > 0 ? `+${galleryCount}` : (!r.image ? "-" : "")}
+                        {r.image ? "🖼️" : ""} {galleryCount > 0 ? `+${galleryCount}` : ""} {r.videoUrl ? "🎥 Video" : ""}
                       </td>
                       <td style={{ padding: "6px 4px", color: "#64748b", fontSize: "0.68rem" }}>
                         {r.date || r.tarih || "Bugün"}
