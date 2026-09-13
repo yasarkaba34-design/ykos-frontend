@@ -75,16 +75,20 @@ export default function YKOSDashboard({
     }
   }, []);
 
-  const languages = [
+   const languages = [
     { code: "TR", label: "Türkçe" },
     { code: "EN", label: "English" },
-    { code: "AZ", label: "Azərbaycan" },
-    { code: "KK", label: "Qazaqşa" },
-    { code: "KY", label: "Кыргызча" },
-    { code: "UZ", label: "Oʻzbekcha" },
-    { code: "RU", label: "Русский" },
     { code: "DE", label: "Deutsch" },
+    { code: "FR", label: "Français" },
+    { code: "ES", label: "Español" },
+    { code: "IT", label: "Italiano" },
+    { code: "JA", label: "日本語" },
+    { code: "ZH", label: "中文" },
+    { code: "RU", label: "Русский" },
+    { code: "AR", label: "العربية" },
+    { code: "FA", label: "فارسی" }
   ];
+
 
   const initialStats = [
     { icon: "🌐", count: "214", label: t.stats?.countries || "Ülkeler" },

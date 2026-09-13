@@ -1,11 +1,11 @@
-export const languages = ["tr", "en", "de", "fr", "es", "ru", "ar", "zh"];
+import { YKOS_LANGUAGES } from "../YKOS Core/languages";
 
 export default function LanguageSelector({ value, onChange }) {
   return (
     <select value={value} onChange={(e) => onChange(e.target.value)}>
-      {languages.map((lang) => (
-        <option key={lang} value={lang}>
-          {lang.toUpperCase()}
+      {YKOS_LANGUAGES.map((lang) => (
+        <option key={lang.code} value={lang.code}>
+          {lang.name}
         </option>
       ))}
     </select>

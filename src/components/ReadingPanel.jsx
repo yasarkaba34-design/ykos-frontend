@@ -1,5 +1,6 @@
 // src/components/ReadingPanel.jsx
 import React, { useState, useEffect } from "react";
+import { translations } from "../data/i18n";
 
 // Sizin hazırladığınız temiz ve kararlı embed dönüştürücü fonksiyon
 export const getEmbedUrl = (url) => {
@@ -27,7 +28,7 @@ const readsData = [
   }
 ];
 
-export default function ReadingPanel({ content }) {
+export default function ReadingPanel({ content, currentLang = "TR" }) {
   const [adminRecords, setAdminRecords] = useState([]);
 
   useEffect(() => {
@@ -39,42 +40,66 @@ export default function ReadingPanel({ content }) {
     }
   }, []);
 
-  // Kayıt bulma mekanizması
+  // Kayıt bulma mekanizması (Admin kayıtları + Statik/Onaylı akış verileri)
   let currentItem = null;
 
-  if (adminRecords.length > 0) {
-    if (content) {
-      if (typeof content === "object") {
-        currentItem = adminRecords.find(
-          (r) => String(r.id) === String(content.id || content.title || content.baslik) ||
-                 (r.title && content.title && r.title.toLowerCase() === content.title.toLowerCase()) ||
-                 (r.baslik && content.baslik && r.baslik.toLowerCase() === content.baslik.toLowerCase())
-        );
-      } else {
-        currentItem = adminRecords.find(
-          (r) => String(r.id) === String(content) ||
-                 (r.title && r.title.toLowerCase().includes(String(content).toLowerCase())) ||
-                 (r.baslik && r.baslik.toLowerCase().includes(String(content).toLowerCase()))
-        );
-      }
-    }
-
-    if (!currentItem) {
-      currentItem = adminRecords[0];
+  if (content) {
+    if (typeof content === "object") {
+      // 1. Önce admin kayıtlarında ara
+      currentItem = adminRecords.find(
+        (r) => String(r.id) === String(content.id || content.title || content.baslik) ||
+               (r.title && content.title && r.title.toLowerCase() === content.title.toLowerCase()) ||
+               (r.baslik && content.baslik && r.baslik.toLowerCase() === content.baslik.toLowerCase())
+      );
+    } else {
+      currentItem = adminRecords.find(
+        (r) => String(r.id) === String(content) ||
+               (r.title && r.title.toLowerCase().includes(String(content).toLowerCase())) ||
+               (r.baslik && r.baslik.toLowerCase().includes(String(content).toLowerCase()))
+      );
     }
   }
 
+  // 2. Eğer admin kayıtlarında bulunamadıysa statik/onaylı akıştan (i18n) bulmaya çalış
+  if (!currentItem) {
+    const t = translations[currentLang] || translations["TR"];
+    const allStaticItems = [...(t.verifiedItems || []), ...(t.cards || [])];
+    
+    if (content) {
+      const searchKey = typeof content === "object" ? (content.id || content.title) : content;
+      currentItem = allStaticItems.find(
+        (item) => String(item.id) === String(searchKey) ||
+                  (item.title && String(searchKey).toLowerCase().includes(item.title.toLowerCase())) ||
+                  (item.title && item.title.toLowerCase().includes(String(searchKey).toLowerCase()))
+      );
+    }
+
+    // Eğer hâlâ bulunamadıysa statik listesinden ilkini al
+    if (!currentItem && allStaticItems.length > 0) {
+      currentItem = allStaticItems[0];
+    }
+  }
+
+  // 3. Son çare varsayılan veri
   if (!currentItem) {
     currentItem = readsData[0];
   }
 
   const itemTitle = currentItem.title || currentItem.baslik || "Başlıksız Kayıt";
-  const itemCategory = currentItem.category || currentItem.icerikTuru || currentItem.kategori || "YKOS Arşiv";
-  const itemContent = currentItem.content || currentItem.icerik || currentItem.kapsamliAnaliz || currentItem.summary || currentItem.ozet || currentItem.aciklama || "Detaylı metin bulunamadı.";
+  const itemCategory = currentItem.category || currentItem.icerikTuru || currentItem.kategori || currentItem.tag || "YKOS Arşiv";
+  
+  // İçerik metni (admin contenti veya statik desc / summary)
+  const itemContent = currentItem.content || currentItem.icerik || currentItem.kapsamliAnaliz || currentItem.summary || currentItem.ozet || currentItem.aciklama || currentItem.desc || "Bu içerik için detaylı metin henüz eklenmemiştir.";
+  
   const itemImage = currentItem.image || currentItem.kapakGorseli || currentItem.gorsel || currentItem.imageUrl || currentItem.resim || "";
   const itemVideo = currentItem.videoUrl || currentItem.video || currentItem.videoBaglantisi || "";
 
   const videoEmbedUrl = getEmbedUrl(itemVideo);
+
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    alert("Bağlantı panoya kopyalandı! Dilediğiniz yerde paylaşabilirsiniz.");
+  };
 
   return (
     <div style={{ padding: "20px", color: "#fff", fontFamily: "Segoe UI, sans-serif", maxWidth: "900px", margin: "0 auto" }}>
@@ -94,21 +119,43 @@ export default function ReadingPanel({ content }) {
             marginBottom: "20px"
           }}
         >
-          <span
-            style={{
-              backgroundColor: "rgba(255, 215, 0, 0.15)",
-              color: "#ffd700",
-              border: "1px solid #ffd700",
-              padding: "4px 12px",
-              borderRadius: "20px",
-              fontSize: "0.75rem",
-              fontWeight: "bold"
-            }}
-          >
-            {itemCategory}
-          </span>
+          {/* ÜST KISIM: KATEGORİ VE PAYLAŞ BUTONU */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
+            <span
+              style={{
+                backgroundColor: "rgba(255, 215, 0, 0.15)",
+                color: "#ffd700",
+                border: "1px solid #ffd700",
+                padding: "4px 12px",
+                borderRadius: "20px",
+                fontSize: "0.75rem",
+                fontWeight: "bold"
+              }}
+            >
+              {itemCategory}
+            </span>
 
-          <h1 style={{ color: "#ffd700", fontSize: "1.8rem", margin: "12px 0 6px 0" }}>
+            <button
+              onClick={handleShare}
+              style={{
+                backgroundColor: "rgba(56, 189, 248, 0.15)",
+                border: "1px solid #38bdf8",
+                color: "#38bdf8",
+                padding: "5px 14px",
+                borderRadius: "6px",
+                fontSize: "0.78rem",
+                fontWeight: "bold",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "6px"
+              }}
+            >
+              📤 Bu İçeriği Paylaş
+            </button>
+          </div>
+
+          <h1 style={{ color: "#ffd700", fontSize: "1.8rem", margin: "15px 0 6px 0" }}>
             {itemTitle}
           </h1>
 
@@ -139,7 +186,11 @@ export default function ReadingPanel({ content }) {
             whiteSpace: "pre-line"
           }}
         >
-          {itemContent}
+          {itemContent.includes("<") ? (
+            <div dangerouslySetInnerHTML={{ __html: itemContent }} />
+          ) : (
+            itemContent
+          )}
         </div>
 
         {/* 🎥 VİDEO OYNATICI (Sayfanın En Altında) */}
