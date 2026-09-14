@@ -124,138 +124,142 @@ export default function BubbleMatrix({ onGoHome, onSelectNode }) {
   };
 
   return (
-    <div style={{ padding: "8px", color: "#fff", fontFamily: "Segoe UI, sans-serif" }}>
+    <div style={{ width: "100%", maxWidth: "1050px", margin: "0 auto", padding: "12px", color: "#fff", fontFamily: "Segoe UI, sans-serif" }}>
       
-      {/* ÜST DURUM BARI */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #ffd700", paddingBottom: "6px", marginBottom: "10px" }}>
-        <div style={{ display: "flex", gap: "15px", fontSize: "0.8rem" }}>
-          <span style={{ color: "#ffd700" }}>⚡ QuantumFlux: <strong style={{ color: "#22c55e" }}>Aktif (40+ Düğüm)</strong></span>
-          <span style={{ color: "#38bdf8" }}>🔵 Core Field: <strong>Senkronize</strong></span>
-          <span style={{ color: "#aaa" }}>📍 Atlas Ref: <strong>Göbeklitepe & Saymalıtaş Hatları Bağlı</strong></span>
-        </div>
-      </div>
+      {/* KAPSAYICI KART */}
+      <div style={{ backgroundColor: "#050811", border: "1.5px solid #ffd700", borderRadius: "14px", padding: "20px", boxShadow: "0 4px 25px rgba(0, 0, 0, 0.8)" }}>
 
-      {/* SEÇİLİ DÜĞÜM BİLGİ KARTI */}
-      {selectedNode && (
-        <div style={{ background: "rgba(255, 215, 0, 0.06)", border: "1.5px solid #ffd700", borderRadius: "8px", padding: "10px 14px", marginBottom: "10px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div>
-            <div style={{ display: "flex", gap: "10px", alignItems: "center", marginBottom: "2px" }}>
-              <h4 style={{ margin: 0, color: "#ffd700", fontSize: "0.95rem" }}>{selectedNode.label}</h4>
-              <span style={{ fontSize: "0.68rem", background: "#f59e0b", color: "#000", fontWeight: "bold", padding: "1px 6px", borderRadius: "4px" }}>
-                {selectedNode.atlasRef}
-              </span>
-            </div>
-            <p style={{ margin: "3px 0 4px 0", fontSize: "0.8rem", color: "#ddd" }}>{selectedNode.desc}</p>
-            <div style={{ fontSize: "0.74rem", color: "#bbb" }}>
-              Bağlantılar: <span style={{ color: "#38bdf8" }}>{selectedNode.connections}</span> | Rezonans: <span style={{ color: "#22c55e", fontWeight: "bold" }}>{selectedNode.score}</span> (Int: {selectedNode.resonance.intensity}, Frek: {selectedNode.resonance.frequency}Hz)
-            </div>
+        {/* ÜST DURUM BARI */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #ffd700", paddingBottom: "6px", marginBottom: "10px" }}>
+          <div style={{ display: "flex", gap: "15px", fontSize: "0.8rem" }}>
+            <span style={{ color: "#ffd700" }}>⚡ QuantumFlux: <strong style={{ color: "#22c55e" }}>Aktif (40+ Düğüm)</strong></span>
+            <span style={{ color: "#38bdf8" }}>🔵 Core Field: <strong>Senkronize</strong></span>
+            <span style={{ color: "#aaa" }}>📍 Atlas Ref: <strong>Göbeklitepe & Saymalıtaş Hatları Bağlı</strong></span>
           </div>
-          <button onClick={() => setSelectedNode(null)} style={{ background: "transparent", border: "none", color: "#ffd700", fontSize: "1.4rem", cursor: "pointer", padding: "0 8px" }}>×</button>
         </div>
-      )}
 
-      {/* GENİŞLETİLMİŞ MATRİS BALONCUK VE BAĞLANTI GRAFİĞİ */}
-      <div style={{ background: "#050811", border: "1px solid rgba(255, 215, 0, 0.3)", borderRadius: "8px", height: "420px", position: "relative", overflow: "hidden", marginBottom: "10px" }}>
-        <svg style={{ width: "100%", height: "100%", viewBox: "150 10 650 400" }}>
-          
-          {/* Çekirdek Hatlar */}
-          <line x1="470" y1="190" x2="530" y2="260" stroke="rgba(245, 158, 11, 0.6)" strokeWidth="1.8" />
-          <line x1="470" y1="190" x2="440" y2="310" stroke="rgba(16, 185, 129, 0.6)" strokeWidth="1.8" />
-          <line x1="470" y1="190" x2="330" y2="240" stroke="rgba(249, 115, 22, 0.6)" strokeWidth="1.8" />
-          <line x1="470" y1="190" x2="590" y2="190" stroke="rgba(234, 179, 8, 0.6)" strokeWidth="1.8" />
-          <line x1="470" y1="190" x2="520" y2="90" stroke="rgba(255, 215, 0, 0.6)" strokeWidth="1.8" />
+        {/* SEÇİLİ DÜĞÜM BİLGİ KARTI */}
+        {selectedNode && (
+          <div style={{ background: "rgba(255, 215, 0, 0.06)", border: "1.5px solid #ffd700", borderRadius: "8px", padding: "10px 14px", marginBottom: "10px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div>
+              <div style={{ display: "flex", gap: "10px", alignItems: "center", marginBottom: "2px" }}>
+                <h4 style={{ margin: 0, color: "#ffd700", fontSize: "0.95rem" }}>{selectedNode.label}</h4>
+                <span style={{ fontSize: "0.68rem", background: "#f59e0b", color: "#000", fontWeight: "bold", padding: "1px 6px", borderRadius: "4px" }}>
+                  {selectedNode.atlasRef}
+                </span>
+              </div>
+              <p style={{ margin: "3px 0 4px 0", fontSize: "0.8rem", color: "#ddd" }}>{selectedNode.desc}</p>
+              <div style={{ fontSize: "0.74rem", color: "#bbb" }}>
+                Bağlantılar: <span style={{ color: "#38bdf8" }}>{selectedNode.connections}</span> | Rezonans: <span style={{ color: "#22c55e", fontWeight: "bold" }}>{selectedNode.score}</span> (Int: {selectedNode.resonance.intensity}, Frek: {selectedNode.resonance.frequency}Hz)
+              </div>
+            </div>
+            <button onClick={() => setSelectedNode(null)} style={{ background: "transparent", border: "none", color: "#ffd700", fontSize: "1.4rem", cursor: "pointer", padding: "0 8px" }}>×</button>
+          </div>
+        )}
 
-          {/* Anadolu & Arkeoloji Hatları */}
-          <line x1="590" y1="190" x2="670" y2="150" stroke="rgba(16, 185, 129, 0.5)" strokeWidth="1.4" />
-          <line x1="590" y1="190" x2="630" y2="240" stroke="rgba(16, 185, 129, 0.5)" strokeWidth="1.4" />
-          <line x1="590" y1="190" x2="690" y2="210" stroke="rgba(6, 182, 212, 0.5)" strokeWidth="1.4" />
-          <line x1="670" y1="150" x2="730" y2="150" stroke="rgba(16, 185, 129, 0.4)" strokeWidth="1.2" />
-          <line x1="670" y1="150" x2="720" y2="100" stroke="rgba(255, 215, 0, 0.4)" strokeWidth="1.2" />
+        {/* GENİŞLETİLMİŞ MATRİS BALONCUK VE BAĞLANTI GRAFİĞİ */}
+        <div style={{ background: "#050811", border: "1px solid rgba(255, 215, 0, 0.3)", borderRadius: "8px", height: "420px", position: "relative", overflow: "hidden", marginBottom: "10px" }}>
+          <svg style={{ width: "100%", height: "100%", viewBox: "150 10 650 400" }}>
+            
+            {/* Çekirdek Hatlar */}
+            <line x1="470" y1="190" x2="530" y2="260" stroke="rgba(245, 158, 11, 0.6)" strokeWidth="1.8" />
+            <line x1="470" y1="190" x2="440" y2="310" stroke="rgba(16, 185, 129, 0.6)" strokeWidth="1.8" />
+            <line x1="470" y1="190" x2="330" y2="240" stroke="rgba(249, 115, 22, 0.6)" strokeWidth="1.8" />
+            <line x1="470" y1="190" x2="590" y2="190" stroke="rgba(234, 179, 8, 0.6)" strokeWidth="1.8" />
+            <line x1="470" y1="190" x2="520" y2="90" stroke="rgba(255, 215, 0, 0.6)" strokeWidth="1.8" />
 
-          {/* Asya, Petroglif & Göç Hatları */}
-          <line x1="440" y1="310" x2="360" y2="320" stroke="rgba(168, 85, 247, 0.5)" strokeWidth="1.4" />
-          <line x1="360" y1="320" x2="330" y2="350" stroke="rgba(168, 85, 247, 0.5)" strokeWidth="1.4" />
-          <line x1="330" y1="350" x2="260" y2="360" stroke="rgba(168, 85, 247, 0.4)" strokeWidth="1.2" />
-          <line x1="360" y1="320" x2="380" y2="380" stroke="rgba(168, 85, 247, 0.4)" strokeWidth="1.2" />
-          <line x1="440" y1="310" x2="230" y2="300" stroke="rgba(244, 63, 94, 0.5)" strokeWidth="1.4" />
-          <line x1="230" y1="300" x2="190" y2="350" stroke="rgba(244, 63, 94, 0.4)" strokeWidth="1.2" />
-          <line x1="440" y1="310" x2="250" y2="220" stroke="rgba(99, 102, 241, 0.5)" strokeWidth="1.4" />
+            {/* Anadolu & Arkeoloji Hatları */}
+            <line x1="590" y1="190" x2="670" y2="150" stroke="rgba(16, 185, 129, 0.5)" strokeWidth="1.4" />
+            <line x1="590" y1="190" x2="630" y2="240" stroke="rgba(16, 185, 129, 0.5)" strokeWidth="1.4" />
+            <line x1="590" y1="190" x2="690" y2="210" stroke="rgba(6, 182, 212, 0.5)" strokeWidth="1.4" />
+            <line x1="670" y1="150" x2="730" y2="150" stroke="rgba(16, 185, 129, 0.4)" strokeWidth="1.2" />
+            <line x1="670" y1="150" x2="720" y2="100" stroke="rgba(255, 215, 0, 0.4)" strokeWidth="1.2" />
 
-          {/* Morfoloji & Medeniyet Hatları */}
-          <line x1="330" y1="240" x2="370" y2="170" stroke="rgba(249, 115, 22, 0.5)" strokeWidth="1.4" />
-          <line x1="330" y1="240" x2="270" y2="170" stroke="rgba(249, 115, 22, 0.5)" strokeWidth="1.4" />
-          <line x1="330" y1="240" x2="310" y2="120" stroke="rgba(249, 115, 22, 0.4)" strokeWidth="1.2" />
-          <line x1="330" y1="240" x2="390" y2="110" stroke="rgba(249, 115, 22, 0.4)" strokeWidth="1.2" />
+            {/* Asya, Petroglif & Göç Hatları */}
+            <line x1="440" y1="310" x2="360" y2="320" stroke="rgba(168, 85, 247, 0.5)" strokeWidth="1.4" />
+            <line x1="360" y1="320" x2="330" y2="350" stroke="rgba(168, 85, 247, 0.5)" strokeWidth="1.4" />
+            <line x1="330" y1="350" x2="260" y2="360" stroke="rgba(168, 85, 247, 0.4)" strokeWidth="1.2" />
+            <line x1="360" y1="320" x2="380" y2="380" stroke="rgba(168, 85, 247, 0.4)" strokeWidth="1.2" />
+            <line x1="440" y1="310" x2="230" y2="300" stroke="rgba(244, 63, 94, 0.5)" strokeWidth="1.4" />
+            <line x1="230" y1="300" x2="190" y2="350" stroke="rgba(244, 63, 94, 0.4)" strokeWidth="1.2" />
+            <line x1="440" y1="310" x2="250" y2="220" stroke="rgba(99, 102, 241, 0.5)" strokeWidth="1.4" />
 
-          {/* Kök Hece & Kozmik Hatlar */}
-          <line x1="520" y1="90" x2="590" y2="80" stroke="rgba(255, 215, 0, 0.5)" strokeWidth="1.4" />
-          <line x1="590" y1="80" x2="650" y2="90" stroke="rgba(255, 215, 0, 0.4)" strokeWidth="1.2" />
-          <line x1="520" y1="90" x2="450" y2="70" stroke="rgba(16, 185, 129, 0.4)" strokeWidth="1.2" />
-          <line x1="450" y1="70" x2="410" y2="60" stroke="rgba(6, 182, 212, 0.4)" strokeWidth="1.2" />
-          <line x1="410" y1="60" x2="360" y2="70" stroke="rgba(6, 182, 212, 0.4)" strokeWidth="1.2" />
-          <line x1="520" y1="90" x2="530" y2="40" stroke="rgba(168, 85, 247, 0.4)" strokeWidth="1.2" />
-          <line x1="530" y1="40" x2="470" y2="30" stroke="rgba(168, 85, 247, 0.4)" strokeWidth="1.2" />
-          <line x1="530" y1="260" x2="620" y2="310" stroke="rgba(234, 179, 8, 0.5)" strokeWidth="1.4" />
-          <line x1="620" y1="310" x2="560" y2="340" stroke="rgba(234, 179, 8, 0.4)" strokeWidth="1.2" />
-          <line x1="530" y1="260" x2="480" y2="370" stroke="rgba(234, 179, 8, 0.4)" strokeWidth="1.2" />
-          <line x1="520" y1="90" x2="480" y2="130" stroke="rgba(255, 215, 0, 0.4)" strokeWidth="1.2" />
-          <line x1="520" y1="90" x2="570" y2="130" stroke="rgba(56, 189, 248, 0.4)" strokeWidth="1.2" />
+            {/* Morfoloji & Medeniyet Hatları */}
+            <line x1="330" y1="240" x2="370" y2="170" stroke="rgba(249, 115, 22, 0.5)" strokeWidth="1.4" />
+            <line x1="330" y1="240" x2="270" y2="170" stroke="rgba(249, 115, 22, 0.5)" strokeWidth="1.4" />
+            <line x1="330" y1="240" x2="310" y2="120" stroke="rgba(249, 115, 22, 0.4)" strokeWidth="1.2" />
+            <line x1="330" y1="240" x2="390" y2="110" stroke="rgba(249, 115, 22, 0.4)" strokeWidth="1.2" />
 
-          {/* Düğümler (Baloncuklar) */}
-          {nodes.map((node) => {
-            const isSelected = selectedNode?.id === node.id;
-            return (
-              <g key={node.id} onClick={() => handleBubbleClick(node)} style={{ cursor: "pointer" }}>
-                <circle
-                  cx={node.position.x}
-                  cy={node.position.y}
-                  r={isSelected ? node.r + 3 : node.r}
-                  fill="#000"
-                  stroke={isSelected ? "#fff" : node.resonance.color}
-                  strokeWidth={isSelected ? "3.5" : "2"}
-                  filter={`drop-shadow(0 0 ${isSelected ? "14px" : "7px"} ${node.resonance.color})`}
-                  style={{ transition: "all 0.2s" }}
-                />
-                <text
-                  x={node.position.x}
-                  y={node.position.y + 3}
-                  fill="#fff"
-                  fontSize={node.r > 20 ? "9px" : "7.5px"}
-                  fontWeight="bold"
-                  textAnchor="middle"
-                  pointerEvents="none"
-                >
-                  {node.id}
-                </text>
-              </g>
-            );
-          })}
-        </svg>
+            {/* Kök Hece & Kozmik Hatlar */}
+            <line x1="520" y1="90" x2="590" y2="80" stroke="rgba(255, 215, 0, 0.5)" strokeWidth="1.4" />
+            <line x1="590" y1="80" x2="650" y2="90" stroke="rgba(255, 215, 0, 0.4)" strokeWidth="1.2" />
+            <line x1="520" y1="90" x2="450" y2="70" stroke="rgba(16, 185, 129, 0.4)" strokeWidth="1.2" />
+            <line x1="450" y1="70" x2="410" y2="60" stroke="rgba(6, 182, 212, 0.4)" strokeWidth="1.2" />
+            <line x1="410" y1="60" x2="360" y2="70" stroke="rgba(6, 182, 212, 0.4)" strokeWidth="1.2" />
+            <line x1="520" y1="90" x2="530" y2="40" stroke="rgba(168, 85, 247, 0.4)" strokeWidth="1.2" />
+            <line x1="530" y1="40" x2="470" y2="30" stroke="rgba(168, 85, 247, 0.4)" strokeWidth="1.2" />
+            <line x1="530" y1="260" x2="620" y2="310" stroke="rgba(234, 179, 8, 0.5)" strokeWidth="1.4" />
+            <line x1="620" y1="310" x2="560" y2="340" stroke="rgba(234, 179, 8, 0.4)" strokeWidth="1.2" />
+            <line x1="530" y1="260" x2="480" y2="370" stroke="rgba(234, 179, 8, 0.4)" strokeWidth="1.2" />
+            <line x1="520" y1="90" x2="480" y2="130" stroke="rgba(255, 215, 0, 0.4)" strokeWidth="1.2" />
+            <line x1="520" y1="90" x2="570" y2="130" stroke="rgba(56, 189, 248, 0.4)" strokeWidth="1.2" />
+
+            {/* Düğümler (Baloncuklar) */}
+            {nodes.map((node) => {
+              const isSelected = selectedNode?.id === node.id;
+              return (
+                <g key={node.id} onClick={() => handleBubbleClick(node)} style={{ cursor: "pointer" }}>
+                  <circle
+                    cx={node.position.x}
+                    cy={node.position.y}
+                    r={isSelected ? node.r + 3 : node.r}
+                    fill="#000"
+                    stroke={isSelected ? "#fff" : node.resonance.color}
+                    strokeWidth={isSelected ? "3.5" : "2"}
+                    filter={`drop-shadow(0 0 ${isSelected ? "14px" : "7px"} ${node.resonance.color})`}
+                    style={{ transition: "all 0.2s" }}
+                  />
+                  <text
+                    x={node.position.x}
+                    y={node.position.y + 3}
+                    fill="#fff"
+                    fontSize={node.r > 20 ? "9px" : "7.5px"}
+                    fontWeight="bold"
+                    textAnchor="middle"
+                    pointerEvents="none"
+                  >
+                    {node.id}
+                  </text>
+                </g>
+              );
+            })}
+          </svg>
+        </div>
+
+        {/* PIPELINE ÇIKTISI */}
+        {pipelineResult && (
+          <div style={{ background: "rgba(6, 182, 212, 0.08)", border: "1px solid #06b6d4", borderRadius: "6px", padding: "8px 12px", marginBottom: "8px", fontSize: "0.75rem", color: "#67e8f9" }}>
+            <strong>⚙️ Pipeline Analiz Çıktısı:</strong>
+            <pre style={{ margin: "4px 0 0 0", fontFamily: "Consolas, monospace", whiteSpace: "pre-wrap" }}>
+              {JSON.stringify(pipelineResult, null, 2)}
+            </pre>
+          </div>
+        )}
+
+        {/* CANLI KONSOL TERMİNALİ */}
+        <div style={{ background: "#050811", border: "1px solid #ffd700", borderRadius: "8px", padding: "10px 14px", height: "135px", overflowY: "auto", fontFamily: "Consolas, monospace" }}>
+          <div style={{ color: "#ffd700", fontSize: "0.78rem", fontWeight: "bold", borderBottom: "1px dashed rgba(255, 215, 0, 0.3)", paddingBottom: "4px", marginBottom: "6px" }}>
+            💻 KÖK-HECE & DAMGA KONSOL TERMİNALİ (40+ DÜĞÜM CANLI İNTERAKTİF AKIŞ)
+          </div>
+          <div style={{ fontSize: "0.72rem", color: "#22c55e", lineHeight: "1.5" }}>
+            {logs.map((log, index) => (
+              <div key={index}>{log}</div>
+            ))}
+            <div ref={terminalEndRef} />
+          </div>
+        </div>
+
       </div>
-
-      {/* PIPELINE ÇIKTISI (Balona tıklandığında anında JSON olarak basar) */}
-      {pipelineResult && (
-        <div style={{ background: "rgba(6, 182, 212, 0.08)", border: "1px solid #06b6d4", borderRadius: "6px", padding: "8px 12px", marginBottom: "8px", fontSize: "0.75rem", color: "#67e8f9" }}>
-          <strong>⚙️ Pipeline Analiz Çıktısı:</strong>
-          <pre style={{ margin: "4px 0 0 0", fontFamily: "Consolas, monospace", whiteSpace: "pre-wrap" }}>
-            {JSON.stringify(pipelineResult, null, 2)}
-          </pre>
-        </div>
-      )}
-
-      {/* CANLI KONSOL TERMİNALİ */}
-      <div style={{ background: "#050811", border: "1px solid #ffd700", borderRadius: "8px", padding: "10px 14px", height: "135px", overflowY: "auto", fontFamily: "Consolas, monospace" }}>
-        <div style={{ color: "#ffd700", fontSize: "0.78rem", fontWeight: "bold", borderBottom: "1px dashed rgba(255, 215, 0, 0.3)", paddingBottom: "4px", marginBottom: "6px" }}>
-          💻 KÖK-HECE & DAMGA KONSOL TERMİNALİ (40+ DÜĞÜM CANLI İNTERAKTİF AKIŞ)
-        </div>
-        <div style={{ fontSize: "0.72rem", color: "#22c55e", lineHeight: "1.5" }}>
-          {logs.map((log, index) => (
-            <div key={index}>{log}</div>
-          ))}
-          <div ref={terminalEndRef} />
-        </div>
-      </div>
-
     </div>
   );
 }

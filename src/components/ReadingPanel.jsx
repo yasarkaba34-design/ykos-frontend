@@ -30,6 +30,7 @@ const readsData = [
 
 export default function ReadingPanel({ content, currentLang = "TR" }) {
   const [adminRecords, setAdminRecords] = useState([]);
+  const [isZoomed, setIsZoomed] = useState(false); // 🔍 Görsel büyüme state'i eklendi
 
   useEffect(() => {
     try {
@@ -45,7 +46,6 @@ export default function ReadingPanel({ content, currentLang = "TR" }) {
 
   if (content) {
     if (typeof content === "object") {
-      // 1. Önce admin kayıtlarında ara
       currentItem = adminRecords.find(
         (r) => String(r.id) === String(content.id || content.title || content.baslik) ||
                (r.title && content.title && r.title.toLowerCase() === content.title.toLowerCase()) ||
@@ -60,7 +60,6 @@ export default function ReadingPanel({ content, currentLang = "TR" }) {
     }
   }
 
-  // 2. Eğer admin kayıtlarında bulunamadıysa statik/onaylı akıştan (i18n) bulmaya çalış
   if (!currentItem) {
     const t = translations[currentLang] || translations["TR"];
     const allStaticItems = [...(t.verifiedItems || []), ...(t.cards || [])];
@@ -74,13 +73,11 @@ export default function ReadingPanel({ content, currentLang = "TR" }) {
       );
     }
 
-    // Eğer hâlâ bulunamadıysa statik listesinden ilkini al
     if (!currentItem && allStaticItems.length > 0) {
       currentItem = allStaticItems[0];
     }
   }
 
-  // 3. Son çare varsayılan veri
   if (!currentItem) {
     currentItem = readsData[0];
   }
@@ -88,7 +85,6 @@ export default function ReadingPanel({ content, currentLang = "TR" }) {
   const itemTitle = currentItem.title || currentItem.baslik || "Başlıksız Kayıt";
   const itemCategory = currentItem.category || currentItem.icerikTuru || currentItem.kategori || currentItem.tag || "YKOS Arşiv";
   
-  // İçerik metni (admin contenti veya statik desc / summary)
   const itemContent = currentItem.content || currentItem.icerik || currentItem.kapsamliAnaliz || currentItem.summary || currentItem.ozet || currentItem.aciklama || currentItem.desc || "Bu içerik için detaylı metin henüz eklenmemiştir.";
   
   const itemImage = currentItem.image || currentItem.kapakGorseli || currentItem.gorsel || currentItem.imageUrl || currentItem.resim || "";
@@ -166,14 +162,73 @@ export default function ReadingPanel({ content, currentLang = "TR" }) {
           </div>
         </div>
 
-        {/* Manşet Görseli */}
+        {/* 🖼️ MANŞET GÖRSELİ VE TIKLAYINCA BÜYÜME (ZOOM) ÖZELLİĞİ */}
         {itemImage && (
           <div style={{ marginBottom: "20px", textAlign: "center" }}>
             <img
               src={itemImage}
               alt={itemTitle}
-              style={{ maxWidth: "100%", maxHeight: "400px", borderRadius: "8px", border: "1px solid #ffd700", objectFit: "cover" }}
+              onClick={() => setIsZoomed(true)}
+              style={{ 
+                maxWidth: "100%", 
+                maxHeight: "400px", 
+                borderRadius: "8px", 
+                border: "1.5px solid #ffd700", 
+                objectFit: "cover",
+                cursor: "zoom-in",
+                transition: "transform 0.2s ease"
+              }}
+              title="Görseli büyütmek için tıklayın"
             />
+            <span style={{ display: "block", color: "#94a3b8", fontSize: "0.72rem", marginTop: "6px" }}>
+              🔍 Görseli tam ekran büyütmek için üzerine tıklayın
+            </span>
+          </div>
+        )}
+
+        {/* 🔍 TIKLANINCA AÇILAN TAM EKRAN BÜYÜK GÖRSEL MODALI (LIGHTBOX) */}
+        {isZoomed && (
+          <div 
+            onClick={() => setIsZoomed(false)}
+            style={{
+              position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+              backgroundColor: "rgba(0, 0, 0, 0.92)",
+              backdropFilter: "blur(10px)",
+              zIndex: 99999,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: "20px",
+              cursor: "zoom-out"
+            }}
+          >
+            <div style={{ position: "relative", maxWidth: "92vw", maxHeight: "92vh" }} onClick={(e) => e.stopPropagation()}>
+              <button 
+                onClick={() => setIsZoomed(false)}
+                style={{
+                  position: "absolute", top: "-45px", right: "0",
+                  background: "#ef4444", color: "#fff", border: "none",
+                  padding: "6px 14px", borderRadius: "6px", fontWeight: "bold",
+                  cursor: "pointer", fontSize: "0.9rem", zIndex: 100000
+                }}
+              >
+                Kapat ✕
+              </button>
+              <img 
+                src={itemImage} 
+                alt="Büyük Görsel" 
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "88vh",
+                  objectFit: "contain",
+                  borderRadius: "10px",
+                  border: "2px solid #ffd700",
+                  boxShadow: "0 0 40px rgba(255, 215, 0, 0.4)",
+                  display: "block",
+                  margin: "0 auto"
+                }}
+              />
+            </div>
           </div>
         )}
 
