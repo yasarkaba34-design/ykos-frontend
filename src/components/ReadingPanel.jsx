@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { translations } from "../data/i18n";
 
-// Sizin hazırladığınız temiz ve kararlı embed dönüştürücü fonksiyon
 export const getEmbedUrl = (url) => {
   if (!url) return null;
   let id = "";
@@ -30,7 +29,7 @@ const readsData = [
 
 export default function ReadingPanel({ content, currentLang = "TR" }) {
   const [adminRecords, setAdminRecords] = useState([]);
-  const [isZoomed, setIsZoomed] = useState(false); // 🔍 Görsel büyüme state'i eklendi
+  const [isZoomed, setIsZoomed] = useState(false);
 
   useEffect(() => {
     try {
@@ -41,16 +40,11 @@ export default function ReadingPanel({ content, currentLang = "TR" }) {
     }
   }, []);
 
-  // Kayıt bulma mekanizması (Admin kayıtları + Statik/Onaylı akış verileri)
   let currentItem = null;
 
   if (content) {
     if (typeof content === "object") {
-      currentItem = adminRecords.find(
-        (r) => String(r.id) === String(content.id || content.title || content.baslik) ||
-               (r.title && content.title && r.title.toLowerCase() === content.title.toLowerCase()) ||
-               (r.baslik && content.baslik && r.baslik.toLowerCase() === content.baslik.toLowerCase())
-      );
+      currentItem = content;
     } else {
       currentItem = adminRecords.find(
         (r) => String(r.id) === String(content) ||
@@ -62,14 +56,15 @@ export default function ReadingPanel({ content, currentLang = "TR" }) {
 
   if (!currentItem) {
     const t = translations[currentLang] || translations["TR"];
-    const allStaticItems = [...(t.verifiedItems || []), ...(t.cards || [])];
+    const allStaticItems = [...(t.verifiedItems || []), ...(t.cards || []), ...(t.analizler || [])];
     
     if (content) {
-      const searchKey = typeof content === "object" ? (content.id || content.title) : content;
+      const searchKey = typeof content === "object" ? (content.id || content.title || content.baslik) : content;
       currentItem = allStaticItems.find(
         (item) => String(item.id) === String(searchKey) ||
                   (item.title && String(searchKey).toLowerCase().includes(item.title.toLowerCase())) ||
-                  (item.title && item.title.toLowerCase().includes(String(searchKey).toLowerCase()))
+                  (item.title && item.title.toLowerCase().includes(String(searchKey).toLowerCase())) ||
+                  (item.baslik && String(searchKey).toLowerCase().includes(item.baslik.toLowerCase()))
       );
     }
 
@@ -82,11 +77,9 @@ export default function ReadingPanel({ content, currentLang = "TR" }) {
     currentItem = readsData[0];
   }
 
-  const itemTitle = currentItem.title || currentItem.baslik || "Başlıksız Kayıt";
-  const itemCategory = currentItem.category || currentItem.icerikTuru || currentItem.kategori || currentItem.tag || "YKOS Arşiv";
-  
-  const itemContent = currentItem.content || currentItem.icerik || currentItem.kapsamliAnaliz || currentItem.summary || currentItem.ozet || currentItem.aciklama || currentItem.desc || "Bu içerik için detaylı metin henüz eklenmemiştir.";
-  
+  const itemTitle = currentItem.title || currentItem.baslik || currentItem.name || "Başlıksız Kayıt";
+  const itemCategory = currentItem.category || currentItem.icerikTuru || currentItem.kategori || currentItem.tag || "YKOS Çözümleme Arşivi";
+  const itemContent = currentItem.content || currentItem.icerik || currentItem.kapsamliAnaliz || currentItem.summary || currentItem.ozet || currentItem.aciklama || currentItem.desc || currentItem.detay || "Bu içerik için henüz kapsamlı analiz metni girilmemiştir.";
   const itemImage = currentItem.image || currentItem.kapakGorseli || currentItem.gorsel || currentItem.imageUrl || currentItem.resim || "";
   const itemVideo = currentItem.videoUrl || currentItem.video || currentItem.videoBaglantisi || "";
 
@@ -98,21 +91,21 @@ export default function ReadingPanel({ content, currentLang = "TR" }) {
   };
 
   return (
-    <div style={{ padding: "20px", color: "#fff", fontFamily: "Segoe UI, sans-serif", maxWidth: "900px", margin: "0 auto" }}>
+    <div style={{ width: "100%", maxWidth: "1200px", margin: "0 auto", padding: "20px", color: "#fff", fontFamily: "Segoe UI, sans-serif", boxSizing: "border-box" }}>
       <div
         style={{
           backgroundColor: "#050811",
           border: "1.5px solid #ffd700",
-          borderRadius: "12px",
-          padding: "25px",
+          borderRadius: "14px",
+          padding: "35px",
           boxShadow: "0 10px 30px rgba(0,0,0,0.8)"
         }}
       >
         <div
           style={{
             borderBottom: "1px solid rgba(255, 215, 0, 0.3)",
-            paddingBottom: "15px",
-            marginBottom: "20px"
+            paddingBottom: "20px",
+            marginBottom: "25px"
           }}
         >
           {/* ÜST KISIM: KATEGORİ VE PAYLAŞ BUTONU */}
@@ -121,10 +114,10 @@ export default function ReadingPanel({ content, currentLang = "TR" }) {
               style={{
                 backgroundColor: "rgba(255, 215, 0, 0.15)",
                 color: "#ffd700",
-                border: "1px solid #ffd700",
-                padding: "4px 12px",
+                border: "1.5px solid #ffd700",
+                padding: "5px 14px",
                 borderRadius: "20px",
-                fontSize: "0.75rem",
+                fontSize: "0.8rem",
                 fontWeight: "bold"
               }}
             >
@@ -135,11 +128,11 @@ export default function ReadingPanel({ content, currentLang = "TR" }) {
               onClick={handleShare}
               style={{
                 backgroundColor: "rgba(56, 189, 248, 0.15)",
-                border: "1px solid #38bdf8",
+                border: "1.5px solid #38bdf8",
                 color: "#38bdf8",
-                padding: "5px 14px",
+                padding: "6px 16px",
                 borderRadius: "6px",
-                fontSize: "0.78rem",
+                fontSize: "0.8rem",
                 fontWeight: "bold",
                 cursor: "pointer",
                 display: "flex",
@@ -151,28 +144,28 @@ export default function ReadingPanel({ content, currentLang = "TR" }) {
             </button>
           </div>
 
-          <h1 style={{ color: "#ffd700", fontSize: "1.8rem", margin: "15px 0 6px 0" }}>
+          <h1 style={{ color: "#ffd700", fontSize: "2.1rem", margin: "18px 0 8px 0", fontWeight: "900" }}>
             {itemTitle}
           </h1>
 
-          <div style={{ fontSize: "0.85rem", color: "#38bdf8", display: "flex", gap: "15px" }}>
+          <div style={{ fontSize: "0.9rem", color: "#38bdf8", display: "flex", gap: "20px" }}>
             {currentItem.period && <span>⏳ {currentItem.period}</span>}
             {currentItem.location && <span>📍 {currentItem.location}</span>}
             {currentItem.date && <span>📅 {currentItem.date}</span>}
           </div>
         </div>
 
-        {/* 🖼️ MANŞET GÖRSELİ VE TIKLAYINCA BÜYÜME (ZOOM) ÖZELLİĞİ */}
+        {/* 🖼️ MANŞET GÖRSELİ VE BÜYÜTME (ZOOM) ÖZELLİĞİ */}
         {itemImage && (
-          <div style={{ marginBottom: "20px", textAlign: "center" }}>
+          <div style={{ marginBottom: "25px", textAlign: "center" }}>
             <img
               src={itemImage}
               alt={itemTitle}
               onClick={() => setIsZoomed(true)}
               style={{ 
                 maxWidth: "100%", 
-                maxHeight: "400px", 
-                borderRadius: "8px", 
+                maxHeight: "480px", 
+                borderRadius: "10px", 
                 border: "1.5px solid #ffd700", 
                 objectFit: "cover",
                 cursor: "zoom-in",
@@ -180,13 +173,13 @@ export default function ReadingPanel({ content, currentLang = "TR" }) {
               }}
               title="Görseli büyütmek için tıklayın"
             />
-            <span style={{ display: "block", color: "#94a3b8", fontSize: "0.72rem", marginTop: "6px" }}>
+            <span style={{ display: "block", color: "#94a3b8", fontSize: "0.75rem", marginTop: "8px" }}>
               🔍 Görseli tam ekran büyütmek için üzerine tıklayın
             </span>
           </div>
         )}
 
-        {/* 🔍 TIKLANINCA AÇILAN TAM EKRAN BÜYÜK GÖRSEL MODALI (LIGHTBOX) */}
+        {/* 🔍 TIKLANINCA AÇILAN TAM EKRAN BÜYÜK GÖRSEL MODALI */}
         {isZoomed && (
           <div 
             onClick={() => setIsZoomed(false)}
@@ -232,29 +225,29 @@ export default function ReadingPanel({ content, currentLang = "TR" }) {
           </div>
         )}
 
-        {/* Detay Metni */}
+        {/* Detay ve Çözümleme Metni */}
         <div
           style={{
-            fontSize: "1rem",
-            lineHeight: "1.7",
+            fontSize: "1.05rem",
+            lineHeight: "1.85",
             color: "#e2e8f0",
             whiteSpace: "pre-line"
           }}
         >
-          {itemContent.includes("<") ? (
+          {String(itemContent).includes("<") ? (
             <div dangerouslySetInnerHTML={{ __html: itemContent }} />
           ) : (
             itemContent
           )}
         </div>
 
-        {/* 🎥 VİDEO OYNATICI (Sayfanın En Altında) */}
+        {/* 🎥 VİDEO OYNATICI */}
         {videoEmbedUrl && (
-          <div style={{ marginTop: "32px", borderTop: "1px solid rgba(255, 215, 0, 0.3)", paddingTop: "20px" }}>
-            <h3 style={{ color: "#ffd700", fontSize: "1.1rem", marginBottom: "12px", textTransform: "uppercase" }}>
+          <div style={{ marginTop: "35px", borderTop: "1px solid rgba(255, 215, 0, 0.3)", paddingTop: "25px" }}>
+            <h3 style={{ color: "#ffd700", fontSize: "1.15rem", marginBottom: "15px", textTransform: "uppercase", fontWeight: "bold" }}>
               🎥 İlgili Sunum / Video Arşivi
             </h3>
-            <div style={{ position: "relative", paddingBottom: "56.25%", height: 0, overflow: "hidden", borderRadius: "8px", border: "1.5px solid #ffd700" }}>
+            <div style={{ position: "relative", paddingBottom: "56.25%", height: 0, overflow: "hidden", borderRadius: "10px", border: "1.5px solid #ffd700" }}>
               <iframe
                 src={videoEmbedUrl}
                 title="YKOS Video Oynatıcı"
