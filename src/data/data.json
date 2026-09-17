@@ -1,10 +1,10 @@
 {
-  "QuantumFlux": "Aktif",
-  "OmniField": "Yükleniyor",
-  "CosmicField": null,
-  "Atlas": "Göbeklitepe rezonans hattı"
-}
-{
+  "systemStatus": {
+    "QuantumFlux": "Aktif",
+    "OmniField": "Yükleniyor",
+    "CosmicField": null,
+    "Atlas": "Göbeklitepe rezonans hattı"
+  },
   "damgalar": [
     {
       "id": "AT",
