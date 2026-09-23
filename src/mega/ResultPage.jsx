@@ -7,7 +7,32 @@ import "./ResultPage.css";
 
 export default function ResultPage() {
   const location = useLocation();
-  const data = location.state?.result;
+  const state = location.state;
+
+  const data =
+    state?.result ??
+    state?.data ??
+    state;
+
+  const analysis =
+    data?.analysis ??
+    data?.result?.analysis ??
+    data?.data?.analysis ??
+    data;
+
+  const flow =
+    data?.flow ??
+    data?.result?.flow ??
+    data?.data?.flow ??
+    analysis?.flow ??
+    [];
+
+  const atlas =
+    data?.atlas ??
+    data?.result?.atlas ??
+    data?.data?.atlas ??
+    analysis?.atlas ??
+    [];
 
   if (!data) {
     return (
@@ -20,12 +45,16 @@ export default function ResultPage() {
   return (
     <div className="result-wrapper">
       <h1 className="result-title">
-        {data.title || data.root || "Sonuç"}
+        {data?.title ??
+          analysis?.title ??
+          analysis?.root ??
+          analysis?.rootHece ??
+          "Sonuç"}
       </h1>
 
-      <ReadingPanel content={data} />
-      <AnalyzerPanel content={data} />
-      <VisualizerPanel content={data} />
+      <ReadingPanel content={analysis} />
+      <AnalyzerPanel content={analysis} />
+      <VisualizerPanel flow={flow} atlas={atlas} />
     </div>
   );
 }

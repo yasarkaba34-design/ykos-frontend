@@ -1,32 +1,117 @@
 // src/App.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { nodeAnalysisData } from "./nodeAnalysisData";
 import YKOSDashboard from "./layouts/YKOSDashboard";
 import { defaultArchiveArticles } from "./data/ykosDataService";
 import AdminPanel from "./layouts/AdminPanel";
-import YalinVeriGirisi from './pages/YalinVeriGirisi';
+import YalinVeriGirisi from "./pages/YalinVeriGirisi";
 import OpsCenter from "./layouts/OpsCenter";
 import BubbleMatrix from "./mega/BubbleMatrix.jsx";
 import AtlasMap from "./mega/AtlasMap";
 import Hakkimizda from "./pages/Hakkimizda";
-// App.jsx içinde:
 import ReadingPanel from "./components/ReadingPanel";
-import './index.css';
+import "./index.css";
+import AdminLogin from "./components/AdminLogin";
 
 export default function App() {
   const [currentLang, setCurrentLang] = useState("TR");
-  const [activeView, setActiveView] = useState("dashboard"); // dashboard, detail, matrix, atlas, method, acikveri, ops, login
+  const [activeView, setActiveView] = useState("dashboard");
   const [selectedContentId, setSelectedContentId] = useState(null);
 
-  // Navigasyon yardımcıları
+    const findContentById = (source, id) => {
+    if (!source || !id) return null;
+
+    if (Array.isArray(source)) {
+      return (
+        source.find(
+          (item) =>
+            String(item?.id) === String(id) ||
+            String(item?.code) === String(id) ||
+            String(item?.nodeId) === String(id) ||
+            String(item?.contentId) === String(id)
+        ) || null
+      );
+    }
+
+    if (typeof source === "object") {
+      if (source[id]) return source[id];
+
+      return (
+        Object.values(source).find(
+          (item) =>
+            String(item?.id) === String(id) ||
+            String(item?.code) === String(id) ||
+            String(item?.nodeId) === String(id) ||
+            String(item?.contentId) === String(id)
+        ) || null
+      );
+    }
+
+    return null;
+  };
+
+  const adminSelectedContent = (() => {
+    try {
+      const records = JSON.parse(
+        localStorage.getItem("ykos_admin_records") || "[]"
+      );
+
+      return (
+        records.find(
+          (record) =>
+            String(record?.id) === String(selectedContentId)
+        ) || null
+      );
+    } catch (error) {
+      console.error("YKOS merkez arşiv okuma hatası:", error);
+      return null;
+    }
+  })();
+
+  const selectedContent =
+    findContentById(nodeAnalysisData, selectedContentId) ??
+    findContentById(defaultArchiveArticles, selectedContentId) ??
+    adminSelectedContent;
+
   const handleNavigateRead = (id) => {
     setSelectedContentId(id);
     setActiveView("detail");
     window.scrollTo(0, 0);
   };
 
+  const backToDashboard = () => {
+    setActiveView("dashboard");
+    setSelectedContentId(null);
+    window.scrollTo(0, 0);
+  };
+
+  const BackButton = () => (
+    <div style={{ padding: "10px 20px" }}>
+      <button
+        onClick={backToDashboard}
+        style={{
+          background: "#ffd700",
+          color: "#000",
+          border: "none",
+          padding: "8px 16px",
+          borderRadius: "6px",
+          fontWeight: "bold",
+          cursor: "pointer"
+        }}
+      >
+        ⬅ Ana Sayfaya Dön
+      </button>
+    </div>
+  );
+
   return (
-    <div style={{ backgroundColor: "#030712", minHeight: "100vh", color: "#fff" }}>
+    <div
+      style={{
+        backgroundColor: "#030712",
+        minHeight: "100vh",
+        color: "#fff"
+      }}
+    >
       {activeView === "dashboard" && (
         <YKOSDashboard
           currentLang={currentLang}
@@ -45,100 +130,70 @@ export default function App() {
 
       {activeView === "detail" && (
         <div>
-          <div style={{ padding: "10px 20px" }}>
-            <button
-              onClick={() => setActiveView("dashboard")}
-              style={{ background: "#ffd700", color: "#000", border: "none", padding: "8px 16px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}
-            >
-              ⬅ Ana Sayfaya Dön
-            </button>
-          </div>
-          <ReadingPanel content={selectedContentId} currentLang={currentLang} />
+          <BackButton />
+
+          {selectedContent ? (
+            <ReadingPanel
+              content={selectedContent}
+              currentLang={currentLang}
+            />
+          ) : (
+            <div style={{ padding: "30px", color: "#fff" }}>
+              Seçilen içeriğin analiz verisi bulunamadı:
+              {" "}
+              {selectedContentId}
+            </div>
+          )}
         </div>
       )}
 
       {activeView === "matrix" && (
         <div>
-          <div style={{ padding: "10px 20px" }}>
-            <button
-              onClick={() => setActiveView("dashboard")}
-              style={{ background: "#ffd700", color: "#000", border: "none", padding: "8px 16px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}
-            >
-              ⬅ Ana Sayfaya Dön
-            </button>
-          </div>
+          <BackButton />
           <BubbleMatrix currentLang={currentLang} />
         </div>
       )}
 
       {activeView === "atlas" && (
         <div>
-          <div style={{ padding: "10px 20px" }}>
-            <button
-              onClick={() => setActiveView("dashboard")}
-              style={{ background: "#ffd700", color: "#000", border: "1px solid #ffd700", padding: "8px 16px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}
-            >
-              ⬅ Ana Sayfaya Dön
-            </button>
-          </div>
+          <BackButton />
           <AtlasMap currentLang={currentLang} />
         </div>
       )}
 
       {activeView === "method" && (
         <div>
-          <div style={{ padding: "10px 20px" }}>
-            <button
-              onClick={() => setActiveView("dashboard")}
-              style={{ background: "#ffd700", color: "#000", border: "none", padding: "8px 16px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}
-            >
-              ⬅ Ana Sayfaya Dön
-            </button>
-          </div>
+          <BackButton />
           <Hakkimizda currentLang={currentLang} />
         </div>
       )}
 
       {activeView === "acikveri" && (
-        <div>
-          <div style={{ padding: "10px 20px" }}>
-            <button
-              onClick={() => setActiveView("dashboard")}
-              style={{ background: "#ffd700", color: "#000", border: "none", padding: "8px 16px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}
-            >
-              ⬅ Ana Sayfaya Dön
-            </button>
-          </div>
-          <YalinVeriGirisi currentLang={currentLang} />
-        </div>
+        <YalinVeriGirisi
+          currentLang={currentLang}
+          onLogout={backToDashboard}
+        />
       )}
 
       {activeView === "ops" && (
         <div>
-          <div style={{ padding: "10px 20px" }}>
-            <button
-              onClick={() => setActiveView("dashboard")}
-              style={{ background: "#ffd700", color: "#000", border: "none", padding: "8px 16px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}
-            >
-              ⬅ Ana Sayfaya Dön
-            </button>
-          </div>
+          <BackButton />
           <OpsCenter currentLang={currentLang} />
         </div>
       )}
 
       {activeView === "login" && (
-        <div>
-          <div style={{ padding: "10px 20px" }}>
-            <button
-              onClick={() => setActiveView("dashboard")}
-              style={{ background: "#ffd700", color: "#000", border: "none", padding: "8px 16px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}
-            >
-              ⬅ Ana Sayfaya Dön
-            </button>
-          </div>
-          <AdminPanel currentLang={currentLang} />
-        </div>
+        <AdminLogin
+          onSuccess={() => setActiveView("admin")}
+          onCancel={() => setActiveView("dashboard")}
+        />
+      )}
+
+      {activeView === "admin" && (
+        <AdminPanel
+          currentLang={currentLang}
+          onLogout={() => setActiveView("dashboard")}
+        />
       )}
     </div>
   );

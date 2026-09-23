@@ -2,9 +2,9 @@
 import React, { useState, useEffect } from "react";
 import SearchBar from "../components/SearchBar";
 import { translations } from "../data/i18n";
-import YKOSLabMatrix from '../components/YKOSLabMatrix';
+import { BubbleMatrixView } from "../mega/BubbleMatrixView";
+import { YKOSPanel } from "./YKOSPanel";
 
-// 11'Lİ YKOS AFİŞ & MANİFESTO VERİ LİSTESİ
 const YKOS_POSTERS = [
   { id: 1, no: "01", title: "Sıfır Noktası & Pleistosen Sığınağı", desc: "Anadolu Refugium Modeli, mikroklima koruması ve derin zaman hafızası.", icon: "🌋", tag: "BUZUL ÇAĞI" },
   { id: 2, no: "02", title: "Kozmik Mühür: Göbeklitepe", desc: "T-Sütunları, piktogramlar ve insanlığın ilk algoritmik grafik hafızası.", icon: "🗿", tag: "PROTO-DAMGA" },
@@ -39,12 +39,10 @@ export default function YKOSDashboard({
   const [searchQuery, setSearchQuery] = useState("");
   const [adminRecords, setAdminRecords] = useState([]);
 
-  // 🎥 VİDEO ARŞİVİ MODALI İÇİN STATE TANIMLARI
   const [videoModalOpen, setVideoModalOpen] = useState(false);
   const [allVideoRecords, setAllVideoRecords] = useState([]);
   const [activeVideo, setActiveVideo] = useState(null);
 
-  // Butona tıklandığında çalışacak fonksiyon
   const handleOpenVideoArchive = () => {
     try {
       const saved = JSON.parse(localStorage.getItem("ykos_admin_records") || "[]");
@@ -75,7 +73,7 @@ export default function YKOSDashboard({
     }
   }, []);
 
-   const languages = [
+  const languages = [
     { code: "TR", label: "Türkçe" },
     { code: "EN", label: "English" },
     { code: "DE", label: "Deutsch" },
@@ -88,7 +86,6 @@ export default function YKOSDashboard({
     { code: "AR", label: "العربية" },
     { code: "FA", label: "فارسی" }
   ];
-
 
   const initialStats = [
     { icon: "🌐", count: "214", label: t.stats?.countries || "Ülkeler" },
@@ -128,7 +125,60 @@ export default function YKOSDashboard({
     transition: "all 0.2s ease",
   };
 
-  const sourceCards = t.cards && t.cards.length > 0 ? t.cards : [];
+ // Sabit arşiv kartları
+const staticCards =
+  t.cards && t.cards.length > 0
+    ? t.cards
+    : [];
+
+// Yönetici merkezinden onaylanmış canlı arşiv kayıtları
+const adminArchiveCards =
+  currentLang === "TR"
+    ? [...adminRecords]
+        .reverse()
+        .map((record) => ({
+          id: record.id,
+          title:
+            record.title ||
+            record.baslik ||
+            "Başlıksız YKOS Kaydı",
+
+          desc:
+            record.summary ||
+            record.ozet ||
+            record.description ||
+            record.content ||
+            record.icerik ||
+            "",
+
+          tag:
+            record.category ||
+            record.kategori ||
+            "YKOS ARŞİVİ",
+
+          image:
+            record.image ||
+            record.gorsel ||
+            record.imageUrl ||
+            record.resim,
+
+          isNew: true,
+          isArchiveRecord: true
+        }))
+    : [];
+
+// Merkez arşiv kayıtları önce, sabit kartlar sonra
+const sourceCards = [
+  ...adminArchiveCards,
+  ...staticCards
+].filter(
+  (card, index, cards) =>
+    index === cards.findIndex(
+      (item) =>
+        String(item.id || item.title) ===
+        String(card.id || card.title)
+    )
+);
 
   const filteredGridCards = sourceCards.filter((card) => {
     if (!searchQuery) return true;
@@ -186,7 +236,7 @@ export default function YKOSDashboard({
         }
       `}</style>
 
-      {/* 1. ÜST BAR & YKOS KURUMSAL MÜHÜR */}
+      {/* 1. ÜST BAR & KURUMSAL MÜHÜR */}
       <div style={{ ...cardStyle, paddingTop: "0px", position: "relative" }}>
         
         <div style={{ position: "absolute", left: "14px", top: "14px", zIndex: 10 }}>
@@ -274,6 +324,10 @@ export default function YKOSDashboard({
             YKOS BİLGİ SİSTEMİ
           </h1>
 
+          <div style={{ color: "#ffd700", fontSize: "0.82rem", fontWeight: "bold", letterSpacing: "1px", margin: "4px 0 6px 0", textTransform: "uppercase" }}>
+            Gazeteciler Sosyal Sorumluluk Projeleri Derneği Kuruluşudur
+          </div>
+
           <p style={{ color: "#94a3b8", fontSize: "0.8rem", letterSpacing: "1.2px", margin: 0, textTransform: "uppercase", fontWeight: "600" }}>
             DİSİPLİNLER ARASI ALGORİTMİK KÜLTÜR VE DİL VERİ TABANI
           </p>
@@ -328,7 +382,6 @@ export default function YKOSDashboard({
               </button>
             </div>
           </div>
-
         )}
       </div>
 
@@ -349,27 +402,6 @@ export default function YKOSDashboard({
           ))}
         </div>
       </div>
-<div style={{ display: "flex", gap: "10px", marginTop: "12px", flexWrap: "wrap" }}>
-  <button 
-    onClick={() => {
-      setVideoModalOpen(false);
-      onNavigateRead(activeVideo.id);
-    }}
-    style={{ flex: 1, background: "rgba(255, 215, 0, 0.2)", border: "1.5px solid #ffd700", color: "#ffd700", padding: "8px 16px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}
-  >
-    📖 Bu İçeriğin Detay Sayfasına Git ➔
-  </button>
-
-  <button
-    onClick={() => {
-      navigator.clipboard.writeText(window.location.href);
-      alert("Bağlantı panoya kopyalandı! Dilediğiniz yerde paylaşabilirsiniz.");
-    }}
-    style={{ background: "rgba(56, 189, 248, 0.15)", border: "1.5px solid #38bdf8", color: "#38bdf8", padding: "8px 16px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}
-  >
-    📤 Paylaş
-  </button>
-</div>
 
       {/* 4. ANA GÖVDE: YKOS ÇÖZÜMLÜLERİ VE İNDEKSLER */}
       <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
