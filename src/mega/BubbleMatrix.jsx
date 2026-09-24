@@ -125,6 +125,88 @@ export default function BubbleMatrix({ onGoHome, onSelectNode }) {
 
   return (
     <div style={{ width: "100%", maxWidth: "1050px", margin: "0 auto", padding: "12px", color: "#fff", fontFamily: "Segoe UI, sans-serif" }}>
+      <style>{`
+        @keyframes ykosNetworkDrift {
+          0%, 100% {
+            transform: translate(0px, 0px) rotate(0deg);
+          }
+          25% {
+            transform: translate(5px, -3px) rotate(0.25deg);
+          }
+          50% {
+            transform: translate(-3px, -6px) rotate(-0.2deg);
+          }
+          75% {
+            transform: translate(-5px, 2px) rotate(0.15deg);
+          }
+        }
+
+        @keyframes ykosBubblePulse {
+          0%, 100% {
+            transform: scale(1);
+            opacity: 0.94;
+          }
+          50% {
+            transform: scale(1.09);
+            opacity: 1;
+          }
+        }
+
+        @keyframes ykosLineFlow {
+          from {
+            stroke-dashoffset: 24;
+          }
+          to {
+            stroke-dashoffset: 0;
+          }
+        }
+
+        .ykos-network {
+          transform-box: fill-box;
+          transform-origin: center;
+          animation: ykosNetworkDrift 8s ease-in-out infinite;
+          will-change: transform;
+        }
+
+        .ykos-network line {
+          stroke-dasharray: 7 5;
+          animation: ykosLineFlow 2.2s linear infinite;
+        }
+
+        .ykos-bubble-node circle {
+          transform-box: fill-box;
+          transform-origin: center;
+          animation: ykosBubblePulse 2.8s ease-in-out infinite;
+          will-change: transform;
+        }
+
+        .ykos-bubble-node:nth-of-type(3n) circle {
+          animation-delay: -0.8s;
+        }
+
+        .ykos-bubble-node:nth-of-type(4n) circle {
+          animation-delay: -1.6s;
+        }
+
+        .ykos-bubble-node:hover circle,
+        .ykos-bubble-node:active circle {
+          animation-duration: 0.75s;
+        }
+
+        @media (max-width: 600px) {
+          .ykos-network {
+            animation-duration: 6s;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .ykos-network,
+          .ykos-network line,
+          .ykos-bubble-node circle {
+            animation: none;
+          }
+        }
+      `}</style>
       
       {/* KAPSAYICI KART */}
       <div style={{ backgroundColor: "#050811", border: "1.5px solid #ffd700", borderRadius: "14px", padding: "20px", boxShadow: "0 4px 25px rgba(0, 0, 0, 0.8)" }}>
@@ -158,8 +240,13 @@ export default function BubbleMatrix({ onGoHome, onSelectNode }) {
         )}
 
         {/* GENİŞLETİLMİŞ MATRİS BALONCUK VE BAĞLANTI GRAFİĞİ */}
-        <div style={{ background: "#050811", border: "1px solid rgba(255, 215, 0, 0.3)", borderRadius: "8px", height: "420px", position: "relative", overflow: "hidden", marginBottom: "10px" }}>
-          <svg style={{ width: "100%", height: "100%", viewBox: "150 10 650 400" }}>
+        <div style={{ background: "#050811", border: "1px solid rgba(255, 215, 0, 0.3)", borderRadius: "8px", height: "clamp(300px, 56vw, 420px)", position: "relative", overflow: "hidden", marginBottom: "10px" }}>
+          <svg
+            viewBox="150 10 650 400"
+            preserveAspectRatio="xMidYMid meet"
+            style={{ width: "100%", height: "100%", display: "block" }}
+          >
+            <g className="ykos-network">
             
             {/* Çekirdek Hatlar */}
             <line x1="470" y1="190" x2="530" y2="260" stroke="rgba(245, 158, 11, 0.6)" strokeWidth="1.8" />
@@ -208,7 +295,12 @@ export default function BubbleMatrix({ onGoHome, onSelectNode }) {
             {nodes.map((node) => {
               const isSelected = selectedNode?.id === node.id;
               return (
-                <g key={node.id} onClick={() => handleBubbleClick(node)} style={{ cursor: "pointer" }}>
+                <g
+                  key={node.id}
+                  className="ykos-bubble-node"
+                  onClick={() => handleBubbleClick(node)}
+                  style={{ cursor: "pointer" }}
+                >
                   <circle
                     cx={node.position.x}
                     cy={node.position.y}
@@ -233,6 +325,7 @@ export default function BubbleMatrix({ onGoHome, onSelectNode }) {
                 </g>
               );
             })}
+            </g>
           </svg>
         </div>
 

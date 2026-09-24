@@ -62,6 +62,7 @@ export default function YKOSDashboard({
   const t = (translations && translations[currentLang]) ? translations[currentLang] : (translations?.TR || {});
 
   useEffect(() => {
+    const loadApprovedRecords = () => {
     try {
       const saved = JSON.parse(localStorage.getItem("ykos_admin_records") || "[]");
       const approved = saved.filter(
@@ -70,7 +71,25 @@ export default function YKOSDashboard({
       setAdminRecords(approved);
     } catch (e) {
       console.error(e);
+      setAdminRecords([]);
     }
+
+    };
+
+    loadApprovedRecords();
+
+    // Yönetici panelinde kayıt yapıldıktan sonra ana sayfaya dönüldüğünde
+    // canlı arşivi yeniden oku. "storage" farklı sekmeleri, "focus" ise
+    // aynı sekmede panele dönülmesini günceller.
+    window.addEventListener("storage", loadApprovedRecords);
+    window.addEventListener("focus", loadApprovedRecords);
+    window.addEventListener("ykos-records-updated", loadApprovedRecords);
+
+    return () => {
+      window.removeEventListener("storage", loadApprovedRecords);
+      window.removeEventListener("focus", loadApprovedRecords);
+      window.removeEventListener("ykos-records-updated", loadApprovedRecords);
+    };
   }, []);
 
   const languages = [
@@ -218,7 +237,7 @@ const sourceCards = [
   };
 
   return (
-    <div style={{ width: "100%", maxWidth: "1280px", margin: "0 auto", padding: "10px", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
+    <div style={{ width: "calc(100% - 20px)", maxWidth: "1920px", margin: "0 auto", padding: "10px", boxSizing: "border-box", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
       
       <style>{`
         @media (max-width: 768px) {
@@ -226,12 +245,19 @@ const sourceCards = [
             display: flex !important;
             flex-direction: column !important;
             grid-template-columns: 1fr !important;
+            min-height: 0 !important;
             max-height: none !important;
           }
           .ykos-archive-grid {
             display: flex !important;
             flex-direction: column !important;
             grid-template-columns: 1fr !important;
+          }
+        }
+
+        @media (min-width: 769px) and (max-width: 1200px) {
+          .ykos-main-content-grid {
+            grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr) !important;
           }
         }
       `}</style>
@@ -319,17 +345,34 @@ const sourceCards = [
               style={{ width: "260px", height: "auto", maxHeight: "220px", objectFit: "contain", display: "block", margin: "0 auto" }}
             />
           </div>
+<h1
+  style={{
+    color: "#f59e0b",
+    fontSize: "1.95rem",
+    fontWeight: "900",
+    letterSpacing: "3px",
+    margin: "2px 0 5px 0",
+    textShadow: "0 0 20px rgba(245, 158, 11, 0.4)"
+  }}
+>
+  YKOS BİLGİ SİSTEMİ
+</h1>
 
-          <h1 style={{ color: "#f59e0b", fontSize: "1.95rem", fontWeight: "900", letterSpacing: "3px", margin: "0 0 4px 0", textShadow: "0 0 20px rgba(245, 158, 11, 0.4)" }}>
-            YKOS BİLGİ SİSTEMİ
-          </h1>
-
-          <div style={{ color: "#ffd700", fontSize: "0.82rem", fontWeight: "bold", letterSpacing: "1px", margin: "4px 0 6px 0", textTransform: "uppercase" }}>
-            Gazeteciler Sosyal Sorumluluk Projeleri Derneği Kuruluşudur
-          </div>
-
-          <p style={{ color: "#94a3b8", fontSize: "0.8rem", letterSpacing: "1.2px", margin: 0, textTransform: "uppercase", fontWeight: "600" }}>
-            DİSİPLİNLER ARASI ALGORİTMİK KÜLTÜR VE DİL VERİ TABANI
+<div
+  style={{
+    color: "#f59e0b",
+    fontSize: "0.82rem",
+    fontWeight: "bold",
+    letterSpacing: "1px",
+    margin: "0 0 4px 0",
+    textTransform: "uppercase",
+    textShadow: "0 0 12px rgba(245, 158, 11, 0.25)"
+  }}
+>
+  DİSİPLİNLER ARASI ALGORİTMİK KÜLTÜR VE DİL VERİ TABANI
+</div>
+    
+          <p style={{ color: "#94a3b8", fontSize: "0.8rem", letterSpacing: "1.2px", margin: 0, textTransform: "uppercase", fontWeight: "600" }}>  
           </p>
         </div>
 
@@ -409,9 +452,9 @@ const sourceCards = [
           ⚡ YKOS ÇÖZÜMLERİ VE İNDEKSLER (CANLI ARŞİV)
         </h3>
 
-        <div className="ykos-main-content-grid" style={{ display: "grid", gridTemplateColumns: "2.3fr 1fr", gap: "14px", minHeight: "440px", maxHeight: "560px" }}>
+        <div className="ykos-main-content-grid" style={{ display: "grid", gridTemplateColumns: "minmax(0, 2.3fr) minmax(300px, 1fr)", gap: "14px", alignItems: "stretch" }}>
           
-          <div className="ykos-archive-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", overflowY: "auto", paddingRight: "6px" }}>
+          <div className="ykos-archive-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: "10px", alignContent: "start", minWidth: 0 }}>
             {filteredGridCards.map((card, idx) => {
               if (card.isMatrixCard) {
                 return (
@@ -453,7 +496,7 @@ const sourceCards = [
             })}
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px", background: "rgba(255, 215, 0, 0.02)", padding: "12px", borderRadius: "8px", border: "1.5px solid rgba(255, 215, 0, 0.3)", overflowY: "auto" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", background: "rgba(255, 215, 0, 0.02)", padding: "12px", borderRadius: "8px", border: "1.5px solid rgba(255, 215, 0, 0.3)", minWidth: 0 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1.5px solid #ffd700", paddingBottom: "6px" }}>
               <span style={{ color: "#ffd700", fontSize: "0.85rem", fontWeight: "bold", display: "flex", alignItems: "center", gap: "6px" }}>📑 {t.approvedTitle || "ONAYLI İÇERİK & VERİ"}</span>
               <span style={{ background: "#ffd700", color: "#000", fontSize: "8.5px", fontWeight: "900", padding: "2px 6px", borderRadius: "3px" }}>{t.publishBadge || "YAYIN"}</span>
@@ -486,7 +529,7 @@ const sourceCards = [
         </div>
 
         {/* ALT BUTTONLAR */}
-        <div style={{ display: "flex", gap: "10px", justifyContent: "center", width: "100%", maxWidth: "950px", margin: "14px auto 0 auto", flexWrap: "wrap" }}>
+        <div style={{ position: "relative", display: "flex", gap: "10px", justifyContent: "center", width: "100%", maxWidth: "950px", margin: "20px auto 4px auto", flexWrap: "wrap" }}>
           <button onClick={onVisualize} style={{ flex: 1, minWidth: "220px", background: "linear-gradient(135deg, #ffd700, #b8860b)", color: "#000", border: "none", padding: "12px", borderRadius: "8px", fontWeight: "900", fontSize: "0.85rem", cursor: "pointer" }}>
             {t.visualizeBtn || "BALONCUK MATRİSİNİ GÖRSELLEŞTİR →"}
           </button>

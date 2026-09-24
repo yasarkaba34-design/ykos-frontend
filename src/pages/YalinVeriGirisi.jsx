@@ -84,7 +84,25 @@ export default function YalinVeriGirisi({ onGoHome }) {
 
   return (
     <div style={{ maxWidth: "780px", margin: "0 auto", padding: "20px", background: "#060913", border: "1.5px solid #ffd700", borderRadius: "10px", color: "#fff" }}>
-      
+ <button
+  type="button"
+  onClick={() => {
+  window.location.assign("/");
+}}
+  style={{
+    padding: "9px 14px",
+    marginBottom: "14px",
+    color: "#000",
+    backgroundColor: "#ffd700",
+    border: "none",
+    borderRadius: "7px",
+    fontSize: "13px",
+    fontWeight: "bold",
+    cursor: "pointer"
+  }}
+>
+  ← Ana Sayfaya Dön
+</button>     
       <div style={{ textAlign: "center", borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "12px", marginBottom: "16px" }}>
         <h2 style={{ color: "#ffd700", margin: "0 0 4px 0", fontSize: "1.3rem", letterSpacing: "1px" }}>
           🌐 AÇIK VERİ & KONUK BULGU GİRİŞİ
