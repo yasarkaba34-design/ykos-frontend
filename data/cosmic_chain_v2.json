@@ -6,9 +6,7 @@
     { "id": "YOL", "color": "#0099ff", "energy": 0.88 },
     { "id": "BIR", "color": "#33cc33", "energy": 0.93 },
     { "id": "KAL", "color": "#9933ff", "energy": 0.67 }
-  ]
-}
-{
+  ],
   "title": {
     "tr": "Göbeklitepe Tamga Dizisi",
     "en": "Göbeklitepe Symbol Sequence",

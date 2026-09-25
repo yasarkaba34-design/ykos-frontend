@@ -109,71 +109,61 @@ export default function YoneticiIcerikGirisi({ secilenVeri, onKayitTamamlandi })
         />
       </div>
 
-      {/* 3. COĞRAFİ KONUM VE ARKEOLOJİK ALAN */}
-      <div style={formStyle.grid2}>
-        <div>
-          <label style={formStyle.label}>İlçe / Köy / Mevki</label>
-          <input 
-            type="text" 
-            name="ilceKoyMevki" 
-            placeholder="Örn: Beykoz / Anadolukavağı" 
-            value={formData.ilceKoyMevki} 
-            onChange={handleChange} 
-            style={formStyle.input} 
-          />
-        </div>
-        <div>
-          <label style={formStyle.label}>Arkeolojik Alan</label>
-          <input 
-            type="text" 
-            name="arkeolojikAlan" 
-            placeholder="Örn: Yoros Kalesi" 
-            value={formData.arkeolojikAlan} 
-            onChange={handleChange} 
-            style={formStyle.input} 
-          />
-        </div>
-      </div>
+     {/* 🎥 4. VİDEO BAĞLANTISI */}
+<div
+  style={{
+    ...formStyle.section,
+    width: "100%",
+    minWidth: 0,
+    boxSizing: "border-box",
+    overflow: "visible"
+  }}
+>
+  <label
+    htmlFor="videoUrl"
+    style={{
+      ...formStyle.label,
+      display: "block",
+      marginBottom: "7px",
+      color: "#38bdf8"
+    }}
+  >
+    🎥 VİDEO BAĞLANTISI (YouTube / Video URL)
+  </label>
 
-      <div style={formStyle.section}>
-        <label style={formStyle.label}>Koordinatlar (Enlem, Boylam)</label>
-        <input 
-          type="text" 
-          name="koordinatlar" 
-          placeholder="Örn: 41.1961, 29.0883" 
-          value={formData.koordinatlar} 
-          onChange={handleChange} 
-          style={formStyle.input} 
-        />
-      </div>
+  <input
+    id="videoUrl"
+    type="url"
+    name="videoUrl"
+    placeholder="https://www.youtube.com/watch?v=..."
+    value={formData.videoUrl || ""}
+    onChange={handleChange}
+    inputMode="url"
+    autoComplete="off"
+    style={{
+      ...formStyle.input,
+      display: "block",
+      width: "100%",
+      minWidth: 0,
+      maxWidth: "100%",
+      boxSizing: "border-box",
+      borderColor: "#38bdf8"
+    }}
+  />
 
-      {/* 🎥 4. VİDEO BAĞLANTISI (YENİ) */}
-      <div style={formStyle.section}>
-        <label style={{ ...formStyle.label, color: '#38bdf8' }}>🎥 VİDEO BAĞLANTISI (YouTube / Video URL)</label>
-        <input 
-          type="text" 
-          name="videoUrl" 
-          placeholder="https://www.youtube.com/watch?v=..." 
-          value={formData.videoUrl} 
-          onChange={handleChange} 
-          style={{ ...formStyle.input, borderColor: '#38bdf8' }} 
-        />
-      </div>
-
-      {/* 5. GÖRSEL VE ÇOKLU FOTOĞRAF ARŞİVİ */}
-      <div style={formStyle.section}>
-        <label style={formStyle.label}>Ana Kapak Görseli</label>
-        <input type="file" accept="image/*" onChange={(e) => handleGorselYukle(e, 'kapak')} style={formStyle.fileInput} />
-        {formData.kapakGorseli && (
-          <img src={formData.kapakGorseli} alt="Kapak" style={formStyle.previewImg} />
-        )}
-      </div>
-
-      <div style={formStyle.section}>
-        <label style={formStyle.label}>Çoklu Fotoğraflar (Galeriye Ekle)</label>
-        <input type="file" multiple accept="image/*" onChange={(e) => handleGorselYukle(e, 'galeri')} style={formStyle.fileInput} />
-      </div>
-
+  {formData.videoUrl && (
+    <div
+      style={{
+        marginTop: "7px",
+        color: "#94a3b8",
+        fontSize: "0.78rem",
+        overflowWrap: "anywhere"
+      }}
+    >
+      Eklenen bağlantı: {formData.videoUrl}
+    </div>
+  )}
+</div>
       {/* 6. METİN VE ANALİZ ALANLARI */}
       <div style={formStyle.section}>
         <label style={formStyle.label}>Kısa Özet</label>

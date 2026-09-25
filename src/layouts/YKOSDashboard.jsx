@@ -337,14 +337,46 @@ const sourceCards = [
           </div>
         </div>
 
-        <div style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", marginTop: "0px", marginBottom: "8px" }}>
-          <div style={{ margin: "0 0 6px 0", filter: "drop-shadow(0 0 16px rgba(245, 158, 11, 0.45))" }}>
-            <img
-              src="/ykos-logo.png"
-              alt="YKOS Logo"
-              style={{ width: "260px", height: "auto", maxHeight: "220px", objectFit: "contain", display: "block", margin: "0 auto" }}
-            />
-          </div>
+ <div
+  style={{
+    textAlign: "center",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    marginTop: "0px",
+    marginBottom: "8px"
+  }}
+>
+  <div
+    style={{
+      margin: "0 0 6px 0",
+      filter: "drop-shadow(0 0 16px rgba(245, 158, 11, 0.45))"
+    }}
+  >
+    <a
+      href="/"
+      aria-label="YKOS Ana Sayfası"
+      title="Ana sayfaya dön"
+      style={{
+        display: "inline-block",
+        lineHeight: 0,
+        cursor: "pointer"
+      }}
+    >
+      <img
+        src="/ykos-logo.png"
+        alt="YKOS Logo"
+        style={{
+          width: "260px",
+          height: "auto",
+          maxHeight: "220px",
+          objectFit: "contain",
+          display: "block",
+          margin: "0 auto"
+        }}
+      />
+    </a>
+  </div>
 <h1
   style={{
     color: "#f59e0b",

@@ -16,13 +16,10 @@ export default function ReadingPanel({ content }) {
 
   const article = content?.article ?? content?.record ?? content;
 
-  // Türkçe ve İngilizce alan adlarının ikisini de destekler
   const title = article?.title || article?.baslik || "";
   const summary = article?.summary || article?.kisaOzet || "";
-  const articleContent =
-    article?.content || article?.kapsamliAnaliz || "";
-  const category =
-    article?.category || article?.icerikTuru || "Merkez Arşiv";
+  const articleContent = article?.content || article?.kapsamliAnaliz || "";
+  const category = article?.category || article?.icerikTuru || "Merkez Arşiv";
   const image = article?.image || article?.kapakGorseli || "";
   const gallery = article?.gallery || article?.galeriGorselleri || [];
   const videoUrl = article?.videoUrl || "";
@@ -138,8 +135,7 @@ export default function ReadingPanel({ content }) {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns:
-                "repeat(auto-fit, minmax(220px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
               gap: "15px",
               marginTop: "25px"
             }}
@@ -163,27 +159,34 @@ export default function ReadingPanel({ content }) {
           </div>
         )}
 
-        {videoUrl && (
-          <div style={{ marginTop: "25px" }}>
+        {article.videoUrl && (
+          <div
+            style={{
+              width: "100%",
+              marginTop: "25px"
+            }}
+          >
             <div
               style={{
                 position: "relative",
                 width: "100%",
-                paddingTop: "56.25%",
+                height: "clamp(220px, 56.25vw, 820px)",
                 overflow: "hidden",
-                borderRadius: "10px",
                 border: "1px solid #ffd700",
+                borderRadius: "10px",
                 backgroundColor: "#000"
               }}
             >
               <iframe
-                src={getEmbedUrl(videoUrl)}
-                title={title || "YKOS Video"}
+                src={getEmbedUrl(article.videoUrl)}
+                title={article.title || "YKOS Video"}
+                loading="lazy"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
                 style={{
                   position: "absolute",
                   inset: 0,
+                  display: "block",
                   width: "100%",
                   height: "100%",
                   border: "none"
@@ -192,7 +195,7 @@ export default function ReadingPanel({ content }) {
             </div>
 
             <a
-              href={videoUrl}
+              href={article.videoUrl}
               target="_blank"
               rel="noreferrer"
               style={{
@@ -212,65 +215,64 @@ export default function ReadingPanel({ content }) {
         )}
       </div>
 
-   {largeImage && (
-  <div
-    onClick={() => setLargeImage(null)}
-    style={{
-      position: "fixed",
-      inset: 0,
-      zIndex: 99999,
-      display: "flex",
-      alignItems: "flex-start",
-      justifyContent: "center",
-      overflow: "auto",
-      padding: "25px",
-      boxSizing: "border-box",
-      backgroundColor: "rgba(0,0,0,0.94)",
-      cursor: "zoom-out"
-    }}
-  >
-    <button
-      type="button"
-      onClick={() => setLargeImage(null)}
-      style={{
-        position: "fixed",
-        top: "20px",
-        right: "25px",
-        zIndex: 100000,
-        width: "44px",
-        height: "44px",
-        color: "#000",
-        backgroundColor: "#ffd700",
-        border: "none",
-        borderRadius: "50%",
-        fontSize: "24px",
-        fontWeight: "bold",
-        cursor: "pointer"
-      }}
-    >
-      ×
-    </button>
+      {largeImage && (
+        <div
+          onClick={() => setLargeImage(null)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 99999,
+            display: "flex",
+            alignItems: "flex-start",
+            justifyContent: "center",
+            overflow: "auto",
+            padding: "25px",
+            boxSizing: "border-box",
+            backgroundColor: "rgba(0,0,0,0.94)",
+            cursor: "zoom-out"
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => setLargeImage(null)}
+            style={{
+              position: "fixed",
+              top: "20px",
+              right: "25px",
+              zIndex: 100000,
+              width: "44px",
+              height: "44px",
+              color: "#000",
+              backgroundColor: "#ffd700",
+              border: "none",
+              borderRadius: "50%",
+              fontSize: "24px",
+              fontWeight: "bold",
+              cursor: "pointer"
+            }}
+          >
+            ×
+          </button>
 
-    <img
-      src={largeImage}
-      alt={article.title}
-      onClick={(event) => event.stopPropagation()}
-      style={{
-        display: "block",
-        width: "96vw",
-        maxWidth: "none",
-        maxHeight: "none",
-        height: "auto",
-        objectFit: "contain",
-        margin: "70px auto 30px",
-        border: "1px solid #ffd700",
-        borderRadius: "8px",
-        boxShadow: "0 0 35px rgba(0,0,0,0.9)"
-      }}
-    />
-  </div>
-)} 
-
-      </div>
-    );
-  }
+          <img
+            src={largeImage}
+            alt={article.title}
+            onClick={(event) => event.stopPropagation()}
+            style={{
+              display: "block",
+              width: "96vw",
+              maxWidth: "none",
+              maxHeight: "none",
+              height: "auto",
+              objectFit: "contain",
+              margin: "70px auto 30px",
+              border: "1px solid #ffd700",
+              borderRadius: "8px",
+              boxShadow: "0 0 35px rgba(0,0,0,0.9)"
+            }}
+          />
+        </div>
+      )}
+    </div>
+  );
+}

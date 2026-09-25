@@ -162,10 +162,55 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
   const currentPublishedRecords = publishedRecords.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
-    <div style={{ maxWidth: "1350px", margin: "0 auto", padding: "12px", color: "#fff" }}>
+    <div className="ykos-admin-panel" style={{ maxWidth: "1350px", margin: "0 auto", padding: "12px", color: "#fff" }}>
+      <style>{`
+        .ykos-admin-grid {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+          gap: 16px;
+          align-items: start;
+        }
+
+        .ykos-admin-table {
+          width: 100%;
+          border-collapse: collapse;
+          font-size: 0.75rem;
+        }
+
+        @media (max-width: 768px) {
+          .ykos-admin-panel {
+            padding: 8px !important;
+          }
+
+          .ykos-admin-header {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 8px;
+          }
+
+          .ykos-admin-header button {
+            width: 100%;
+          }
+
+          .ykos-admin-grid {
+            grid-template-columns: minmax(0, 1fr) !important;
+            gap: 12px;
+          }
+
+          .ykos-video-input {
+            min-width: 0 !important;
+            max-width: 100% !important;
+            font-size: 16px !important;
+          }
+
+          .ykos-admin-table {
+            min-width: 680px;
+          }
+        }
+      `}</style>
       
       {/* ÜST BAŞLIK BARI */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1.5px solid #ffd700", paddingBottom: "8px", marginBottom: "12px" }}>
+      <div className="ykos-admin-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1.5px solid #ffd700", paddingBottom: "8px", marginBottom: "12px" }}>
         <div>
           <h1 style={{ color: "#ffd700", margin: "0 0 2px 0", fontSize: "1.25rem", letterSpacing: "1px", fontWeight: "900" }}>
             ⚙️ YKOS İÇERİK & YÖNETİM MERKEZİ
@@ -183,7 +228,7 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
       </div>
 
       {/* 2 SÜTUNLU GÖVDE */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1.25fr", gap: "16px", alignItems: "start" }}>
+      <div className="ykos-admin-grid">
         
         {/* SOL SÜTUN */}
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
@@ -226,6 +271,16 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
                         </button>
                       </div>
                     </div>
+                    {item.videoUrl && (
+                      <a
+                        href={item.videoUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{ display: "inline-block", marginTop: "6px", color: "#38bdf8", fontSize: "0.7rem", fontWeight: "bold", textDecoration: "none" }}
+                      >
+                        🎥 Videoyu Aç
+                      </a>
+                    )}
                   </div>
                 ))}
               </div>
@@ -264,9 +319,19 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
               </div>
 
               {/* 🎥 VİDEO URL ALANI */}
-              <div>
+              <div style={{ width: "100%", minWidth: 0, boxSizing: "border-box" }}>
                 <label style={{ display: "block", fontSize: "0.7rem", color: "#38bdf8", marginBottom: "2px" }}>🎥 Video Bağlantısı (YouTube / Video URL)</label>
-                <input type="text" placeholder="https://www.youtube.com/watch?v=..." value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} style={{ width: "100%", padding: "6px", background: "#060913", border: "1px solid #334155", color: "#fff", borderRadius: "4px", fontSize: "0.78rem", boxSizing: "border-box" }} />
+                <input className="ykos-video-input" type="url" inputMode="url" placeholder="https://www.youtube.com/watch?v=..." value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} style={{ display: "block", width: "100%", minWidth: 0, maxWidth: "100%", padding: "8px", background: "#060913", border: "1px solid #38bdf8", color: "#fff", borderRadius: "4px", fontSize: "0.78rem", boxSizing: "border-box" }} />
+                {videoUrl.trim() && (
+                  <a
+                    href={videoUrl.trim()}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{ display: "inline-block", marginTop: "5px", color: "#38bdf8", fontSize: "0.7rem", fontWeight: "bold", overflowWrap: "anywhere" }}
+                  >
+                    🎥 Bağlantıyı Kontrol Et
+                  </a>
+                )}
               </div>
 
               <div style={{ background: "rgba(0,0,0,0.3)", padding: "8px", borderRadius: "5px", border: "1px solid #27272a" }}>
@@ -320,7 +385,7 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
           </div>
 
           <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.75rem" }}>
+            <table className="ykos-admin-table">
               <thead>
                 <tr style={{ borderBottom: "1.5px solid #334155", color: "#ffd700", textAlign: "left" }}>
                   <th style={{ padding: "6px 4px" }}>Durum</th>
@@ -343,6 +408,16 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
                       </td>
                       <td style={{ padding: "6px 4px", fontWeight: "bold", maxWidth: "160px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                         {r.title || r.baslik}
+                        {r.videoUrl && (
+                          <a
+                            href={r.videoUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            style={{ display: "block", marginTop: "3px", color: "#38bdf8", fontSize: "0.66rem", textDecoration: "none" }}
+                          >
+                            🎥 Videoyu Aç
+                          </a>
+                        )}
                       </td>
                       <td style={{ padding: "6px 4px", color: "#94a3b8" }}>
                         {r.category || r.kategori || "Damga"}
