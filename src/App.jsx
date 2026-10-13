@@ -5,6 +5,7 @@ import {
   Routes,
   Route,
   useNavigate,
+  useParams,
 } from "react-router-dom";
 
 import "./index.css";
@@ -27,12 +28,19 @@ import VideoArchive from "./pages/VideoArchive";
 function DashboardWrapper() {
   const navigate = useNavigate();
 
+  // TUDITAM gelen ID'leri otomatik YKOS'a çevirip yönlendirir
+  const handleNavigateRead = (id) => {
+    if (!id) return;
+    const cleanId = String(id).replace(/^TUDITAM-/i, "YKOS-");
+    navigate(`/read/${cleanId}`);
+  };
+
   return (
     <YKOSDashboard
       currentLang="TR"
       setCurrentLang={() => {}}
       onVisualize={() => navigate("/matrix")}
-      onNavigateRead={(id) => navigate(`/read/${id}`)}
+      onNavigateRead={handleNavigateRead}
       onNavigateLogin={() => navigate("/admin-login")}
       onNavigateAtlas={() => navigate("/atlas")}
       onNavigateEngine={() => navigate("/matrix")}
@@ -42,6 +50,14 @@ function DashboardWrapper() {
       onNavigateOpsCenter={() => navigate("/ops")}
     />
   );
+}
+
+// OKUMA PANELİ SARMALAYICI (URL'deki ID'yi okur ve normalize eder)
+function ReadingPanelWrapper() {
+  const { id } = useParams();
+  const normalizedId = id ? String(id).replace(/^TUDITAM-/i, "YKOS-") : id;
+
+  return <ReadingPanel id={normalizedId} readId={normalizedId} />;
 }
 
 // YÖNETİCİ GİRİŞİ YÖNLENDİRMELERİ
@@ -101,7 +117,7 @@ function App() {
         <Route path="/acikveri" element={<YalinVeriGirisi />} />
 
         {/* OKUMA PANELİ */}
-        <Route path="/read/:id" element={<ReadingPanel />} />
+        <Route path="/read/:id" element={<ReadingPanelWrapper />} />
 
         {/* VİDEO ARŞİVİ */}
         <Route path="/video-archive" element={<VideoArchive />} />
