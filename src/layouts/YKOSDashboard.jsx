@@ -1,9 +1,8 @@
-// src/layouts/YKOSDashboard.jsx
+// FILE: src/layouts/YKOSDashboard.jsx
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import SearchBar from "../components/SearchBar";
 import { translations } from "../data/i18n";
-import { BubbleMatrixView } from "../mega/BubbleMatrixView";
-import { YKOSPanel } from "./YKOSPanel";
 
 const YKOS_POSTERS = [
   { id: 1, no: "01", title: "Sıfır Noktası & Pleistosen Sığınağı", desc: "Anadolu Refugium Modeli, mikroklima koruması ve derin zaman hafızası.", icon: "🌋", tag: "BUZUL ÇAĞI" },
@@ -32,6 +31,7 @@ export default function YKOSDashboard({
   onNavigateAcikVeri = () => {},
   onNavigateOpsCenter = () => {},
 }) {
+  const navigate = useNavigate();
   const [langOpen, setLangOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [posterModalOpen, setPosterModalOpen] = useState(false);
@@ -59,28 +59,30 @@ export default function YKOSDashboard({
     }
   };
 
+  const getEmbedUrl = (url) => {
+    if (!url) return "";
+    if (url.includes("embed")) return url;
+    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+    return match ? `https://www.youtube-nocookie.com/embed/${match[1]}` : url;
+  };
+
   const t = (translations && translations[currentLang]) ? translations[currentLang] : (translations?.TR || {});
 
   useEffect(() => {
     const loadApprovedRecords = () => {
-    try {
-      const saved = JSON.parse(localStorage.getItem("ykos_admin_records") || "[]");
-      const approved = saved.filter(
-        (r) => r.status === "approved" || r.durum === "onaylandi" || r.status === "published"
-      );
-      setAdminRecords(approved);
-    } catch (e) {
-      console.error(e);
-      setAdminRecords([]);
-    }
-
+      try {
+        const saved = JSON.parse(localStorage.getItem("ykos_admin_records") || "[]");
+        const approved = saved.filter(
+          (r) => r.status === "approved" || r.durum === "onaylandi" || r.status === "published"
+        );
+        setAdminRecords(approved);
+      } catch (e) {
+        console.error(e);
+        setAdminRecords([]);
+      }
     };
 
     loadApprovedRecords();
-
-    // Yönetici panelinde kayıt yapıldıktan sonra ana sayfaya dönüldüğünde
-    // canlı arşivi yeniden oku. "storage" farklı sekmeleri, "focus" ise
-    // aynı sekmede panele dönülmesini günceller.
     window.addEventListener("storage", loadApprovedRecords);
     window.addEventListener("focus", loadApprovedRecords);
     window.addEventListener("ykos-records-updated", loadApprovedRecords);
@@ -93,16 +95,11 @@ export default function YKOSDashboard({
   }, []);
 
   const languages = [
-    { code: "TR", label: "Türkçe" },
-    { code: "EN", label: "English" },
-    { code: "DE", label: "Deutsch" },
-    { code: "FR", label: "Français" },
-    { code: "ES", label: "Español" },
-    { code: "IT", label: "Italiano" },
-    { code: "JA", label: "日本語" },
-    { code: "ZH", label: "中文" },
-    { code: "RU", label: "Русский" },
-    { code: "AR", label: "العربية" },
+    { code: "TR", label: "Türkçe" }, { code: "EN", label: "English" },
+    { code: "DE", label: "Deutsch" }, { code: "FR", label: "Français" },
+    { code: "ES", label: "Español" }, { code: "IT", label: "Italiano" },
+    { code: "JA", label: "日本語" }, { code: "ZH", label: "中文" },
+    { code: "RU", label: "Русский" }, { code: "AR", label: "العربية" },
     { code: "FA", label: "فارسی" }
   ];
 
@@ -144,60 +141,27 @@ export default function YKOSDashboard({
     transition: "all 0.2s ease",
   };
 
- // Sabit arşiv kartları
-const staticCards =
-  t.cards && t.cards.length > 0
-    ? t.cards
+  const staticCards = t.cards && t.cards.length > 0 ? t.cards : [];
+
+  const adminArchiveCards = currentLang === "TR"
+    ? [...adminRecords].reverse().map((record) => ({
+        id: record.id,
+        title: record.title || record.baslik || "Başlıksız YKOS Kaydı",
+        desc: record.summary || record.ozet || record.description || record.content || record.icerik || "",
+        tag: record.category || record.kategori || "YKOS ARŞİVİ",
+        image: record.image || record.gorsel || record.imageUrl || record.resim,
+        isNew: true,
+        isArchiveRecord: true
+      }))
     : [];
 
-// Yönetici merkezinden onaylanmış canlı arşiv kayıtları
-const adminArchiveCards =
-  currentLang === "TR"
-    ? [...adminRecords]
-        .reverse()
-        .map((record) => ({
-          id: record.id,
-          title:
-            record.title ||
-            record.baslik ||
-            "Başlıksız YKOS Kaydı",
-
-          desc:
-            record.summary ||
-            record.ozet ||
-            record.description ||
-            record.content ||
-            record.icerik ||
-            "",
-
-          tag:
-            record.category ||
-            record.kategori ||
-            "YKOS ARŞİVİ",
-
-          image:
-            record.image ||
-            record.gorsel ||
-            record.imageUrl ||
-            record.resim,
-
-          isNew: true,
-          isArchiveRecord: true
-        }))
-    : [];
-
-// Merkez arşiv kayıtları önce, sabit kartlar sonra
-const sourceCards = [
-  ...adminArchiveCards,
-  ...staticCards
-].filter(
-  (card, index, cards) =>
-    index === cards.findIndex(
-      (item) =>
-        String(item.id || item.title) ===
-        String(card.id || card.title)
-    )
-);
+  const sourceCards = [
+    { isMatrixCard: true, title: "Kök-Hece Matrisi", desc: "Disiplinler arası interaktif görselleştirme paneli", tag: "CANLI MATRİS" },
+    ...adminArchiveCards,
+    ...staticCards
+  ].filter(
+    (card, index, cards) => index === cards.findIndex((item) => String(item.id || item.title) === String(card.id || card.title))
+  );
 
   const filteredGridCards = sourceCards.filter((card) => {
     if (!searchQuery) return true;
@@ -254,7 +218,6 @@ const sourceCards = [
             grid-template-columns: 1fr !important;
           }
         }
-
         @media (min-width: 769px) and (max-width: 1200px) {
           .ykos-main-content-grid {
             grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr) !important;
@@ -337,75 +300,22 @@ const sourceCards = [
           </div>
         </div>
 
- <div
-  style={{
-    textAlign: "center",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    marginTop: "0px",
-    marginBottom: "8px"
-  }}
->
-  <div
-    style={{
-      margin: "0 0 6px 0",
-      filter: "drop-shadow(0 0 16px rgba(245, 158, 11, 0.45))"
-    }}
-  >
-    <a
-      href="/"
-      aria-label="YKOS Ana Sayfası"
-      title="Ana sayfaya dön"
-      style={{
-        display: "inline-block",
-        lineHeight: 0,
-        cursor: "pointer"
-      }}
-    >
-      <img
-        src="/ykos-logo.png"
-        alt="YKOS Logo"
-        style={{
-          width: "260px",
-          height: "auto",
-          maxHeight: "220px",
-          objectFit: "contain",
-          display: "block",
-          margin: "0 auto"
-        }}
-      />
-    </a>
-  </div>
-<h1
-  style={{
-    color: "#f59e0b",
-    fontSize: "1.95rem",
-    fontWeight: "900",
-    letterSpacing: "3px",
-    margin: "2px 0 5px 0",
-    textShadow: "0 0 20px rgba(245, 158, 11, 0.4)"
-  }}
->
-  YKOS BİLGİ SİSTEMİ
-</h1>
-
-<div
-  style={{
-    color: "#f59e0b",
-    fontSize: "0.82rem",
-    fontWeight: "bold",
-    letterSpacing: "1px",
-    margin: "0 0 4px 0",
-    textTransform: "uppercase",
-    textShadow: "0 0 12px rgba(245, 158, 11, 0.25)"
-  }}
->
-  DİSİPLİNLER ARASI ALGORİTMİK KÜLTÜR VE DİL VERİ TABANI
-</div>
-    
-          <p style={{ color: "#94a3b8", fontSize: "0.8rem", letterSpacing: "1.2px", margin: 0, textTransform: "uppercase", fontWeight: "600" }}>  
-          </p>
+        <div style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", marginTop: "0px", marginBottom: "8px" }}>
+          <div style={{ margin: "0 0 6px 0", filter: "drop-shadow(0 0 16px rgba(245, 158, 11, 0.45))" }}>
+            <a href="/" aria-label="YKOS Ana Sayfası" title="Ana sayfaya dön" style={{ display: "inline-block", lineHeight: 0, cursor: "pointer" }}>
+              <img
+                src="/ykos-logo.png"
+                alt="YKOS Logo"
+                style={{ width: "260px", height: "auto", maxHeight: "220px", objectFit: "contain", display: "block", margin: "0 auto" }}
+              />
+            </a>
+          </div>
+          <h1 style={{ color: "#f59e0b", fontSize: "1.95rem", fontWeight: "900", letterSpacing: "3px", margin: "2px 0 5px 0", textShadow: "0 0 20px rgba(245, 158, 11, 0.4)" }}>
+            YKOS BİLGİ SİSTEMİ
+          </h1>
+          <div style={{ color: "#f59e0b", fontSize: "0.82rem", fontWeight: "bold", letterSpacing: "1px", margin: "0 0 4px 0", textTransform: "uppercase" }}>
+            DİSİPLİNLER ARASI ALGORİTMİK KÜLTÜR VE DİL VERİ TABANI
+          </div>
         </div>
 
         {menuOpen && (
@@ -478,7 +388,7 @@ const sourceCards = [
         </div>
       </div>
 
-      {/* 4. ANA GÖVDE: YKOS ÇÖZÜMLÜLERİ VE İNDEKSLER */}
+      {/* 4. ANA GÖVDE: 3 SÜTUNLU YAPI */}
       <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
         <h3 style={{ color: "#ffd700", fontSize: "1.05rem", marginTop: 0, borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "8px", marginBottom: "12px" }}>
           ⚡ YKOS ÇÖZÜMLERİ VE İNDEKSLER (CANLI ARŞİV)
@@ -544,7 +454,7 @@ const sourceCards = [
                   onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#ffd700"; e.currentTarget.style.background = "rgba(255, 215, 0, 0.15)"; e.currentTarget.style.transform = "translateX(2px)"; }}
                   onMouseLeave={(e) => { e.currentTarget.style.borderColor = idx === 0 ? "#ffd700" : "rgba(255, 215, 0, 0.25)"; e.currentTarget.style.background = idx === 0 ? "rgba(255, 215, 0, 0.08)" : "#0c101d"; e.currentTarget.style.transform = "none"; }}
                 >
-                  <div style={{ width: "42px", height: "42px", background: "#1a1505", border: "1px solid #ffd700", borderRadius: "4px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px", flexShrink: 0, overflow: "hidden" }}>
+                  <div style={{ width: "42px", height: "42px", background: "#1a1505", border: "1.5px solid #ffd700", borderRadius: "4px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px", flexShrink: 0, overflow: "hidden" }}>
                     {itemImg ? <img src={itemImg} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : (item.icon || "📑")}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -558,114 +468,270 @@ const sourceCards = [
               );
             })}
           </div>
+
         </div>
 
-        {/* ALT BUTTONLAR */}
+        {/* 5. ALT ROTA BUTTONLARI */}
         <div style={{ position: "relative", display: "flex", gap: "10px", justifyContent: "center", width: "100%", maxWidth: "950px", margin: "20px auto 4px auto", flexWrap: "wrap" }}>
-          <button onClick={onVisualize} style={{ flex: 1, minWidth: "220px", background: "linear-gradient(135deg, #ffd700, #b8860b)", color: "#000", border: "none", padding: "12px", borderRadius: "8px", fontWeight: "900", fontSize: "0.85rem", cursor: "pointer" }}>
+          <button onClick={onVisualize} style={{ flex: 1, minWidth: "210px", background: "linear-gradient(135deg, #ffd700, #b8860b)", color: "#000", border: "none", padding: "12px", borderRadius: "8px", fontWeight: "900", fontSize: "0.85rem", cursor: "pointer" }}>
             {t.visualizeBtn || "BALONCUK MATRİSİNİ GÖRSELLEŞTİR →"}
           </button>
           
-          <button onClick={onNavigateAcikVeri} style={{ flex: 1, minWidth: "220px", background: "linear-gradient(135deg, #00ff7f, #008000)", color: "#000", border: "none", padding: "12px", borderRadius: "8px", fontWeight: "900", fontSize: "0.85rem", cursor: "pointer" }}>
+          <button onClick={onNavigateAcikVeri} style={{ flex: 1, minWidth: "210px", background: "linear-gradient(135deg, #00ff7f, #008000)", color: "#000", border: "none", padding: "12px", borderRadius: "8px", fontWeight: "900", fontSize: "0.85rem", cursor: "pointer" }}>
             🌐 {t.openDataBtn || "AÇIK VERİ PORTALINA GİT"}
           </button>
 
-          <button onClick={handleOpenVideoArchive} style={{ flex: 1, minWidth: "220px", background: "linear-gradient(135deg, #ef4444, #991b1b)", color: "#fff", border: "none", padding: "12px", borderRadius: "8px", fontWeight: "900", fontSize: "0.85rem", cursor: "pointer" }}>
+          <button onClick={() => navigate("/arsiv")} style={{ flex: 1, minWidth: "210px", background: "linear-gradient(135deg, #38bdf8, #0284c7)", color: "#000", border: "none", padding: "12px", borderRadius: "8px", fontWeight: "900", fontSize: "0.85rem", cursor: "pointer" }}>
+            📁 Arşiv
+          </button>
+
+          <button onClick={handleOpenVideoArchive} style={{ flex: 1, minWidth: "210px", background: "linear-gradient(135deg, #ef4444, #991b1b)", color: "#fff", border: "none", padding: "12px", borderRadius: "8px", fontWeight: "900", fontSize: "0.85rem", cursor: "pointer" }}>
             🎥 VİDEO ARŞİVİ & SUNUMLAR
           </button>
         </div>
       </div>
 
-      {/* 🎥 VİDEO ARŞİVİ SEÇİM MODALI */}
-      {videoModalOpen && (
-        <div style={{
-          position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: "rgba(0, 0, 0, 0.88)", backdropFilter: "blur(8px)",
-          zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: "16px"
-        }}>
-          <div style={{
-            background: "#050811", border: "2px solid #ffd700", borderRadius: "16px",
-            width: "100%", maxWidth: "1050px", maxHeight: "90vh", display: "flex", flexDirection: "column",
-            boxShadow: "0 0 35px rgba(255, 215, 0, 0.35)", overflow: "hidden"
-          }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 20px", borderBottom: "1.5px solid rgba(255, 215, 0, 0.3)", background: "rgba(255, 215, 0, 0.05)" }}>
-              <h2 style={{ margin: 0, fontSize: "1.15rem", color: "#ffd700", fontWeight: "900" }}>
-                🎥 YKOS VİDEO ARŞİVİ VE SUNUM LİSTESİ
-              </h2>
-              <button onClick={() => setVideoModalOpen(false)} style={{ background: "transparent", border: "1px solid #ef4444", color: "#ef4444", width: "32px", height: "32px", borderRadius: "50%", cursor: "pointer", fontWeight: "bold" }}>✕</button>
-            </div>
+   {/* YKOS VİDEO ARŞİVİ MODALI */}
+{videoModalOpen && (
+  <div
+    style={{
+      position: "fixed",
+      inset: 0,
+      width: "100vw",
+      height: "100vh",
+      backgroundColor: "rgba(0, 0, 0, 0.88)",
+      zIndex: 9999,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "15px",
+      boxSizing: "border-box",
+    }}
+  >
+    <div
+      style={{
+        position: "relative",
+        width: "100%",
+        maxWidth: "900px",
+        maxHeight: "94vh",
+        overflowY: "auto",
+        backgroundColor: "#0c101d",
+        border: "1.5px solid #ffd700",
+        borderRadius: "12px",
+        padding: "20px",
+        boxSizing: "border-box",
+        boxShadow: "0 10px 30px rgba(0, 0, 0, 0.8)",
+      }}
+    >
+      {/* ÜST DÜĞMELER */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: "12px",
+          marginBottom: "15px",
+        }}
+      >
+        <button
+          type="button"
+          onClick={() => {
+            setActiveVideo(null);
+            setVideoModalOpen(false);
+          }}
+          style={{
+            background: "linear-gradient(135deg, #ffd700, #b8860b)",
+            color: "#000",
+            border: "none",
+            padding: "9px 15px",
+            borderRadius: "6px",
+            fontWeight: "900",
+            fontSize: "0.8rem",
+            cursor: "pointer",
+          }}
+        >
+          ← ANA SAYFAYA DÖN
+        </button>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: "16px", padding: "18px", overflowY: "auto", flex: 1 }}>
-              <div>
-                {activeVideo ? (
-                  <div>
-                    <h3 style={{ color: "#ffd700", fontSize: "1.1rem", marginBottom: "10px" }}>
-                      {activeVideo.title || activeVideo.baslik}
-                    </h3>
-                    <div style={{ position: "relative", paddingBottom: "56.25%", height: 0, overflow: "hidden", borderRadius: "8px", border: "1.5px solid #ffd700" }}>
-                      <iframe
-                        src={(() => {
-                          const url = activeVideo.videoUrl || activeVideo.video || activeVideo.videoBaglantisi || "";
-                          if (url.includes("embed")) return url;
-                          const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
-                          return match ? `https://www.youtube.com/embed/${match[1]}` : url;
-                        })()}
-                        title="Video Oynatıcı"
-                        style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: 0 }}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
-                    </div>
-                    <p style={{ color: "#ccc", fontSize: "0.85rem", marginTop: "10px", lineHeight: "1.5" }}>
-                      {activeVideo.summary || activeVideo.ozet || activeVideo.content || ""}
-                    </p>
-                    <button 
-                      onClick={() => {
-                        setVideoModalOpen(false);
-                        onNavigateRead(activeVideo.id);
-                      }}
-                      style={{ marginTop: "10px", background: "rgba(255, 215, 0, 0.2)", border: "1px solid #ffd700", color: "#ffd700", padding: "8px 16px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}
-                    >
-                      📖 Bu İçeriğin Detay Sayfasına Git ➔
-                    </button>
-                  </div>
-                ) : (
-                  <p style={{ color: "#888" }}>Lütfen listeden bir video seçin.</p>
-                )}
-              </div>
+        <button
+          type="button"
+          onClick={() => {
+            setActiveVideo(null);
+            setVideoModalOpen(false);
+          }}
+          aria-label="Video arşivini kapat"
+          style={{
+            background: "transparent",
+            border: "1px solid #ffd700",
+            color: "#ffd700",
+            borderRadius: "50%",
+            width: "34px",
+            height: "34px",
+            fontWeight: "bold",
+            fontSize: "1rem",
+            cursor: "pointer",
+            flexShrink: 0,
+          }}
+        >
+          ✕
+        </button>
+      </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "8px", overflowY: "auto", maxHeight: "420px", paddingRight: "4px" }}>
-                {allVideoRecords.map((vid, i) => {
-                  const isSelected = activeVideo?.id === vid.id;
-                  return (
-                    <div
-                      key={vid.id || i}
-                      onClick={() => setActiveVideo(vid)}
-                      style={{
-                        background: isSelected ? "rgba(245, 158, 11, 0.2)" : "#0c101d",
-                        border: isSelected ? "1.5px solid #f59e0b" : "1px solid rgba(255, 215, 0, 0.2)",
-                        borderRadius: "8px", padding: "10px 12px", cursor: "pointer",
-                        display: "flex", gap: "10px", alignItems: "center"
-                      }}
-                    >
-                      <span style={{ fontSize: "1.5rem" }}>▶️</span>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ color: isSelected ? "#ffd700" : "#fff", fontWeight: "bold", fontSize: "0.85rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                          {vid.title || vid.baslik}
-                        </div>
-                        <div style={{ color: "#94a3b8", fontSize: "0.7rem", marginTop: "2px" }}>
-                          {vid.category || vid.kategori || "YKOS Sunum"}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+      <h3
+        style={{
+          color: "#ffd700",
+          margin: "0",
+          fontSize: "1.1rem",
+          borderBottom: "1px solid rgba(255, 215, 0, 0.3)",
+          paddingBottom: "10px",
+        }}
+      >
+        🎥 YKOS VİDEO ARŞİVİ & SUNUMLAR
+      </h3>
+
+      {/* VİDEO OYNATICI VE LİSTE */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+          gap: "15px",
+          marginTop: "15px",
+        }}
+      >
+        {/* VİDEO OYNATICI */}
+        <div
+          style={{
+            width: "100%",
+            aspectRatio: "16 / 9",
+            minHeight: "220px",
+            background: "#000",
+            border: "1px solid #ffd700",
+            borderRadius: "8px",
+            overflow: "hidden",
+          }}
+        >
+          {activeVideo ? (
+            <iframe
+              src={(() => {
+                const rawUrl =
+                  activeVideo.videoUrl ||
+                  activeVideo.url ||
+                  activeVideo.embedUrl ||
+                  "";
+
+                if (!rawUrl) return "";
+
+                if (
+                  rawUrl.includes("youtube.com/embed/") ||
+                  rawUrl.includes("youtube-nocookie.com/embed/")
+                ) {
+                  return rawUrl;
+                }
+
+                let videoId = "";
+
+                try {
+                  const parsedUrl = new URL(rawUrl);
+
+                  if (parsedUrl.hostname.includes("youtu.be")) {
+                    videoId = parsedUrl.pathname.split("/")[1] || "";
+                  } else if (parsedUrl.pathname.includes("/shorts/")) {
+                    videoId =
+                      parsedUrl.pathname.split("/shorts/")[1]?.split("/")[0] ||
+                      "";
+                  } else {
+                    videoId = parsedUrl.searchParams.get("v") || "";
+                  }
+                } catch (error) {
+                  console.error("Video bağlantısı okunamadı:", error);
+                }
+
+                return videoId
+                  ? `https://www.youtube-nocookie.com/embed/${videoId}`
+                  : rawUrl;
+              })()}
+              title={activeVideo.title || "YKOS Video"}
+              style={{
+                width: "100%",
+                height: "100%",
+                border: "none",
+                display: "block",
+              }}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          ) : (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "100%",
+                minHeight: "220px",
+                padding: "20px",
+                boxSizing: "border-box",
+                color: "#aaa",
+                textAlign: "center",
+              }}
+            >
+              Lütfen listeden bir video seçin.
             </div>
-          </div>
+          )}
         </div>
-      )}
 
+        {/* VİDEO LİSTESİ */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
+            maxHeight: "380px",
+            overflowY: "auto",
+          }}
+        >
+          {Array.isArray(allVideoRecords) &&
+          allVideoRecords.length > 0 ? (
+            allVideoRecords.map((vid, idx) => (
+              <button
+                type="button"
+                key={vid.id || `${vid.title}-${idx}`}
+                onClick={() => setActiveVideo(vid)}
+                style={{
+                  background:
+                    activeVideo === vid
+                      ? "rgba(255, 215, 0, 0.2)"
+                      : "#141824",
+                  border: "1px solid rgba(255, 215, 0, 0.4)",
+                  color: "#fff",
+                  padding: "10px",
+                  borderRadius: "6px",
+                  textAlign: "left",
+                  fontSize: "0.8rem",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                }}
+              >
+                ▶ {vid.title || "İsimsiz Video"}
+              </button>
+            ))
+          ) : (
+            <div
+              style={{
+                color: "#94a3b8",
+                padding: "15px",
+                border: "1px solid rgba(255, 215, 0, 0.25)",
+                borderRadius: "6px",
+                textAlign: "center",
+              }}
+            >
+              Henüz video kaydı bulunmuyor.
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+)}
       {/* 5. 11'Lİ YKOS AFİŞ & MANİFESTO VİTRİN MODALI */}
       {posterModalOpen && (
         <div style={{

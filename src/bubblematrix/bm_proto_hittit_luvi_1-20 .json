@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "label": "yol",
+    "proto_hece": "I-ŠA",
+    "ritim": "K",
+    "semiyotik": "iz → rota → yol",
+    "geo": "Hattuşa"
+  },
+  {
+    "id": 2,
+    "label": "su",
+    "proto_hece": "ŠU",
+    "ritim": "U",
+    "semiyotik": "akış → yaşam → su",
+    "geo": "Kilikya-Toros"
+  },
+  {
+    "id": 3,
+    "label": "taş",
+    "proto_hece": "TA",
+    "ritim": "K",
+    "semiyotik": "yer → nesne → taş",
+    "geo": "Hattuşa"
+  },
+  {
+    "id": 4,
+    "label": "el",
+    "proto_hece": "A-LA",
+    "ritim": "A",
+    "semiyotik": "uzuv → güç → el",
+    "geo": "İç Anadolu"
+  },
+  {
+    "id": 5,
+    "label": "gün",
+    "proto_hece": "KU-NA",
+    "ritim": "U",
+    "semiyotik": "ışık → zaman → gün",
+    "geo": "Toros"
+  },
+  {
+    "id": 6,
+    "label": "ay",
+    "proto_hece": "A-YA",
+    "ritim": "A",
+    "semiyotik": "ışık → gök → ay",
+    "geo": "İç Anadolu"
+  },
+  {
+    "id": 7,
+    "label": "kara",
+    "proto_hece": "KA-RA",
+    "ritim": "K",
+    "semiyotik": "toprak → yüzey → kara",
+    "geo": "Hattuşa"
+  },
+  {
+    "id": 8,
+    "label": "yer",
+    "proto_hece": "E-RA",
+    "ritim": "A",
+    "semiyotik": "zemin → konum → yer",
+    "geo": "İç Anadolu"
+  },
+  {
+    "id": 9,
+    "label": "suyolu",
+    "proto_hece": "ŠU-I-ŠA",
+    "ritim": "U+K",
+    "semiyotik": "akış → rota → su yolu",
+    "geo": "Toros-Hattuşa"
+  },
+  {
+    "id": 10,
+    "label": "dağ",
+    "proto_hece": "TA-KA",
+    "ritim": "K",
+    "semiyotik": "yükselti → sınır → dağ",
+    "geo": "Hattuşa"
+  }
+]

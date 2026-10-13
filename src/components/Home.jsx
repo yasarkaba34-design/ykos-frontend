@@ -52,6 +52,14 @@ export default function Home() {
         <button className="search-btn" onClick={handleSearch}>
           Ara
         </button>
+
+        {/* --- ARŞİV BUTONU EKLENDİ --- */}
+        <button
+          className="archive-btn"
+          onClick={() => navigate("/arsiv")}
+        >
+          Arşiv
+        </button>
       </div>
 
       {/* --- ARŞİV LİSTESİ --- */}
@@ -63,3 +71,25 @@ export default function Home() {
     </div>
   );
 }
+<div className="home-footer">
+  <button
+    className="ykos-button"
+    onClick={() => navigate("/matrix")}
+  >
+    Baloncuk Matrisi Görselleştir
+  </button>
+
+  <button
+    className="ykos-button"
+    onClick={() => navigate("/open-data")}
+  >
+    Açık Veri Portalına Git
+  </button>
+
+  <button
+    className="ykos-button"
+    onClick={() => navigate("/video-archive")}
+  >
+    Video Arşivi & Sunumlar
+  </button>
+</div>

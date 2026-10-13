@@ -1,4 +1,9 @@
-/* --- BubbleMatrix kapsayıcısı --- */
+// src/mega/BubbleMatrixViewer.jsx
+
+import React, { useEffect, useState } from "react";
+import { useBubblePipeline } from "@/core/useBubblePipeline";
+import "@/styles/bubblematrix.css";
+
 .bubble-matrix {
   position: relative;
   width: 100%;

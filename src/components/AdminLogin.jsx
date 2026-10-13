@@ -3,27 +3,57 @@ import React, { useState } from "react";
 const PASSWORD_KEY = "ykos_admin_password";
 const DEFAULT_PASSWORD = "YKOS2026";
 
+const normalizePassword = (value) =>
+  String(value || "")
+    .replace(/\s+/g, "")
+    .toUpperCase();
+
 export default function AdminLogin({ onSuccess, onCancel }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-const handleSubmit = (e) => {
-  e.preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-  const savedPassword = localStorage.getItem(PASSWORD_KEY);
+    const enteredPassword = normalizePassword(password);
+    const defaultPassword = normalizePassword(DEFAULT_PASSWORD);
+    const savedPassword = normalizePassword(
+      localStorage.getItem(PASSWORD_KEY)
+    );
 
-  const currentPassword = savedPassword
-    ? savedPassword.trim()
-    : DEFAULT_PASSWORD;
+    const isValid =
+      enteredPassword === defaultPassword ||
+      (savedPassword !== "" && enteredPassword === savedPassword);
 
-  if (password.trim() === currentPassword) {
+    if (!isValid) {
+      setError("Şifre hatalı.");
+      return;
+    }
+
     setError("");
     setPassword("");
-    onSuccess();
-  } else {
-    setError("Şifre hatalı.");
-  }
-};
+
+    // Eski veya bozuk kayıtlı şifreyi düzeltir.
+    localStorage.setItem(PASSWORD_KEY, DEFAULT_PASSWORD);
+
+    if (typeof onSuccess === "function") {
+      onSuccess();
+    } else {
+      window.location.href = "/admin";
+    }
+  };
+
+  const handleCancel = () => {
+    setPassword("");
+    setError("");
+
+    if (typeof onCancel === "function") {
+      onCancel();
+    } else {
+      setError("Yönetici paneli bağlantısı bulunamadı.");
+    }
+  };
+
   return (
     <div
       style={{
@@ -34,6 +64,7 @@ const handleSubmit = (e) => {
         justifyContent: "center",
         alignItems: "center",
         padding: "20px",
+        boxSizing: "border-box",
       }}
     >
       <form
@@ -45,13 +76,14 @@ const handleSubmit = (e) => {
           border: "1.5px solid #ffd700",
           borderRadius: "10px",
           padding: "24px",
+          boxSizing: "border-box",
         }}
       >
         <h2
           style={{
             color: "#ffd700",
             textAlign: "center",
-            marginTop: 0,
+            margin: "0 0 8px",
           }}
         >
           ⚙️ YÖNETİCİ GİRİŞİ
@@ -62,6 +94,7 @@ const handleSubmit = (e) => {
             textAlign: "center",
             color: "#94a3b8",
             fontSize: "13px",
+            marginTop: 0,
           }}
         >
           YKOS YÖNETİCİ GİRİŞİ
@@ -75,6 +108,8 @@ const handleSubmit = (e) => {
             setError("");
           }}
           placeholder="Yönetici şifresi"
+          autoComplete="off"
+          spellCheck="false"
           autoFocus
           style={{
             width: "100%",
@@ -120,7 +155,7 @@ const handleSubmit = (e) => {
 
         <button
           type="button"
-          onClick={onCancel}
+          onClick={handleCancel}
           style={{
             width: "100%",
             marginTop: "8px",

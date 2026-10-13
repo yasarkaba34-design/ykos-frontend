@@ -160,6 +160,17 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentPublishedRecords = publishedRecords.slice(indexOfFirstItem, indexOfLastItem);
+ 
+ // Çıkış yapma fonksiyonu
+  const handleLogoutClick = () => {
+    localStorage.removeItem("ykos_admin_logged_in");
+
+    if (typeof onLogout === "function") {
+      onLogout();
+    }
+
+    window.location.href = "/";
+  };
 
   return (
     <div className="ykos-admin-panel" style={{ maxWidth: "1350px", margin: "0 auto", padding: "12px", color: "#fff" }}>
@@ -219,12 +230,16 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
             Yetki: <b style={{ color: "#00ff7f" }}>{userRole.toUpperCase()}</b> | Toplam Arşiv: <b>{records.length}</b> | Onay Bekleyen: <b style={{ color: "#eab308" }}>{pendingRecords.length}</b>
           </div>
         </div>
-        <button
-          onClick={onLogout}
-          style={{ background: "#dc2626", color: "#fff", border: "none", padding: "6px 16px", borderRadius: "5px", fontWeight: "bold", cursor: "pointer", fontSize: "0.8rem" }}
-        >
-          Çıkış Yap
-        </button>
+    <button
+  onClick={handleLogoutClick}
+  style={{
+    // Mevcut buton stilleriniz...
+    cursor: "pointer",
+  }}
+>
+  Çıkış Yap
+</button>
+
       </div>
 
       {/* 2 SÜTUNLU GÖVDE */}

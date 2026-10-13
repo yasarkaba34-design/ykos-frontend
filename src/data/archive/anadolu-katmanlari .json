@@ -1,0 +1,9 @@
+{
+  "id": "anadolu-katmanlari-dil-testleri",
+  "title": "Anadolu Katmanları Dil Testleri",
+  "category": "Dilbilim / YKOS",
+  "description": "100 kelimelik Anadolu kök-hece test seti, 10 katmanlı YKOS matrisinde işlenmiş.",
+  "createdAt": "2026-09-26",
+  "tags": ["YKOS", "Dil Testi", "Anadolu", "Kökhece"],
+  "link": "/tests/anadolu"
+}

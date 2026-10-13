@@ -98,3 +98,56 @@
   font-size: 1.1rem;
   text-shadow: 0 0 6px #000;
 }
+.bubble-resonance-card {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  background: rgba(10, 10, 10, 0.9);
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  max-width: 240px;
+  z-index: 1000;
+}
+
+.brc-title {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #ffd700;
+}
+.bubble-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.bubble-tooltip {
+  position: absolute;
+  background: rgba(20, 20, 20, 0.85);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  pointer-events: none;
+  z-index: 999;
+  backdrop-filter: blur(4px);
+}
+
+.bubble-resonance-card {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  background: rgba(10, 10, 10, 0.9);
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  max-width: 240px;
+  z-index: 1000;
+}
+
+.brc-title {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #ffd700;
+}

@@ -1,4 +1,49 @@
 /* ==========================================================================
+   YKOS Ortak Üst Menü (Header)
+   ========================================================================== */
+.ykos-header {
+  width: 100%;
+  background: #000000;
+  border-bottom: 1px solid #333333;
+  padding: 18px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.ykos-header-logo {
+  color: #d4af37;
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-shadow: 0 0 10px rgba(212, 175, 55, 0.45);
+}
+
+.ykos-header-menu {
+  display: flex;
+  gap: 22px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.header-btn {
+  background: linear-gradient(90deg, #f5c542, #42f5e6);
+  color: #000;
+  font-weight: 600;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.header-btn:hover {
+  box-shadow: 0 0 10px rgba(245, 197, 66, 0.6);
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
    YKOS Global Stil Kuralları
    ========================================================================== */
 * {
@@ -45,57 +90,6 @@ a {
   text-align: center;
   margin-top: 10px;
   margin-bottom: 30px;
-}
-
-/* ==========================================================================
-   Üst Bar ve Menü Yapısı (Ortalanmış ve Parıltılı)
-   ========================================================================== */
-.top-bar {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 25px 0 20px 0;
-  background: #000000;
-  border-bottom: 1px solid #333333;
-  position: relative;
-}
-
-.top-logo {
-  color: #d4af37;
-  font-size: 40px;
-  font-weight: 900;
-  letter-spacing: 0.10em;
-  text-transform: uppercase;
-  margin-bottom: 12px;
-  text-shadow: 0 0 10px rgba(212, 175, 55, 0.45);
-}
-
-.top-menu {
-  display: flex;
-  gap: 22px;
-  color: #f5f5f5;
-  font-size: 16px;
-  font-weight: 500;
-  justify-content: center;
-}
-
-.top-menu span {
-  transition: color 0.25s ease, text-shadow 0.25s ease;
-  cursor: pointer;
-}
-
-.top-menu span:hover {
-  color: #d4af37;
-  text-shadow: 0 0 6px rgba(212, 175, 55, 0.35);
-}
-
-.language-selector {
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #d4af37;
-  font-weight: 600;
 }
 
 /* ==========================================================================
@@ -245,4 +239,46 @@ a {
 
 .data-entry-panel button:hover {
   background: #f0c94a;
+}
+/* ==========================================================================
+   Arşiv Modülü (Tek Sayfa)
+   ========================================================================== */
+.archive-list {
+  max-width: 700px;
+  margin: 0 auto;
+  background: #0a0a0a;
+  border: 1px solid #333;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.archive-item {
+  padding: 16px 22px;
+  border-bottom: 1px solid #222;
+  transition: background 0.2s, transform 0.1s;
+  cursor: pointer;
+}
+
+.archive-item:last-child {
+  border-bottom: none;
+}
+
+.archive-item:hover {
+  background: #111;
+  transform: scale(1.015);
+  color: #d4af37;
+}
+
+.archive-item h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #f5f5f5;
+}
+
+.archive-date {
+  display: block;
+  margin-top: 6px;
+  font-size: 14px;
+  color: #d4af37;
+  opacity: 0.85;
 }
