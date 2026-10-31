@@ -60,6 +60,16 @@ function ReadingPanelWrapper() {
   return <ReadingPanel id={normalizedId} readId={normalizedId} />;
 }
 
+function HakkimizdaWrapper() {
+  const navigate = useNavigate();
+  return (
+    <Hakkimizda
+      onNavigateHome={() => navigate("/")}
+      onNavigateMatrix={() => navigate("/matrix")}
+    />
+  );
+}
+
 // YÖNETİCİ GİRİŞİ YÖNLENDİRMELERİ
 function AdminLoginWrapper() {
   const navigate = useNavigate();
@@ -104,7 +114,7 @@ function App() {
         <Route path="/open-data" element={<OpenData />} />
 
         {/* HAKKIMIZDA */}
-        <Route path="/hakkimizda" element={<Hakkimizda />} />
+        <Route path="/hakkimizda" element={<HakkimizdaWrapper />} />
 
         {/* YÖNETİCİ */}
         <Route path="/admin-login" element={<AdminLoginWrapper />} />
