@@ -24,7 +24,7 @@ function archiveUrl(record) {
 function ArchiveRecord({ record, index }) {
   const title =
     firstValue(record, ["title", "baslik", "name", "heading"]) ||
-    \`Arşiv kaydı \${index + 1}\`;
+    `Arşiv kaydı ${index + 1}`;
   const excerpt = firstValue(record, [
     "excerpt",
     "summary",
