@@ -74,7 +74,7 @@ export default function App() {
           onNavigateRead={handleNavigateRead}
           onNavigateLogin={() => setActiveView("login")}
           onNavigateAtlas={() => setActiveView("atlas")}
-          onNavigateEngine={() => setActiveView("dashboard")}
+          onNavigateEngine={() => setActiveView("matrix")}
           onNavigateFlow={() => setActiveView("dashboard")}
           onNavigateMethod={() => setActiveView("method")}
           onNavigateAcikVeri={() => setActiveView("acikveri")}
