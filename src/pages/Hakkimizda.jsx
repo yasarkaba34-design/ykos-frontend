@@ -1,164 +1,122 @@
 import React from "react";
 
-export default function MethodologyPanel({ onNavigateHome = () => {} }) {
-  const cardStyle = {
-    backgroundColor: "#050811",
-    border: "1.5px solid #ffd700",
-    borderRadius: "14px",
-    padding: "20px",
-    marginBottom: "16px",
-    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.7)",
-  };
+const cardStyle = {
+  backgroundColor: "#050811",
+  border: "1px solid rgba(255, 215, 0, 0.55)",
+  borderRadius: "14px",
+  padding: "20px",
+  boxShadow: "0 4px 20px rgba(0, 0, 0, 0.45)",
+};
 
+const headingStyle = {
+  color: "#ffd700",
+  fontSize: "1.05rem",
+  margin: "0 0 12px",
+};
+
+const textStyle = {
+  color: "#d5dbe6",
+  fontSize: "0.9rem",
+  lineHeight: 1.7,
+  margin: 0,
+};
+
+const steps = [
+  ["01", "Kaynak kaydı", "Özgün biçim, anlam, bağlam, kaynak, tarih ve coğrafya kaydedilir."],
+  ["02", "Damga ve biçim", "İşaret ya da sözcük biçimi, okuma önerisinden ayrı tutulur."],
+  ["03", "Kök / hece yapısı", "YKOS okumasında önerilen kök veya hece yapısı ve izlenen işlem adımları gösterilir."],
+  ["04", "Ses ve anlam karşılaştırması", "Ses karşılıkları ile anlam ilişkileri gerekçeleriyle ayrı ayrı değerlendirilir."],
+  ["05", "Yapı ve biçimbilim", "Ekler, kök ilişkileri ve biçimsel düzen karşılaştırılır."],
+  ["06", "Tarih ve coğrafya", "Tarihleme, buluntu yeri, olası temas ve aktarım bilgileri kaydedilir."],
+  ["07", "Sonuç ve sınırlar", "Test sonucu, dayanakları, belirsizlikleri ve karşı örnekleriyle yayımlanır."],
+  ["08", "Sürüm ve yeniden inceleme", "Yeni kaynak ve itirazlar ayrı kayıt olarak eklenir; önceki sürüm korunur."],
+];
+
+export default function MethodologyPanel({ onNavigateHome = () => {} }) {
   return (
-    <div style={{ width: "100%", maxWidth: "1100px", margin: "0 auto", padding: "16px", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
-      
-      {/* ÜST GEZİNME BARI */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+    <main style={{ width: "100%", maxWidth: "1100px", margin: "0 auto", padding: "16px", color: "#fff", fontFamily: "Segoe UI, sans-serif" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "12px", flexWrap: "wrap", marginBottom: "16px" }}>
         <button
+          type="button"
           onClick={onNavigateHome}
-          style={{
-            background: "rgba(245, 158, 11, 0.15)",
-            border: "1.5px solid #f59e0b",
-            color: "#f59e0b",
-            padding: "8px 16px",
-            borderRadius: "8px",
-            fontWeight: "900",
-            fontSize: "0.85rem",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            gap: "6px"
-          }}
+          style={{ background: "rgba(245, 158, 11, 0.15)", border: "1px solid #f59e0b", color: "#f59e0b", padding: "8px 16px", borderRadius: "8px", fontWeight: 800, cursor: "pointer" }}
         >
           🏠 ANASAYFAYA DÖN
         </button>
-        <span style={{ color: "#94a3b8", fontSize: "0.8rem", letterSpacing: "1px" }}>
-          YKOS BİLİMSEL METODOLOJİ VE KURUMSAL ESASLAR
+        <span style={{ color: "#94a3b8", fontSize: "0.78rem", letterSpacing: "0.08em" }}>
+          YKOS YÖNTEMİ · ARAŞTIRMA KAYDI
         </span>
       </div>
 
-      {/* 1. KURUMSAL BAŞLIK VE MÜHÜR */}
-      <div style={{ ...cardStyle, textAlign: "center", padding: "28px 20px" }}>
-        <div style={{ display: "inline-block", padding: "10px", borderRadius: "50%", border: "2px solid #f59e0b", marginBottom: "10px", background: "rgba(245, 158, 11, 0.05)" }}>
-          <span style={{ fontSize: "2.2rem" }}>🦅</span>
-        </div>
-        <h1 style={{ color: "#f59e0b", fontSize: "1.8rem", fontWeight: "900", letterSpacing: "2px", margin: "0 0 6px 0" }}>
-          YKOS BİLGİ SİSTEMİ
-        </h1>
-        <div style={{ color: "#ffffff", fontSize: "1.05rem", fontWeight: "bold", letterSpacing: "1px", marginBottom: "6px" }}>
+      <section style={{ ...cardStyle, textAlign: "center", padding: "28px 20px", marginBottom: "16px" }}>
+        <p style={{ color: "#f59e0b", fontSize: "0.78rem", letterSpacing: "0.12em", margin: "0 0 8px" }}>
+          DAMGA KOD SİSTEMİ
+        </p>
+        <h1 style={{ color: "#ffd700", fontSize: "clamp(1.5rem, 4vw, 2rem)", margin: "0 0 8px" }}>
           Yaşar Kaba Okuma Sistemi
-        </div>
-        <p style={{ color: "#94a3b8", fontSize: "0.82rem", letterSpacing: "1px", margin: 0, textTransform: "uppercase" }}>
-          DİSİPLİNLER ARASI ALGORİTMİK KÜLTÜR VE DİL VERİ TABANI
+        </h1>
+        <p style={{ ...textStyle, maxWidth: "760px", margin: "0 auto" }}>
+          YKOS, damga, kök ve hece yapısını belirli okuma adımlarıyla inceleyen bir teknik yöntemdir. Bu yöntemle yürütülen testlerin verileri, işlem basamakları ve sonuçları açık ve izlenebilir biçimde kaydedilir.
         </p>
+      </section>
+
+      <section style={{ ...cardStyle, marginBottom: "16px" }}>
+        <h2 style={headingStyle}>Yöntem ile araştırma sonucu</h2>
+        <p style={textStyle}>
+          YKOS okuma ve karşılaştırma yöntemini tanımlar. Anadolu Dil Katmanları × 30 Türk dili/lehçesi gibi çalışmalar ise bu yöntemin belirli veri kümelerine uygulandığı ayrı testlerdir. Bir testin tamamlanması, aday veri kümesinin eksiksiz veya her kaydın doğrulanmış olduğu anlamına gelmez.
+        </p>
+        <p style={{ ...textStyle, marginTop: "10px" }}>
+          Tek bir ses ya da anlam benzerliği genel dil ilişkisini göstermez. İlişki değerlendirmesi; düzenli ses karşılıkları, kök/hece ve ek yapısı, anlam, tarih, coğrafya, temas olasılığı ve kaynakların birlikte incelenmesini gerektirir.
+        </p>
+      </section>
+
+      <section style={{ ...cardStyle, marginBottom: "16px" }}>
+        <h2 style={headingStyle}>İzlenebilir test akışı</h2>
+        <p style={{ ...textStyle, marginBottom: "14px" }}>
+          Her testte kullanılan ölçütler ve sıra önceden belirtilir. Her aşamadaki bulgu, gerekçe ve eksik kanıt kayda bağlanır.
+        </p>
+        <ol style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "10px", listStyle: "none", margin: 0, padding: 0 }}>
+          {steps.map(([number, title, description]) => (
+            <li key={number} style={{ padding: "12px", background: "rgba(255,255,255,0.035)", borderRadius: "8px", borderLeft: "3px solid #f59e0b" }}>
+              <span style={{ color: "#f59e0b", fontWeight: 800, fontSize: "0.76rem" }}>{number} · </span>
+              <strong style={{ color: "#fff", fontSize: "0.88rem" }}>{title}</strong>
+              <p style={{ ...textStyle, fontSize: "0.82rem", marginTop: "6px" }}>{description}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "16px", marginBottom: "16px" }}>
+        <section style={cardStyle}>
+          <h2 style={headingStyle}>Kök merkezli ve aşamalı inceleme</h2>
+          <p style={textStyle}>
+            Kök/hece yapısı incelemenin ana eksenidir. Çalışmalar Anadolu merkezinden başlayıp belirlenen dairesel sırayla dış alanlara ilerler. Bu sıra araştırmanın düzenidir; tek başına köken, göç veya aktarım kanıtı sayılmaz. Her dil ve bölge için aynı test kaydı ve ölçütler kullanılır.
+          </p>
+        </section>
+        <section style={cardStyle}>
+          <h2 style={headingStyle}>Kaynak, kanıt ve yorum</h2>
+          <p style={textStyle}>
+            Kaynakta geçen sözcük, işaret, anlam ve bağlam ham kayıt olarak saklanır. YKOS okuması ve karşılaştırma sonucu ayrı test kaydında sunulur. Her sonuç kaynak gösterir; yorum, kanıtın gücü ve sınırlarıyla birlikte yayımlanır.
+          </p>
+        </section>
       </div>
 
-      {/* 2. HAKKIMIZDA & GELİŞTİRİCİ TANITIMI */}
-      <div style={cardStyle}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", borderBottom: "1.5px solid rgba(255, 215, 0, 0.3)", paddingBottom: "8px", marginBottom: "14px" }}>
-          <span style={{ fontSize: "1.2rem" }}>📌</span>
-          <h2 style={{ margin: 0, fontSize: "1.1rem", color: "#ffd700", fontWeight: "900" }}>
-            HAKKIMIZDA & SİSTEMİN DOĞUŞU
-          </h2>
-        </div>
-        <p style={{ color: "#e2e8f0", fontSize: "0.88rem", lineHeight: "1.65", margin: "0 0 12px 0" }}>
-          <strong>YKOS (Yaşar Kaba Okuma Sistemi);</strong> araştırmacı-yazar Yaşar Kaba tarafından geliştirilen; arkeoloji, jeoloji, paleoklimatoloji, filoloji ve semiyotik verileri tek bir algoritmik çatı altında birleştiren disiplinler arası bir okuma ve analiz metodolojisidir.
+      <section style={{ ...cardStyle, marginBottom: "16px" }}>
+        <h2 style={headingStyle}>Kapsam, eksikler ve itirazlar</h2>
+        <p style={textStyle}>
+          Her çalışma kendi kapsamı içinde tamamlanır. Eksik belge, tarihleme sorunu, belirsiz okuma ve karşı örnekler açıkça işaretlenir; sonraki araştırma veya sürümlerde ele alınabilir. Kaynaklı itirazlar ve alternatif okumalar gerekçeleriyle eklenir. Çelişkili kayıtlar silinmez; yeniden inceleme olarak tutulur.
         </p>
-        <p style={{ color: "#cbd5e1", fontSize: "0.85rem", lineHeight: "1.6", margin: 0 }}>
-          Sistem; Anadolu'yu insanlığın, erken piktogramların ve dilsel köklerin buzul çağı korunaklı <em>(Refugium)</em> merkezi olarak konumlandırır. Batı merkezli izole tarih tezlerinin aksine; grafik hafızanın Asya'dan Anadolu'ya değil, Anadolu'dan Avrasya, Etrüsk, Glozel ve küresel havzalara aktığını somut epigrafik ve algoritmik verilerle ortaya koyar.
+      </section>
+
+      <section style={{ ...cardStyle, borderColor: "rgba(56, 189, 248, 0.55)" }}>
+        <h2 style={{ ...headingStyle, color: "#38bdf8" }}>Araştırma sırası</h2>
+        <p style={textStyle}>
+          Çalışmalar Anadolu merkezinden dışa doğru, belirlenmiş coğrafi ve tarihsel halkalarla yürütülür. Sonraki diller sırayla eklenir; coğrafi yakınlık, tekil benzerlik veya sıralama tek başına tarihsel ilişki sonucu olarak yorumlanmaz.
         </p>
-      </div>
-
-      {/* 3. ARAŞTIRMA YAKLAŞIMI & ALGORİTMA HATTI */}
-      <div style={cardStyle}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", borderBottom: "1.5px solid rgba(255, 215, 0, 0.3)", paddingBottom: "8px", marginBottom: "14px" }}>
-          <span style={{ fontSize: "1.2rem" }}>⚙️</span>
-          <h2 style={{ margin: 0, fontSize: "1.1rem", color: "#ffd700", fontWeight: "900" }}>
-            YKOS ARAŞTIRMA ALGORİTMASI & ÇALIŞMA İLKESİ
-          </h2>
-        </div>
-        <p style={{ color: "#cbd5e1", fontSize: "0.85rem", lineHeight: "1.6", marginBottom: "14px" }}>
-          YKOS çalışmalarında veri temelli, şartlandırmasız ve karşılaştırmalı yöntem esastır. Amaç önceden belirlenmiş bir görüşü doğrulamak değil; verinin ortaya koyduğu örüntüyü şeffaf biçimde görünür kılmaktır:
+        <p style={{ ...textStyle, marginTop: "10px", color: "#94a3b8" }}>
+          TÜDİTAM kurumsal araştırma ve arşiv işlevini; YKOS ise okuma ve test yöntemini ifade eder.
         </p>
-        
-        {/* İŞLEM HATTI ÇUBUĞU */}
-        <div style={{
-          background: "rgba(6, 182, 212, 0.08)",
-          border: "1.5px solid #06b6d4",
-          borderRadius: "8px",
-          padding: "12px",
-          textAlign: "center",
-          color: "#38bdf8",
-          fontSize: "0.85rem",
-          fontWeight: "bold",
-          letterSpacing: "0.5px",
-          marginBottom: "12px"
-        }}>
-          ÖNCE VERİ ➔ MORFOLOJİ & FORM ➔ KÖK-HECE (M5) ➔ KRONOLOJİ ➔ COĞRAFİ AKIŞ ➔ SONUÇ RAPORU
-        </div>
-        <p style={{ color: "#94a3b8", fontSize: "0.78rem", fontStyle: "italic", textAlign: "center", margin: 0 }}>
-          "Biz gördüğümüzü yazarız, görmediğimizi yazmayız; gördüğümüzü de asla görmezden gelmeyiz." — YKOS Manifestosu
-        </p>
-      </div>
-
-      {/* 4. ÇALIŞMA ALANLARI VE BİRİMLER (2 KOLON) */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-        
-        {/* SOL: TEMEL ÇALIŞMA ALANLARI */}
-        <div style={cardStyle}>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", borderBottom: "1.5px solid rgba(255, 215, 0, 0.3)", paddingBottom: "8px", marginBottom: "12px" }}>
-            <span style={{ fontSize: "1.1rem" }}>📚</span>
-            <h3 style={{ margin: 0, fontSize: "0.95rem", color: "#ffd700", fontWeight: "bold" }}>
-              TEMEL ÇALIŞMA ALANLARI
-            </h3>
-          </div>
-          <ul style={{ margin: 0, paddingLeft: "18px", color: "#cbd5e1", fontSize: "0.8rem", lineHeight: "1.8" }}>
-            <li>Anadolu 12.000 Yıllık Epigrafik & Semiyotik Katmanları</li>
-            <li>M5 Algoritmik Kök-Hece Matrisi & Türkçe Dil Kodlama Sistemi</li>
-            <li>Göbeklitepe, Saymalıtaş ve Kaya Üstü Damga Morfolojisi</li>
-            <li>Fransa Glozel Tabletleri & İtalya Etrüsk Karşılaştırma Analizleri</li>
-            <li>Sümer Eklemeli Çivi Yazısı ile Ön-Türkçe Kök Korunumu</li>
-            <li>Hitit-Luvi Hiyeroglif Mühürleri & Avrasya Runik Yazıtları</li>
-            <li>Küresel Petroglif Atlası & Canlı Graf Veri Tabanı Mimarisi</li>
-          </ul>
-        </div>
-
-        {/* SAĞ: SİSTEM SEVİYELERİ & TEMEL İLKE */}
-        <div style={cardStyle}>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", borderBottom: "1.5px solid rgba(255, 215, 0, 0.3)", paddingBottom: "8px", marginBottom: "12px" }}>
-            <span style={{ fontSize: "1.1rem" }}>🏛️</span>
-            <h3 style={{ margin: 0, fontSize: "0.95rem", color: "#ffd700", fontWeight: "bold" }}>
-              YKOS SİSTEM HİYERARŞİSİ
-            </h3>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "6px", color: "#cbd5e1", fontSize: "0.78rem" }}>
-            <div style={{ padding: "6px 8px", background: "rgba(255,255,255,0.02)", borderRadius: "4px", borderLeft: "3px solid #f59e0b" }}>
-              <strong style={{ color: "#ffd700" }}>YKOS 100:</strong> Temel Kök-Hece ve Damga Matrisleri
-            </div>
-            <div style={{ padding: "6px 8px", background: "rgba(255,255,255,0.02)", borderRadius: "4px", borderLeft: "3px solid #06b6d4" }}>
-              <strong style={{ color: "#38bdf8" }}>YKOS 200:</strong> Buzul Çağından Günümüze Anadolu Atlasları
-            </div>
-            <div style={{ padding: "6px 8px", background: "rgba(255,255,255,0.02)", borderRadius: "4px", borderLeft: "3px solid #00ff7f" }}>
-              <strong style={{ color: "#00ff7f" }}>YKOS 300 / 500:</strong> Küresel Bağlantılar & Disiplinler Arası Entegrasyon
-            </div>
-            <div style={{ padding: "6px 8px", background: "rgba(255,255,255,0.02)", borderRadius: "4px", borderLeft: "3px solid #ffd700" }}>
-              <strong style={{ color: "#ffd700" }}>YKOS 1000:</strong> Yapay Zekâ & Kuantum Veri Tabanı Master Katmanı
-            </div>
-          </div>
-
-          <div style={{ marginTop: "12px", padding: "10px", background: "rgba(0, 255, 127, 0.05)", border: "1px solid rgba(0, 255, 127, 0.3)", borderRadius: "6px" }}>
-            <div style={{ color: "#00ff7f", fontWeight: "bold", fontSize: "0.75rem", marginBottom: "2px" }}>
-              ⚖️ TEMEL BİLİMSEL İLKE
-            </div>
-            <div style={{ color: "#aaa", fontSize: "0.72rem", lineHeight: "1.4" }}>
-              Araştırmanın görevi bir şeyi sahiplenmek değil, gerçeği araştırmaktır. Yeni veriler önceki değerlendirmeleri değiştirebilir; bu durumda eski kayıt korunur, yeni veri yeniden sınanır.
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-    </div>
+      </section>
+    </main>
   );
 }
