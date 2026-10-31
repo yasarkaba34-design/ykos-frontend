@@ -32,10 +32,11 @@ const steps = [
   ["08", "Sürüm ve yeniden inceleme", "Yeni kaynak ve itirazlar ayrı kayıt olarak eklenir; önceki sürüm korunur."],
 ];
 
-export default function MethodologyPanel({ onNavigateHome = () => {} }) {
+export default function MethodologyPanel({ onNavigateHome = () => {}, onNavigateMatrix = () => {} }) {
   return (
     <main style={{ width: "100%", maxWidth: "1100px", margin: "0 auto", padding: "16px", color: "#fff", fontFamily: "Segoe UI, sans-serif" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "12px", flexWrap: "wrap", marginBottom: "16px" }}>
+        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
         <button
           type="button"
           onClick={onNavigateHome}
@@ -43,6 +44,14 @@ export default function MethodologyPanel({ onNavigateHome = () => {} }) {
         >
           🏠 ANASAYFAYA DÖN
         </button>
+          <button
+            type="button"
+            onClick={onNavigateMatrix}
+            style={{ background: "rgba(56, 189, 248, 0.12)", border: "1px solid #38bdf8", color: "#38bdf8", padding: "8px 16px", borderRadius: "8px", fontWeight: 800, cursor: "pointer" }}
+          >
+            ▦ MATRİSLERE DÖN
+          </button>
+        </div>
         <span style={{ color: "#94a3b8", fontSize: "0.78rem", letterSpacing: "0.08em" }}>
           YKOS YÖNTEMİ · ARAŞTIRMA KAYDI
         </span>
