@@ -1,174 +1,134 @@
 import React, { useState } from "react";
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { auth } from "../data/firebase";
 
-const PASSWORD_KEY = "ykos_admin_password";
-const DEFAULT_PASSWORD = "YKOS2026";
+const ADMIN_UID = "WnKrb0wcY3dHpSJjdn9b2aAwTw02";
 
-const normalizePassword = (value) =>
-  String(value || "")
-    .replace(/\s+/g, "")
-    .toUpperCase();
-
-export default function AdminLogin({ onSuccess, onCancel }) {
+export default function AdminLogin() {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const enteredPassword = normalizePassword(password);
-    const defaultPassword = normalizePassword(DEFAULT_PASSWORD);
-    const savedPassword = normalizePassword(
-      localStorage.getItem(PASSWORD_KEY)
-    );
-
-    const isValid =
-      enteredPassword === defaultPassword ||
-      (savedPassword !== "" && enteredPassword === savedPassword);
-
-    if (!isValid) {
-      setError("Şifre hatalı.");
-      return;
-    }
-
     setError("");
-    setPassword("");
+    setBusy(true);
 
-    // Eski veya bozuk kayıtlı şifreyi düzeltir.
-    localStorage.setItem(PASSWORD_KEY, DEFAULT_PASSWORD);
+    try {
+      const result = await signInWithEmailAndPassword(
+        auth,
+        email.trim(),
+        password
+      );
 
-    if (typeof onSuccess === "function") {
-      onSuccess();
-    } else {
-      window.location.href = "/admin";
+      if (result.user.uid !== ADMIN_UID) {
+        await signOut(auth);
+        setError("Bu hesabın yönetici yetkisi yok.");
+        return;
+      }
+
+      window.location.assign("/admin");
+    } catch (error) {
+      setError(`Giriş yapılamadı: ${error.code || "bilinmeyen-hata"}`);
+    } finally {
+      setBusy(false);
     }
   };
 
-  const handleCancel = () => {
-    setPassword("");
-    setError("");
-
-    if (typeof onCancel === "function") {
-      onCancel();
-    } else {
-      setError("Yönetici paneli bağlantısı bulunamadı.");
-    }
+  const inputStyle = {
+    width: "100%",
+    boxSizing: "border-box",
+    padding: "12px",
+    marginTop: "12px",
+    background: "#030712",
+    border: "1px solid #475569",
+    borderRadius: "6px",
+    color: "#fff",
+    fontSize: "16px"
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#030712",
-        color: "#fff",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "20px",
-        boxSizing: "border-box",
-      }}
-    >
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          width: "100%",
-          maxWidth: "420px",
-          background: "#070b14",
-          border: "1.5px solid #ffd700",
-          borderRadius: "10px",
-          padding: "24px",
-          boxSizing: "border-box",
-        }}
-      >
-        <h2
-          style={{
-            color: "#ffd700",
-            textAlign: "center",
-            margin: "0 0 8px",
-          }}
-        >
-          ⚙️ YÖNETİCİ GİRİŞİ
+    <div style={{
+      minHeight: "100vh",
+      background: "#030712",
+      color: "#fff",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      padding: "20px",
+      boxSizing: "border-box"
+    }}>
+      <form onSubmit={handleSubmit} style={{
+        width: "100%",
+        maxWidth: "420px",
+        background: "#070b14",
+        border: "1.5px solid #ffd700",
+        borderRadius: "10px",
+        padding: "24px",
+        boxSizing: "border-box"
+      }}>
+        <h2 style={{ color: "#ffd700", textAlign: "center" }}>
+          YKOS YÖNETİCİ GİRİŞİ
         </h2>
 
-        <p
-          style={{
-            textAlign: "center",
-            color: "#94a3b8",
-            fontSize: "13px",
-            marginTop: 0,
-          }}
-        >
-          YKOS YÖNETİCİ GİRİŞİ
-        </p>
-
+        <label htmlFor="admin-email">E-posta</label>
         <input
+          id="admin-email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          autoComplete="username"
+          required
+          disabled={busy}
+          style={inputStyle}
+        />
+
+        <label
+          htmlFor="admin-password"
+          style={{ display: "block", marginTop: "16px" }}
+        >
+          Şifre
+        </label>
+        <input
+          id="admin-password"
           type="password"
           value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-            setError("");
-          }}
-          placeholder="Yönetici şifresi"
-          autoComplete="off"
-          spellCheck="false"
-          autoFocus
-          style={{
-            width: "100%",
-            boxSizing: "border-box",
-            padding: "12px",
-            marginTop: "12px",
-            background: "#030712",
-            border: "1px solid #475569",
-            borderRadius: "6px",
-            color: "#fff",
-            fontSize: "14px",
-          }}
+          onChange={(e) => setPassword(e.target.value)}
+          autoComplete="current-password"
+          required
+          disabled={busy}
+          style={inputStyle}
         />
 
         {error && (
-          <div
-            style={{
-              color: "#ef4444",
-              marginTop: "8px",
-              fontSize: "13px",
-            }}
-          >
-            ⚠️ {error}
-          </div>
+          <p role="alert" style={{ color: "#f87171" }}>
+            {error}
+          </p>
         )}
 
-        <button
-          type="submit"
-          style={{
-            width: "100%",
-            marginTop: "16px",
-            padding: "11px",
-            background: "#ffd700",
-            color: "#000",
-            border: "none",
-            borderRadius: "6px",
-            fontWeight: "900",
-            cursor: "pointer",
-          }}
-        >
-          🔐 GİRİŞ YAP
+        <button type="submit" disabled={busy} style={{
+          width: "100%",
+          marginTop: "20px",
+          padding: "12px",
+          background: "#ffd700",
+          color: "#000",
+          border: "none",
+          borderRadius: "6px",
+          fontWeight: "bold",
+          cursor: busy ? "wait" : "pointer"
+        }}>
+          {busy ? "Giriş yapılıyor…" : "GİRİŞ YAP"}
         </button>
 
-        <button
-          type="button"
-          onClick={handleCancel}
-          style={{
-            width: "100%",
-            marginTop: "8px",
-            padding: "10px",
-            background: "#1e293b",
-            color: "#fff",
-            border: "1px solid #475569",
-            borderRadius: "6px",
-            cursor: "pointer",
-          }}
-        >
-          ← ANA SAYFAYA DÖN
-        </button>
+        <a href="/" style={{
+          display: "block",
+          marginTop: "16px",
+          textAlign: "center",
+          color: "#94a3b8"
+        }}>
+          Ana sayfaya dön
+        </a>
       </form>
     </div>
   );

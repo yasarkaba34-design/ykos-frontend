@@ -80,7 +80,7 @@ export default function ReadingPanel({
           return;
         }
         // 3. Firestore: önce doğrudan belge kimliği.
-        const collections = ["bulgular", "ykos_bulgulari"];
+        const collections = ["ykos-bulgular", "bulgular", "ykos_bulgulari"];
         const rawId = String(paramId).trim();
         const candidateIds = [...new Set([
           rawId,
@@ -242,7 +242,7 @@ export default function ReadingPanel({
     <div
       style={{
         width: "100%",
-        maxWidth: "1600px",
+        maxWidth: "1900px",
         margin: "20px auto",
         padding: "clamp(10px, 3vw, 20px)",
         color: "#fff",
@@ -336,7 +336,7 @@ export default function ReadingPanel({
             overflowWrap: "anywhere",
           }}
         >
-          {articleContent || "İçerik metni bulunamadı."}
+          {articleContent}
         </div>
         {Array.isArray(gallery) && gallery.length > 0 && (
           <div

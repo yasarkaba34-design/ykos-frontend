@@ -1,0 +1,29 @@
+YKOS.ORG — Mobil ve yönetici paneli düzeltmesi
+Firebase projesi: ykos-database
+Yönetici UID: WnKrb0wcY3dHpSJjdn9b2aAwTw02
+
+1. ykos.org proje klasöründeki src klasörünüzün yedeğini alın.
+2. ZIP içindeki src klasörünü mevcut src ile birleştirin. Aynı adlı dosyaları değiştirin. Mevcut src klasörünü silmeyin. Tarayıcı verilerini temizlemeyin.
+3. Mevcut .env ve Vercel ayarlarınız bu Firebase projesine ait olmalıdır. Bu paket API anahtarı veya .env değiştirmez.
+4. Firebase → ykos-database → Firestore Database → Rules bölümündeki mevcut kuralları kontrol edin. FIRESTORE_KURAL_EKLE.txt, yeni ykos-bulgular koleksiyonu için eklenecek bloğu içerir. Mevcut genel test yazma izinleri yönetici kısıtını geçersiz kılabilir. Kuralları bilmiyorsanız önce mevcut Rules metnini paylaşın.
+5. Terminalde npm run build çalıştırın. Başarılıysa, doğru ykos.org Vercel projesi seçiliyken npx vercel --prod --force çalıştırın.
+6. Yönetici girişinde ykos-database Authentication hesabınızın e-posta ve şifresini kullanın. Eski yerel panel şifresi artık kullanılmaz.
+7. Eski kayıtların bulunduğu bilgisayar ve tarayıcıyla ykos.org/admin'e girip aktarım düğmesine basın. Bu düğme mevcut Firebase belgelerinin üzerine yazmaz; yerel kaynak kayıtlarını silmez. Boyut nedeniyle aktarılamayanlar mesajda listelenir.
+8. Telefonda ana sayfa, arşiv, video listesi ve bir içerik bağlantısını kontrol edin.
+
+YAPILANLAR
+- Yönetici kayıtları artık Firestore ykos-bulgular koleksiyonuna kaydolur; ana sayfa ve arşiv buradan güncellenir.
+- Yönetici paneli Firebase oturumu ve verilen UID ile korunur. Veritabanı yazma yetkisini sunucuda Firebase kuralları belirler.
+- Panelde ana sayfa ve içerik bağlantıları; Firebase'deki kayıtlarla yalnız bu cihazdaki kayıtların ayrımı bulunur.
+- Görsel yayın kopyaları 1900 piksel azami genişlikte, oran korunarak WebP'ye dönüştürülür. Küçük görseller büyütülmez. Aktarımda yerel orijinaller korunur. Animasyonlu görseller tek kareye dönüşür.
+- Çok büyük galeriler hâlâ belge boyutu sınırına takılabilir. Kayıt kaybolmaz; hata mesajı gösterilir. Ayrı Storage kurulumu yapılmadı.
+- Okuma sayfasının eski ID eşleştirmeleri korunur; yeni koleksiyon eklendi.
+- Hazır arşiv metinleri korunur. Örnek arşiv kartları gerçek arşiv listesiyle değiştirildi.
+- YouTube watch, youtu.be, shorts, live ve embed adresleri desteklenir.
+- main.jsx doğrudan App.jsx dosyasını kullanır.
+
+KONTROL VE SINIRLAR
+Kaynak ağacı esbuild ile paketlendi. Ortak görsel/kayıt yardımcılarının filtre ve boyutlandırma kontrolleri geçti. Özgün package.json ve Vite ayarları ZIP'te yok; projenin kendi npm run build komutu burada çalıştırılmadı. Gerçek Firebase giriş/yazma veya mobil tarayıcı testi yapılmadı.
+Mevcut eski bulgular ve ykos_bulgulari belgeleri silinmez; okuma sayfasındaki geriye uyumluluk korunur. Yeni ana sayfa listesi ykos-bulgular koleksiyonunu kullanır. Diğer koleksiyonlarda olup yerelde olmayan kayıtlar otomatik taşınmaz.
+/acikveri konuk formu hâlâ yerel çalışır. Konukların farklı cihazlardan özel gönderi yapabilmesi bu paketin dışında ayrı bir bekleme koleksiyonu ve kurallar gerektirir.
+Bu paket tuditam.org veya ykos.net için değildir.

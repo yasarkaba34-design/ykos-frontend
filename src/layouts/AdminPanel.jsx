@@ -1,8 +1,21 @@
 // src/layouts/AdminPanel.jsx
 import React, { useState, useEffect } from "react";
+import { normalizeRecord } from "../data/usePublishedRecords";
+import { prepareImage, prepareRecordImages } from "../data/imageResize";
+import { signOut } from "firebase/auth";
+import { auth, db } from "../data/firebase";
+import {
+  collection,
+  doc,
+  runTransaction,
+  getDocs,
+  setDoc,
+  deleteDoc
+} from "firebase/firestore";
 
 export default function AdminPanel({ onLogout, userRole = "admin" }) {
   const [records, setRecords] = useState([]);
+  const [cloudIds, setCloudIds] = useState(new Set());
   const [editingId, setEditingId] = useState(null);
 
   // Form Alanları
@@ -27,126 +40,151 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
     "Külliyat & Makale"
   ];
 
-  const loadRecords = () => {
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState("");
+  const readLocal = () => {
+    const value = JSON.parse(localStorage.getItem("ykos_admin_records") || "[]");
+    if (!Array.isArray(value)) throw new Error("Yerel kayıt biçimi geçersiz.");
+    return value.map(record => normalizeRecord(record));
+  };
+  const errorText = error => error.code || error.message || "Bilinmeyen hata";
+  const loadRecords = async () => {
+    let local = [];
+    try { local = readLocal(); } catch (error) { setMessage(errorText(error)); }
+    setRecords(local);
     try {
-      const saved = JSON.parse(localStorage.getItem("ykos_admin_records") || "[]");
-      setRecords(saved);
-    } catch (e) {
-      console.error("Kayıtlar yüklenirken hata oluştu:", e);
-      setRecords([]);
+      const snapshot = await getDocs(collection(db, "ykos-bulgular"));
+      const merged = new Map(local.map(record => [String(record.id), record]));
+      snapshot.forEach(item => merged.set(item.id, normalizeRecord(item.data(), item.id)));
+      setCloudIds(new Set(snapshot.docs.map(item => item.id)));
+      setRecords([...merged.values()]);
+    } catch (error) { setMessage("Firebase okunamadı: " + errorText(error)); }
+  };
+  useEffect(() => { loadRecords(); }, []);
+  const checkRecord = record => {
+    if (!record.id || String(record.id).includes("/")) throw new Error("Geçerli kayıt kimliği gerekli.");
+    if (new TextEncoder().encode(JSON.stringify(record)).length > 900000) {
+      throw new Error("Görseller nedeniyle kayıt çok büyük. Yerel kayıt korunuyor; galerideki görsel sayısını azaltıp yeniden deneyin.");
     }
   };
-
-  useEffect(() => {
-    loadRecords();
-  }, []);
-
-  const handleMainImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setMainImage(reader.result);
-      reader.readAsDataURL(file);
-    }
+  const updateLocal = record => {
+    try {
+      localStorage.setItem("ykos_admin_records", JSON.stringify([
+        record, ...readLocal().filter(item => String(item.id) !== String(record.id))
+      ]));
+    } catch (error) { console.warn("Yerel kopya güncellenemedi", error); }
+    window.dispatchEvent(new Event("ykos-records-updated"));
   };
-
-  const handleGalleryChange = (e) => {
-    const files = Array.from(e.target.files);
-    files.forEach((file) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setGalleryImages((prev) => [...prev, reader.result]);
-      };
-      reader.readAsDataURL(file);
-    });
+  const saveRecord = async record => {
+    record = await prepareRecordImages(record);
+    record.updatedAt = new Date().toISOString();
+    checkRecord(record);
+    await setDoc(doc(db, "ykos-bulgular", String(record.id)), record);
+    updateLocal(record);
   };
-
-  const removeGalleryImage = (index) => {
-    setGalleryImages(galleryImages.filter((_, i) => i !== index));
+  const resetForm = () => {
+    setEditingId(null); setTitle(""); setSummary(""); setContent("");
+    setMainImage(""); setGalleryImages([]); setVideoUrl("");
   };
-
-  const handleSubmit = (e) => {
+  const readImage = file => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => prepareImage(reader.result).then(resolve, reject);
+    reader.onerror = () => reject(new Error("Görsel okunamadı."));
+    reader.readAsDataURL(file);
+  });
+  const handleMainImageChange = async e => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setBusy(true);
+    try { setMainImage(await readImage(file)); }
+    catch (error) { setMessage(errorText(error)); }
+    finally { setBusy(false); }
+  };
+  const handleGalleryChange = async e => {
+    const files = Array.from(e.target.files || []);
+    setBusy(true);
+    try {
+      const images = await Promise.all(files.map(readImage));
+      setGalleryImages(previous => [...previous, ...images]);
+    } catch (error) { setMessage(errorText(error)); }
+    finally { setBusy(false); }
+  };
+  const removeGalleryImage = index => setGalleryImages(previous => previous.filter((_, i) => i !== index));
+  const handleSubmit = async e => {
     e.preventDefault();
-    if (!title || !title.trim()) {
-      alert("Lütfen geçerli bir başlık giriniz.");
-      return;
-    }
-
-    const existing = JSON.parse(localStorage.getItem("ykos_admin_records") || "[]");
-
-    if (editingId) {
-      const updated = existing.map((r) =>
-        r.id === editingId
-          ? {
-              ...r,
-              title: title.trim(),
-              category,
-              summary: summary.trim(),
-              content: content.trim(),
-              image: mainImage || r.image,
-              gallery: galleryImages.length > 0 ? galleryImages : (r.gallery || []),
-              videoUrl: videoUrl.trim() // Güncelleme
-            }
-          : r
-      );
-      localStorage.setItem("ykos_admin_records", JSON.stringify(updated));
-      setEditingId(null);
-    } else {
-      const newRecord = {
-        id: "YKOS-" + Date.now(),
-        title: title.trim(),
-        category,
-        summary: summary.trim(),
-        content: content.trim(),
-        image: mainImage,
-        gallery: galleryImages,
-        videoUrl: videoUrl.trim(), // Yeni kayıt video URL
-        status: "published",
-        durum: "onaylandi",
-        date: new Date().toLocaleDateString("tr-TR")
+    if (busy || !title.trim()) return;
+    setBusy(true); setMessage("");
+    try {
+      const existing = records.find(item => item.id === editingId);
+      const record = {
+        ...(existing || {}), id: editingId || "YKOS-" + crypto.randomUUID(),
+        title: title.trim(), category, summary: summary.trim(), content: content.trim(),
+        image: mainImage, gallery: galleryImages, videoUrl: videoUrl.trim(),
+        status: "published", durum: "onaylandi",
+        date: existing?.date || new Date().toLocaleDateString("tr-TR")
       };
-      existing.unshift(newRecord);
-      localStorage.setItem("ykos_admin_records", JSON.stringify(existing));
-    }
-
-    // Formu sıfırla
-    setTitle("");
-    setSummary("");
-    setContent("");
-    setMainImage("");
-    setGalleryImages([]);
-    setVideoUrl("");
-    loadRecords();
+      await saveRecord(record); resetForm(); await loadRecords();
+      setMessage("İçerik Firebase’e kaydedildi.");
+    } catch (error) { setMessage("Kayıt yapılamadı: " + errorText(error)); }
+    finally { setBusy(false); }
   };
-
-  const handleApprove = (id) => {
-    const updated = records.map((r) => {
-      if (r.id === id) {
-        return { ...r, status: "published", durum: "onaylandi" };
-      }
-      return r;
-    });
-    localStorage.setItem("ykos_admin_records", JSON.stringify(updated));
-    setRecords(updated);
+  const handleApprove = async id => {
+    if (busy) return;
+    const record = records.find(item => item.id === id);
+    if (!record) return;
+    setBusy(true);
+    try { await saveRecord({ ...record, status: "published", durum: "onaylandi" }); await loadRecords(); }
+    catch (error) { setMessage(errorText(error)); }
+    finally { setBusy(false); }
   };
-
-  const handleEdit = (record) => {
-    setEditingId(record.id);
-    setTitle(record.title || record.baslik || "");
+  const handleEdit = record => {
+    if (busy) return;
+    setEditingId(record.id); setTitle(record.title || record.baslik || "");
     setCategory(record.category || record.kategori || categories[0]);
-    setSummary(record.summary || record.ozet || "");
-    setContent(record.content || record.icerik || "");
-    setMainImage(record.image || record.mansetGorsel || "");
-    setGalleryImages(record.gallery || record.galeri || []);
+    setSummary(record.summary || record.ozet || record.kisaOzet || "");
+    setContent(record.content || record.icerik || record.kapsamliAnaliz || "");
+    setMainImage(record.image || record.mansetGorsel || record.kapakGorseli || "");
+    setGalleryImages(record.gallery || record.galeri || record.galeriGorselleri || []);
     setVideoUrl(record.videoUrl || record.video || "");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
-  const handleDelete = (id) => {
-    if (window.confirm("Bu kaydı kalıcı olarak silmek istediğinize emin misiniz?")) {
-      const updated = records.filter((r) => r.id !== id);
-      localStorage.setItem("ykos_admin_records", JSON.stringify(updated));
-      loadRecords();
-    }
+  const handleDelete = async id => {
+    if (busy || !window.confirm("Bu kaydı silmek istediğinize emin misiniz?")) return;
+    setBusy(true);
+    try {
+      const local = readLocal();
+      await deleteDoc(doc(db, "ykos-bulgular", String(id)));
+      localStorage.setItem("ykos_admin_records", JSON.stringify(local.filter(item => item.id !== id)));
+      await loadRecords();
+      window.dispatchEvent(new Event("ykos-records-updated"));
+    } catch (error) { setMessage("Silme işlemi tamamlanamadı: " + errorText(error)); }
+    finally { setBusy(false); }
+  };
+  const handleTransferLocalRecords = async () => {
+    if (busy) return;
+    setBusy(true); setMessage("Aktarım başladı…");
+    let added = 0, skipped = 0;
+    const failed = [];
+    try {
+      for (const original of readLocal()) {
+        const record = { ...original };
+        try {
+          const prepared = await prepareRecordImages(record);
+          checkRecord(prepared);
+          const reference = doc(db, "ykos-bulgular", String(record.id));
+          const created = await runTransaction(db, async transaction => {
+            const snapshot = await transaction.get(reference);
+            if (snapshot.exists()) return false;
+            transaction.set(reference, prepared);
+            return true;
+          });
+          if (created) added++; else skipped++;
+        } catch (error) { failed.push(`${record.title || record.id}: ${errorText(error)}`); }
+      }
+      await loadRecords();
+      setMessage(`${added} kayıt aktarıldı. ${skipped} kayıt zaten mevcut.\n` + failed.join("\n"));
+    } catch (error) { setMessage("Aktarım tamamlanamadı: " + errorText(error)); }
+    finally { setBusy(false); }
   };
 
   const pendingRecords = records.filter(
@@ -162,19 +200,21 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
   const currentPublishedRecords = publishedRecords.slice(indexOfFirstItem, indexOfLastItem);
  
  // Çıkış yapma fonksiyonu
-  const handleLogoutClick = () => {
-    localStorage.removeItem("ykos_admin_logged_in");
-
-    if (typeof onLogout === "function") {
-      onLogout();
-    }
-
-    window.location.href = "/";
+  const handleLogoutClick = async () => {
+    try {
+      if (typeof onLogout === "function") await onLogout();
+      else await signOut(auth);
+      window.location.assign("/");
+    } catch (error) { setMessage("Çıkış yapılamadı: " + errorText(error)); }
   };
 
   return (
     <div className="ykos-admin-panel" style={{ maxWidth: "1350px", margin: "0 auto", padding: "12px", color: "#fff" }}>
       <style>{`
+        .ykos-admin-panel { box-sizing: border-box; }
+        .ykos-admin-panel input, .ykos-admin-panel textarea, .ykos-admin-panel select { font-size: 16px !important; }
+        .ykos-admin-panel button { min-height: 36px; }
+        .ykos-admin-grid > div { min-width: 0; }
         .ykos-admin-grid {
           display: grid;
           grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
@@ -230,11 +270,12 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
             Yetki: <b style={{ color: "#00ff7f" }}>{userRole.toUpperCase()}</b> | Toplam Arşiv: <b>{records.length}</b> | Onay Bekleyen: <b style={{ color: "#eab308" }}>{pendingRecords.length}</b>
           </div>
         </div>
+        <a href="/" style={{color:"#ffd700", padding:10}}>← Ana sayfa</a>
     <button
+  disabled={busy}
   onClick={handleLogoutClick}
   style={{
-    // Mevcut buton stilleriniz...
-    cursor: "pointer",
+    background: "#1e293b", color: "#fff", padding: "10px 16px", border: "1px solid #475569", borderRadius: 6, cursor: "pointer",
   }}
 >
   Çıkış Yap
@@ -242,6 +283,11 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
 
       </div>
 
+      <button type="button" disabled={busy} onClick={handleTransferLocalRecords}
+        style={{ padding: "12px", background: "#38bdf8", border: "none", borderRadius: "6px", marginBottom: "12px", fontWeight: "bold" }}>
+        {busy ? "İşlem sürüyor…" : "Bilgisayardaki eski kayıtları Firebase’e aktar"}
+      </button>
+      {message && <p role="status" style={{ whiteSpace: "pre-wrap", color: "#facc15" }}>{message}</p>}
       {/* 2 SÜTUNLU GÖVDE */}
       <div className="ykos-admin-grid">
         
@@ -308,7 +354,7 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
               {editingId ? "✏️ Kaydı Güncelle" : "➕ Yeni İçerik & Video Girişi"}
             </h3>
 
-            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <fieldset disabled={busy} style={{ border: 0, padding: 0, margin: 0, minWidth: 0 }}><form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
               <div>
                 <label style={{ display: "block", fontSize: "0.7rem", color: "#ffd700", marginBottom: "2px" }}>Kategori</label>
                 <select value={category} onChange={(e) => setCategory(e.target.value)} style={{ width: "100%", padding: "6px", background: "#060913", border: "1px solid #334155", color: "#fff", borderRadius: "4px", fontSize: "0.78rem" }}>
@@ -382,7 +428,7 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
                   </button>
                 )}
               </div>
-            </form>
+            </form></fieldset>
           </div>
 
         </div>
@@ -392,7 +438,7 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
           
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1.5px solid #ffd700", paddingBottom: "6px", marginBottom: "8px" }}>
             <h3 style={{ color: "#ffd700", margin: 0, fontSize: "0.9rem" }}>
-              📑 YAYINLANAN TÜM İÇERİKLER ({publishedRecords.length})
+              📑 KAYITLI İÇERİKLER ({publishedRecords.length})
             </h3>
             <span style={{ fontSize: "0.68rem", color: "#94a3b8" }}>
               Sayfa {currentPage} / {totalPages} (Her Sayfada 25 Kayıt)
@@ -417,12 +463,12 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
                   return (
                     <tr key={r.id} style={{ borderBottom: "1px solid #1e293b" }}>
                       <td style={{ padding: "6px 4px" }}>
-                        <span style={{ background: "#22c55e", color: "#000", padding: "1px 5px", borderRadius: "2px", fontSize: "0.62rem", fontWeight: "900" }}>
-                          ✓ AKTİF
+                        <span style={{ background: cloudIds.has(String(r.id)) ? "#22c55e" : "#facc15", color: "#000", padding: "1px 5px", borderRadius: "2px", fontSize: "0.62rem", fontWeight: "900" }}>
+                          {cloudIds.has(String(r.id)) ? "✓ YAYINDA" : "BU CİHAZDA"}
                         </span>
                       </td>
                       <td style={{ padding: "6px 4px", fontWeight: "bold", maxWidth: "160px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                        {r.title || r.baslik}
+                        <a href={`/read/${encodeURIComponent(r.id)}`} target="_blank" rel="noreferrer" title={r.title || r.baslik || "Başlıksız kayıt"} style={{color:"#ffd700"}}>{r.title || r.baslik || "Başlıksız kayıt"}</a>
                         {r.videoUrl && (
                           <a
                             href={r.videoUrl}

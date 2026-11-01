@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { db } from "../data/firebase";
+import { collection, doc, setDoc, serverTimestamp } from "firebase/firestore";
 
 export default function YoneticiIcerikGirisi({ secilenVeri, onKayitTamamlandi }) {
+  const [kaydediliyor, setKaydediliyor] = useState(false);
   // 5 Temel İçerik / Kategori Türü
   const icerikTurleri = [
     "Araştırma yazısı",
@@ -57,26 +60,77 @@ export default function YoneticiIcerikGirisi({ secilenVeri, onKayitTamamlandi })
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!formData.baslik.trim()) {
-      alert("Lütfen içerik başlığını giriniz!");
-      return;
-    }
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    // Yerel veya sunucu havuzuna kaydet
-    const mevcutVeriler = JSON.parse(localStorage.getItem("ykos_canli_havuz") || "[]");
-    const guncelListe = [formData, ...mevcutVeriler.filter(item => item.baslik !== formData.baslik)];
-    localStorage.setItem("ykos_canli_havuz", JSON.stringify(guncelListe));
+  if (kaydediliyor) return;
 
-    // Konuk bekleme listesinden düşür
-    const beklemeHavuzu = JSON.parse(localStorage.getItem("ykos_konuk_havuzu") || "[]");
-    const yeniBekleme = beklemeHavuzu.filter(item => item.baslik !== formData.baslik);
-    localStorage.setItem("ykos_konuk_havuzu", JSON.stringify(yeniBekleme));
+  if (!formData.baslik.trim()) {
+    alert("Lütfen içerik başlığını giriniz!");
+    return;
+  }
 
-    alert("✓ Veri ve video başarıyla akademik veritabanına ve canlı akışa aktarıldı!");
+  // Geçici görsel adresleri diğer cihazlarda çalışmaz.
+  const gorseller = [
+    formData.kapakGorseli,
+    ...(formData.galeriGorselleri || [])
+  ];
+
+  if (gorseller.some(
+    (adres) => typeof adres === "string" && adres.startsWith("blob:")
+  )) {
+    alert(
+      "Görseller geçici tarayıcı adresi kullanıyor. " +
+      "Önce kalıcı görsel yükleme bağlantısını düzenlemeliyiz."
+    );
+    return;
+  }
+
+  setKaydediliyor(true);
+
+  try {
+    // Yeni kayıtta kimlik üret; düzenlemede aynı belgeyi güncelle.
+    const mevcutId = formData.id || secilenVeri?.id;
+    const belge = mevcutId
+      ? doc(db, "bulgular", String(mevcutId))
+      : doc(collection(db, "bulgular"));
+
+    const kayit = {
+      ...formData,
+      id: belge.id,
+      baslik: formData.baslik.trim(),
+      durum: "onaylandi",
+      status: "approved",
+      guncellenmeTarihi: serverTimestamp()
+    };
+
+    // Firestore undefined değerleri kabul etmez.
+    Object.keys(kayit).forEach((alan) => {
+      if (kayit[alan] === undefined) delete kayit[alan];
+    });
+
+    await setDoc(belge, kayit, { merge: true });
+
+    setFormData((prev) => ({
+      ...prev,
+      id: belge.id,
+      durum: "onaylandi",
+      status: "approved"
+    }));
+
+    alert("✓ İçerik Firebase veritabanına kaydedildi.");
+
     if (onKayitTamamlandi) onKayitTamamlandi();
-  };
+  } catch (error) {
+    console.error("Firebase kayıt hatası:", error);
+    alert(
+      "Kayıt tamamlanamadı. Formdaki bilgiler korunuyor.\n" +
+      (error.code || error.message)
+    );
+  } finally {
+    setKaydediliyor(false);
+  }
+};
 
   return (
     <form onSubmit={handleSubmit} style={formStyle.container}>

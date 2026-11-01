@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SearchBar from "../components/SearchBar";
+import { usePublishedRecords } from "../data/usePublishedRecords";
+import { getEmbedUrl } from "../data/videoEmbed";
 import { translations } from "../data/i18n";
 
 const YKOS_POSTERS = [
@@ -37,62 +39,34 @@ export default function YKOSDashboard({
   const [posterModalOpen, setPosterModalOpen] = useState(false);
   const [selectedPoster, setSelectedPoster] = useState(YKOS_POSTERS[0]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [adminRecords, setAdminRecords] = useState([]);
+  const { records: adminRecords, error: recordsError } = usePublishedRecords();
 
   const [videoModalOpen, setVideoModalOpen] = useState(false);
   const [allVideoRecords, setAllVideoRecords] = useState([]);
   const [activeVideo, setActiveVideo] = useState(null);
 
   const handleOpenVideoArchive = () => {
-    try {
-      const saved = JSON.parse(localStorage.getItem("ykos_admin_records") || "[]");
-      const vids = saved.filter(r => r.videoUrl || r.video || r.videoBaglantisi);
-      setAllVideoRecords(vids);
-      if (vids.length > 0) {
-        setActiveVideo(vids[0]);
-        setVideoModalOpen(true);
-      } else {
-        alert("Henüz sistemde video eklenmiş bir kayıt bulunmuyor.");
-      }
-    } catch (e) {
-      console.error(e);
+    const videos = adminRecords
+      .filter(record =>
+        record.videoUrl || record.video || record.videoBaglantisi
+      )
+      .map(record => ({
+        ...record,
+        videoUrl:
+          record.videoUrl || record.video || record.videoBaglantisi
+      }));
+
+    setAllVideoRecords(videos);
+
+    if (videos.length > 0) {
+      setActiveVideo(videos[0]);
+      setVideoModalOpen(true);
+    } else {
+      alert("Henüz yayımlanmış video kaydı bulunmuyor.");
     }
   };
 
-  const getEmbedUrl = (url) => {
-    if (!url) return "";
-    if (url.includes("embed")) return url;
-    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
-    return match ? `https://www.youtube-nocookie.com/embed/${match[1]}` : url;
-  };
-
   const t = (translations && translations[currentLang]) ? translations[currentLang] : (translations?.TR || {});
-
-  useEffect(() => {
-    const loadApprovedRecords = () => {
-      try {
-        const saved = JSON.parse(localStorage.getItem("ykos_admin_records") || "[]");
-        const approved = saved.filter(
-          (r) => r.status === "approved" || r.durum === "onaylandi" || r.status === "published"
-        );
-        setAdminRecords(approved);
-      } catch (e) {
-        console.error(e);
-        setAdminRecords([]);
-      }
-    };
-
-    loadApprovedRecords();
-    window.addEventListener("storage", loadApprovedRecords);
-    window.addEventListener("focus", loadApprovedRecords);
-    window.addEventListener("ykos-records-updated", loadApprovedRecords);
-
-    return () => {
-      window.removeEventListener("storage", loadApprovedRecords);
-      window.removeEventListener("focus", loadApprovedRecords);
-      window.removeEventListener("ykos-records-updated", loadApprovedRecords);
-    };
-  }, []);
 
   const languages = [
     { code: "TR", label: "Türkçe" }, { code: "EN", label: "English" },
@@ -144,7 +118,7 @@ export default function YKOSDashboard({
   const staticCards = t.cards && t.cards.length > 0 ? t.cards : [];
 
   const adminArchiveCards = currentLang === "TR"
-    ? [...adminRecords].reverse().map((record) => ({
+    ? adminRecords.map((record) => ({
         id: record.id,
         title: record.title || record.baslik || "Başlıksız YKOS Kaydı",
         desc: record.summary || record.ozet || record.description || record.content || record.icerik || "",
@@ -203,6 +177,7 @@ export default function YKOSDashboard({
   return (
     <div style={{ width: "calc(100% - 20px)", maxWidth: "1920px", margin: "0 auto", padding: "10px", boxSizing: "border-box", color: "#ffffff", fontFamily: "Segoe UI, sans-serif" }}>
       
+      {recordsError && <p role="alert" style={{color: "#f87171"}}>{recordsError}</p>}
       <style>{`
         @media (max-width: 768px) {
           .ykos-main-content-grid {

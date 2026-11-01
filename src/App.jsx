@@ -1,11 +1,14 @@
 // src/App.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "./data/firebase";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   useNavigate,
   useParams,
+  Navigate,
 } from "react-router-dom";
 
 import "./index.css";
@@ -31,8 +34,8 @@ function DashboardWrapper() {
   // TUDITAM gelen ID'leri otomatik YKOS'a çevirip yönlendirir
   const handleNavigateRead = (id) => {
     if (!id) return;
-    const cleanId = String(id).replace(/^TUDITAM-/i, "YKOS-");
-    navigate(`/read/${cleanId}`);
+    const cleanId = String(id);
+    navigate(`/read/${encodeURIComponent(cleanId)}`);
   };
 
   return (
@@ -55,7 +58,7 @@ function DashboardWrapper() {
 // OKUMA PANELİ SARMALAYICI (URL'deki ID'yi okur ve normalize eder)
 function ReadingPanelWrapper() {
   const { id } = useParams();
-  const normalizedId = id ? String(id).replace(/^TUDITAM-/i, "YKOS-") : id;
+  const normalizedId = id;
 
   return <ReadingPanel id={normalizedId} readId={normalizedId} />;
 }
@@ -84,14 +87,16 @@ function AdminLoginWrapper() {
 
 // YÖNETİCİ PANELİ ÇIKIŞ YÖNLENDİRMESİ
 function AdminPanelWrapper() {
-  const navigate = useNavigate();
-
-  return (
-    <AdminPanel
-      currentLang="TR"
-      onLogout={() => navigate("/", { replace: true })}
-    />
-  );
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  useEffect(() => onAuthStateChanged(auth, current => {
+    setUser(current); setLoading(false);
+  }, () => { setError("Oturum kontrol edilemedi. Sayfayı yenileyin."); setLoading(false); }), []);
+  if (loading) return <p role="status">Oturum kontrol ediliyor…</p>;
+  if (error) return <p role="alert">{error}</p>;
+  if (!user || user.uid !== "WnKrb0wcY3dHpSJjdn9b2aAwTw02") return <Navigate to="/admin-login" replace />;
+  return <AdminPanel onLogout={() => signOut(auth)} />;
 }
 
 function App() {
