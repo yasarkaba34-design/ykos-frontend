@@ -17,6 +17,7 @@ import Hakkimizda from "./pages/Hakkimizda";
 import BubbleMatrix from "./mega/BubbleMatrix.jsx";
 import AtlasMap from "./mega/AtlasMap";
 import ReadingPanel from "./components/ReadingPanel";
+import AncientTextWorkbench from "./pages/AncientTextWorkbench";
 
 import "./index.css";
 
@@ -74,12 +75,16 @@ export default function App() {
           onNavigateRead={handleNavigateRead}
           onNavigateLogin={() => setActiveView("login")}
           onNavigateAtlas={() => setActiveView("atlas")}
-          onNavigateEngine={() => setActiveView("matrix")}
+          onNavigateEngine={() => setActiveView("ancient-analysis")}
           onNavigateFlow={() => setActiveView("dashboard")}
           onNavigateMethod={() => setActiveView("method")}
           onNavigateAcikVeri={() => setActiveView("acikveri")}
           onNavigateOpsCenter={() => setActiveView("ops")}
         />
+      )}
+
+      {activeView === "ancient-analysis" && (
+        <AncientTextWorkbench onBack={() => setActiveView("dashboard")} />
       )}
 
       {activeView === "detail" && (
