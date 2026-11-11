@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ANCIENT_LANGUAGES, WRITING_SYSTEMS, getAncientLanguage } from "../ancient/registry.js";
 import { createAncientDocumentRecord, validateAncientDocumentRecord } from "../ancient/documentModel.js";
 import { compareWitnessTokens, tokenizeWitness } from "../ancient/witnessAnalysis.js";
