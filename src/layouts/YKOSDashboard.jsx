@@ -141,25 +141,25 @@ export default function YKOSDashboard({
           tag: rec.category || rec.kategori || "YAYIN",
           image: rec.image || rec.gorsel || rec.imageUrl || rec.resim,
           icon: "📑",
-          onClick: () => onNavigateRead(rec.id)
+          onClick: () => onNavigateRead(rec)
         })),
         ...(t.verifiedItems || []).map((item) => ({
           ...item,
-          onClick: () => (item.id === "ACIK-VERI" ? onNavigateAcikVeri() : onNavigateRead(item.id))
+          onClick: () => (item.id === "ACIK-VERI" ? onNavigateAcikVeri() : onNavigateRead(item))
         }))
       ].slice(0, 4)
     : (t.verifiedItems || []).slice(0, 4).map((item) => ({
         ...item,
-        onClick: () => (item.id === "ACIK-VERI" ? onNavigateAcikVeri() : onNavigateRead(item.id))
+        onClick: () => (item.id === "ACIK-VERI" ? onNavigateAcikVeri() : onNavigateRead(item))
       }));
 
   const handleCardClick = (card) => {
     if (card.isMatrixCard) {
       onVisualize();
     } else if (card.id) {
-      onNavigateRead(card.id);
+      onNavigateRead(card);
     } else {
-      onNavigateRead(card.title || "detay");
+      onNavigateRead(card);
     }
   };
 
@@ -333,7 +333,7 @@ export default function YKOSDashboard({
 
       {/* 2. DİNAMİK ARAMA BARI */}
       <div style={{ marginBottom: "12px" }}>
-        <SearchBar placeholder={t?.searchPlaceholder || "Arşivde veya Matriste Ara..."} onSearch={(q) => setSearchQuery(q)} />
+        <SearchBar placeholder="Kart başlığı ve açıklamasında ara..." onSearch={(q) => setSearchQuery(q)} />
       </div>
 
       {/* 3. DİNAMİK SAYAÇLAR */}
@@ -493,7 +493,7 @@ export default function YKOSDashboard({
                     <button 
                       onClick={() => {
                         setVideoModalOpen(false);
-                        onNavigateRead(activeVideo.id);
+                        onNavigateRead(activeVideo);
                       }}
                       style={{ marginTop: "10px", background: "rgba(255, 215, 0, 0.2)", border: "1px solid #ffd700", color: "#ffd700", padding: "8px 16px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}
                     >
