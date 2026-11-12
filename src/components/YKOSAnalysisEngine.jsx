@@ -1,154 +1,149 @@
-import React, { useState } from 'react';
-import { Search, Shield, Cpu, Terminal, RefreshCw, Layers } from 'lucide-react';
+import React, { useState } from "react";
+import { searchYkosApi } from "../data/ykosApiService";
+
+const listKeys = ["results", "items", "posts", "records", "matches"];
+
+function extractRecords(payload) {
+  if (Array.isArray(payload)) return payload;
+  if (!payload || typeof payload !== "object") return [];
+
+  for (const key of listKeys) {
+    if (Array.isArray(payload[key])) return payload[key];
+  }
+
+  for (const key of ["data", "result", "response"]) {
+    const nested = payload[key];
+    if (Array.isArray(nested)) return nested;
+    if (nested && typeof nested === "object") {
+      const records = extractRecords(nested);
+      if (records.length) return records;
+    }
+  }
+
+  if (payload.title || payload.baslik || payload.name || payload.synthesis) return [payload];
+  return [];
+}
+
+function textValue(record, keys) {
+  for (const key of keys) {
+    const value = record?.[key];
+    if (typeof value === "string" && value.trim()) return value;
+  }
+  return "";
+}
+
+function readableValue(value) {
+  if (typeof value === "string") return value;
+  if (value == null) return "";
+  try {
+    return JSON.stringify(value, null, 2);
+  } catch {
+    return String(value);
+  }
+}
 
 export default function YKOSAnalysisEngine() {
-  const [inputWord, setInputWord] = useState('');
-  const [selectedLayer, setSelectedLayer] = useState('LİKÇE');
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [query, setQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
   const [result, setResult] = useState(null);
+  const [error, setError] = useState("");
 
-  const database = {
-    'LİKÇE': {
-      'ERİN': { root: 'ER', meaning: 'Er / Eren / Yiğit', shell: '-İN (Büküm eki temizlendi)', resonance: '%98.5 Ön-Türkçe Kök Rezonansı' },
-      'XUDAZ': { root: 'KUT / XUDA', meaning: 'İlahi Güç / Mukaddes', shell: '-AZ (Hellenik/Likyalı kabuk soyuldu)', resonance: '%96.0 Altai-Anadolu Rezonansı' },
-      'PRLAS': { root: 'PUR / PARLAK', meaning: 'Ateş / Işık tözü', shell: '-AS (Yunan büküm eki arındırıldı)', resonance: '%97.2 Arkaik Ses Uyumu' }
-    },
-    'PALACA': {
-      'KAMANZA': { root: 'KAM / ŞAMAN', meaning: 'Bilgi ve İnanç Tözü', shell: '-ANZA (Hitit/Palaic ek temizlendi)', resonance: '%99.1 Kök-Hece Matematiği' },
-      'WURAS': { root: 'ULA / BÜYÜK', meaning: 'Coğrafi / İlahi Büyüklük', shell: '-AS (Kabuk soyuldu)', resonance: '%95.4 Fonetik Rezonans' }
-    },
-    'HATTİCE': {
-      'SUWASH': { root: 'SU / KAYNAK', meaning: 'En Eski Yerli Töz', shell: '-ASH (Hattice büküm arındırıldı)', resonance: '%99.8 Pleistosen Sığınak Kökü' }
+  const handleSearch = async (event) => {
+    event.preventDefault();
+    const cleanQuery = query.trim();
+    if (cleanQuery.length < 2) {
+      setError("Arama için en az iki karakter girin.");
+      setResult(null);
+      return;
+    }
+
+    setIsSearching(true);
+    setError("");
+    setResult(null);
+    try {
+      const response = await searchYkosApi(cleanQuery);
+      if (!response || response.source === "none") {
+        setError("Arama sonucu alınamadı.");
+      } else {
+        setResult(response);
+      }
+    } catch (searchError) {
+      setError(searchError?.message || "Arama sırasında beklenmeyen bir hata oluştu.");
+    } finally {
+      setIsSearching(false);
     }
   };
 
-  const handleAnalyze = (e) => {
-    e.preventDefault();
-    if (!inputWord) return;
-
-    setIsAnalyzing(true);
-    setResult(null);
-
-    setTimeout(() => {
-      const upperWord = inputWord.toUpperCase().trim();
-      const layerData = database[selectedLayer] || {};
-      
-      if (layerData[upperWord]) {
-        setResult(layerData[upperWord]);
-      } else {
-        setResult({
-          root: upperWord.slice(0, 3) + ' (Kök-Heceye İndirgendi)',
-          meaning: 'Anadolu Refugium Arkaik Töz Karşılığı',
-          shell: 'Yabancı ekler (-os, -is, -um) başarıyla sıyrıldı.',
-          resonance: '%94.2 Tahmini Türk Lehçeleri Rezonansı'
-        });
-      }
-      setIsAnalyzing(false);
-    }, 800);
-  };
+  const records = result ? extractRecords(result.data) : [];
+  const fromArchive = result?.source === "central-archive";
 
   return (
-    <div className="min-h-[450px] bg-black text-[#D4AF37] p-6 font-mono border border-[#D4AF37]/30 rounded-xl shadow-2xl my-4">
-      <div className="flex items-center justify-between border-b border-[#D4AF37]/40 pb-4 mb-6">
-        <div className="flex items-center space-x-3">
-          <Cpu className="w-8 h-8 text-[#D4AF37] animate-pulse" />
-          <div>
-            <h2 className="text-xl font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#FFD700] to-[#B8860B]">
-              YKOS OKUMA & ANALİZ MOTORU
-            </h2>
-            <p className="text-xs text-[#D4AF37]/60 tracking-wider">
-              KABUK SOYMA (DESOĞANDIRMA) & 30 LEHÇE REZONANS LABORATUVARI
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center space-x-2 text-xs border border-[#D4AF37]/40 px-3 py-1 rounded bg-[#D4AF37]/10">
-          <Shield className="w-4 h-4 text-[#D4AF37]" />
-          <span>SİSTEM AKTİF: v3.75</span>
-        </div>
-      </div>
+    <section style={{
+      maxWidth: "1100px",
+      margin: "18px auto",
+      padding: "20px",
+      color: "#f8fafc",
+      fontFamily: "Segoe UI, sans-serif"
+    }}>
+      <div style={{ background: "#050811", border: "1px solid #d4af37", borderRadius: "12px", padding: "clamp(18px, 4vw, 30px)" }}>
+        <h1 style={{ color: "#ffd700", marginTop: 0 }}>YKOS Okuma ve Arşiv Analizi</h1>
+        <p style={{ color: "#cbd5e1", lineHeight: 1.6 }}>
+          Arama önce merkez arşivde yapılır. Bağlantı kurulamazsa yerel sentez ayrı ve açık biçimde gösterilir.
+        </p>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        <div className="bg-[#111111] border border-[#D4AF37]/30 p-4 rounded-lg">
-          <label className="block text-xs uppercase tracking-widest text-[#D4AF37]/80 mb-2 flex items-center space-x-2">
-            <Layers className="w-4 h-4" />
-            <span>Epigrafik Katman Seçimi</span>
-          </label>
-          <select 
-            value={selectedLayer} 
-            onChange={(e) => setSelectedLayer(e.target.value)}
-            className="w-full bg-black border border-[#D4AF37]/50 text-[#D4AF37] p-3 rounded focus:outline-none focus:border-[#FFD700]"
+        <form onSubmit={handleSearch} style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+          <input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Arşivde aranacak sözcük veya konu"
+            aria-label="Arşiv araması"
+            style={{ flex: "1 1 260px", minWidth: 0, padding: "12px", borderRadius: "6px", border: "1px solid #8b7426", background: "#000", color: "#fff" }}
+          />
+          <button
+            type="submit"
+            disabled={isSearching}
+            style={{ padding: "12px 20px", border: 0, borderRadius: "6px", background: "#d4af37", color: "#111", fontWeight: 700, cursor: isSearching ? "wait" : "pointer" }}
           >
-            <option value="LİKÇE">LİKÇE (Lycian Corpus)</option>
-            <option value="PALACA">PALACA (Palaic Corpus)</option>
-            <option value="HATTİCE">HATTİCE (Hattian Layer)</option>
-          </select>
-        </div>
+            {isSearching ? "Aranıyor…" : "Ara"}
+          </button>
+        </form>
 
-        <div className="lg:col-span-2 bg-[#111111] border border-[#D4AF37]/30 p-4 rounded-lg flex flex-col justify-between">
-          <form onSubmit={handleAnalyze} className="space-y-4">
-            <label className="block text-xs uppercase tracking-widest text-[#D4AF37]/80 flex items-center space-x-2">
-              <Terminal className="w-4 h-4" />
-              <span>İncelenecek Antik Kelime / Terim (Örn: ERİN, XUDAZ)</span>
-            </label>
-            <div className="flex space-x-2">
-              <input 
-                type="text" 
-                value={inputWord}
-                onChange={(e) => setInputWord(e.target.value)}
-                placeholder="Örn: ERİN..." 
-                className="flex-1 bg-black border border-[#D4AF37]/50 text-[#D4AF37] px-4 py-3 rounded focus:outline-none focus:border-[#FFD700] uppercase tracking-wider"
-              />
-              <button 
-                type="submit"
-                disabled={isAnalyzing}
-                className="bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-black font-bold px-6 py-3 rounded hover:from-[#FFD700] hover:to-[#B8860B] transition-all flex items-center space-x-2 shadow-lg disabled:opacity-50 cursor-pointer"
-              >
-                {isAnalyzing ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
-                <span>ANALİZ ET</span>
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
+        {error && <p role="alert" style={{ color: "#fca5a5", marginTop: "16px" }}>{error}</p>}
+        {isSearching && <p role="status" style={{ color: "#fcd34d", marginTop: "16px" }}>Merkez arşiv yanıtı bekleniyor…</p>}
 
-      <div className="bg-[#0A0A0A] border border-[#D4AF37]/40 p-6 rounded-lg relative overflow-hidden min-h-[160px] flex flex-col justify-center">
-        {isAnalyzing ? (
-          <div className="text-center py-6 space-y-3">
-            <RefreshCw className="w-8 h-8 text-[#FFD700] animate-spin mx-auto" />
-            <p className="text-xs tracking-widest text-[#D4AF37]/80 animate-pulse">
-              KABUK SOYMA (DESOĞANDIRMA) OPERASYONU YÜRÜTÜLÜYOR...
-            </p>
-          </div>
-        ) : result ? (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between border-b border-[#D4AF37]/20 pb-2">
-              <span className="text-xs uppercase text-[#D4AF37]/60">ANALİZ SONUCU & TÖZ EŞLEŞMESİ</span>
-              <span className="text-xs text-[#FFD700] font-bold bg-[#D4AF37]/10 px-2.5 py-0.5 rounded border border-[#D4AF37]/30">
-                {result.resonance}
-              </span>
+        {result && (
+          <div aria-live="polite" style={{ marginTop: "22px" }}>
+            <div style={{
+              border: `1px solid ${fromArchive ? "#22c55e" : "#f59e0b"}`,
+              borderRadius: "8px",
+              padding: "12px 14px",
+              marginBottom: "14px",
+              color: fromArchive ? "#bbf7d0" : "#fde68a"
+            }}>
+              {fromArchive
+                ? "Kaynak: ykos.com.tr merkez arşiv API’si"
+                : "Kaynak: yerel sentez. Bu içerik merkez arşiv kaydı değildir."}
+              {result.error && <div style={{ marginTop: "6px", fontSize: "0.9rem" }}>API bilgisi: {result.error}</div>}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
-              <div className="bg-black/60 p-3 border border-[#D4AF37]/20 rounded">
-                <span className="block text-[10px] text-[#D4AF37]/50 uppercase">Arındırılmış Kök-Hece</span>
-                <span className="text-lg font-bold text-[#FFD700]">{result.root}</span>
-              </div>
-              <div className="bg-black/60 p-3 border border-[#D4AF37]/20 rounded">
-                <span className="block text-[10px] text-[#D4AF37]/50 uppercase">Anlam / Töz Karşılığı</span>
-                <span className="text-base font-semibold text-white">{result.meaning}</span>
-              </div>
-              <div className="bg-black/60 p-3 border border-[#D4AF37]/20 rounded">
-                <span className="block text-[10px] text-[#D4AF37]/50 uppercase">Kabuk Soyma Raporu</span>
-                <span className="text-xs text-[#D4AF37]/90">{result.shell}</span>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="text-center py-6 text-[#D4AF37]/40">
-            <Terminal className="w-10 h-10 mx-auto mb-2 opacity-30" />
-            <p className="text-xs">Lütfen bir katman seçin ve analizi başlatmak için bir terim girin.</p>
+
+            {records.length ? records.map((record, index) => {
+              const title = textValue(record, ["title", "baslik", "name", "heading"]) || `Kayıt ${index + 1}`;
+              const body = textValue(record, ["summary", "ozet", "synthesis", "content", "description", "excerpt", "text", "body"]);
+              const source = textValue(record, ["sourceVolume", "source", "kaynak"]);
+              return (
+                <article key={record.id || record.slug || index} style={{ background: "#0b1220", border: "1px solid #334155", borderRadius: "8px", padding: "16px", marginTop: "10px" }}>
+                  <h2 style={{ color: "#fcd34d", fontSize: "1.1rem", margin: "0 0 8px" }}>{title}</h2>
+                  {body && <div style={{ whiteSpace: "pre-wrap", lineHeight: 1.7, color: "#e2e8f0" }}>{body}</div>}
+                  {source && <div style={{ color: "#94a3b8", marginTop: "10px", fontSize: "0.9rem" }}>Kaynak: {source}</div>}
+                  {!body && <pre style={{ color: "#cbd5e1", whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>{readableValue(record)}</pre>}
+                </article>
+              );
+            }) : (
+              <p style={{ color: "#cbd5e1" }}>API yanıtı geldi ancak tanınan bir kayıt listesi bulunamadı.</p>
+            )}
           </div>
         )}
       </div>
-    </div>
+    </section>
   );
 }

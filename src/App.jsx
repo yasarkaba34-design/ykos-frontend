@@ -2,8 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 
-import { nodeAnalysisData } from "./nodeAnalysisData";
-import { defaultArchiveArticles } from "./data/ykosDataService";
 import { auth } from "./data/firebase";
 
 import YKOSDashboard from "./layouts/YKOSDashboard";
@@ -17,6 +15,7 @@ import Hakkimizda from "./pages/Hakkimizda";
 import BubbleMatrix from "./mega/BubbleMatrix.jsx";
 import AtlasMap from "./mega/AtlasMap";
 import ReadingPanel from "./components/ReadingPanel";
+import YKOSAnalysisEngine from "./components/YKOSAnalysisEngine";
 
 import "./index.css";
 
@@ -74,7 +73,7 @@ export default function App() {
           onNavigateRead={handleNavigateRead}
           onNavigateLogin={() => setActiveView("login")}
           onNavigateAtlas={() => setActiveView("atlas")}
-          onNavigateEngine={() => setActiveView("matrix")}
+          onNavigateEngine={() => setActiveView("engine")}
           onNavigateFlow={() => setActiveView("dashboard")}
           onNavigateMethod={() => setActiveView("method")}
           onNavigateAcikVeri={() => setActiveView("acikveri")}
@@ -105,6 +104,29 @@ export default function App() {
             content={selectedContentId}
             currentLang={currentLang}
           />
+        </div>
+      )}
+
+      {activeView === "engine" && (
+        <div>
+          <div style={{ padding: "10px 20px" }}>
+            <button
+              onClick={() => setActiveView("dashboard")}
+              style={{
+                background: "#ffd700",
+                color: "#000",
+                border: "none",
+                padding: "8px 16px",
+                borderRadius: "6px",
+                fontWeight: "bold",
+                cursor: "pointer",
+              }}
+            >
+              ⬅ Ana Sayfaya Dön
+            </button>
+          </div>
+
+          <YKOSAnalysisEngine />
         </div>
       )}
 

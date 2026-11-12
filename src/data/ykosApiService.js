@@ -20,24 +20,37 @@ export async function fetchYkosCoreMatrix() {
 
 // 2. Arama Motoru ve Canlı API Servisi (Tek Tanım)
 export async function searchYkosApi(query) {
-  if (!query || query.trim().length < 2) return null;
-
-  try {
-    const response = await fetch(`https://www.ykos.com.tr/api/search?q=${encodeURIComponent(query)}`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" }
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      return data;
-    }
-  } catch (error) {
-    console.log("Dış API yanıt vermedi, YKOS 1000 Yerel Külliyat Katmanı devreye girdi.");
+  const cleanQuery = String(query || "").trim();
+  if (cleanQuery.length < 2) {
+    return { source: "none", data: null, error: null };
   }
 
-  // API Bağlantısı olmadığında yerel 11 Ciltlik Külliyat verisinden sentez üretir
-  return getArchiveSynthesis(query);
+  try {
+    const response = await fetch(
+      `https://www.ykos.com.tr/api/search?q=${encodeURIComponent(cleanQuery)}`,
+      {
+        method: "GET",
+        headers: { Accept: "application/json" }
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Merkez arşiv yanıt vermedi (HTTP ${response.status}).`);
+    }
+
+    return {
+      source: "central-archive",
+      data: await response.json(),
+      error: null
+    };
+  } catch (error) {
+    console.warn("Merkez arşiv erişilemedi; yerel sentez gösteriliyor.", error);
+    return {
+      source: "local-synthesis",
+      data: getArchiveSynthesis(cleanQuery),
+      error: error?.message || "Merkez arşive ulaşılamadı."
+    };
+  }
 }
 
 
