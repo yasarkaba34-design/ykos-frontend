@@ -12,7 +12,7 @@ import AdminLogin from "./pages/AdminLogin";
 import YalinVeriGirisi from "./pages/YalinVeriGirisi";
 import Hakkimizda from "./pages/Hakkimizda";
 
-import BubbleMatrix from "./mega/BubbleMatrix.jsx";
+import BubbleMatrixPanel from "./pages/BubbleMatrixPanel";
 import AtlasMap from "./mega/AtlasMap";
 import ReadingPanel from "./components/ReadingPanel";
 import YKOSAnalysisEngine from "./components/YKOSAnalysisEngine";
@@ -131,26 +131,7 @@ export default function App() {
       )}
 
       {activeView === "matrix" && (
-        <div>
-          <div style={{ padding: "10px 20px" }}>
-            <button
-              onClick={() => setActiveView("dashboard")}
-              style={{
-                background: "#ffd700",
-                color: "#000",
-                border: "none",
-                padding: "8px 16px",
-                borderRadius: "6px",
-                fontWeight: "bold",
-                cursor: "pointer",
-              }}
-            >
-              ⬅ Ana Sayfaya Dön
-            </button>
-          </div>
-
-          <BubbleMatrix currentLang={currentLang} />
-        </div>
+        <BubbleMatrixPanel onGoHome={() => setActiveView("dashboard")} />
       )}
 
       {activeView === "atlas" && (
@@ -177,26 +158,10 @@ export default function App() {
       )}
 
       {activeView === "method" && (
-        <div>
-          <div style={{ padding: "10px 20px" }}>
-            <button
-              onClick={() => setActiveView("dashboard")}
-              style={{
-                background: "#ffd700",
-                color: "#000",
-                border: "none",
-                padding: "8px 16px",
-                borderRadius: "6px",
-                fontWeight: "bold",
-                cursor: "pointer",
-              }}
-            >
-              ⬅ Ana Sayfaya Dön
-            </button>
-          </div>
-
-          <Hakkimizda currentLang={currentLang} />
-        </div>
+        <Hakkimizda
+          currentLang={currentLang}
+          onNavigateHome={() => setActiveView("dashboard")}
+        />
       )}
 
       {activeView === "acikveri" && (
