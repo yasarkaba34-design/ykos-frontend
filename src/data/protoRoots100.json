@@ -6,9 +6,13 @@
   "sourceBranch": "main",
   "sourceFiles": [
     "src/bubblematrix/bm_proto_hitt_luvi_100.json",
+    "src/bubblematrix/bm_proto_hittit_luvi_1-20 .json",
+    "src/bubblematrix/bm_proto_hitit_luvi_21_40 .json",
+    "src/bubblematrix/bm_proto_hitit_luvi_41_60 .json",
+    "src/bubblematrix/bm_proto_hitit_luvi_61_80 .json",
     "src/bubblematrix/bm_proto_hitit_luvi_81_100 .json"
   ],
-  "validationNote": "Records are prototype candidates. The source files do not provide citations or first-attestation dates; do not treat the semantic readings as verified etymologies.",
+  "validationNote": "Merged from the prototype files on the old main branch. The 100 IDs are complete after combining overlapping partial files; the source files do not provide citations or first-attestation dates. Treat these as unvalidated research candidates, not established etymologies.",
   "records": [
     {
       "id": 1,
