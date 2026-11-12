@@ -30,6 +30,10 @@ export default function BubbleMatrixPanel({ onGoHome = () => {} }) {
           </p>
         </div>
 
+        <aside role="status" style={{ background: "rgba(127,29,29,.2)", border: "1px solid #b45309", borderRadius: "9px", padding: "12px 14px", marginBottom: "16px", color: "#fde68a", fontSize: "0.85rem", lineHeight: 1.55 }}>
+          <strong>Veri kapsamı:</strong> Bu depodaki dosyada {damgalar.length} damga kaydı bulunuyor; ayrı bir kök/hece envanteri bulunmuyor. Canlı matriste görünen “100 kök-hece” sayısı bu veri dosyasıyla doğrulanamıyor.
+        </aside>
+
         {damgalar.length ? (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 290px), 1fr))", gap: "12px" }}>
             {damgalar.map((item) => (
