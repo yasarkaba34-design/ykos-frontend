@@ -1,47 +1,56 @@
 import { getArchiveSynthesis } from "./ykosArchiveSynthesis";
 
-// 1. Merkez Arşivi Matris Verisini ve Tüm Kayıtları Çeken Gelişmiş Servis
 export async function fetchYkosCoreMatrix() {
   try {
     const response = await fetch("https://www.ykos.com.tr/api/ykos-core", {
       method: "GET",
-      headers: { "Content-Type": "application/json" }
+      headers: { Accept: "application/json" }
     });
+    if (!response.ok) return null;
 
-    if (response.ok) {
-      const data = await response.json();
-      return data.ykos_core || data;
-    }
+    const data = await response.json();
+    return data?.ykos_core ?? data ?? null;
   } catch (error) {
-    console.log("Canlı JSON matrisi yüklenemedi, yerel dinamik katman kullanılıyor.");
+    console.warn("Canlı JSON matrisi yüklenemedi.", error);
+    return null;
   }
-  return null;
 }
 
-// 2. Merkez Arşivi ve Tüm Alt Alanları (ykos.net / ykos.org) Tarayan Kapsamlı Arama Servisi
+// Yanıt biçimi YKOSAnalysisEngine'in beklediği source/data/error sözleşmesini korur.
 export async function searchYkosApi(query) {
-  if (!query || query.trim().length < 2) return null;
-
-  try {
-    // Hem ana API üzerinden merkez arşivi taraması hem de ykos.net / ykos.org uç noktaları
-    const response = await fetch(`https://www.ykos.com.tr/api/search?q=${encodeURIComponent(query)}&scope=all_archives`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" }
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      // Eğer dış API'den arşiv sonuçları döndüyse doğrudan onları ilet
-      if (data && (data.results || data.length > 0)) {
-        return data;
-      }
-    }
-  } catch (error) {
-    console.log("Merkez Arşiv API bağlantısı yanıt vermedi, yerel külliyat ve sentez katmanı devreye girdi.");
+  const cleanQuery = String(query || "").trim();
+  if (cleanQuery.length < 2) {
+    return { source: "none", data: null, error: null };
   }
 
-  // API'den doğrudan sonuç alınamadığında veya çevrimdışı durumda Merkez Arşiv Sentezi ve Yerel Katman taranır
-  return getArchiveSynthesis(query);
+  try {
+    const url = new URL("https://www.ykos.com.tr/api/search");
+    url.searchParams.set("q", cleanQuery);
+    url.searchParams.set("scope", "all_archives");
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: { Accept: "application/json" }
+    });
+    if (!response.ok) {
+      throw new Error(`Merkez arşiv yanıt vermedi (HTTP ${response.status}).`);
+    }
+
+    const data = await response.json();
+    const message = typeof data?.message === "string" ? data.message : "";
+    if (data?.success === false || data?.status === "error" || data?.error || /api hata|internal server error/i.test(message)) {
+      throw new Error(message || data?.error || "Merkez arşiv API hata yanıtı verdi.");
+    }
+
+    return { source: "central-archive", data, error: null };
+  } catch (error) {
+    console.warn("Merkez arşiv erişilemedi; yerel sentez gösteriliyor.", error);
+    return {
+      source: "local-synthesis",
+      data: getArchiveSynthesis(cleanQuery),
+      error: error?.message || "Merkez arşive ulaşılamadı."
+    };
+  }
 }
 
 export default {
