@@ -307,7 +307,7 @@ export default function YKOSDashboard({
               </button>
               
               <button onClick={() => { setMenuOpen(false); onNavigateEngine(); }} style={btnBaseStyle}>
-                ⚙️ {t.nav?.engine || "OKUMA & ANALİZ MOTORU"}
+                ⚙️ {t.nav?.engine || "OKUMA & ARŞİV ANALİZİ"}
               </button>
               
               <button onClick={() => { setMenuOpen(false); onNavigateFlow(); }} style={btnBaseStyle}>
@@ -437,6 +437,10 @@ export default function YKOSDashboard({
             {t.visualizeBtn || "BALONCUK MATRİSİNİ GÖRSELLEŞTİR →"}
           </button>
           
+          <button onClick={onNavigateEngine} style={{ flex: 1, minWidth: "220px", background: "linear-gradient(135deg, #0e7490, #082f49)", color: "#fff", border: "1px solid #22d3ee", padding: "12px", borderRadius: "8px", fontWeight: "900", fontSize: "0.85rem", cursor: "pointer" }}>
+            📚 OKUMA & ARŞİV ANALİZİ
+          </button>
+
           <button onClick={onNavigateAcikVeri} style={{ flex: 1, minWidth: "220px", background: "linear-gradient(135deg, #00ff7f, #008000)", color: "#000", border: "none", padding: "12px", borderRadius: "8px", fontWeight: "900", fontSize: "0.85rem", cursor: "pointer" }}>
             🌐 {t.openDataBtn || "AÇIK VERİ PORTALINA GİT"}
           </button>
