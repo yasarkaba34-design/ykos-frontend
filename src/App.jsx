@@ -19,6 +19,7 @@ import AdminPanel from "./layouts/AdminPanel";
 import YalinVeriGirisi from "./pages/YalinVeriGirisi";
 import OpsCenter from "./layouts/OpsCenter";
 import BubbleMatrix from "./mega/BubbleMatrix";
+import RootInventory from "./pages/RootInventory";
 import AtlasMap from "./mega/AtlasMap";
 import Hakkimizda from "./pages/Hakkimizda";
 import ReadingPanel from "./components/ReadingPanel";
@@ -110,7 +111,7 @@ function App() {
         <Route path="/arsiv" element={<Archive />} />
 
         {/* BALONCUK MATRİSİ */}
-        <Route path="/matrix" element={<BubbleMatrix />} />
+        <Route path="/matrix" element={<><BubbleMatrix /><RootInventory /></>} />
 
         {/* ATLAS */}
         <Route path="/atlas" element={<AtlasMap />} />
