@@ -20,6 +20,7 @@ import YalinVeriGirisi from "./pages/YalinVeriGirisi";
 import OpsCenter from "./layouts/OpsCenter";
 import BubbleMatrix from "./mega/BubbleMatrix";
 import RootInventory from "./pages/RootInventory";
+import YKOSAnalysisEngine from "./components/YKOSAnalysisEngine";
 import AtlasMap from "./mega/AtlasMap";
 import Hakkimizda from "./pages/Hakkimizda";
 import ReadingPanel from "./components/ReadingPanel";
@@ -47,7 +48,7 @@ function DashboardWrapper() {
       onNavigateRead={handleNavigateRead}
       onNavigateLogin={() => navigate("/admin-login")}
       onNavigateAtlas={() => navigate("/atlas")}
-      onNavigateEngine={() => navigate("/matrix")}
+      onNavigateEngine={() => navigate("/analiz")}
       onNavigateFlow={() => navigate("/atlas")}
       onNavigateMethod={() => navigate("/hakkimizda")}
       onNavigateAcikVeri={() => navigate("/open-data")}
@@ -62,6 +63,32 @@ function ReadingPanelWrapper() {
   const normalizedId = id;
 
   return <ReadingPanel id={normalizedId} readId={normalizedId} />;
+}
+
+function AnalysisEngineWrapper() {
+  const navigate = useNavigate();
+  return (
+    <div>
+      <div style={{ padding: "10px 20px" }}>
+        <button
+          type="button"
+          onClick={() => navigate("/")}
+          style={{
+            background: "#ffd700",
+            color: "#000",
+            border: "none",
+            padding: "8px 16px",
+            borderRadius: "6px",
+            fontWeight: "bold",
+            cursor: "pointer",
+          }}
+        >
+          ← Ana Sayfaya Dön
+        </button>
+      </div>
+      <YKOSAnalysisEngine />
+    </div>
+  );
 }
 
 function HakkimizdaWrapper() {
@@ -112,6 +139,9 @@ function App() {
 
         {/* BALONCUK MATRİSİ */}
         <Route path="/matrix" element={<><BubbleMatrix /><RootInventory /></>} />
+
+        {/* OKUMA VE MERKEZ ARŞİV ANALİZİ */}
+        <Route path="/analiz" element={<AnalysisEngineWrapper />} />
 
         {/* ATLAS */}
         <Route path="/atlas" element={<AtlasMap />} />
