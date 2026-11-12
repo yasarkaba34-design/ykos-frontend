@@ -150,7 +150,7 @@ export default function YKOSDashboard({
       ].slice(0, 4)
     : (t.verifiedItems || []).slice(0, 4).map((item) => ({
         ...item,
-        onClick: () => (item.id === "ACIK-VERI" ? onNavigateAcikVeri() : onNavigateRead(item.id))
+        onClick: () => (item.id === "ACIK-VERI" ? onNavigateAcikVeri() : onNavigateRead(item))
       }));
 
   const handleCardClick = (card) => {
