@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import SearchBar from "../components/SearchBar";
 import { translations } from "../data/i18n";
 import { YKOSPanel } from "./YKOSPanel";
+import matrixData from "../data/data.json";
 
 const YKOS_POSTERS = [
   { id: 1, no: "01", title: "Sıfır Noktası & Pleistosen Sığınağı", desc: "Anadolu Refugium Modeli, mikroklima koruması ve derin zaman hafızası.", icon: "🌋", tag: "BUZUL ÇAĞI" },
@@ -125,6 +126,7 @@ export default function YKOSDashboard({
   };
 
   const sourceCards = t.cards && t.cards.length > 0 ? t.cards : [];
+  const testRootEntries = Array.isArray(matrixData?.damgalar) ? matrixData.damgalar.slice(0, 6) : [];
 
   const filteredGridCards = sourceCards.filter((card) => {
     if (!searchQuery) return true;
@@ -349,7 +351,33 @@ export default function YKOSDashboard({
         </div>
       </div>
 
-      {/* 4. ANA GÖVDE: YKOS ÇÖZÜMLÜLERİ VE İNDEKSLER */}
+      {/* 4. ÖN PANEL: TEST KÖK-HECE / DAMGA GİRİŞLERİ */}
+      <section style={cardStyle} aria-labelledby="test-root-heading">
+        <h3 id="test-root-heading" style={{ color: "#67e8f9", fontSize: "1rem", marginTop: 0, marginBottom: "6px" }}>
+          🧪 TEST KÖK-HECE / DAMGA GİRİŞLERİ
+        </h3>
+        <p style={{ color: "#94a3b8", fontSize: "0.78rem", lineHeight: 1.45, margin: "0 0 12px" }}>
+          Altı çalışma kaydıdır; açılımlar doğrulanmış tarihsel veya etimolojik sonuç olarak değerlendirilmemelidir.
+        </p>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 165px), 1fr))", gap: "10px" }}>
+          {testRootEntries.map((entry) => (
+            <button
+              key={entry.id}
+              type="button"
+              onClick={onVisualize}
+              aria-label="Matriste test girişini aç"
+              style={{ background: "#0b1220", border: "1px solid rgba(14, 116, 144, 0.75)", borderRadius: "9px", padding: "12px", color: "#f8fafc", textAlign: "left", cursor: "pointer" }}
+            >
+              <span style={{ display: "block", color: "#fbbf24", fontSize: "1.12rem", fontWeight: 900 }}>{entry.hece || entry.id}</span>
+              <span style={{ display: "block", color: "#cbd5e1", fontSize: "0.8rem", marginTop: "5px" }}>{entry.shape || "Biçim kaydı yok"}</span>
+              <span style={{ display: "block", color: "#67e8f9", fontSize: "0.78rem", marginTop: "8px" }}>Kavram: {entry.kavram || "Kayıt yok"}</span>
+              <span style={{ display: "block", color: "#94a3b8", fontSize: "0.74rem", marginTop: "3px" }}>Açılım: {entry.cosmic || "Kayıt yok"}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* 5. ANA GÖVDE: YKOS ÇÖZÜMLÜLERİ VE İNDEKSLER */}
       <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
         <h3 style={{ color: "#ffd700", fontSize: "1.05rem", marginTop: 0, borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "8px", marginBottom: "12px" }}>
           ⚡ YKOS ÇÖZÜMLERİ VE İNDEKSLER (CANLI ARŞİV)
