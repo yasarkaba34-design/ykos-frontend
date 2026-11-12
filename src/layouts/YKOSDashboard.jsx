@@ -780,3 +780,22 @@ export default function YKOSDashboard({
     </div>
   );
 }
+<div
+  style={{
+    maxWidth: "900px",
+    margin: "12px auto 0 auto",
+    padding: "10px 14px",
+    color: "#e2e8f0",
+    fontSize: "0.85rem",
+    lineHeight: "1.6",
+    textAlign: "center",
+    borderTop: "1px solid rgba(255,215,0,0.25)",
+  }}
+>
+  YKOS; dil, yazıt, damga, petroglif ve kültürel verileri
+  aynı atlas üzerinde ilişkilendiren araştırma platformudur.
+  <br />
+  <span style={{ color: "#ffd700", fontWeight: "bold" }}>
+    Önce Veri → Sonra Analiz → Sonra Yorum
+  </span>
+</div>

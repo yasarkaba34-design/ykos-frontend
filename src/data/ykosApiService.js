@@ -1,6 +1,6 @@
 import { getArchiveSynthesis } from "./ykosArchiveSynthesis";
 
-// 1. Canlı JSON Matris Verisini Çeken Servis (ykos_core)
+// 1. Merkez Arşivi Matris Verisini ve Tüm Kayıtları Çeken Gelişmiş Servis
 export async function fetchYkosCoreMatrix() {
   try {
     const response = await fetch("https://www.ykos.com.tr/api/ykos-core", {
@@ -18,25 +18,29 @@ export async function fetchYkosCoreMatrix() {
   return null;
 }
 
-// 2. Arama Motoru ve Canlı API Servisi (Tek Tanım)
+// 2. Merkez Arşivi ve Tüm Alt Alanları (ykos.net / ykos.org) Tarayan Kapsamlı Arama Servisi
 export async function searchYkosApi(query) {
   if (!query || query.trim().length < 2) return null;
 
   try {
-    const response = await fetch(`https://www.ykos.com.tr/api/search?q=${encodeURIComponent(query)}`, {
+    // Hem ana API üzerinden merkez arşivi taraması hem de ykos.net / ykos.org uç noktaları
+    const response = await fetch(`https://www.ykos.com.tr/api/search?q=${encodeURIComponent(query)}&scope=all_archives`, {
       method: "GET",
       headers: { "Content-Type": "application/json" }
     });
 
     if (response.ok) {
       const data = await response.json();
-      return data;
+      // Eğer dış API'den arşiv sonuçları döndüyse doğrudan onları ilet
+      if (data && (data.results || data.length > 0)) {
+        return data;
+      }
     }
   } catch (error) {
-    console.log("Dış API yanıt vermedi, YKOS 1000 Yerel Külliyat Katmanı devreye girdi.");
+    console.log("Merkez Arşiv API bağlantısı yanıt vermedi, yerel külliyat ve sentez katmanı devreye girdi.");
   }
 
-  // API Bağlantısı olmadığında yerel 11 Ciltlik Külliyat verisinden sentez üretir
+  // API'den doğrudan sonuç alınamadığında veya çevrimdışı durumda Merkez Arşiv Sentezi ve Yerel Katman taranır
   return getArchiveSynthesis(query);
 }
 
