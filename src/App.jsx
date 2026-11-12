@@ -34,7 +34,8 @@ const viewPaths = Object.fromEntries(
 );
 
 function getViewFromPath() {
-  const path = window.location.pathname.replace(/\\/+$/, "") || "/";
+  let path = window.location.pathname;
+  while (path.length > 1 && path.endsWith("/")) path = path.slice(0, -1);
   return routeViews[path] || "dashboard";
 }
 
