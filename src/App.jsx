@@ -19,10 +19,42 @@ import YKOSAnalysisEngine from "./components/YKOSAnalysisEngine";
 
 import "./index.css";
 
+const routeViews = {
+  "/": "dashboard",
+  "/matrix": "matrix",
+  "/hakkimizda": "method",
+  "/analiz": "engine",
+  "/atlas": "atlas",
+  "/admin": "login",
+  "/veri": "acikveri",
+  "/ops": "ops",
+};
+const viewPaths = Object.fromEntries(
+  Object.entries(routeViews).map(([path, view]) => [view, path]),
+);
+
+function getViewFromPath() {
+  const path = window.location.pathname.replace(/\\/+$/, "") || "/";
+  return routeViews[path] || "dashboard";
+}
+
 export default function App() {
   const [currentLang, setCurrentLang] = useState("TR");
-  const [activeView, setActiveView] = useState("dashboard");
+  const [activeView, setActiveView] = useState(getViewFromPath);
   const [selectedContentId, setSelectedContentId] = useState(null);
+
+  useEffect(() => {
+    const path = viewPaths[activeView];
+    if (path && window.location.pathname !== path) {
+      window.history.replaceState({}, "", path);
+    }
+  }, [activeView]);
+
+  useEffect(() => {
+    const handlePopState = () => setActiveView(getViewFromPath());
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
 
   // Firebase yönetici oturumu
   const [adminUser, setAdminUser] = useState(null);
