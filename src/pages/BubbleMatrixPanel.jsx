@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import data from "../data/data.json";
+import BubbleMatrixGraph from "../mega/BubbleMatrixGraph";
 import rootData from "../data/protoRoots100.json";
 
 const damgalar = Array.isArray(data?.damgalar) ? data.damgalar : [];
@@ -44,6 +45,8 @@ export default function BubbleMatrixPanel({ onGoHome = () => {} }) {
             Aşağıdaki kayıtlar YKOS veri dosyasındaki damga kodu, biçim, kavram ve kozmik açıklamayı birlikte gösterir. Bunlar sistemde kayıtlı yorumlardır; tarihsel doğrulama için ayrıca kaynak ve bağlam incelenmelidir.
           </p>
         </div>
+
+        <BubbleMatrixGraph />
 
         <aside role="status" style={{ background: "rgba(127,29,29,.2)", border: "1px solid #b45309", borderRadius: "9px", padding: "12px 14px", marginBottom: "16px", color: "#fde68a", fontSize: "0.85rem", lineHeight: 1.55 }}>
           <strong>Veri kapsamı:</strong> Bu uygulamada {damgalar.length} damga anlam kaydı ve eski <code>main</code> dalından taşınan {rootRecords.length} prototip kök-hece satırı var. Bu 100 satır aday veri niteliğindedir; kaynak, ilk tanıklık tarihi ve doğrulama alanları bulunmadığı için doğrulanmış kök sonucu olarak sunulmaz.
