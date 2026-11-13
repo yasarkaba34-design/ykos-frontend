@@ -23,6 +23,7 @@ export default function YKOSDashboard({
   currentLang = "TR",
   setCurrentLang = () => {},
   onVisualize = () => {},
+  onNavigate3D = () => {},
   onNavigateRead = () => {},
   onNavigateLogin = () => {},
   onNavigateAtlas = () => {},
@@ -350,6 +351,31 @@ export default function YKOSDashboard({
           ))}
         </div>
       </div>
+
+      {/* HIZLI ERİŞİM: TEST, 2D MATRİS VE 3D MATRİS */}
+      <nav aria-label="Test ve matris görünümleri" style={{ ...cardStyle, display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: "10px" }}>
+        <button
+          type="button"
+          onClick={() => document.getElementById("test-root-heading")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+          style={{ ...btnBaseStyle, minHeight: "48px", border: "1px solid #06b6d4", color: "#67e8f9" }}
+        >
+          🧪 TEST
+        </button>
+        <button
+          type="button"
+          onClick={onVisualize}
+          style={{ ...btnBaseStyle, minHeight: "48px", border: "1px solid #f59e0b", color: "#fbbf24" }}
+        >
+          🌐 MATRİS
+        </button>
+        <button
+          type="button"
+          onClick={onNavigate3D}
+          style={{ ...btnBaseStyle, minHeight: "48px", border: "1px solid #a78bfa", color: "#c4b5fd" }}
+        >
+          🧊 3D MATRİS
+        </button>
+      </nav>
 
       {/* 4. ÖN PANEL: TEST KÖK-HECE / DAMGA GİRİŞLERİ */}
       <section style={cardStyle} aria-labelledby="test-root-heading">
