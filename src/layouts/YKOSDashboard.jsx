@@ -24,6 +24,8 @@ export default function YKOSDashboard({
   currentLang = "TR",
   setCurrentLang = () => {},
   onVisualize = () => {},
+  onNavigateTest = () => {},
+  onNavigate3D = () => {},
   onNavigateRead = () => {},
   onNavigateLogin = () => {},
   onNavigateAtlas = () => {},
@@ -368,6 +370,21 @@ export default function YKOSDashboard({
         <h3 style={{ color: "#ffd700", fontSize: "1.05rem", marginTop: 0, borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "8px", marginBottom: "12px" }}>
           ⚡ YKOS ÇÖZÜMLERİ VE İNDEKSLER (CANLI ARŞİV)
         </h3>
+        <nav aria-label="YKOS test, okuma ve matris görünümleri" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: "9px", margin: "0 0 14px" }}>
+          <button type="button" onClick={onNavigateTest} style={{ ...btnBaseStyle, minHeight: "44px", border: "1px solid #06b6d4", color: "#67e8f9" }}>
+            🧪 TEST
+          </button>
+          <button type="button" onClick={onNavigateEngine} style={{ ...btnBaseStyle, minHeight: "44px", border: "1px solid #22c55e", color: "#86efac" }}>
+            📖 OKUMA & ANALİZ
+          </button>
+          <button type="button" onClick={onVisualize} style={{ ...btnBaseStyle, minHeight: "44px", border: "1px solid #f59e0b", color: "#fbbf24" }}>
+            🌐 MATRİS
+          </button>
+          <button type="button" onClick={onNavigate3D} style={{ ...btnBaseStyle, minHeight: "44px", border: "1px solid #a78bfa", color: "#c4b5fd" }}>
+            🧊 3D MATRİS
+          </button>
+        </nav>
+
 
         <div className="ykos-main-content-grid" style={{ display: "grid", gridTemplateColumns: "minmax(0, 2.3fr) minmax(300px, 1fr)", gap: "14px", alignItems: "stretch" }}>
           
@@ -448,10 +465,6 @@ export default function YKOSDashboard({
 
         {/* 5. ALT ROTA BUTTONLARI */}
         <div style={{ position: "relative", display: "flex", gap: "10px", justifyContent: "center", width: "100%", maxWidth: "950px", margin: "20px auto 4px auto", flexWrap: "wrap" }}>
-          <button onClick={onVisualize} style={{ flex: 1, minWidth: "210px", background: "linear-gradient(135deg, #ffd700, #b8860b)", color: "#000", border: "none", padding: "12px", borderRadius: "8px", fontWeight: "900", fontSize: "0.85rem", cursor: "pointer" }}>
-            {t.visualizeBtn || "BALONCUK MATRİSİNİ GÖRSELLEŞTİR →"}
-          </button>
-          
           <button onClick={onNavigateAcikVeri} style={{ flex: 1, minWidth: "210px", background: "linear-gradient(135deg, #00ff7f, #008000)", color: "#000", border: "none", padding: "12px", borderRadius: "8px", fontWeight: "900", fontSize: "0.85rem", cursor: "pointer" }}>
             🌐 {t.openDataBtn || "AÇIK VERİ PORTALINA GİT"}
           </button>
