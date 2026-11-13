@@ -27,6 +27,8 @@ import AdminLogin from "./components/AdminLogin";
 import OpenData from "./pages/AcikVeriPortali";
 import Archive from "./pages/Archive";
 import VideoArchive from "./pages/VideoArchive";
+import YKOSAnalysisEngine from "./components/YKOSAnalysisEngine";
+import ProtoRoots3DMatrix from "./pages/ProtoRoots3DMatrix";
 
 // ANA SAYFA YÖNLENDİRMELERİ
 function DashboardWrapper() {
@@ -44,10 +46,12 @@ function DashboardWrapper() {
       currentLang="TR"
       setCurrentLang={() => {}}
       onVisualize={() => navigate("/matrix")}
+      onNavigateTest={() => navigate("/matrix#root-inventory")}
+      onNavigate3D={() => navigate("/matrix-3d")}
       onNavigateRead={handleNavigateRead}
       onNavigateLogin={() => navigate("/admin-login")}
       onNavigateAtlas={() => navigate("/atlas")}
-      onNavigateEngine={() => navigate("/matrix")}
+      onNavigateEngine={() => navigate("/analiz")}
       onNavigateFlow={() => navigate("/atlas")}
       onNavigateMethod={() => navigate("/hakkimizda")}
       onNavigateAcikVeri={() => navigate("/open-data")}
@@ -112,6 +116,8 @@ function App() {
 
         {/* BALONCUK MATRİSİ */}
         <Route path="/matrix" element={<><BubbleMatrix /><RootInventory /></>} />
+        <Route path="/matrix-3d" element={<ProtoRoots3DMatrix onGoHome={() => window.location.assign("/")} />} />
+        <Route path="/analiz" element={<YKOSAnalysisEngine />} />
 
         {/* ATLAS */}
         <Route path="/atlas" element={<AtlasMap />} />
