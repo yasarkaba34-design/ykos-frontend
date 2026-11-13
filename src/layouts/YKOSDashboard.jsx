@@ -132,7 +132,7 @@ export default function YKOSDashboard({
     : [];
 
   const isDedicatedMatrixShortcut = (card) => {
-    const title = String(card.title || "").trim().toLocaleLowerCase("tr").replace(/\\s+/g, " ");
+    const title = String(card.title || "").trim().toLocaleLowerCase("tr").replace(/\s+/g, " ");
     return title === "kök-hece matrisi" || title === "matrisler / matrix sphere";
   };
 
