@@ -18,7 +18,7 @@ export default function RootInventory() {
   }, [query]);
 
   return (
-    <section style={{ maxWidth: "1100px", margin: "0 auto 28px", padding: "20px 16px", color: "#f8fafc", fontFamily: "Segoe UI, sans-serif" }}>
+    <section id="root-inventory" style={{ maxWidth: "1100px", margin: "0 auto 28px", padding: "20px 16px", color: "#f8fafc", fontFamily: "Segoe UI, sans-serif", scrollMarginTop: "16px" }}>
       <div style={{ border: "1px solid #0e7490", borderRadius: "12px", overflow: "hidden", background: "#07111d" }}>
         <header style={{ padding: "16px", borderBottom: "1px solid rgba(14,116,144,.5)" }}>
           <h2 style={{ margin: "0 0 8px", color: "#67e8f9", fontSize: "1.1rem" }}>
