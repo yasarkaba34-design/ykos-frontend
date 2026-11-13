@@ -469,6 +469,10 @@ export default function YKOSDashboard({
 
         {/* 5. ALT ROTA BUTTONLARI */}
         <div style={{ position: "relative", display: "flex", gap: "10px", justifyContent: "center", width: "100%", maxWidth: "950px", margin: "20px auto 4px auto", flexWrap: "wrap" }}>
+          <button onClick={onVisualize} style={{ flex: 1, minWidth: "210px", background: "linear-gradient(135deg, #ffd700, #b8860b)", color: "#000", border: "none", padding: "12px", borderRadius: "8px", fontWeight: "900", fontSize: "0.85rem", cursor: "pointer" }}>
+            {t.visualizeBtn || "BALONCUK MATRİSİNİ GÖRSELLEŞTİR →"}
+          </button>
+
           <button onClick={onNavigateAcikVeri} style={{ flex: 1, minWidth: "210px", background: "linear-gradient(135deg, #00ff7f, #008000)", color: "#000", border: "none", padding: "12px", borderRadius: "8px", fontWeight: "900", fontSize: "0.85rem", cursor: "pointer" }}>
             🌐 {t.openDataBtn || "AÇIK VERİ PORTALINA GİT"}
           </button>
