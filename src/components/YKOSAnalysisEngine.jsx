@@ -92,7 +92,8 @@ export default function YKOSAnalysisEngine() {
             </label>
             <div className="flex space-x-2">
               <input 
-                type="text" 
+                type="text"
+                size={21} 
                 value={inputWord}
                 onChange={(e) => setInputWord(e.target.value)}
                 placeholder="Örn: ERİN..." 
