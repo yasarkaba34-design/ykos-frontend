@@ -131,11 +131,15 @@ export default function YKOSDashboard({
       }))
     : [];
 
+  const isDedicatedMatrixShortcut = (card) => {
+    const title = String(card.title || "").trim().toLocaleLowerCase("tr").replace(/\\s+/g, " ");
+    return title === "kök-hece matrisi" || title === "matrisler / matrix sphere";
+  };
+
   const sourceCards = [
-    { isMatrixCard: true, title: "Kök-Hece Matrisi", desc: "Disiplinler arası interaktif görselleştirme paneli", tag: "CANLI MATRİS" },
     ...adminArchiveCards,
     ...staticCards
-  ].filter(
+  ].filter((card) => !isDedicatedMatrixShortcut(card)).filter(
     (card, index, cards) => index === cards.findIndex((item) => String(item.id || item.title) === String(card.id || card.title))
   );
 
