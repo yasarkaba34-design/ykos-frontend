@@ -13,6 +13,7 @@ import YalinVeriGirisi from "./pages/YalinVeriGirisi";
 import Hakkimizda from "./pages/Hakkimizda";
 
 import BubbleMatrixPanel from "./pages/BubbleMatrixPanel";
+import ProtoRoots3DMatrix from "./pages/ProtoRoots3DMatrix";
 import AtlasMap from "./mega/AtlasMap";
 import ReadingPanel from "./components/ReadingPanel";
 import YKOSAnalysisEngine from "./components/YKOSAnalysisEngine";
@@ -22,6 +23,7 @@ import "./index.css";
 const routeViews = {
   "/": "dashboard",
   "/matrix": "matrix",
+  "/matrix-3d": "matrix3d",
   "/hakkimizda": "method",
   "/analiz": "engine",
   "/atlas": "atlas",
@@ -103,6 +105,7 @@ export default function App() {
           currentLang={currentLang}
           setCurrentLang={setCurrentLang}
           onVisualize={() => setActiveView("matrix")}
+          onNavigate3D={() => setActiveView("matrix3d")}
           onNavigateRead={handleNavigateRead}
           onNavigateLogin={() => setActiveView("login")}
           onNavigateAtlas={() => setActiveView("atlas")}
@@ -165,6 +168,10 @@ export default function App() {
 
       {activeView === "matrix" && (
         <BubbleMatrixPanel onGoHome={() => setActiveView("dashboard")} />
+      )}
+
+      {activeView === "matrix3d" && (
+        <ProtoRoots3DMatrix onGoHome={() => setActiveView("dashboard")} />
       )}
 
       {activeView === "atlas" && (
