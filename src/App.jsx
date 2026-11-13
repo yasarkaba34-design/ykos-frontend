@@ -29,6 +29,7 @@ import Archive from "./pages/Archive";
 import VideoArchive from "./pages/VideoArchive";
 import YKOSAnalysisEngine from "./components/YKOSAnalysisEngine";
 import ProtoRoots3DMatrix from "./pages/ProtoRoots3DMatrix";
+import RootTestPage from "./pages/RootTestPage";
 
 // ANA SAYFA YÖNLENDİRMELERİ
 function DashboardWrapper() {
@@ -46,7 +47,7 @@ function DashboardWrapper() {
       currentLang="TR"
       setCurrentLang={() => {}}
       onVisualize={() => navigate("/matrix")}
-      onNavigateTest={() => navigate("/matrix#root-inventory")}
+      onNavigateTest={() => navigate("/test")}
       onNavigate3D={() => navigate("/matrix-3d")}
       onNavigateRead={handleNavigateRead}
       onNavigateLogin={() => navigate("/admin-login")}
@@ -116,6 +117,7 @@ function App() {
 
         {/* BALONCUK MATRİSİ */}
         <Route path="/matrix" element={<><BubbleMatrix /><RootInventory /></>} />
+        <Route path="/test" element={<RootTestPage />} />
         <Route path="/matrix-3d" element={<ProtoRoots3DMatrix onGoHome={() => window.location.assign("/")} />} />
         <Route path="/analiz" element={<YKOSAnalysisEngine />} />
 
