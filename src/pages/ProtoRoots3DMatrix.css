@@ -1,0 +1,63 @@
+.proto3d-page {
+  width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+.proto3d-shell,
+.proto3d-layout,
+.proto3d-scroller,
+.proto3d-detail {
+  min-width: 0;
+}
+
+.proto3d-scroller {
+  width: 100%;
+  max-width: 100%;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+}
+
+.proto3d-stage {
+  width: 100%;
+}
+
+.proto3d-grid {
+  box-sizing: border-box;
+}
+
+.proto3d-detail {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 760px) {
+  .proto3d-page {
+    padding: 12px !important;
+  }
+
+  .proto3d-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+    align-items: start !important;
+    gap: 12px !important;
+  }
+
+  .proto3d-scroller {
+    padding: 12px 0 24px !important;
+  }
+
+  .proto3d-stage {
+    min-height: 330px !important;
+  }
+
+  .proto3d-detail {
+    width: 100%;
+    min-height: 0 !important;
+    box-sizing: border-box;
+    padding: 16px !important;
+  }
+
+  .proto3d-detail dl {
+    grid-template-columns: minmax(112px, auto) minmax(0, 1fr) !important;
+    gap: 8px 10px !important;
+  }
+}
