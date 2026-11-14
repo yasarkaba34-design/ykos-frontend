@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import rootData from "../data/protoRoots100.json";
+import "./ProtoRoots3DMatrix.css";
 
 const records = Array.isArray(rootData?.records) ? rootData.records : [];
 
@@ -8,8 +9,8 @@ export default function ProtoRoots3DMatrix({ onGoHome = () => {} }) {
   const selected = records.find((record) => record.id === selectedId) || null;
 
   return (
-    <main style={{ minHeight: "100vh", padding: "20px", background: "#030712", color: "#f8fafc", fontFamily: "Segoe UI, sans-serif", boxSizing: "border-box" }}>
-      <div style={{ width: "min(100%, 1180px)", margin: "0 auto" }}>
+    <main className="proto3d-page" style={{ minHeight: "100vh", padding: "20px", background: "#030712", color: "#f8fafc", fontFamily: "Segoe UI, sans-serif", boxSizing: "border-box" }}>
+      <div className="proto3d-shell" style={{ width: "min(100%, 1180px)", margin: "0 auto" }}>
         <button type="button" onClick={onGoHome} style={{ marginBottom: "16px", padding: "9px 14px", border: "1px solid #f59e0b", borderRadius: "8px", background: "#111827", color: "#fbbf24", fontWeight: 800, cursor: "pointer" }}>
           ← Ana sayfaya dön
         </button>
@@ -21,10 +22,10 @@ export default function ProtoRoots3DMatrix({ onGoHome = () => {} }) {
             Bu görünüm, prototip envanterindeki kayıtları üç boyut hissi veren bir düzlemde gösterir. Kayıtlar araştırma adayıdır; görünüm tarihsel doğrulama veya etimolojik sonuç üretmez.
           </p>
 
-          <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.5fr) minmax(240px, 0.7fr)", gap: "24px", alignItems: "center" }}>
-            <div style={{ overflow: "auto", padding: "24px 12px 50px" }}>
-              <div style={{ perspective: "1100px", minWidth: "640px", minHeight: "420px", display: "grid", placeItems: "center" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(10, minmax(48px, 1fr))", gap: "8px", width: "min(100%, 680px)", padding: "16px", border: "1px solid rgba(34,211,238,.45)", borderRadius: "14px", background: "radial-gradient(ellipse at center, rgba(14,116,144,.22), rgba(3,7,18,.92))", boxShadow: "0 25px 55px rgba(0,0,0,.55)", transform: "rotateX(48deg) rotateZ(-8deg)", transformStyle: "preserve-3d" }}>
+          <div className="proto3d-layout" style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.5fr) minmax(240px, 0.7fr)", gap: "24px", alignItems: "center" }}>
+            <div className="proto3d-scroller" style={{ overflow: "auto", padding: "24px 12px 50px" }}>
+              <div className="proto3d-stage" style={{ perspective: "1100px", minWidth: "640px", minHeight: "420px", display: "grid", placeItems: "center" }}>
+                <div className="proto3d-grid" style={{ display: "grid", gridTemplateColumns: "repeat(10, minmax(48px, 1fr))", gap: "8px", width: "min(100%, 680px)", padding: "16px", border: "1px solid rgba(34,211,238,.45)", borderRadius: "14px", background: "radial-gradient(ellipse at center, rgba(14,116,144,.22), rgba(3,7,18,.92))", boxShadow: "0 25px 55px rgba(0,0,0,.55)", transform: "rotateX(48deg) rotateZ(-8deg)", transformStyle: "preserve-3d" }}>
                   {records.map((record) => {
                     const active = record.id === selectedId;
                     return (
@@ -57,7 +58,7 @@ export default function ProtoRoots3DMatrix({ onGoHome = () => {} }) {
               </div>
             </div>
 
-            <aside style={{ minHeight: "210px", padding: "18px", border: "1px solid rgba(245,158,11,.5)", borderRadius: "12px", background: "#090d17" }}>
+            <aside className="proto3d-detail" style={{ minHeight: "210px", padding: "18px", border: "1px solid rgba(245,158,11,.5)", borderRadius: "12px", background: "#090d17" }}>
               <div style={{ color: "#94a3b8", fontSize: "0.78rem" }}>Seçili kayıt {selected ? `#${selected.id}` : ""}</div>
               <h2 style={{ margin: "8px 0", color: "#fbbf24", fontSize: "1.6rem" }}>{selected?.label || "Kayıt yok"}</h2>
               <dl style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: "8px 12px", margin: 0, lineHeight: 1.45 }}>
