@@ -143,15 +143,16 @@ export default function YKOSDashboard({
     (card, index, cards) => index === cards.findIndex((item) => String(item.id || item.title) === String(card.id || card.title))
   );
 
-  const filteredGridCards = sourceCards.filter((card) => {
+  const searchFilteredGridCards = sourceCards.filter((card) => {
     if (!searchQuery) return true;
-    const q = searchQuery.toLowerCase();
-    return card.title?.toLowerCase().includes(q) || (card.desc && card.desc.toLowerCase().includes(q));
+    const q = searchQuery.toLocaleLowerCase("tr-TR");
+    return card.title?.toLocaleLowerCase("tr-TR").includes(q) || (card.desc && card.desc.toLocaleLowerCase("tr-TR").includes(q));
   });
 
-  const rightColumnItems = currentLang === "TR" && adminRecords.length > 0
+  const hasVideo = (record) => Boolean(record.videoUrl || record.video || record.videoBaglantisi);
+  const rightColumnItems = currentLang === "TR"
     ? [
-        ...adminRecords.map((rec) => ({
+        ...adminRecords.filter((record) => !hasVideo(record)).map((rec) => ({
           id: rec.id,
           title: rec.title || rec.baslik,
           desc: rec.summary || rec.ozet,
@@ -169,6 +170,27 @@ export default function YKOSDashboard({
         ...item,
         onClick: () => (item.id === "ACIK-VERI" ? onNavigateAcikVeri() : onNavigateRead(item.id))
       }));
+  const rightColumnVideoItems = currentLang === "TR"
+    ? adminRecords.filter(hasVideo).slice(0, 4).map((record) => ({
+        id: record.id,
+        title: record.title || record.baslik || "YKOS videosu",
+        desc: record.summary || record.ozet || record.category || record.kategori || "YKOS video arşivi",
+        record: {
+          ...record,
+          videoUrl: record.videoUrl || record.video || record.videoBaglantisi
+        }
+      }))
+    : [];
+
+  // Sağ sütunda listelenen yayınlar ve videolar sol arşivde tekrar etmesin.
+  const normalizeTitle = (value) =>
+    (value || "").trim().replace(/\s+/g, " ").toLocaleLowerCase("tr-TR");
+  const rightColumnShownItems = [...rightColumnItems, ...rightColumnVideoItems];
+  const rightColumnIds = new Set(rightColumnShownItems.map((item) => item.id).filter(Boolean).map(String));
+  const rightColumnTitles = new Set(rightColumnShownItems.map((item) => normalizeTitle(item.title)).filter(Boolean));
+  const filteredGridCards = searchFilteredGridCards.filter((card) =>
+    !rightColumnIds.has(String(card.id || "")) && !rightColumnTitles.has(normalizeTitle(card.title))
+  );
 
   const handleCardClick = (card) => {
     if (card.isMatrixCard) {
