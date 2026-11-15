@@ -226,7 +226,7 @@ export default function YKOSDashboard({
               gap: "6px"
             }}
           >
-            ☰ {t.nav?.menu || "MENÜ"}
+            ☰ {t.menu || "MENÜ"}
           </button>
         </div>
 
@@ -376,16 +376,16 @@ export default function YKOSDashboard({
         </h3>
         <nav aria-label="YKOS test, okuma ve matris görünümleri" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: "9px", margin: "0 0 14px" }}>
           <button type="button" onClick={onNavigateTest} style={{ ...btnBaseStyle, minHeight: "44px", border: "1px solid #06b6d4", color: "#67e8f9" }}>
-            🧪 TEST
+            🧪 {t.testButton || "TEST"}
           </button>
           <button type="button" onClick={onNavigateEngine} style={{ ...btnBaseStyle, minHeight: "44px", border: "1px solid #22c55e", color: "#86efac" }}>
-            📖 OKUMA & ANALİZ
+            📖 {t.readingButton || "OKUMA & ANALİZ"}
           </button>
           <button type="button" onClick={onVisualize} style={{ ...btnBaseStyle, minHeight: "44px", border: "1px solid #f59e0b", color: "#fbbf24" }}>
-            🌐 MATRİS
+            🌐 {t.matrixButton || "MATRİS"}
           </button>
           <button type="button" onClick={onNavigate3D} style={{ ...btnBaseStyle, minHeight: "44px", border: "1px solid #a78bfa", color: "#c4b5fd" }}>
-            🧊 3D MATRİS
+            🧊 {t.matrix3dButton || "3D MATRİS"}
           </button>
         </nav>
 
@@ -478,11 +478,11 @@ export default function YKOSDashboard({
           </button>
 
           <button onClick={() => navigate("/arsiv")} style={{ flex: 1, minWidth: "210px", background: "linear-gradient(135deg, #38bdf8, #0284c7)", color: "#000", border: "none", padding: "12px", borderRadius: "8px", fontWeight: "900", fontSize: "0.85rem", cursor: "pointer" }}>
-            📁 Arşiv
+            📁 {t.archiveButton || "Arşiv"}
           </button>
 
           <button onClick={handleOpenVideoArchive} style={{ flex: 1, minWidth: "210px", background: "linear-gradient(135deg, #ef4444, #991b1b)", color: "#fff", border: "none", padding: "12px", borderRadius: "8px", fontWeight: "900", fontSize: "0.85rem", cursor: "pointer" }}>
-            🎥 VİDEO ARŞİVİ & SUNUMLAR
+            🎥 {t.videoArchiveButton || "VİDEO ARŞİVİ & SUNUMLAR"}
           </button>
         </div>
       </div>
