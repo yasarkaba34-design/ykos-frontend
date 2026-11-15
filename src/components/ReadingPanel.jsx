@@ -5,6 +5,18 @@ import { getEmbedUrl } from "../data/videoEmbed";
 import { loadArchiveData } from "../data/ykosDataService";
 import { db } from "../data/firebase";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+const normalizeExternalUrl = (value) => {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  const candidate = /^[a-z][a-z0-9+.-]*:\/\//i.test(raw) ? raw : `https://${raw}`;
+  try {
+    const parsed = new URL(candidate);
+    return parsed.protocol === "http:" || parsed.protocol === "https:" ? parsed.href : "";
+  } catch {
+    return "";
+  }
+};
+
 const normalizeId = (value) =>
   String(value ?? "")
     .trim()
@@ -229,6 +241,7 @@ export default function ReadingPanel({
     article.video ||
     article.videoBaglantisi ||
     "";
+  const externalUrl = normalizeExternalUrl(article.externalUrl || article.sourceUrl || article.linkUrl || article.link || article.url || "");
   const rawDate =
     article.eklenmeTarihi || article.tarih || article.date || "";
   const date =
@@ -327,6 +340,15 @@ export default function ReadingPanel({
             {summary}
           </div>
         )}
+        {externalUrl && (
+          <div style={{ margin: "0 0 22px", padding: "14px 16px", border: "1px solid rgba(56,189,248,0.45)", borderRadius: "10px", background: "linear-gradient(135deg, rgba(8,47,73,0.45), rgba(15,23,42,0.72))" }}>
+            <div style={{ color: "#7dd3fc", fontSize: "0.78rem", fontWeight: 800, marginBottom: "7px" }}>KAYNAK / İLGİLİ WEB ADRESİ</div>
+            <a href={externalUrl} target="_blank" rel="noopener noreferrer" style={{ color: "#e0f2fe", fontWeight: 700, overflowWrap: "anywhere", textDecoration: "underline", textUnderlineOffset: "3px" }}>
+              🔗 İlgili sayfayı aç ↗
+            </a>
+          </div>
+        )}
+
         <div
           style={{
             color: "#e2e8f0",
