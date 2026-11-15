@@ -174,7 +174,43 @@ function App() {
         />
         <Route path="/test" element={<RootTestPage />} />
         <Route path="/matrix-3d" element={<ProtoRoots3DMatrix onGoHome={() => window.location.assign("/")} />} />
-        <Route path="/analiz" element={<YKOSAnalysisEngine />} />
+        <Route
+          path="/analiz"
+          element={
+            <div>
+              <div
+                style={{
+                  position: "sticky",
+                  top: 0,
+                  zIndex: 1000,
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  padding: "8px 12px",
+                  background: "rgba(3, 7, 18, 0.94)",
+                  borderBottom: "1px solid rgba(255, 215, 0, 0.28)",
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => window.location.assign("/")}
+                  aria-label="Ana sayfaya dön"
+                  style={{
+                    background: "rgba(255, 215, 0, 0.1)",
+                    border: "1px solid #ffd700",
+                    color: "#ffd700",
+                    padding: "8px 16px",
+                    borderRadius: "7px",
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                  }}
+                >
+                  ⬅ Ana Sayfaya Dön
+                </button>
+              </div>
+              <YKOSAnalysisEngine />
+            </div>
+          }
+        />
 
         {/* ATLAS */}
         <Route path="/atlas" element={<AtlasMap />} />
