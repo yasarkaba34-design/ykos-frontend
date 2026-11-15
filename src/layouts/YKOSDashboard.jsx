@@ -129,10 +129,10 @@ export default function YKOSDashboard({
   const sourceCards = t.cards && t.cards.length > 0 ? t.cards : [];
   const testRootEntries = Array.isArray(matrixData?.damgalar) ? matrixData.damgalar.slice(0, 6) : [];
 
-  const filteredGridCards = sourceCards.filter((card) => {
+  const searchFilteredGridCards = sourceCards.filter((card) => {
     if (!searchQuery) return true;
-    const q = searchQuery.toLowerCase();
-    return card.title?.toLowerCase().includes(q) || (card.desc && card.desc.toLowerCase().includes(q));
+    const q = searchQuery.toLocaleLowerCase("tr-TR");
+    return card.title?.toLocaleLowerCase("tr-TR").includes(q) || (card.desc && card.desc.toLocaleLowerCase("tr-TR").includes(q));
   });
 
   const rightColumnItems = currentLang === "TR" && adminRecords.length > 0
@@ -155,6 +155,15 @@ export default function YKOSDashboard({
         ...item,
         onClick: () => (item.id === "ACIK-VERI" ? onNavigateAcikVeri() : onNavigateRead(item))
       }));
+
+  // Onaylı sütunda gösterilen kayıtlar sol arşiv gridinde yinelenmesin.
+  const normalizeTitle = (value) =>
+    (value || "").trim().replace(/\\s+/g, " ").toLocaleLowerCase("tr-TR");
+  const approvedIds = new Set(rightColumnItems.map((item) => item.id).filter(Boolean).map(String));
+  const approvedTitles = new Set(rightColumnItems.map((item) => normalizeTitle(item.title)).filter(Boolean));
+  const filteredGridCards = searchFilteredGridCards.filter((card) =>
+    !approvedIds.has(String(card.id || "")) && !approvedTitles.has(normalizeTitle(card.title))
+  );
 
   const handleCardClick = (card) => {
     if (card.isMatrixCard) {
