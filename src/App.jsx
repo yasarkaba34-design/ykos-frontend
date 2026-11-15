@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "./data/firebase";
+import { isAdminUser } from "./data/adminAccess";
 import {
   BrowserRouter as Router,
   Routes,
@@ -118,7 +119,7 @@ function AdminPanelWrapper() {
   }, () => { setError("Oturum kontrol edilemedi. Sayfayı yenileyin."); setLoading(false); }), []);
   if (loading) return <p role="status">Oturum kontrol ediliyor…</p>;
   if (error) return <p role="alert">{error}</p>;
-  if (!user || user.uid !== "WnKrb0wcY3dHpSJjdn9b2aAwTw02") return <Navigate to="/admin-login" replace />;
+  if (!user || !isAdminUser(user)) return <Navigate to="/admin-login" replace />;
   return <AdminPanel onLogout={() => signOut(auth)} />;
 }
 
