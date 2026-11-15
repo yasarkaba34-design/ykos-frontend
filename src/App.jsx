@@ -34,6 +34,23 @@ import RootTestPage from "./pages/RootTestPage";
 // ANA SAYFA YÖNLENDİRMELERİ
 function DashboardWrapper() {
   const navigate = useNavigate();
+  const [currentLang, setCurrentLang] = useState(() => {
+    try {
+      const saved = window.localStorage.getItem("ykos-language");
+      const supported = ["TR", "EN", "DE", "FR", "ES", "IT", "JA", "ZH", "RU", "AR", "FA"];
+      return supported.includes(saved) ? saved : "TR";
+    } catch {
+      return "TR";
+    }
+  });
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem("ykos-language", currentLang);
+    } catch {
+      // Keep language switching available when storage is disabled.
+    }
+  }, [currentLang]);
 
   // TUDITAM gelen ID'leri otomatik YKOS'a çevirip yönlendirir
   const handleNavigateRead = (id) => {
@@ -44,8 +61,8 @@ function DashboardWrapper() {
 
   return (
     <YKOSDashboard
-      currentLang="TR"
-      setCurrentLang={() => {}}
+      currentLang={currentLang}
+      setCurrentLang={setCurrentLang}
       onVisualize={() => navigate("/matrix")}
       onNavigateTest={() => navigate("/test")}
       onNavigate3D={() => navigate("/matrix-3d")}
