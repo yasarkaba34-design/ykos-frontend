@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { auth } from "../data/firebase";
+import { isAdminUser } from "../data/adminAccess";
 
-const ADMIN_UID = "WnKrb0wcY3dHpSJjdn9b2aAwTw02";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -22,7 +22,7 @@ export default function AdminLogin() {
         password
       );
 
-      if (result.user.uid !== ADMIN_UID) {
+      if (!isAdminUser(result.user)) {
         await signOut(auth);
         setError("Bu hesabın yönetici yetkisi yok.");
         return;
