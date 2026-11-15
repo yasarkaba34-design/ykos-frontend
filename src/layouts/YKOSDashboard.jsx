@@ -158,7 +158,7 @@ export default function YKOSDashboard({
 
   // Onaylı sütunda gösterilen kayıtlar sol arşiv gridinde yinelenmesin.
   const normalizeTitle = (value) =>
-    (value || "").trim().replace(/\\s+/g, " ").toLocaleLowerCase("tr-TR");
+    (value || "").trim().replace(/\s+/g, " ").toLocaleLowerCase("tr-TR");
   const approvedIds = new Set(rightColumnItems.map((item) => item.id).filter(Boolean).map(String));
   const approvedTitles = new Set(rightColumnItems.map((item) => normalizeTitle(item.title)).filter(Boolean));
   const filteredGridCards = searchFilteredGridCards.filter((card) =>
