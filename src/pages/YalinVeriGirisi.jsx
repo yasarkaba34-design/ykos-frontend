@@ -1,6 +1,18 @@
 // src/pages/YalinVeriGirisi.jsx
 import React, { useState } from "react";
 
+const normalizeExternalUrl = (value) => {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  const candidate = /^[a-z][a-z0-9+.-]*:\/\//i.test(raw) ? raw : `https://${raw}`;
+  try {
+    const parsed = new URL(candidate);
+    return parsed.protocol === "http:" || parsed.protocol === "https:" ? parsed.href : "";
+  } catch {
+    return "";
+  }
+};
+
 export default function YalinVeriGirisi({ onGoHome }) {
   const [researcherName, setResearcherName] = useState("");
   const [researcherEmail, setResearcherEmail] = useState("");
@@ -8,6 +20,7 @@ export default function YalinVeriGirisi({ onGoHome }) {
   const [category, setCategory] = useState("Damga & Sembol");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
+  const [externalUrl, setExternalUrl] = useState("");
   
   // Manşet ve Çoklu Galeri Görselleri
   const [mainImage, setMainImage] = useState("");
@@ -48,6 +61,12 @@ export default function YalinVeriGirisi({ onGoHome }) {
       return;
     }
 
+    const normalizedExternalUrl = normalizeExternalUrl(externalUrl);
+    if (externalUrl.trim() && !normalizedExternalUrl) {
+      alert("Bağlantı http:// veya https:// adresi olmalı.");
+      return;
+    }
+
     const newRecord = {
       id: "GUEST-" + Date.now(),
       researcher: {
@@ -59,6 +78,7 @@ export default function YalinVeriGirisi({ onGoHome }) {
       location,
       summary: `${researcherName} (${location || "Konum Belirtilmedi"}) tarafından iletilen açık veri bulgusu.`,
       content: description,
+      externalUrl: normalizedExternalUrl,
       image: mainImage,
       gallery: galleryImages,
       status: "pending", // Yönetici Onayını Bekler
@@ -75,6 +95,7 @@ export default function YalinVeriGirisi({ onGoHome }) {
       setTitle("");
       setLocation("");
       setDescription("");
+      setExternalUrl("");
       setMainImage("");
       setGalleryImages([]);
     } catch (err) {
@@ -158,6 +179,12 @@ export default function YalinVeriGirisi({ onGoHome }) {
         <div>
           <label style={{ display: "block", fontSize: "0.75rem", color: "#e2e8f0", fontWeight: "bold", marginBottom: "4px" }}>📝 BULGU AÇIKLAMASI & OKUMA ANALİZİ</label>
           <textarea rows="4" placeholder="Bulgunun detayları, morfolojik yapısı ve kaynaklar..." value={description} onChange={(e) => setDescription(e.target.value)} style={{ width: "100%", padding: "8px", background: "#0c101d", border: "1px solid #334155", borderRadius: "5px", color: "#fff", fontSize: "0.85rem", boxSizing: "border-box", resize: "vertical" }} />
+        </div>
+
+        <div>
+          <label style={{ display: "block", fontSize: "0.75rem", color: "#38bdf8", fontWeight: "bold", marginBottom: "4px" }}>🔗 İLGİLİ WEB ADRESİ / KAYNAK LİNKİ</label>
+          <input type="text" inputMode="url" placeholder="https://ornek-kaynak.org/..." value={externalUrl} onChange={(e) => setExternalUrl(e.target.value)} style={{ width: "100%", padding: "8px", background: "#0c101d", border: "1px solid #38bdf8", borderRadius: "5px", color: "#fff", fontSize: "0.85rem", boxSizing: "border-box" }} />
+          {normalizeExternalUrl(externalUrl) && <a href={normalizeExternalUrl(externalUrl)} target="_blank" rel="noopener noreferrer" style={{ display: "inline-block", marginTop: "6px", color: "#7dd3fc", fontSize: "0.8rem" }}>↗ Bağlantıyı yeni sekmede kontrol et</a>}
         </div>
 
         {/* FOTOĞRAF YÜKLEME ALANI */}

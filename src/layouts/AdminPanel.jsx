@@ -13,6 +13,18 @@ import {
   deleteDoc
 } from "firebase/firestore";
 
+const normalizeExternalUrl = (value) => {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  const candidate = /^[a-z][a-z0-9+.-]*:\/\//i.test(raw) ? raw : `https://${raw}`;
+  try {
+    const parsed = new URL(candidate);
+    return parsed.protocol === "http:" || parsed.protocol === "https:" ? parsed.href : "";
+  } catch {
+    return "";
+  }
+};
+
 export default function AdminPanel({ onLogout, userRole = "admin" }) {
   const [records, setRecords] = useState([]);
   const [cloudIds, setCloudIds] = useState(new Set());
@@ -25,7 +37,8 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
   const [content, setContent] = useState("");
   const [mainImage, setMainImage] = useState("");
   const [galleryImages, setGalleryImages] = useState([]);
-  const [videoUrl, setVideoUrl] = useState(""); // 🎥 Yeni: Video URL alanı
+  const [videoUrl, setVideoUrl] = useState(""); // 🎥 Video URL
+  const [externalUrl, setExternalUrl] = useState("");
 
   // Sayfalama
   const [currentPage, setCurrentPage] = useState(1);
@@ -84,7 +97,7 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
   };
   const resetForm = () => {
     setEditingId(null); setTitle(""); setSummary(""); setContent("");
-    setMainImage(""); setGalleryImages([]); setVideoUrl("");
+    setMainImage(""); setGalleryImages([]); setVideoUrl(""); setExternalUrl("");
   };
   const readImage = file => new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -113,6 +126,11 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
   const handleSubmit = async e => {
     e.preventDefault();
     if (busy || !title.trim()) return;
+    const normalizedExternalUrl = normalizeExternalUrl(externalUrl);
+    if (externalUrl.trim() && !normalizedExternalUrl) {
+      setMessage("Bağlantı http:// veya https:// adresi olmalı.");
+      return;
+    }
     setBusy(true); setMessage("");
     try {
       const existing = records.find(item => item.id === editingId);
@@ -120,6 +138,7 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
         ...(existing || {}), id: editingId || "YKOS-" + crypto.randomUUID(),
         title: title.trim(), category, summary: summary.trim(), content: content.trim(),
         image: mainImage, gallery: galleryImages, videoUrl: videoUrl.trim(),
+        externalUrl: normalizedExternalUrl,
         status: "published", durum: "onaylandi",
         date: existing?.date || new Date().toLocaleDateString("tr-TR")
       };
@@ -146,6 +165,7 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
     setMainImage(record.image || record.mansetGorsel || record.kapakGorseli || "");
     setGalleryImages(record.gallery || record.galeri || record.galeriGorselleri || []);
     setVideoUrl(record.videoUrl || record.video || "");
+    setExternalUrl(record.externalUrl || record.sourceUrl || record.linkUrl || record.link || record.url || "");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
   const handleDelete = async id => {
@@ -212,6 +232,13 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
     <div className="ykos-admin-panel" style={{ maxWidth: "1350px", margin: "0 auto", padding: "12px", color: "#fff" }}>
       <style>{`
         .ykos-admin-panel { box-sizing: border-box; }
+        .ykos-entry-panel { position: relative; overflow: hidden; border-radius: 14px !important; border-color: rgba(56,189,248,.55) !important; background: linear-gradient(155deg, rgba(8,22,37,.98), rgba(5,8,17,.98)) !important; box-shadow: 0 14px 36px rgba(0,0,0,.4), inset 0 1px rgba(255,255,255,.04); }
+        .ykos-entry-panel h3 { padding: 0 0 10px !important; margin-bottom: 14px !important; font-size: 1rem !important; letter-spacing: .02em; }
+        .ykos-entry-panel input, .ykos-entry-panel textarea, .ykos-entry-panel select { border-radius: 8px !important; transition: border-color .18s ease, box-shadow .18s ease; }
+        .ykos-entry-panel input:focus, .ykos-entry-panel textarea:focus, .ykos-entry-panel select:focus { outline: none; border-color: #38bdf8 !important; box-shadow: 0 0 0 3px rgba(56,189,248,.14); }
+        .ykos-external-link-field { padding: 10px; border: 1px solid rgba(56,189,248,.32); border-radius: 10px; background: rgba(8,47,73,.2); }
+        .ykos-external-link-field input { display: block; width: 100%; min-width: 0; box-sizing: border-box; padding: 9px 10px; background: #060913; border: 1px solid #334155; color: #fff; font-size: .82rem; }
+        .ykos-link-preview { display: inline-block; margin-top: 7px; color: #7dd3fc; font-size: .74rem; font-weight: 700; text-decoration: none; }
         .ykos-admin-panel input, .ykos-admin-panel textarea, .ykos-admin-panel select { font-size: 16px !important; }
         .ykos-admin-panel button { min-height: 36px; }
         .ykos-admin-grid > div { min-width: 0; }
@@ -349,7 +376,7 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
           </div>
 
           {/* 2. ALT: VERİ & HABER GİRİŞ FORMU */}
-          <div style={{ background: "rgba(255, 215, 0, 0.02)", border: "1.5px solid rgba(255, 215, 0, 0.35)", borderRadius: "8px", padding: "12px" }}>
+          <div className="ykos-entry-panel" style={{ background: "rgba(255, 215, 0, 0.02)", border: "1.5px solid rgba(255, 215, 0, 0.35)", borderRadius: "8px", padding: "16px" }}>
             <h3 style={{ color: "#ffd700", marginTop: 0, fontSize: "0.88rem", borderBottom: "1px solid #333", paddingBottom: "4px", marginBottom: "8px" }}>
               {editingId ? "✏️ Kaydı Güncelle" : "➕ Yeni İçerik & Video Girişi"}
             </h3>
@@ -395,7 +422,15 @@ export default function AdminPanel({ onLogout, userRole = "admin" }) {
                 )}
               </div>
 
-              <div style={{ background: "rgba(0,0,0,0.3)", padding: "8px", borderRadius: "5px", border: "1px solid #27272a" }}>
+              <div className="ykos-external-link-field">
+                <label htmlFor="record-external-url" style={{ display: "block", fontSize: "0.7rem", color: "#38bdf8", marginBottom: "5px", fontWeight: 800 }}>🔗 İlgili web adresi / kaynak bağlantısı</label>
+                <input id="record-external-url" type="text" inputMode="url" placeholder="https://ornek-kaynak.org/..." value={externalUrl} onChange={(e) => setExternalUrl(e.target.value)} />
+                {normalizeExternalUrl(externalUrl) && (
+                  <a href={normalizeExternalUrl(externalUrl)} target="_blank" rel="noopener noreferrer" className="ykos-link-preview">↗ Bağlantıyı yeni sekmede kontrol et</a>
+                )}
+              </div>
+
+              <div style={{ background: "rgba(0,0,0,0.3)", padding: "8px", borderRadius: "10px", border: "1px solid #27272a" }}>
                 <div style={{ marginBottom: "6px" }}>
                   <label style={{ display: "block", fontSize: "0.68rem", color: "#ffd700", marginBottom: "2px" }}>📸 Manşet Görsel</label>
                   <input type="file" accept="image/*" onChange={handleMainImageChange} style={{ fontSize: "0.7rem", color: "#94a3b8" }} />
