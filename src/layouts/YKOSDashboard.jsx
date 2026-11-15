@@ -47,7 +47,7 @@ export default function YKOSDashboard({
   const [allVideoRecords, setAllVideoRecords] = useState([]);
   const [activeVideo, setActiveVideo] = useState(null);
 
-  const handleOpenVideoArchive = () => {
+  const handleOpenVideoArchive = (selectedRecord = null) => {
     const videos = adminRecords
       .filter(record =>
         record.videoUrl || record.video || record.videoBaglantisi
@@ -61,7 +61,7 @@ export default function YKOSDashboard({
     setAllVideoRecords(videos);
 
     if (videos.length > 0) {
-      setActiveVideo(videos[0]);
+      setActiveVideo(videos.find(video => video.id === selectedRecord?.id) || videos[0]);
       setVideoModalOpen(true);
     } else {
       alert("Henüz yayımlanmış video kaydı bulunmuyor.");
@@ -143,15 +143,16 @@ export default function YKOSDashboard({
     (card, index, cards) => index === cards.findIndex((item) => String(item.id || item.title) === String(card.id || card.title))
   );
 
-  const filteredGridCards = sourceCards.filter((card) => {
+  const searchFilteredGridCards = sourceCards.filter((card) => {
     if (!searchQuery) return true;
-    const q = searchQuery.toLowerCase();
-    return card.title?.toLowerCase().includes(q) || (card.desc && card.desc.toLowerCase().includes(q));
+    const q = searchQuery.toLocaleLowerCase("tr-TR");
+    return card.title?.toLocaleLowerCase("tr-TR").includes(q) || (card.desc && card.desc.toLocaleLowerCase("tr-TR").includes(q));
   });
 
-  const rightColumnItems = currentLang === "TR" && adminRecords.length > 0
+  const hasVideo = (record) => Boolean(record.videoUrl || record.video || record.videoBaglantisi);
+  const rightColumnItems = currentLang === "TR"
     ? [
-        ...adminRecords.map((rec) => ({
+        ...adminRecords.filter((record) => !hasVideo(record)).map((rec) => ({
           id: rec.id,
           title: rec.title || rec.baslik,
           desc: rec.summary || rec.ozet,
@@ -169,6 +170,27 @@ export default function YKOSDashboard({
         ...item,
         onClick: () => (item.id === "ACIK-VERI" ? onNavigateAcikVeri() : onNavigateRead(item.id))
       }));
+  const rightColumnVideoItems = currentLang === "TR"
+    ? adminRecords.filter(hasVideo).slice(0, 4).map((record) => ({
+        id: record.id,
+        title: record.title || record.baslik || "YKOS videosu",
+        desc: record.summary || record.ozet || record.category || record.kategori || "YKOS video arşivi",
+        record: {
+          ...record,
+          videoUrl: record.videoUrl || record.video || record.videoBaglantisi
+        }
+      }))
+    : [];
+
+  // Sağ sütunda listelenen yayınlar ve videolar sol arşivde tekrar etmesin.
+  const normalizeTitle = (value) =>
+    (value || "").trim().replace(/\s+/g, " ").toLocaleLowerCase("tr-TR");
+  const rightColumnShownItems = [...rightColumnItems, ...rightColumnVideoItems];
+  const rightColumnIds = new Set(rightColumnShownItems.map((item) => item.id).filter(Boolean).map(String));
+  const rightColumnTitles = new Set(rightColumnShownItems.map((item) => normalizeTitle(item.title)).filter(Boolean));
+  const filteredGridCards = searchFilteredGridCards.filter((card) =>
+    !rightColumnIds.has(String(card.id || "")) && !rightColumnTitles.has(normalizeTitle(card.title))
+  );
 
   const handleCardClick = (card) => {
     if (card.isMatrixCard) {
@@ -463,6 +485,32 @@ export default function YKOSDashboard({
                 </div>
               );
             })}
+            {rightColumnVideoItems.length > 0 && (
+              <>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(239,68,68,0.55)", padding: "8px 0 6px", marginTop: "4px" }}>
+                  <span style={{ color: "#fca5a5", fontSize: "0.82rem", fontWeight: "bold" }}>🎥 YAYINLANAN VİDEOLAR</span>
+                  <span style={{ color: "#fca5a5", fontSize: "0.65rem" }}>{rightColumnVideoItems.length} kayıt</span>
+                </div>
+                {rightColumnVideoItems.map((item, idx) => (
+                  <button
+                    key={`right-video-${item.id || idx}`}
+                    type="button"
+                    onClick={() => handleOpenVideoArchive(item.record)}
+                    style={{ display: "flex", width: "100%", gap: "10px", alignItems: "center", background: "#0c101d", border: "1px solid rgba(239,68,68,0.45)", borderRadius: "6px", padding: "10px", color: "#fff", textAlign: "left", cursor: "pointer" }}
+                  >
+                    <span style={{ width: "42px", height: "42px", display: "grid", placeItems: "center", background: "rgba(239,68,68,0.12)", border: "1px solid #ef4444", borderRadius: "4px", fontSize: "18px", flexShrink: 0 }}>▶️</span>
+                    <span style={{ flex: 1, minWidth: 0 }}>
+                      <span style={{ display: "flex", justifyContent: "space-between", gap: "8px", alignItems: "center" }}>
+                        <strong style={{ color: "#fca5a5", fontSize: "0.76rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.title}</strong>
+                        <span style={{ color: "#f87171", fontSize: "0.62rem", fontWeight: "bold", flexShrink: 0 }}>İZLE ➔</span>
+                      </span>
+                      <span style={{ display: "block", color: "#cbd5e1", fontSize: "0.66rem", marginTop: "3px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.desc}</span>
+                    </span>
+                  </button>
+                ))}
+              </>
+            )}
+
           </div>
 
         </div>
