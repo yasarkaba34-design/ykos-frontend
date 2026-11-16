@@ -194,8 +194,8 @@ function App() {
               >
                 <button
                   type="button"
-                  onClick={() => window.location.assign("/")}
-                  aria-label="Ana sayfaya dön"
+                  onClick={returnToTuditam}
+                  aria-label="TÜDİTAM ana sayfasına dön"
                   style={{
                     background: "rgba(255, 215, 0, 0.1)",
                     border: "1px solid #ffd700",
@@ -206,7 +206,7 @@ function App() {
                     cursor: "pointer",
                   }}
                 >
-                  ⬅ Ana Sayfaya Dön
+                  ⬅ TÜDİTAM Ana Sayfasına Dön
                 </button>
               </div>
               <YKOSAnalysisEngine />
