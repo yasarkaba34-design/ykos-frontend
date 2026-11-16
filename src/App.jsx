@@ -14,8 +14,6 @@ import {
 
 import "./index.css";
 
-const returnToTuditam = () => window.location.assign("https://tuditam.org/");
-
 // SAYFALAR & BİLEŞENLER
 import YKOSDashboard from "./layouts/YKOSDashboard";
 import AdminPanel from "./layouts/AdminPanel";
@@ -93,7 +91,7 @@ function HakkimizdaWrapper() {
   const navigate = useNavigate();
   return (
     <Hakkimizda
-      onNavigateHome={returnToTuditam}
+      onNavigateHome={() => navigate("/")}
       onNavigateMatrix={() => navigate("/matrix")}
     />
   );
@@ -106,7 +104,7 @@ function AdminLoginWrapper() {
   return (
     <AdminLogin
       onSuccess={() => navigate("/admin", { replace: true })}
-      onCancel={returnToTuditam}
+      onCancel={() => navigate("/", { replace: true })}
     />
   );
 }
@@ -154,8 +152,8 @@ function App() {
               >
                 <button
                   type="button"
-                  onClick={returnToTuditam}
-                  aria-label="TÜDİTAM ana sayfasına dön"
+                  onClick={() => window.location.assign("/")}
+                  aria-label="Ana sayfaya dön"
                   style={{
                     background: "rgba(255, 215, 0, 0.1)",
                     border: "1px solid #ffd700",
@@ -166,7 +164,7 @@ function App() {
                     cursor: "pointer",
                   }}
                 >
-                  ⬅ TÜDİTAM Ana Sayfasına Dön
+                  ⬅ Ana Sayfaya Dön
                 </button>
               </div>
               <BubbleMatrix />
@@ -174,8 +172,8 @@ function App() {
             </div>
           }
         />
-        <Route path="/test" element={<RootTestPage onGoHome={returnToTuditam} />} />
-        <Route path="/matrix-3d" element={<ProtoRoots3DMatrix onGoHome={returnToTuditam} />} />
+        <Route path="/test" element={<RootTestPage />} />
+        <Route path="/matrix-3d" element={<ProtoRoots3DMatrix onGoHome={() => window.location.assign("/")} />} />
         <Route
           path="/analiz"
           element={
@@ -194,8 +192,8 @@ function App() {
               >
                 <button
                   type="button"
-                  onClick={returnToTuditam}
-                  aria-label="TÜDİTAM ana sayfasına dön"
+                  onClick={() => window.location.assign("/")}
+                  aria-label="Ana sayfaya dön"
                   style={{
                     background: "rgba(255, 215, 0, 0.1)",
                     border: "1px solid #ffd700",
@@ -206,7 +204,7 @@ function App() {
                     cursor: "pointer",
                   }}
                 >
-                  ⬅ TÜDİTAM Ana Sayfasına Dön
+                  ⬅ Ana Sayfaya Dön
                 </button>
               </div>
               <YKOSAnalysisEngine />
