@@ -5,7 +5,7 @@ export default function YKOSHeader() {
 
   return (
     <div className="ykos-header">
-      <span className="ykos-header-logo">YKOS</span>
+      <a href="/" className="ykos-header-logo" aria-label="YKOS ana sayfasına dön" title="Ana sayfaya dön" style={{ color: "inherit", textDecoration: "none" }}>YKOS</a>
 
       <div className="ykos-header-menu">
         <button onClick={() => navigate("/")} className="header-btn">🏠 Ana Sayfa</button>
