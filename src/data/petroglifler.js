@@ -26,7 +26,10 @@ const petroglifler = [
     kaynaklar: [
       "Göbeklitepe Kazı Yayınları",
       "YKOS Veri Tabanı",
-    ],
+    ],    veriDurumu: "KISMİ — alan bilgisi kaynaklı; YKOS eşleşmeleri adaydır",
+    kanitKayitlari: [{ kurum: "UNESCO Dünya Mirası Merkezi", belge: "Göbekli Tepe", url: "https://whc.unesco.org/en/list/1572/", destekledigiBilgi: "T biçimli kireçtaşı sütunları, hayvan kabartmaları ve alanın Neolitik bağlamı." }],
+    ykosBaglantiDurumu: "ADAY — UNESCO kaydı AK, BA, OK köklerini veya D001/D008 damga eşleşmelerini doğrulamaz.",
+    gorselKaynakDurumu: "Yerel görsellerin üreticisi, kaynağı ve kullanım izni kayda eklenmeli.",
   },
 
   {
@@ -36,7 +39,7 @@ const petroglifler = [
     sehir: "Almatı",
     ilce: "",
     alan: "Tamgalı Arkeolojik Peyzajı",
-    tarih: "MÖ 2. binyıl ve sonrası",
+    tarih: "MÖ 2. binyılın ikinci yarısı – 20. yüzyıl başı (UNESCO)",
     donem: "Tunç Çağı–Tarihî Dönem",
     koordinat: {
       enlem: 43.8025,
@@ -55,7 +58,10 @@ const petroglifler = [
     kaynaklar: [
       "Tamgalı Arkeolojik Alanı Araştırmaları",
       "YKOS Kazakistan Veri Girişi",
-    ],
+    ],    veriDurumu: "KISMİ — alan ve kronoloji UNESCO kaydıyla destekleniyor; YKOS eşleşmeleri adaydır",
+    kanitKayitlari: [{ kurum: "UNESCO Dünya Mirası Merkezi", belge: "Petroglyphs within the Archaeological Landscape of Tamgaly", url: "https://whc.unesco.org/en/list/1145/", destekledigiBilgi: "Yaklaşık 5.000 petroglif; tarihlendirme MÖ 2. binyılın ikinci yarısından 20. yüzyıl başına uzanır." }],
+    ykosBaglantiDurumu: "ADAY — UNESCO kaydı GÜN, AT, OK köklerini veya D014/D021 damga eşleşmelerini doğrulamaz.",
+    gorselKaynakDurumu: "Yerel görsellerin üreticisi, kaynağı ve kullanım izni kayda eklenmeli.",
   },
 
   {
@@ -65,7 +71,7 @@ const petroglifler = [
     sehir: "Celalabad",
     ilce: "",
     alan: "Saymalıtaş",
-    tarih: "MÖ 3. binyıl ve sonrası",
+    tarih: "En erken örnekler: MÖ 3. – erken 2. binyıl (UNESCO Geçici Liste)",
     donem: "Tunç Çağı–Demir Çağı",
     koordinat: {
       enlem: 41.18,
@@ -84,7 +90,10 @@ const petroglifler = [
     kaynaklar: [
       "Saymalıtaş Petroglif Araştırmaları",
       "YKOS Kırgızistan Veri Girişi",
-    ],
+    ],    veriDurumu: "KISMİ — UNESCO Geçici Liste kaydı mevcut; YKOS eşleşmeleri adaydır",
+    kanitKayitlari: [{ kurum: "Kırgızistan UNESCO Millî Komisyonu / UNESCO Dünya Mirası Merkezi", belge: "Saimaly-Tash Petroglyphs (Geçici Liste, 1512)", url: "https://whc.unesco.org/en/tentativelists/1512/", destekledigiBilgi: "Kayıt yaklaşık 10.000 resimli taştan ve en erken örneklerin MÖ 3. – erken 2. binyıllara tarihlenmesinden söz eder; bu bir Geçici Liste beyanıdır." }],
+    ykosBaglantiDurumu: "ADAY — UNESCO Geçici Liste kaydı AT, YOL, GÜN köklerini veya D031/D044 damga eşleşmelerini doğrulamaz.",
+    gorselKaynakDurumu: "Yerel görsellerin üreticisi, kaynağı ve kullanım izni kayda eklenmeli.",
   },
 
   {
@@ -110,7 +119,10 @@ const petroglifler = [
     kaynaklar: [
       "YKOS Alan Kaydı",
       "YKOS Türkiye Atlası",
-    ],
+    ],    veriDurumu: "KISMİ — yerel kayıt; kaynak belge ve buluntu yeri teyidi bekleniyor",
+    kanitKayitlari: [],
+    ykosBaglantiDurumu: "ADAY — AK ve D001 bağlantısı kaynak belgeyle doğrulanmadı.",
+    gorselKaynakDurumu: "Görselin sahibi, çekim bilgisi, tam konumu ve kullanım izni kayda eklenmeli.",
   },
 ];
 
