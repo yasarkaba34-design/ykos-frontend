@@ -22,6 +22,7 @@ import "./index.css";
 
 const routeViews = {
   "/": "dashboard",
+  "/test": "test",
   "/matrix": "matrix",
   "/matrix-3d": "matrix3d",
   "/hakkimizda": "method",
@@ -51,6 +52,14 @@ export default function App() {
     if (path && window.location.pathname !== path) {
       window.history.replaceState({}, "", path);
     }
+  }, [activeView]);
+
+  useEffect(() => {
+    if (activeView !== "test") return undefined;
+    const frame = window.requestAnimationFrame(() => {
+      document.getElementById("test-root-heading")?.scrollIntoView({ block: "start" });
+    });
+    return () => window.cancelAnimationFrame(frame);
   }, [activeView]);
 
   useEffect(() => {
@@ -86,6 +95,8 @@ export default function App() {
     }
   };
 
+  const returnToTuditam = () => window.location.assign("https://tuditam.org/");
+
   const handleNavigateRead = (id) => {
     setSelectedContentId(id);
     setActiveView("detail");
@@ -100,12 +111,13 @@ export default function App() {
         color: "#fff",
       }}
     >
-      {activeView === "dashboard" && (
+      {(activeView === "dashboard" || activeView === "test") && (
         <YKOSDashboard
           currentLang={currentLang}
           setCurrentLang={setCurrentLang}
           onVisualize={() => setActiveView("matrix")}
           onNavigate3D={() => setActiveView("matrix3d")}
+          onNavigateTuditam={returnToTuditam}
           onNavigateRead={handleNavigateRead}
           onNavigateLogin={() => setActiveView("login")}
           onNavigateAtlas={() => setActiveView("atlas")}
@@ -121,7 +133,7 @@ export default function App() {
         <div>
           <div style={{ padding: "10px 20px" }}>
             <button
-              onClick={() => setActiveView("dashboard")}
+              onClick={returnToTuditam}
               style={{
                 background: "#ffd700",
                 color: "#000",
@@ -167,11 +179,11 @@ export default function App() {
       )}
 
       {activeView === "matrix" && (
-        <BubbleMatrixPanel onGoHome={() => setActiveView("dashboard")} />
+        <BubbleMatrixPanel onGoHome={returnToTuditam} />
       )}
 
       {activeView === "matrix3d" && (
-        <ProtoRoots3DMatrix onGoHome={() => setActiveView("dashboard")} />
+        <ProtoRoots3DMatrix onGoHome={returnToTuditam} />
       )}
 
       {activeView === "atlas" && (
@@ -200,14 +212,14 @@ export default function App() {
       {activeView === "method" && (
         <Hakkimizda
           currentLang={currentLang}
-          onNavigateHome={() => setActiveView("dashboard")}
+          onNavigateHome={returnToTuditam}
         />
       )}
 
       {activeView === "acikveri" && (
         <YalinVeriGirisi
           currentLang={currentLang}
-          onLogout={() => setActiveView("dashboard")}
+          onLogout={returnToTuditam}
         />
       )}
 
@@ -255,7 +267,7 @@ export default function App() {
           />
         ) : (
           <AdminLogin
-            onBack={() => setActiveView("dashboard")}
+            onBack={returnToTuditam}
           />
         ))}
     </div>

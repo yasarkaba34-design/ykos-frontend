@@ -32,6 +32,7 @@ export default function YKOSDashboard({
   onNavigateMethod = () => {},
   onNavigateAcikVeri = () => {},
   onNavigateOpsCenter = () => {},
+  onNavigateTuditam = () => window.location.assign("https://tuditam.org/"),
 }) {
   const [langOpen, setLangOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -401,6 +402,11 @@ export default function YKOSDashboard({
 
       {/* 4. ÖN PANEL: TEST KÖK-HECE / DAMGA GİRİŞLERİ */}
       <section style={cardStyle} aria-labelledby="test-root-heading">
+        {window.location.pathname === "/test" && (
+          <button type="button" onClick={onNavigateTuditam} style={{ marginBottom: "12px", background: "rgba(245, 158, 11, 0.12)", border: "1.5px solid #f59e0b", color: "#fbbf24", padding: "9px 16px", borderRadius: "7px", fontWeight: 800, cursor: "pointer" }}>
+            ← TÜDİTAM ana sayfasına dön
+          </button>
+        )}
         <h3 id="test-root-heading" style={{ color: "#67e8f9", fontSize: "1rem", marginTop: 0, marginBottom: "6px" }}>
           🧪 TEST KÖK-HECE / DAMGA GİRİŞLERİ
         </h3>
