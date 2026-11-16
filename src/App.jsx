@@ -14,6 +14,8 @@ import {
 
 import "./index.css";
 
+const returnToTuditam = () => window.location.assign("https://tuditam.org/");
+
 // SAYFALAR & BİLEŞENLER
 import YKOSDashboard from "./layouts/YKOSDashboard";
 import AdminPanel from "./layouts/AdminPanel";
@@ -91,7 +93,7 @@ function HakkimizdaWrapper() {
   const navigate = useNavigate();
   return (
     <Hakkimizda
-      onNavigateHome={() => navigate("/")}
+      onNavigateHome={returnToTuditam}
       onNavigateMatrix={() => navigate("/matrix")}
     />
   );
@@ -104,7 +106,7 @@ function AdminLoginWrapper() {
   return (
     <AdminLogin
       onSuccess={() => navigate("/admin", { replace: true })}
-      onCancel={() => navigate("/", { replace: true })}
+      onCancel={returnToTuditam}
     />
   );
 }
@@ -152,8 +154,8 @@ function App() {
               >
                 <button
                   type="button"
-                  onClick={() => window.location.assign("/")}
-                  aria-label="Ana sayfaya dön"
+                  onClick={returnToTuditam}
+                  aria-label="TÜDİTAM ana sayfasına dön"
                   style={{
                     background: "rgba(255, 215, 0, 0.1)",
                     border: "1px solid #ffd700",
@@ -164,7 +166,7 @@ function App() {
                     cursor: "pointer",
                   }}
                 >
-                  ⬅ Ana Sayfaya Dön
+                  ⬅ TÜDİTAM Ana Sayfasına Dön
                 </button>
               </div>
               <BubbleMatrix />
@@ -172,8 +174,8 @@ function App() {
             </div>
           }
         />
-        <Route path="/test" element={<RootTestPage />} />
-        <Route path="/matrix-3d" element={<ProtoRoots3DMatrix onGoHome={() => window.location.assign("/")} />} />
+        <Route path="/test" element={<RootTestPage onGoHome={returnToTuditam} />} />
+        <Route path="/matrix-3d" element={<ProtoRoots3DMatrix onGoHome={returnToTuditam} />} />
         <Route
           path="/analiz"
           element={
