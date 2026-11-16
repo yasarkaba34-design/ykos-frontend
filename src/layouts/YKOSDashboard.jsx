@@ -396,6 +396,9 @@ export default function YKOSDashboard({
         <h3 style={{ color: "#ffd700", fontSize: "1.05rem", marginTop: 0, borderBottom: "1px solid rgba(255,215,0,0.3)", paddingBottom: "8px", marginBottom: "12px" }}>
           ⚡ YKOS ÇÖZÜMLERİ VE İNDEKSLER (CANLI ARŞİV)
         </h3>
+        <div role="status" aria-live="polite" style={{ margin: "-2px 0 12px", padding: "10px 12px", border: "1px solid rgba(34, 211, 238, 0.45)", borderLeft: "3px solid #22d3ee", borderRadius: "6px", background: "rgba(8, 47, 73, 0.28)", color: "#cbd5e1", fontSize: "0.82rem", lineHeight: 1.5 }}>
+          <strong style={{ color: "#67e8f9" }}>Veri girişi sürmektedir.</strong> Kök-hece, damga, petroglif ve yazıt kayıtları kaynak ve belge bilgileriyle aşamalı olarak tamamlanıyor. Eksik bilgiler belirtiliyor; doğrulanmamış eşleşmeler araştırma adayı olarak sunuluyor.
+        </div>
         <nav aria-label="YKOS test, okuma ve matris görünümleri" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: "9px", margin: "0 0 14px" }}>
           <button type="button" onClick={onNavigateTest} style={{ ...btnBaseStyle, minHeight: "44px", border: "1px solid #06b6d4", color: "#67e8f9" }}>
             🧪 {t.testButton || "TEST"}
