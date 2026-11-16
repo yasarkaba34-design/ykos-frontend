@@ -1,11 +1,9 @@
 import React, { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import rootData from "../data/protoRoots100.json";
 
 const records = Array.isArray(rootData?.records) ? rootData.records : [];
 
-export default function RootTestPage() {
-  const navigate = useNavigate();
+export default function RootTestPage({ onGoHome = () => window.location.assign("https://tuditam.org/") }) {
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState(null);
 
@@ -26,8 +24,8 @@ export default function RootTestPage() {
   return (
     <main style={{ minHeight: "100vh", padding: "20px", background: "#030712", color: "#f8fafc", fontFamily: "Segoe UI, sans-serif", boxSizing: "border-box" }}>
       <div style={{ width: "min(100%, 1120px)", margin: "0 auto" }}>
-        <button type="button" onClick={() => navigate("/")} style={{ marginBottom: "16px", padding: "9px 14px", border: "1px solid #f59e0b", borderRadius: "8px", background: "#111827", color: "#fbbf24", fontWeight: 800, cursor: "pointer" }}>
-          ← Ana sayfaya dön
+        <button type="button" onClick={onGoHome} style={{ marginBottom: "16px", padding: "9px 14px", border: "1px solid #f59e0b", borderRadius: "8px", background: "#111827", color: "#fbbf24", fontWeight: 800, cursor: "pointer" }}>
+          ← TÜDİTAM ana sayfasına dön
         </button>
 
         <section style={{ padding: "clamp(18px, 3vw, 30px)", border: "1px solid #0e7490", borderRadius: "16px", background: "linear-gradient(145deg, #0b1020, #050811)" }}>
