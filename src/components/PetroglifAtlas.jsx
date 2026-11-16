@@ -19,6 +19,39 @@ function Etiketler({ baslik, veriler = [] }) {
   );
 }
 
+function KanitPaneli({ kayit }) {
+  const kanitlar = Array.isArray(kayit.kanitKayitlari) ? kayit.kanitKayitlari : [];
+
+  return (
+    <div className="petroglif-bolum">
+      <h4>Kayıt Durumu ve Kaynak Kanıtı</h4>
+      <p style={{ color: "#cbd5e1", lineHeight: 1.55 }}>
+        <strong style={{ color: "#fbbf24" }}>{kayit.veriDurumu || "Kayıt durumu belirtilmemiş."}</strong>
+      </p>
+      {kanitlar.length > 0 ? (
+        <ul style={{ paddingLeft: "20px", color: "#cbd5e1", lineHeight: 1.55 }}>
+          {kanitlar.map((kanit, index) => (
+            <li key={kanit.url || index} style={{ marginBottom: "10px" }}>
+              <a href={kanit.url} target="_blank" rel="noopener noreferrer" style={{ color: "#67e8f9", fontWeight: 700 }}>
+                {kanit.kurum} — {kanit.belge}
+              </a>
+              <div>{kanit.destekledigiBilgi}</div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p style={{ color: "#cbd5e1" }}>Kaynak belge henüz eklenmedi; kayıt eksik bilgi olarak tutuluyor.</p>
+      )}
+      <p style={{ color: "#cbd5e1", lineHeight: 1.55 }}>
+        <strong>YKOS eşleşme durumu:</strong> {kayit.ykosBaglantiDurumu || "Belirtilmemiş"}
+      </p>
+      <p style={{ color: "#94a3b8", fontSize: "0.9rem", lineHeight: 1.5 }}>
+        <strong>Görsel kaynağı:</strong> {kayit.gorselKaynakDurumu || "Bilgi bekleniyor."}
+      </p>
+    </div>
+  );
+}
+
 export default function PetroglifAtlas({ query = "" }) {
   const [aktifId, setAktifId] = useState(petroglifler[0]?.id || "");
   const [aktifGorsel, setAktifGorsel] = useState(
@@ -45,6 +78,14 @@ export default function PetroglifAtlas({ query = "" }) {
         ...(kayit.kokler || []),
         ...(kayit.yazitlar || []),
         ...(kayit.kaynaklar || []),
+        kayit.veriDurumu,
+        kayit.ykosBaglantiDurumu,
+        ...(kayit.kanitKayitlari || []).flatMap((kanit) => [
+          kanit.kurum,
+          kanit.belge,
+          kanit.destekledigiBilgi,
+          kanit.url,
+        ]),
       ]
         .join(" ")
         .toLocaleLowerCase("tr-TR");
@@ -215,6 +256,8 @@ export default function PetroglifAtlas({ query = "" }) {
               baslik="Kaynaklar"
               veriler={aktifKayit.kaynaklar}
             />
+
+            <KanitPaneli kayit={aktifKayit} />
           </div>
         </main>
       </div>
