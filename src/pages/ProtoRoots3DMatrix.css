@@ -106,3 +106,73 @@
     width: calc(100% - 16px) !important;
   }
 }
+
+
+.proto3d-detail-close {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .proto3d-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 7px !important;
+    width: 100% !important;
+    padding: 8px !important;
+    transform: rotateX(18deg) rotateZ(0deg) !important;
+  }
+
+  .proto3d-grid button {
+    min-height: 58px !important;
+    padding: 5px 3px !important;
+    font-size: 0.68rem !important;
+    line-height: 1.15;
+  }
+
+  .proto3d-detail {
+    display: none;
+    order: initial;
+    position: fixed;
+    inset: 12px;
+    top: auto;
+    z-index: 1000;
+    width: auto;
+    max-height: min(72vh, 560px);
+    overflow-y: auto;
+    border-color: rgba(245, 158, 11, 0.9) !important;
+    background: #090d17 !important;
+    box-shadow: 0 0 0 100vmax rgba(3, 7, 18, 0.78), 0 18px 55px rgba(0, 0, 0, 0.85) !important;
+  }
+
+  .proto3d-detail.is-open {
+    display: block;
+  }
+
+  .proto3d-detail-close {
+    display: grid;
+    place-items: center;
+    position: sticky;
+    top: 0;
+    float: right;
+    width: 36px;
+    height: 36px;
+    margin: -4px -4px 6px 10px;
+    border: 1px solid rgba(245, 158, 11, 0.75);
+    border-radius: 50%;
+    background: #111827;
+    color: #fbbf24;
+    font-size: 1.55rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+}
+
+@media (max-width: 390px) {
+  .proto3d-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    width: 100% !important;
+  }
+
+  .proto3d-grid button {
+    font-size: 0.63rem !important;
+  }
+}
