@@ -32,32 +32,77 @@
 
 @media (max-width: 760px) {
   .proto3d-page {
-    padding: 12px !important;
+    padding: 10px !important;
   }
 
   .proto3d-layout {
-    grid-template-columns: minmax(0, 1fr) !important;
-    align-items: start !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
     gap: 12px !important;
   }
 
-  .proto3d-scroller {
-    padding: 12px 0 24px !important;
-  }
-
-  .proto3d-stage {
-    min-height: 330px !important;
-  }
-
   .proto3d-detail {
+    order: -1;
+    position: sticky;
+    top: 8px;
+    z-index: 10;
     width: 100%;
     min-height: 0 !important;
+    max-height: 42vh;
+    overflow-y: auto;
     box-sizing: border-box;
-    padding: 16px !important;
+    padding: 14px !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55);
+  }
+
+  .proto3d-detail h2 {
+    margin: 5px 0 !important;
+    font-size: 1.3rem !important;
   }
 
   .proto3d-detail dl {
-    grid-template-columns: minmax(112px, auto) minmax(0, 1fr) !important;
-    gap: 8px 10px !important;
+    grid-template-columns: minmax(102px, auto) minmax(0, 1fr) !important;
+    gap: 6px 9px !important;
+    font-size: 0.88rem;
+  }
+
+  .proto3d-detail p {
+    margin-top: 10px !important;
+  }
+
+  .proto3d-scroller {
+    overflow-x: hidden !important;
+    padding: 8px 0 20px !important;
+  }
+
+  .proto3d-stage {
+    min-width: 0 !important;
+    min-height: 0 !important;
+    display: block !important;
+  }
+
+  .proto3d-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    width: calc(100% - 20px) !important;
+    min-width: 0 !important;
+    margin: 0 auto;
+    padding: 10px !important;
+    transform: rotateX(24deg) rotateZ(-2deg) !important;
+    transform-origin: top center;
+  }
+
+  .proto3d-grid button {
+    min-height: 44px !important;
+    padding: 3px 2px !important;
+    font-size: 0.58rem !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .proto3d-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    width: calc(100% - 16px) !important;
   }
 }
