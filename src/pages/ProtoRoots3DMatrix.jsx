@@ -6,6 +6,7 @@ const records = Array.isArray(rootData?.records) ? rootData.records : [];
 
 export default function ProtoRoots3DMatrix({ onGoHome = () => {} }) {
   const [selectedId, setSelectedId] = useState(records[0]?.id ?? null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
   const selected = records.find((record) => record.id === selectedId) || null;
 
   return (
@@ -32,7 +33,10 @@ export default function ProtoRoots3DMatrix({ onGoHome = () => {} }) {
                       <button
                         key={record.id}
                         type="button"
-                        onClick={() => setSelectedId(record.id)}
+                        onClick={() => {
+                          setSelectedId(record.id);
+                          setIsDetailOpen(true);
+                        }}
                         aria-label={`Kayıt ${record.id}: ${record.label}, prototip hece ${record.proto_hece}`}
                         title={`${record.label} · ${record.proto_hece}`}
                         style={{
@@ -58,7 +62,8 @@ export default function ProtoRoots3DMatrix({ onGoHome = () => {} }) {
               </div>
             </div>
 
-            <aside className="proto3d-detail" style={{ minHeight: "210px", padding: "18px", border: "1px solid rgba(245,158,11,.5)", borderRadius: "12px", background: "#090d17" }}>
+            <aside className={`proto3d-detail${isDetailOpen ? " is-open" : ""}`} role="dialog" aria-modal={isDetailOpen ? "true" : undefined} aria-label="Seçili kayıt ayrıntısı" style={{ minHeight: "210px", padding: "18px", border: "1px solid rgba(245,158,11,.5)", borderRadius: "12px", background: "#090d17" }}>
+              <button type="button" className="proto3d-detail-close" onClick={() => setIsDetailOpen(false)} aria-label="Ayrıntı panelini kapat">×</button>
               <div style={{ color: "#94a3b8", fontSize: "0.78rem" }}>Seçili kayıt {selected ? `#${selected.id}` : ""}</div>
               <h2 style={{ margin: "8px 0", color: "#fbbf24", fontSize: "1.6rem" }}>{selected?.label || "Kayıt yok"}</h2>
               <dl style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: "8px 12px", margin: 0, lineHeight: 1.45 }}>
