@@ -4,10 +4,40 @@ import "./ProtoRoots3DMatrix.css";
 
 const records = Array.isArray(rootData?.records) ? rootData.records : [];
 
+const keyboardPages = [
+  { title: "Temel Doğa ve Yaşam", records: records.slice(0, 25) },
+  { title: "İnsan ve Canlılar", records: records.slice(25, 50) },
+  { title: "Üretim, Gündelik Yaşam ve Evren", records: records.slice(50, 75) },
+  { title: "Dil, Düşünce ve Sistem", records: records.slice(75, 100) }
+];
+
 export default function ProtoRoots3DMatrix({ onGoHome = () => {} }) {
   const [selectedId, setSelectedId] = useState(records[0]?.id ?? null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [keyboardIndex, setKeyboardIndex] = useState(0);
+  const [touchStartX, setTouchStartX] = useState(null);
   const selected = records.find((record) => record.id === selectedId) || null;
+  const currentKeyboard = keyboardPages[keyboardIndex] || keyboardPages[0];
+  const currentRecords = currentKeyboard?.records || [];
+  const previousIndex = (keyboardIndex - 1 + keyboardPages.length) % keyboardPages.length;
+  const nextIndex = (keyboardIndex + 1) % keyboardPages.length;
+
+  const changeKeyboard = (nextKeyboardIndex) => {
+    const nextKeyboard = keyboardPages[nextKeyboardIndex];
+    setKeyboardIndex(nextKeyboardIndex);
+    setSelectedId(nextKeyboard?.records[0]?.id ?? null);
+    setIsDetailOpen(false);
+  };
+
+  const handleTouchEnd = (event) => {
+    if (touchStartX === null) return;
+    const endX = event.changedTouches?.[0]?.clientX ?? touchStartX;
+    const distance = endX - touchStartX;
+    if (Math.abs(distance) > 55) {
+      changeKeyboard(distance < 0 ? nextIndex : previousIndex);
+    }
+    setTouchStartX(null);
+  };
 
   return (
     <main className="proto-matrix-page" style={{ minHeight: "100vh", padding: "20px", background: "#030712", color: "#f8fafc", fontFamily: "Segoe UI, sans-serif", boxSizing: "border-box" }}>
@@ -23,11 +53,31 @@ export default function ProtoRoots3DMatrix({ onGoHome = () => {} }) {
             Bu görünüm, prototip envanterindeki kayıtları üç boyut hissi veren bir düzlemde gösterir. Kayıtlar araştırma adayıdır; görünüm tarihsel doğrulama veya etimolojik sonuç üretmez.
           </p>
 
+          <div className="proto-keyboard-switcher" aria-label="3D klavye seçimi">
+            <button type="button" className="proto-keyboard-ear proto-keyboard-ear-left" onClick={() => changeKeyboard(previousIndex)} aria-label="Önceki klavye">
+              <span>‹</span>
+              <small>{keyboardPages[previousIndex].title}</small>
+            </button>
+            <div className="proto-keyboard-current">
+              <strong>{currentKeyboard.title}</strong>
+              <span>Klavye {keyboardIndex + 1} / {keyboardPages.length} · {currentRecords.length} kayıt</span>
+              <div className="proto-keyboard-dots" aria-hidden="true">
+                {keyboardPages.map((page, index) => (
+                  <i key={page.title} className={index === keyboardIndex ? "is-active" : ""} />
+                ))}
+              </div>
+            </div>
+            <button type="button" className="proto-keyboard-ear proto-keyboard-ear-right" onClick={() => changeKeyboard(nextIndex)} aria-label="Sonraki klavye">
+              <small>{keyboardPages[nextIndex].title}</small>
+              <span>›</span>
+            </button>
+          </div>
+
           <div className="proto-matrix-layout" style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.5fr) minmax(240px, 0.7fr)", gap: "24px", alignItems: "center" }}>
-            <div className="proto-matrix-scroll" style={{ overflow: "auto", padding: "24px 12px 50px" }}>
+            <div className="proto-matrix-scroll" onTouchStart={(event) => setTouchStartX(event.touches?.[0]?.clientX ?? null)} onTouchEnd={handleTouchEnd} style={{ overflow: "auto", padding: "24px 12px 50px" }}>
               <div className="proto-matrix-stage" style={{ perspective: "1100px", minWidth: "640px", minHeight: "420px", display: "grid", placeItems: "center" }}>
                 <div className="proto-matrix-grid" style={{ display: "grid", gridTemplateColumns: "repeat(10, minmax(48px, 1fr))", gap: "8px", width: "min(100%, 680px)", padding: "16px", border: "1px solid rgba(34,211,238,.45)", borderRadius: "14px", background: "radial-gradient(ellipse at center, rgba(14,116,144,.22), rgba(3,7,18,.92))", boxShadow: "0 25px 55px rgba(0,0,0,.55)", transform: "rotateX(48deg) rotateZ(-8deg)", transformStyle: "preserve-3d" }}>
-                  {records.map((record) => {
+                  {currentRecords.map((record) => {
                     const active = record.id === selectedId;
                     return (
                       <button
