@@ -7,8 +7,14 @@ const records = Array.isArray(rootData?.records) ? rootData.records : [];
 const alphabeticalRecords = [...records].sort((a, b) =>
   a.label.localeCompare(b.label, "tr", { sensitivity: "base" })
 );
-const keyboardPages = Array.from({ length: 4 }, (_, index) => {
-  const pageRecords = alphabeticalRecords.slice(index * 25, (index + 1) * 25);
+const recordsPerKeyboard = 100;
+const keyboardPages = Array.from(
+  { length: Math.max(1, Math.ceil(alphabeticalRecords.length / recordsPerKeyboard)) },
+  (_, index) => {
+  const pageRecords = alphabeticalRecords.slice(
+    index * recordsPerKeyboard,
+    (index + 1) * recordsPerKeyboard
+  );
   const firstLabel = pageRecords[0]?.label || "—";
   const lastLabel = pageRecords[pageRecords.length - 1]?.label || "—";
   return {
@@ -59,11 +65,13 @@ export default function ProtoRoots3DMatrix({ onGoHome = () => {} }) {
             Bu görünüm, prototip envanterindeki kayıtları üç boyut hissi veren bir düzlemde gösterir. Kayıtlar araştırma adayıdır; görünüm tarihsel doğrulama veya etimolojik sonuç üretmez.
           </p>
 
-          <div className="proto-keyboard-switcher" aria-label="3D klavye seçimi">
+          <div className={`proto-keyboard-switcher${keyboardPages.length === 1 ? " is-single" : ""}`} aria-label="3D klavye seçimi">
+            {keyboardPages.length > 1 && (
             <button type="button" className="proto-keyboard-ear proto-keyboard-ear-left" onClick={() => changeKeyboard(previousIndex)} aria-label="Önceki klavye">
               <span>‹</span>
               <small>{keyboardPages[previousIndex].title}</small>
             </button>
+            )}
             <div className="proto-keyboard-current">
               <strong>{currentKeyboard.title}</strong>
               <span>Klavye {keyboardIndex + 1} / {keyboardPages.length} · {currentRecords.length} kayıt</span>
@@ -81,10 +89,12 @@ export default function ProtoRoots3DMatrix({ onGoHome = () => {} }) {
                 ))}
               </div>
             </div>
+            {keyboardPages.length > 1 && (
             <button type="button" className="proto-keyboard-ear proto-keyboard-ear-right" onClick={() => changeKeyboard(nextIndex)} aria-label="Sonraki klavye">
               <small>{keyboardPages[nextIndex].title}</small>
               <span>›</span>
             </button>
+            )}
           </div>
 
           <div className="proto-matrix-layout" style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.5fr) minmax(240px, 0.7fr)", gap: "24px", alignItems: "center" }}>
