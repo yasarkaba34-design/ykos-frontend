@@ -131,3 +131,46 @@
     cursor: pointer;
   }
 }
+
+
+/* Mobilde 3D klavyeyi kompakt tut ve parmakla yatay kaydır. */
+@media (max-width: 768px) {
+  .proto-matrix-scroll {
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    padding: 8px 10px 20px !important;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
+    scrollbar-width: thin;
+  }
+
+  .proto-matrix-stage {
+    display: flex !important;
+    justify-content: flex-start !important;
+    width: max-content !important;
+    min-width: 100% !important;
+  }
+
+  .proto-matrix-grid {
+    flex: 0 0 auto;
+    width: 360px !important;
+    min-width: 360px !important;
+    margin: 0 12px !important;
+    gap: 5px !important;
+    padding: 7px !important;
+    transform: rotateX(14deg) rotateZ(0deg) scale(0.94) !important;
+    transform-origin: top center !important;
+  }
+
+  .proto-matrix-grid button {
+    min-height: 50px !important;
+    padding: 4px 2px !important;
+    font-size: 0.62rem !important;
+    transition: transform 120ms ease, box-shadow 120ms ease;
+  }
+
+  .proto-matrix-grid button:active {
+    transform: translateZ(10px) scale(0.96) !important;
+  }
+}
