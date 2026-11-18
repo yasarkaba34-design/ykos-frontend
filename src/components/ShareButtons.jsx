@@ -37,6 +37,18 @@ export default function ShareButtons({ title = "" }) {
     window.setTimeout(() => setCopied(false), 1800);
   };
 
+  const directShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: title || "YKOS yayını", url: pageUrl });
+        return;
+      } catch (error) {
+        if (error?.name === "AbortError") return;
+      }
+    }
+    await copyLink();
+  };
+
   return (
     <div
       aria-label="İçeriği sosyal medyada paylaş"
@@ -51,6 +63,28 @@ export default function ShareButtons({ title = "" }) {
       <span style={{ color: "#94a3b8", fontSize: "0.78rem", fontWeight: 800, marginRight: "2px" }}>
         PAYLAŞ
       </span>
+      <button
+        type="button"
+        onClick={directShare}
+        aria-label="Doğrudan paylaş"
+        title="Doğrudan paylaş"
+        style={{
+          minHeight: "38px",
+          padding: "0 13px",
+          borderRadius: "19px",
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "6px",
+          background: "#b8860b",
+          border: "1px solid #ffd700",
+          color: "#fff",
+          fontSize: "0.78rem",
+          fontWeight: 900,
+          cursor: "pointer"
+        }}
+      >
+        📤 Direkt Paylaş
+      </button>
       <a
         href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`}
         target="_blank"
