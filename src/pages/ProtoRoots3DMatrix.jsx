@@ -78,7 +78,7 @@ export default function ProtoRoots3DMatrix({ onGoHome = () => {} }) {
     <main className="proto-matrix-page" style={{ minHeight: "100vh", padding: "20px", background: "#030712", color: "#f8fafc", fontFamily: "Segoe UI, sans-serif", boxSizing: "border-box" }}>
       <div style={{ width: "min(100%, 1180px)", margin: "0 auto" }}>
         <button type="button" onClick={onGoHome} style={{ marginBottom: "16px", padding: "9px 14px", border: "1px solid #f59e0b", borderRadius: "8px", background: "#111827", color: "#fbbf24", fontWeight: 800, cursor: "pointer" }}>
-          ← Ana sayfaya dön
+          {window.location.hostname.toLowerCase().includes("tuditam") ? "← TÜDİTAM’a Dön" : "← Ana sayfaya dön"}
         </button>
 
         <section className="proto-matrix-section" style={{ padding: "clamp(18px, 3vw, 30px)", border: "1px solid #806414", borderRadius: "16px", background: "linear-gradient(145deg, #0b1020, #050811)" }}>
