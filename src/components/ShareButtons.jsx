@@ -3,7 +3,7 @@ import React, { useState } from "react";
 const iconButtonStyle = {
   width: "38px",
   height: "38px",
-  borderRadius: "50%",
+  borderRadius: "6px",
   display: "inline-grid",
   placeItems: "center",
   color: "#fff",
@@ -114,6 +114,26 @@ export default function ShareButtons({ title = "" }) {
         style={{ ...iconButtonStyle, background: "#111827", border: "1px solid #64748b" }}
       >
         X
+      </a>
+      <a
+        href={`https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Telegram'da paylaş"
+        title="Telegram'da paylaş"
+        style={{ ...iconButtonStyle, background: "#229ed9", border: "1px solid #7dd3fc" }}
+      >
+        ➤
+      </a>
+      <a
+        href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="LinkedIn'de paylaş"
+        title="LinkedIn'de paylaş"
+        style={{ ...iconButtonStyle, background: "#0a66c2", border: "1px solid #60a5fa", fontSize: "0.82rem" }}
+      >
+        in
       </a>
       <button
         type="button"
