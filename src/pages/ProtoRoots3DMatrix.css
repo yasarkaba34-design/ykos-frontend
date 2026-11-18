@@ -379,3 +379,11 @@
     height: 28px;
   }
 }
+
+
+.proto-keyboard-switcher.is-single {
+  grid-template-columns: minmax(220px, 1fr);
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+}
