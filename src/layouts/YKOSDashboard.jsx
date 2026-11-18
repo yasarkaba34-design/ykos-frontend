@@ -207,18 +207,12 @@ export default function YKOSDashboard({
       
       {recordsError && <p role="alert" style={{color: "#f87171"}}>{recordsError}</p>}
       <style>{`
-        .ykos-mobile-shortcuts {
-          display: none;
-        }
-        .ykos-desktop-shortcuts {
+        .ykos-primary-shortcuts {
           display: grid;
         }
         @media (max-width: 768px) {
-          .ykos-mobile-shortcuts {
-            display: grid !important;
-          }
-          .ykos-desktop-shortcuts {
-            display: none !important;
+          .ykos-primary-shortcuts {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
           }
           .ykos-main-content-grid {
             display: flex !important;
@@ -390,11 +384,11 @@ export default function YKOSDashboard({
         <SearchBar placeholder={t?.searchPlaceholder || "Arşivde veya Matriste Ara..."} onSearch={(q) => setSearchQuery(q)} />
       </div>
 
-      {/* Mobilde temel araçlar aramanın hemen altında gösterilir. */}
+      {/* Temel araçlar tüm ekranlarda aramanın hemen altında gösterilir. */}
       <nav
-        className="ykos-mobile-shortcuts"
+        className="ykos-primary-shortcuts"
         aria-label="YKOS test, okuma ve matris görünümleri"
-        style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: "9px", margin: "0 0 12px" }}
+        style={{ gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: "9px", margin: "0 0 12px" }}
       >
         <button type="button" onClick={onNavigateTest} style={{ ...btnBaseStyle, minWidth: 0, minHeight: "44px", border: "1px solid #06b6d4", color: "#67e8f9" }}>
           🧪 {t.testButton || "TEST"}
@@ -431,20 +425,7 @@ export default function YKOSDashboard({
         <div role="status" aria-live="polite" style={{ margin: "-2px 0 12px", padding: "10px 12px", border: "1px solid rgba(34, 211, 238, 0.45)", borderLeft: "3px solid #22d3ee", borderRadius: "6px", background: "rgba(8, 47, 73, 0.28)", color: "#cbd5e1", fontSize: "0.82rem", lineHeight: 1.5 }}>
           <strong style={{ color: "#67e8f9" }}>Veri girişi sürmektedir.</strong> Kök-hece, damga, petroglif ve yazıt kayıtları kaynak ve belge bilgileriyle aşamalı olarak tamamlanıyor. Eksik bilgiler belirtiliyor; doğrulanmamış eşleşmeler araştırma adayı olarak sunuluyor.
         </div>
-        <nav className="ykos-desktop-shortcuts" aria-label="YKOS test, okuma ve matris görünümleri" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: "9px", margin: "0 0 14px" }}>
-          <button type="button" onClick={onNavigateTest} style={{ ...btnBaseStyle, minHeight: "44px", border: "1px solid #06b6d4", color: "#67e8f9" }}>
-            🧪 {t.testButton || "TEST"}
-          </button>
-          <button type="button" onClick={onNavigateEngine} style={{ ...btnBaseStyle, minHeight: "44px", border: "1px solid #22c55e", color: "#86efac" }}>
-            📖 {t.readingButton || "OKUMA & ANALİZ"}
-          </button>
-          <button type="button" onClick={onVisualize} style={{ ...btnBaseStyle, minHeight: "44px", border: "1px solid #f59e0b", color: "#fbbf24" }}>
-            🌐 {t.matrixButton || "MATRİS"}
-          </button>
-          <button type="button" onClick={onNavigate3D} style={{ ...btnBaseStyle, minHeight: "44px", border: "1px solid #a78bfa", color: "#c4b5fd" }}>
-            🧊 {t.matrix3dButton || "3D MATRİS"}
-          </button>
-        </nav>
+
 
 
         <div className="ykos-main-content-grid" style={{ display: "grid", gridTemplateColumns: "minmax(0, 2.3fr) minmax(300px, 1fr)", gap: "14px", alignItems: "stretch" }}>
