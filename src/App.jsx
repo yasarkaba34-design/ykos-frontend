@@ -164,7 +164,7 @@ function App() {
                     cursor: "pointer",
                   }}
                 >
-                  ⬅ Ana Sayfaya Dön
+                  {window.location.hostname.toLowerCase().includes("tuditam") ? "⬅ TÜDİTAM’a Dön" : "⬅ Ana Sayfaya Dön"}
                 </button>
               </div>
               <BubbleMatrix />
@@ -204,7 +204,7 @@ function App() {
                     cursor: "pointer",
                   }}
                 >
-                  ⬅ Ana Sayfaya Dön
+                  {window.location.hostname.toLowerCase().includes("tuditam") ? "⬅ TÜDİTAM’a Dön" : "⬅ Ana Sayfaya Dön"}
                 </button>
               </div>
               <YKOSAnalysisEngine />
