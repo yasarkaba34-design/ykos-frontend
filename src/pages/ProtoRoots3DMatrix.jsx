@@ -4,6 +4,28 @@ import "./ProtoRoots3DMatrix.css";
 
 const records = Array.isArray(rootData?.records) ? rootData.records : [];
 
+const categoryGroups = [
+  {
+    name: "Doğa–Coğrafya",
+    labels: new Set(["su", "taş", "gün", "ay", "kara", "yer", "suyolu", "dağ", "ateş", "yıl", "yıldız", "toprak", "rüzgâr", "deniz", "kül", "bulut", "yağmur", "evren", "dünya", "gökyüzü", "yeraltı", "ışık", "gölge"])
+  },
+  {
+    name: "İnsan–Beden",
+    labels: new Set(["el", "göz", "yüz", "kalp", "akıl", "kan", "kemik", "omuz", "baş", "kulak", "dil"])
+  },
+  {
+    name: "Hayvan–Bitki",
+    labels: new Set(["balık", "kuş", "ağaç", "söğüt", "çiçek", "köpek", "at", "kurt", "tilki", "yılan", "arı", "elma", "armut", "üzüm", "buğday", "arpa"])
+  },
+  {
+    name: "Yaşam–Kültür",
+    labels: new Set(["yol", "söz", "kapı", "ev", "demir", "tahta", "köy", "tarla", "ekmek", "bal", "süt", "yağ", "tuz", "sucuk", "peynir", "yemek", "çorba", "tabak", "kaşık", "çatal", "bıçak", "sofra", "koltuk", "masa", "sandalye", "eşik", "kültür", "tarih", "yazı", "kitap", "oku", "yazmak"])
+  }
+];
+
+const getCategory = (label) =>
+  categoryGroups.find((category) => category.labels.has(label))?.name || "Soyut–Sistem";
+
 const alphabeticalRecords = [...records].sort((a, b) =>
   a.label.localeCompare(b.label, "tr", { sensitivity: "base" })
 );
@@ -29,6 +51,7 @@ export default function ProtoRoots3DMatrix({ onGoHome = () => {} }) {
   const [keyboardIndex, setKeyboardIndex] = useState(0);
   const [touchStartX, setTouchStartX] = useState(null);
   const selected = records.find((record) => record.id === selectedId) || null;
+  const selectedCategory = selected ? getCategory(selected.label) : "—";
   const currentKeyboard = keyboardPages[keyboardIndex] || keyboardPages[0];
   const currentRecords = currentKeyboard?.records || [];
   const previousIndex = (keyboardIndex - 1 + keyboardPages.length) % keyboardPages.length;
@@ -60,9 +83,9 @@ export default function ProtoRoots3DMatrix({ onGoHome = () => {} }) {
 
         <section className="proto-matrix-section" style={{ padding: "clamp(18px, 3vw, 30px)", border: "1px solid #806414", borderRadius: "16px", background: "linear-gradient(145deg, #0b1020, #050811)" }}>
           <p style={{ margin: "0 0 6px", color: "#22d3ee", fontSize: "0.78rem", fontWeight: 800, letterSpacing: "1.5px" }}>YKOS • 3D KÖK-HECE MATRİSİ</p>
-          <h1 style={{ margin: "0 0 8px", color: "#fbbf24", fontSize: "clamp(1.5rem, 4vw, 2.2rem)" }}>100 Prototip Aday Kaydı</h1>
+          <h1 style={{ margin: "0 0 8px", color: "#fbbf24", fontSize: "clamp(1.5rem, 4vw, 2.2rem)" }}>1.000 Kayıt Hedefli Akademik Ön Çalışma</h1>
           <p style={{ maxWidth: "850px", color: "#cbd5e1", lineHeight: 1.6 }}>
-            Bu görünüm, prototip envanterindeki kayıtları üç boyut hissi veren bir düzlemde gösterir. Kayıtlar araştırma adayıdır; görünüm tarihsel doğrulama veya etimolojik sonuç üretmez.
+            Beş ana kategoride büyütülen matrisin mevcut aşamasında {records.length} aday kayıt bulunmaktadır. Her klavye 100 kayıt taşır; kayıtlar araştırma adayıdır ve kaynaklandırılmadan tarihsel ya da etimolojik sonuç sayılmaz.
           </p>
 
           <div className={`proto-keyboard-switcher${keyboardPages.length === 1 ? " is-single" : ""}`} aria-label="3D klavye seçimi">
@@ -141,12 +164,12 @@ export default function ProtoRoots3DMatrix({ onGoHome = () => {} }) {
               <div style={{ color: "#94a3b8", fontSize: "0.78rem" }}>Seçili kayıt {selected ? `#${selected.id}` : ""}</div>
               <h2 style={{ margin: "8px 0", color: "#fbbf24", fontSize: "1.6rem" }}>{selected?.label || "Kayıt yok"}</h2>
               <dl style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: "8px 12px", margin: 0, lineHeight: 1.45 }}>
-                <dt style={{ color: "#94a3b8" }}>Prototip hece</dt><dd style={{ margin: 0, color: "#67e8f9", fontWeight: 800 }}>{selected?.proto_hece || "—"}</dd>
+                <dt style={{ color: "#94a3b8" }}>Kategori</dt><dd style={{ margin: 0, color: "#86efac", fontWeight: 800 }}>{selectedCategory}</dd>\n                <dt style={{ color: "#94a3b8" }}>Kayıt durumu</dt><dd style={{ margin: 0 }}>Ön çalışma · doğrulanmamış aday</dd>\n                <dt style={{ color: "#94a3b8" }}>Prototip hece</dt><dd style={{ margin: 0, color: "#67e8f9", fontWeight: 800 }}>{selected?.proto_hece || "—"}</dd>
                 <dt style={{ color: "#94a3b8" }}>Ritim</dt><dd style={{ margin: 0 }}>{selected?.ritim || "—"}</dd>
                 <dt style={{ color: "#94a3b8" }}>Semiyotik not</dt><dd style={{ margin: 0 }}>{selected?.semiyotik || "—"}</dd>
                 <dt style={{ color: "#94a3b8" }}>Coğrafi not</dt><dd style={{ margin: 0 }}>{selected?.geo || "—"}</dd>
               </dl>
-              <p style={{ margin: "16px 0 0", color: "#fcd34d", fontSize: "0.78rem", lineHeight: 1.5 }}>Aday veri: kaynak ve ilk tanıklık bilgileri bu envanterde yer almıyor.</p>
+              <p style={{ margin: "16px 0 0", color: "#fcd34d", fontSize: "0.78rem", lineHeight: 1.5 }}>Akademik uyarı: kaynak, en eski belgeli tanıklık ve tarih bilgileri eklenmeden bu kayıt kesin etimoloji olarak kullanılamaz.</p>
             </aside>
           </div>
         </section>
