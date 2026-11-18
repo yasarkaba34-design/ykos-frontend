@@ -5,6 +5,7 @@ import { getEmbedUrl } from "../data/videoEmbed";
 import { loadArchiveData } from "../data/ykosDataService";
 import { db } from "../data/firebase";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import ShareButtons from "./ShareButtons";
 const normalizeExternalUrl = (value) => {
   const raw = String(value || "").trim();
   if (!raw) return "";
@@ -325,6 +326,7 @@ export default function ReadingPanel({
             }}
           />
         )}
+        <ShareButtons title={title} />
         {summary && (
           <div
             style={{
