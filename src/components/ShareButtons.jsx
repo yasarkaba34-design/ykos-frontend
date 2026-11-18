@@ -1,0 +1,98 @@
+import React, { useState } from "react";
+
+const iconButtonStyle = {
+  width: "38px",
+  height: "38px",
+  borderRadius: "50%",
+  display: "inline-grid",
+  placeItems: "center",
+  color: "#fff",
+  textDecoration: "none",
+  fontSize: "1rem",
+  fontWeight: 900,
+  cursor: "pointer",
+  boxSizing: "border-box"
+};
+
+export default function ShareButtons({ title = "" }) {
+  const [copied, setCopied] = useState(false);
+  const pageUrl = typeof window !== "undefined" ? window.location.href : "";
+  const encodedUrl = encodeURIComponent(pageUrl);
+  const encodedText = encodeURIComponent(title || "YKOS yayını");
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(pageUrl);
+    } catch {
+      const input = document.createElement("textarea");
+      input.value = pageUrl;
+      input.style.position = "fixed";
+      input.style.opacity = "0";
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand("copy");
+      input.remove();
+    }
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1800);
+  };
+
+  return (
+    <div
+      aria-label="İçeriği sosyal medyada paylaş"
+      style={{
+        display: "flex",
+        alignItems: "center",
+        flexWrap: "wrap",
+        gap: "8px",
+        margin: "0 0 20px"
+      }}
+    >
+      <span style={{ color: "#94a3b8", fontSize: "0.78rem", fontWeight: 800, marginRight: "2px" }}>
+        PAYLAŞ
+      </span>
+      <a
+        href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Facebook'ta paylaş"
+        title="Facebook'ta paylaş"
+        style={{ ...iconButtonStyle, background: "#1877f2", border: "1px solid #60a5fa" }}
+      >
+        f
+      </a>
+      <a
+        href={`https://wa.me/?text=${encodedText}%20${encodedUrl}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="WhatsApp'ta paylaş"
+        title="WhatsApp'ta paylaş"
+        style={{ ...iconButtonStyle, background: "#25d366", border: "1px solid #86efac" }}
+      >
+        ◉
+      </a>
+      <a
+        href={`https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="X'te paylaş"
+        title="X'te paylaş"
+        style={{ ...iconButtonStyle, background: "#111827", border: "1px solid #64748b" }}
+      >
+        X
+      </a>
+      <button
+        type="button"
+        onClick={copyLink}
+        aria-label="Bağlantıyı kopyala"
+        title="Bağlantıyı kopyala"
+        style={{ ...iconButtonStyle, background: "#0e7490", border: "1px solid #22d3ee" }}
+      >
+        🔗
+      </button>
+      <span role="status" aria-live="polite" style={{ color: copied ? "#86efac" : "transparent", fontSize: "0.75rem", fontWeight: 700 }}>
+        {copied ? "Bağlantı kopyalandı" : "."}
+      </span>
+    </div>
+  );
+}
