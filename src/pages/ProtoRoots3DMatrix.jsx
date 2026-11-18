@@ -4,12 +4,18 @@ import "./ProtoRoots3DMatrix.css";
 
 const records = Array.isArray(rootData?.records) ? rootData.records : [];
 
-const keyboardPages = [
-  { title: "Temel Doğa ve Yaşam", records: records.slice(0, 25) },
-  { title: "İnsan ve Canlılar", records: records.slice(25, 50) },
-  { title: "Üretim, Gündelik Yaşam ve Evren", records: records.slice(50, 75) },
-  { title: "Dil, Düşünce ve Sistem", records: records.slice(75, 100) }
-];
+const alphabeticalRecords = [...records].sort((a, b) =>
+  a.label.localeCompare(b.label, "tr", { sensitivity: "base" })
+);
+const keyboardPages = Array.from({ length: 4 }, (_, index) => {
+  const pageRecords = alphabeticalRecords.slice(index * 25, (index + 1) * 25);
+  const firstLabel = pageRecords[0]?.label || "—";
+  const lastLabel = pageRecords[pageRecords.length - 1]?.label || "—";
+  return {
+    title: `${firstLabel.toLocaleUpperCase("tr-TR")} – ${lastLabel.toLocaleUpperCase("tr-TR")}`,
+    records: pageRecords
+  };
+});
 
 export default function ProtoRoots3DMatrix({ onGoHome = () => {} }) {
   const [selectedId, setSelectedId] = useState(records[0]?.id ?? null);
@@ -61,9 +67,17 @@ export default function ProtoRoots3DMatrix({ onGoHome = () => {} }) {
             <div className="proto-keyboard-current">
               <strong>{currentKeyboard.title}</strong>
               <span>Klavye {keyboardIndex + 1} / {keyboardPages.length} · {currentRecords.length} kayıt</span>
-              <div className="proto-keyboard-dots" aria-hidden="true">
+              <div className="proto-keyboard-dots" aria-label="Klavye numaraları">
                 {keyboardPages.map((page, index) => (
-                  <i key={page.title} className={index === keyboardIndex ? "is-active" : ""} />
+                  <button
+                    key={page.title}
+                    type="button"
+                    className={index === keyboardIndex ? "is-active" : ""}
+                    onClick={() => changeKeyboard(index)}
+                    aria-label={`Klavye ${index + 1}: ${page.title}`}
+                  >
+                    {index + 1}
+                  </button>
                 ))}
               </div>
             </div>
