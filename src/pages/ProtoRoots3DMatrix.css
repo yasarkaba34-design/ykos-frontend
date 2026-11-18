@@ -211,3 +211,171 @@
     margin-top: 86px !important;
   }
 }
+
+
+/* Çoklu 3D klavye geçişi: komşu klavyelerin kulakları ve numaralı seçim. */
+.proto-keyboard-switcher {
+  display: grid;
+  grid-template-columns: minmax(90px, 0.32fr) minmax(220px, 1fr) minmax(90px, 0.32fr);
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0 4px;
+  overflow: hidden;
+}
+
+.proto-keyboard-ear {
+  min-height: 68px;
+  border: 1px solid rgba(34, 211, 238, 0.55);
+  border-radius: 14px;
+  background: rgba(8, 47, 73, 0.72);
+  color: #cffafe;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  opacity: 0.78;
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.proto-keyboard-ear:hover,
+.proto-keyboard-ear:focus-visible {
+  opacity: 1;
+}
+
+.proto-keyboard-ear-left {
+  justify-content: flex-end;
+  transform: translateX(-34%);
+}
+
+.proto-keyboard-ear-right {
+  justify-content: flex-start;
+  transform: translateX(34%);
+}
+
+.proto-keyboard-ear-left:hover,
+.proto-keyboard-ear-left:focus-visible {
+  transform: translateX(-27%);
+}
+
+.proto-keyboard-ear-right:hover,
+.proto-keyboard-ear-right:focus-visible {
+  transform: translateX(27%);
+}
+
+.proto-keyboard-ear span {
+  color: #fbbf24;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.proto-keyboard-ear small {
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.proto-keyboard-current {
+  text-align: center;
+}
+
+.proto-keyboard-current strong {
+  display: block;
+  color: #fbbf24;
+  font-size: 1.05rem;
+}
+
+.proto-keyboard-current > span {
+  display: block;
+  margin-top: 4px;
+  color: #94a3b8;
+  font-size: 0.78rem;
+}
+
+.proto-keyboard-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.proto-keyboard-dots button {
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(34, 211, 238, 0.55);
+  border-radius: 50%;
+  background: #0b1220;
+  color: #a5f3fc;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.proto-keyboard-dots button.is-active {
+  border-color: #fbbf24;
+  background: #b45309;
+  color: #fff7ed;
+  box-shadow: 0 0 14px rgba(251, 191, 36, 0.5);
+}
+
+@media (min-width: 769px) {
+  .proto-matrix-stage {
+    min-height: 430px !important;
+  }
+
+  .proto-matrix-grid {
+    grid-template-columns: repeat(5, minmax(76px, 1fr)) !important;
+    width: min(100%, 520px) !important;
+    transform: rotateX(20deg) rotateZ(-1deg) !important;
+  }
+
+  .proto-matrix-grid button {
+    min-height: 64px !important;
+    font-size: 0.72rem !important;
+  }
+
+  .proto-matrix-detail {
+    margin-top: 56px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .proto-keyboard-switcher {
+    grid-template-columns: 58px minmax(0, 1fr) 58px;
+    gap: 4px;
+    margin-top: 14px;
+  }
+
+  .proto-keyboard-ear {
+    min-height: 58px;
+    padding: 5px;
+  }
+
+  .proto-keyboard-ear-left {
+    transform: translateX(-42%);
+  }
+
+  .proto-keyboard-ear-right {
+    transform: translateX(42%);
+  }
+
+  .proto-keyboard-ear small {
+    display: none;
+  }
+
+  .proto-keyboard-current strong {
+    font-size: 0.9rem;
+  }
+
+  .proto-keyboard-current > span {
+    font-size: 0.7rem;
+  }
+
+  .proto-keyboard-dots {
+    gap: 6px;
+    margin-top: 7px;
+  }
+
+  .proto-keyboard-dots button {
+    width: 28px;
+    height: 28px;
+  }
+}
