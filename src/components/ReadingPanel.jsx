@@ -309,7 +309,6 @@ export default function ReadingPanel({
         >
           {title}
         </h1>
-        <ShareButtons title={title} />
         {image && (
           <img
             src={image}
@@ -327,6 +326,7 @@ export default function ReadingPanel({
             }}
           />
         )}
+        <ShareButtons title={title} />
         {summary && (
           <div
             style={{
