@@ -1,5 +1,6 @@
 import React from "react";
 import data from "../data/data.json";
+import ShareButtons from "./ShareButtons";
 
 function getText(record, keys) {
   for (const key of keys) {
@@ -58,6 +59,7 @@ export default function ReadingPanel({ content }) {
         {record.hece && <p style={{ color: "#38bdf8" }}>Kök / hece: <strong>{record.hece}</strong></p>}
         {summary && <p style={{ lineHeight: 1.7, color: "#e2e8f0" }}>{summary}</p>}
         {image && <img src={image} alt={title} style={{ display: "block", maxWidth: "100%", maxHeight: "520px", objectFit: "contain", margin: "18px auto" }} />}
+        <ShareButtons title={title} />
         {body && <div style={{ whiteSpace: "pre-wrap", lineHeight: 1.8, color: "#e2e8f0" }}>{body}</div>}
         {shape && <p style={{ color: "#cbd5e1" }}>Biçim: {shape}</p>}
         {culture && <p style={{ color: "#94a3b8" }}>Bağlantı / kaynak: {culture}</p>}
